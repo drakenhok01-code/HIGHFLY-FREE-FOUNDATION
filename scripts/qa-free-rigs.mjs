@@ -35,7 +35,19 @@ function summarize(g){
  }).sort();
  const animationNames=(g.animations??[]).map(a=>a.name).sort();
  const sockets=g.nodes.map(n=>n.name).filter(n=>/handslot|hand.?slot/i.test(n)).sort();
- return {joints:jointNames.length,jointNames,hierarchy,clips:animationNames.length,animationNames,sockets};
+ const pose=joints.map(i=>{
+  const node=g.nodes[i];
+  const t=node.translation??[0,0,0],r=node.rotation??[0,0,0,1],sc=node.scale??[1,1,1];
+  return {bone:normal(node.name),transform:node.matrix??[...t,...r,...sc]};
+ }).sort((a,b)=>a.bone.localeCompare(b.bone));
+ const meshStats=g.nodes.filter(n=>Number.isInteger(n.mesh)).map(n=>({
+  name:n.name,skin:Number.isInteger(n.skin),mesh:n.mesh,
+  primitives:g.meshes[n.mesh]?.primitives?.map(p=>({
+   vertices:g.accessors[p.attributes?.POSITION]?.count??0,
+   skinWeighted:Number.isInteger(p.attributes?.JOINTS_0)&&Number.isInteger(p.attributes?.WEIGHTS_0)
+  }))??[]
+ }));
+ return {joints:jointNames.length,jointNames,hierarchy,clips:animationNames.length,animationNames,sockets,pose,meshStats};
 }
 const result=[];
 for(const [name,gitSha,size] of candidates){
@@ -59,6 +71,11 @@ const report={
   identicalBoneHierarchy:equal(x.hierarchy,canonical.hierarchy),
   identicalClipNames:equal(x.animationNames,canonical.animationNames),
   compatibleMedium:equal(x.hierarchy,canonical.hierarchy),
+  identicalRestTransforms:equal(x.pose,canonical.pose),
+  boneRestDifferences:x.pose.filter((p,i)=>!equal(p,canonical.pose[i])).length,
+  skinnedMeshes:x.meshStats.filter(m=>m.skin).length,
+  weightedPrimitives:x.meshStats.reduce((n,m)=>n+m.primitives.filter(p=>p.skinWeighted).length,0),
+  meshNodes:x.meshStats.length,
   // Original vs HIGHFLY V6.6: same joint structure, different rest transforms.
   source:x.source
  })),

@@ -126,9 +126,10 @@ export function installHighflyUniversalMotion(p){
     // Pass the canceling input back to original Unsung.
    }else{
     this.stateTime+=step;action.time+=step;this.speed=0;
-    if(action.time>=ACTIONS[action.name].duration){
+    if(action.time>=ACTIONS[action.name].duration&&!ACTIONS[action.name].idle){
      this._hfAction=null;this.setState('move');this.emit('highflyActionEnd',{name:action.name});
     }
+    // Sit/lie remain in their idle clip until Jump, ATK, DASH or ROLL cancels.
     return;
    }
   }

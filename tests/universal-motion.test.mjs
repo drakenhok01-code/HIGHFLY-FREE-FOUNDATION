@@ -110,3 +110,20 @@ test('No roll/dash state collision with double jump, climb or social action',()=
  assert.equal(p._hfGearCycle,0);
  assert.ok(p.pos.y>=start);
 });
+
+test('Sitting/lying keeps its pose until interrupted; not a 3-second timer',()=>{
+ const p=player();
+ p.update(1/60,input(['sit']),0);
+ assert.equal(p.state,'hf_action');
+ for(let i=0;i<250;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'hf_action','seated pose must persist');
+ assert.equal(p._hfAction.name,'sit');
+ p.update(1/60,input(['jump']),0);
+ assert.equal(p.state,'move','jump cancels sitting');
+ p.update(1/60,input(['lie']),0);
+ assert.equal(p.state,'hf_action');
+ for(let i=0;i<250;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'hf_action','lying pose must persist');
+ p.update(1/60,input(['dodge']),0);
+ assert.equal(p.state,'roll','Unsung original roll cancels lying');
+});
