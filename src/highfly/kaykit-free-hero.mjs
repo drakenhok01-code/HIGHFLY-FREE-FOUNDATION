@@ -278,6 +278,23 @@ export class KayKitFreeHero {
      (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
    this.rollPivot.position.y=.91-.39*tuck+this._swimBlend*.08;
+   // The F0.11 head bug was WORLD rotation, not local head-bone rotation.
+   // Swim pitch tilts the entire pivot: counter-rotate the head in WORLD
+   // coordinates to keep the gaze forward while arms/chest perform crawl.
+   const face=this._bone('head');
+   if(face?.parent&&this._swimBlend>.001&&p.state!=='roll'){
+    const pitch=this.rollPivot.rotation.x;
+    this.rollPivot.rotation.x=0;
+    this.actor.updateMatrixWorld(true);
+    const intended=face.getWorldQuaternion(new THREE.Quaternion());
+    this.rollPivot.rotation.x=pitch;
+    this.actor.updateMatrixWorld(true);
+    const actual=face.getWorldQuaternion(new THREE.Quaternion());
+    const parentWorld=face.parent.getWorldQuaternion(new THREE.Quaternion());
+    const delta=intended.multiply(actual.invert());
+    const local=parentWorld.clone().invert().multiply(delta).multiply(parentWorld);
+    face.quaternion.premultiply(new THREE.Quaternion().slerp(local,.93)).normalize();
+   }
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
