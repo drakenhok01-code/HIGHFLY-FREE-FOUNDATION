@@ -21,7 +21,10 @@ try{
  const errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text().slice(0,200))});
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
- await page.waitForFunction('window.__highflyHeroStatus?.loaded && window.__game?.hero && !document.querySelector("#boot:not(.gone)")',null,{timeout:155000});
+ // Full-world terrain light baking can continue behind the boot overlay for
+ // minutes on software WebGL. Test the REAL game, hero and collision world
+ // once they exist; do not gate on the presentation-only loading screen.
+ await page.waitForFunction('window.__highflyHeroStatus?.loaded && window.__game?.hero && window.__game?.world',null,{timeout:110000});
  const ready=await page.evaluate(()=>{window.__game.input.lockPointer=()=>{};window.__game.start();return {x:window.__game.player.pos.x,y:window.__game.player.pos.y,z:window.__game.player.pos.z}});
  await delay(2000);
  // All captures are performed at fixed scene time and camera with one pipeline.render.
