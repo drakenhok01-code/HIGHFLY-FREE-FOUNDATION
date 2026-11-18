@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {createUniversalMaterial} from './kaykit-material.mjs';
+import {ACTIONS} from './universal-motion.mjs';
+import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,applyEquipment} from './universal-gear.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
@@ -43,7 +45,7 @@ export class KayKitFreeHero {
    const armored=styleParams.get('hflook')==='armored'||this.originalLook;
    const hidden=new Set(HIDE);
    if(!armored)for(const name of ['Knight_Helmet','Knight_HelmetVisor','Knight_Cape'])hidden.add(name);
-   this.bodyParts=new Set();this.sword=null;
+   this.bodyParts=new Set();this.sword=null;this.gearNodes=new Map();this.rigBones=new Map();
    this.flash={value:0};this.rim={value:0};
    this.root.frustumCulled=false;
    this.socket=null;this.visibleMeshes=0;this.swordMeshes=0;
@@ -51,10 +53,12 @@ export class KayKitFreeHero {
    let handFallback=null;
    this.root.traverse(o=>{
      const n=norm(o.name);
+     if(o.isBone)this.rigBones.set(n,o);
      // Three GLTFLoader sanitizes dotted names: handslot.r can become handslot_r.
      if(n==='handslotr'||n==='righthandslot')this.socket=o;
      if(!handFallback&&['handr','righthand','handright'].includes(n))handFallback=o;
      if(!o.isMesh)return;
+     if(EQUIPMENT_NODES.includes(o.name))this.gearNodes.set(o.name,o);
      o.visible=!hidden.has(o.name);
      if(/^Knight_(Body|Head|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(o.name)){
        o.visible=true;this.bodyParts.add(o.name);
@@ -70,6 +74,7 @@ export class KayKitFreeHero {
      o.material=Array.isArray(o.material)?o.material.map(mk):mk(o.material);
    });
    this.socket??=handFallback??this.root;
+   applyEquipment(this,0);
    if(this.bodyParts.size!==6)throw Error('KayKit body incomplete: '+[...this.bodyParts].join(','));
    if(!this.sword)throw Error('KayKit 1H_Sword not found for actual tip/trail');
    if(this.socket===this.root)console.warn('[HIGHFLY] KayKit FREE right-hand socket not found; using root hit-effect position without blocking character rendering');
@@ -101,6 +106,7 @@ export class KayKitFreeHero {
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
    this.availableActions=[...this.clips.keys()];
+   this.equipmentModes=WEAPON_MODES.map(x=>x.id);this._lastEquipCycle=0;this._hfPhase=0;
    this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',look:this.originalLook?'original-kaykit':'anime-v66',rig:this.profile.rig,
     bodyParts:this.bodyParts.size,clips:this.availableActions.length,
     boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
@@ -110,7 +116,9 @@ export class KayKitFreeHero {
  }
  play(key,duration=0){
    if(key===this.key)return;
-   const raw=this.clips.get(CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle));
+   const clipName=CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle);
+   const raw=this.clips.get(clipName);
+   if(!raw){console.warn('[HIGHFLY] Unknown FREE clip '+clipName);return;}
    const clip=raw.clone();
    // Physics is exclusively Unsung's kinematic capsule: strip animated root translations
    // so cinematic/dodge clips cannot teleport the collision body or visual origin.
@@ -121,7 +129,8 @@ export class KayKitFreeHero {
      this.actions.set(key,action);
    }
    action.reset();
-   const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key);
+   const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key)||
+    (key.startsWith('raw:')&&!/_(Idle|Pose|Shooting)$/.test(key));
    action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);
    action.clampWhenFinished=once;
    action.timeScale=duration>0?Math.min(3,Math.max(.3,clip.duration/duration)):1;
@@ -136,25 +145,48 @@ export class KayKitFreeHero {
    else if(p.state==='hurt')key='hurt';
    else if(p.state==='roll'){key='roll';duration=.62;}
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
+   else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
+   else if(p.state==='hf_climb'){key='raw:Interact';duration=.65;}
+   else if(p.state==='hf_action'&&p._hfAction){
+      const cfg=ACTIONS[p._hfAction.name];
+      if(cfg){
+       const seated=p._hfAction.time>.7&&cfg.idle;
+       key='raw:'+(seated?cfg.idle:cfg.clip);
+       duration=cfg.duration;
+      }
+   }
    else if(p.state==='plunge')key='plunge';
    else if(p.state==='attack'){
-      key=p.comboStep===3?'heavy':p.comboStep===1?'attack2':p.comboStep===2?'attack3':'attack1';
+      const profile=this.weaponMode?.style??'onehand';
+      const arr=WEAPON_ANIMATIONS[profile]??WEAPON_ANIMATIONS.onehand;
+      const step=p.comboStep===3?2:Math.max(0,Math.min(2,p.comboStep));
+      key='raw:'+arr[step];
       duration=p.attack?.t??.46;
-   }else if(p.state==='swim')key='swim'; // FREE swim clip absent: no false animation claim.
+   }else if(p.state==='swim')key='swim';
+   else if(!p.grounded&&p._hfJumpFx>0)key='raw:Jump_Full_Short';
    else if(!p.grounded)key='jump';
    else if(speed>5.8)key='sprint';
    else if(speed>2.6)key='run';
    else if(speed>.2)key='walk';
+   if((p._hfGearCycle??0)!==this._lastEquipCycle){
+    const index=p._hfGearCycle??0;this.equip(index);this._lastEquipCycle=index;
+   }
    this.play(key,duration);
    this.mixer.update(dt);
+   this._poseProcedural(Math.max(0,dt),p);
    // One actor transform driven exclusively by Unsung Player; no root-motion.
    this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
    this.actor.rotation.y=p.yaw;
    const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
    const eased=k*k*(3-2*k);
    // Unsung's 360-degree full-body ROLL, around the torso rather than the feet.
+   // Ground-hugging Unsung ROLL: tuck into a short cylinder. The old
+   // 0.91 m high pivot rotated a standing avatar like an aerial flic-flac.
+   const tuck=p.state==='roll'?Math.pow(Math.max(0,Math.sin(Math.PI*k)),.72):0;
    this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
-   this.rollPivot.position.y=.91-(p.state==='roll'?.24*Math.sin(Math.PI*k):0);
+   this.rollPivot.rotation.z=-.08*tuck;
+   this.offset.scale.y=1-.43*tuck;
+   this.rollPivot.position.y=.91-.39*tuck;
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
@@ -164,8 +196,55 @@ export class KayKitFreeHero {
    this.tip.copy(next);this.lastTip.copy(next);this.updated=true;
    this._drawBladeTrail(Math.max(0,dt),p);
  }
+
+ equip(index){
+  const mode=applyEquipment(this,index);
+  this.diagnostics&&(this.diagnostics.equipped=mode.id);
+  return mode;
+ }
+ _bone(key){return this.rigBones.get(key.replace(/[^a-z0-9]/gi,'').toLowerCase());}
+ _addPose(name,axis,angle){
+  if(!angle)return;
+  const bone=this._bone(name);if(!bone)return;
+  const basis=axis==='x'?new THREE.Vector3(1,0,0):axis==='z'?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
+  bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(basis,angle));
+ }
+ _poseProcedural(dt,p){
+  this._hfPhase+=dt*(p.state==='swim'?Math.max(2.2,3.5+(p.speed??0)*1.1):1.0);
+  if(p.state==='roll'){
+   const k=Math.min(1,Math.max(0,(p.stateTime??0)/.62));
+   const t=Math.pow(Math.sin(Math.PI*k),.72);
+   this._addPose('upperleg.l','x',-.75*t);
+   this._addPose('upperleg.r','x',-.75*t);
+   this._addPose('lowerleg.l','x',1.16*t);
+   this._addPose('lowerleg.r','x',1.16*t);
+   this._addPose('upperarm.l','x',.62*t);
+   this._addPose('upperarm.r','x',.62*t);
+   this._addPose('head','x',-.12*t);
+  }else if(p.state==='swim'){
+   // Original Unsung _swim controls buoyancy, direction, speed and ripples.
+   // The 76-clip Knight has no swim clip, so apply a small alternating
+   // stroke to the SAME 41-bone skinned character. No duplicate skeleton.
+   const phase=this._hfPhase,amount=.22+Math.min(1,(p.speed??0)/3)*.72;
+   this._addPose('upperarm.l','x',(-.52+.79*Math.sin(phase))*amount);
+   this._addPose('upperarm.r','x',(-.52-.79*Math.sin(phase))*amount);
+   this._addPose('lowerarm.l','x',-.35*amount);
+   this._addPose('lowerarm.r','x',-.35*amount);
+   this._addPose('upperleg.l','x',.20*Math.sin(phase*1.25)*amount);
+   this._addPose('upperleg.r','x',-.20*Math.sin(phase*1.25)*amount);
+   this._addPose('lowerleg.l','x',.32*Math.sin(phase*1.25)*amount);
+   this._addPose('lowerleg.r','x',-.32*Math.sin(phase*1.25)*amount);
+  }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
+   const phase=this._hfPhase*4;
+   this._addPose('upperarm.l','x',-.78+.27*Math.sin(phase));
+   this._addPose('upperarm.r','x',-.78-.27*Math.sin(phase));
+   this._addPose('upperleg.l','x',.28*Math.sin(phase));
+   this._addPose('upperleg.r','x',-.28*Math.sin(phase));
+  }
+ }
  _swordEndpoints(){
    // Longest actual local weapon-geometry axis, rather than the hand socket.
+   if(!this.sword){const hand=this.socket.getWorldPosition(new THREE.Vector3());return {base:hand.clone(),next:hand};}
    const g=this.sword.geometry;
    if(!g.boundingBox)g.computeBoundingBox();
    const bb=g.boundingBox,span=bb.getSize(new THREE.Vector3());
@@ -182,10 +261,11 @@ export class KayKitFreeHero {
    this.trailHistory=this.trailHistory.filter(h=>h.age<.18);
    const attack=p.state==='attack'&&Array.isArray(p.attack?.hit)&&
      p.stateTime>=p.attack.hit[0]-.035&&p.stateTime<=p.attack.hit[1]+.04;
-   if(attack&&this.sword.visible){
+   if(attack&&this.sword?.visible){
      this.trailHistory.push({a:this.bladeBase.clone(),b:this.tip.clone(),age:0});
      if(this.trailHistory.length>this.trailMax)this.trailHistory.shift();
    }
+   if(!this.sword){this.trailHistory.length=0;this.trail.visible=false;this.trail.geometry.setDrawRange(0,0);return;}
    const n=this.trailHistory.length;
    if(n<2){this.trail.visible=false;this.trail.geometry.setDrawRange(0,0);return;}
    const pos=this.trail.geometry.attributes.position;
