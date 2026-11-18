@@ -167,6 +167,74 @@ for(const n of ['Idle','Walking_A','Running_A','Running_B','Jump_Idle','Jump_Lan
 if(!nodes.includes('handslot.r')||clips.length<70)throw Error('Missing KayKit rig socket or clips');
 fs.writeFileSync(path.join(output,'KAYKIT_ANIMATION_INVENTORY.json'),JSON.stringify({source:kaykitResult.url,sha256:hash(kaykitModel),count:clips.length,clips,nodes:nodes.filter(n=>/hand|arm|leg|foot|root|hip|spine|head/i.test(n))},null,2));
 
+// Inspect the actual five official FREE GLB files at the pinned commit.
+// Their Git blob SHA-1 is from the official repository tree; downloaded
+// model bytes are NOT shipped except the playable Knight.
+function inspectGLB(bytes,label){
+ if(bytes.toString('ascii',0,4)!=='glTF'||bytes.readUInt32LE(4)!==2||
+    bytes.readUInt32LE(8)!==bytes.length||bytes.toString('ascii',16,20)!=='JSON')
+  throw Error('Invalid official CC0 glTF '+label);
+ const json=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString('utf8'));
+ const parents=new Map();
+ (json.nodes||[]).forEach((node,i)=>(node.children||[]).forEach(j=>parents.set(j,i)));
+ const skins=(json.skins||[]).map(skin=>{
+  const all=skin.joints.map(i=>(json.nodes[i]?.name)||'UNNAMED:'+i);
+  const joints=all.slice().sort();
+  const shape=skin.joints.map(i=>{
+   const node=json.nodes[i]||{};
+   return {name:node.name||'',parent:json.nodes[parents.get(i)]?.name||null,
+    position:node.translation||[0,0,0],rotation:node.rotation||[0,0,0,1]};
+  }).sort((a,b)=>a.name.localeCompare(b.name));
+  return {jointCount:joints.length,joints,shape};
+ });
+ return {file:label,nodeCount:json.nodes?.length||0,skins,
+  clipCount:json.animations?.length||0,
+  clips:(json.animations||[]).map(a=>a.name).sort(),
+  sockets:(json.nodes||[]).map(n=>n.name||'').filter(n=>/handslot/i.test(n)).sort(),
+  skinnedMeshCount:(json.nodes||[]).filter(n=>n.skin!==undefined).length};
+}
+const knightAudit=inspectGLB(kb,'Knight.glb');
+const otherFreeCharacters=[
+ ['Barbarian.glb','66d312ab6dc02b35fb648e7585bfdddb4e02eeef'],
+ ['Mage.glb','c89f19f6e707f6e07e4632a08876bd6d0172b082'],
+ ['Rogue.glb','c8827661105eef7b2bfbef3bc676d41a47625733'],
+ ['Rogue_Hooded.glb','5d2b1403240d5f9ffff12e3a38b']
+];
+const rigComparisons=[];
+for(const [name,sha1] of [['Knight.glb','717b56ca2b5ff5392679774725201ba03a3eefab'],...otherFreeCharacters]){
+ const suffix='addons/kaykit_character_pack_adventures/Characters/gltf/'+name;
+ let bytes;
+ if(name==='Knight.glb')bytes=kb;
+ else{
+  const response=await fetch(kaykitRoot+suffix);
+  if(!response.ok)throw Error('FREE KayKit character unavailable '+name+' '+response.status);
+  bytes=Buffer.from(await response.arrayBuffer());
+ }
+ const blobHash=crypto.createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex');
+ if(blobHash!==sha1)throw Error('Official Git blob SHA1 changed: '+name);
+ const m=inspectGLB(bytes,name),kn=knightAudit.skins[0],skin=m.skins[0];
+ const sameBones=JSON.stringify(skin?.joints)===JSON.stringify(kn?.joints);
+ const sameHierarchy=JSON.stringify((skin?.shape||[]).map(n=>[n.name,n.parent]))===
+                     JSON.stringify((kn?.shape||[]).map(n=>[n.name,n.parent]));
+ const sameRest=JSON.stringify(skin?.shape)===JSON.stringify(kn?.shape);
+ rigComparisons.push({name,size:bytes.length,gitBlobSha1:blobHash,
+  skinCount:m.skins.length,jointCount:skin?.jointCount||0,
+  sameBoneNames:sameBones,sameHierarchy,sameRestPose:sameRest,
+  same76ClipNames:JSON.stringify(m.clips)===JSON.stringify(knightAudit.clips),
+  clipCount:m.clipCount,sockets:m.sockets,skinnedMeshCount:m.skinnedMeshCount,
+  note:'Matching bones alone do NOT prove identical gear mesh/weights or universal modular armor'});
+}
+fs.writeFileSync(path.join(output,'RIG_COMPATIBILITY_KAYKIT_FREE.json'),JSON.stringify({
+ baseline:'Knight.glb',officialCommit:kaykitCommit,
+ method:'Verified binary Git blob SHA1; GLB JSON bones, hierarchy, rest local transforms and clip names',
+ characters:rigComparisons,
+ constraints:['FREE Adventurers only, not SOURCE or Rig_Large','No other GLB models copied into public dist',
+ 'Same skeleton does not imply armor mesh and UV atlases interchangeable']
+},null,2));
+console.log('[HIGHFLY RIG FAMILY AUDIT]',JSON.stringify(rigComparisons.map(x=>({
+ character:x.name,bones:x.jointCount,hierarchy:x.sameHierarchy,rest:x.sameRestPose,clips:x.clipCount}))));
+
+
 const animationModule=fs.readFileSync(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),'utf8');
 const animationMap=animationModule.match(/const CLIPS=\{([\s\S]*?)\};/)?.[1];
 if(!animationMap)throw Error('KayKit runtime CLIPS map missing');
