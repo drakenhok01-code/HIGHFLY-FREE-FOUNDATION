@@ -59,7 +59,9 @@ test('Conservative wall probe: only close collidable wall enables climbing',()=>
  for(let i=0;i<12;i++)p.update(1/60,input([],['climb'],0,1),0);
  assert.ok(p.pos.y>start+.25,'body climbs up using collision probe and stamina');
  p.update(1/60,input(),0);
- assert.equal(p.state,'move','releasing climb cancels safely');
+ assert.equal(p.state,'hf_climb','releasing touch must KEEP the grip');
+ p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'move','second tap releases grip');
 });
 test('Low wall with unobstructed head produces mantle, not wall phasing',()=>{
  const ledge={...ground,
@@ -174,7 +176,9 @@ test('F0.11.2 jump into valid wall -> attach in air, hold without teleport',()=>
  assert.ok(p.pos.x>before.x,'climbing left/right moves laterally');
  assert.ok(p.pos.y>before.y,'up stick climbs up');
  p.update(1/60,input(),0);
- assert.equal(p.state,'move','release means detach');
+ assert.equal(p.state,'hf_climb','grip persists without hold');
+ p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'move','second tap detaches');
 });
 test('F0.11.2 wall jump exits climbing and carries launch velocity',()=>{
  const wall={...ground,raycast:()=>.48};
@@ -210,4 +214,104 @@ test('F0.11.3 independent ability dragging still overrides hero facing',()=>{
  p.update(1/60,command,0);
  assert.equal(p.state,'hf_dash');
  assert.ok(p._hfDashDir.z<-.98,'drag backward toward camera');
+});
+
+test('F0.11.4 rocky wall sweep follows wavering collision without phantom gravity',()=>{
+ const rock={...ground,raycast(origin,dir,max){
+   const d=.50+.14*Math.sin(origin.y*4);
+   return origin.y<7.5?d:max;
+ }};
+ const p=player(rock);
+ p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'hf_climb');
+ let before=p.pos.y,nonFinite=0;
+ for(let i=0;i<190;i++){
+  p.update(1/60,input([],[],0,1),0);
+  if(!Number.isFinite(p.pos.y))nonFinite++;
+ }
+ assert.equal(nonFinite,0);
+ assert.equal(p.state,'hf_climb','rock retains anchor across varying depths');
+ assert.ok(p.pos.y>before+3.5,'climb gains real height');
+ assert.ok(p.stamina<100,'stamina consumed while moving');
+});
+test('F0.11.4 climbing an untagged tree collider is allowed',()=>{
+ const trunk={...ground,caps:new Float32Array([0,0,.58,0,6,.58,.35]),
+  raycast(origin,dir,max){return origin.y<6?.47:max;}};
+ const p=player(trunk);
+ p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'hf_climb');
+ for(let i=0;i<70;i++)p.update(1/60,input([],[],0,1),0);
+ assert.ok(p.pos.y>1.4,'tree physical trunk supports climbing');
+});
+test('F0.11.4 clipping blocked by terrain must freeze climb-arm walk input',()=>{
+ const blocked={...ground,raycast:()=>.48,
+  resolveCapsule(pos){pos.y=0;return true;}};
+ const p=player(blocked);p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'hf_climb');
+ for(let i=0;i<10;i++)p.update(1/60,input([],[],0,1),0);
+ assert.equal(p.pos.y,0);
+ assert.equal(p._hfClimbInput.y,0,'limbs animate ACTUAL height not desired joystick');
+});
+test('F0.11.4 climbing is cancelled immediately by wall jump and never by joystick release',()=>{
+ const wall={...ground,raycast:()=>.48},p=player(wall);
+ p.update(1/60,input(['climb']),0);
+ for(let i=0;i<80;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'hf_climb');
+ const y=p.pos.y;
+ p.update(1/60,input(['jump']),0);
+ assert.equal(p.state,'move');
+ assert.ok(p.vel.y>5);
+ assert.equal(p._hfDoubleUsed,true);
+ assert.ok(p.pos.y>=y);
+});
+test('F0.11.5 original Unsung combo attacks with real movement, one physics capsule',()=>{
+ const p=player(),start=p.pos.clone();
+ p.update(1/60,input(['attack'],[],0,1),0);
+ assert.equal(p.state,'attack');
+ assert.equal(p.comboStep,0);
+ for(let i=0;i<8;i++)p.update(1/60,input([],[],0,1),0);
+ assert.ok(p.pos.z>start.z+.25,'attack while walking makes real forward progress');
+ assert.ok(p._hfAttackTravelSpeed>.6,'attack movement computed from native collision');
+ assert.equal(p._hfAttackSteering,true);
+ assert.equal(p.attack.t,.46,'native Unsung combo time remains pinned');
+ assert.equal(p.attack.hit[0],.14,'native damage window unchanged');
+ for(let i=0;i<25;i++)p.update(1/60,input(),0);
+ assert.ok(p.pos.z>start.z);
+});
+test('F0.11.5 stationary attack does not trigger fake running legs',()=>{
+ const p=player();p.update(1/60,input(['attack']),0);
+ assert.equal(p.state,'attack');assert.equal(p._hfAttackSteering,false);
+ p.update(1/60,input(),0);
+ assert.equal(p._hfAttackSteering,false);
+ assert.equal(p.comboStep,0);
+});
+test('F0.11.5 moving attack stops at an obstacle without teleport',()=>{
+ const wall={...ground,resolveCapsule(pos){
+  if(pos.z>.44)pos.z=.44;
+  if(pos.y<0)pos.y=0;
+  return pos.y<=.00001;
+ }};
+ const p=player(wall);
+ for(let i=0;i<20;i++)p.update(1/60,input(i===0?['attack']:[],[],0,1),0);
+ assert.ok(p.pos.z<=.441,'native world capsule stops at wall');
+ assert.equal(p.state,'attack');
+});
+test('F0.11.5 water buoyancy is finite and swim exits on dry/shallow shore',()=>{
+ let dry=false;
+ const water={...ground,waterLevel:()=>dry?-Infinity:3};
+ const p=player(water);p.update(1/60,input(),0);
+ assert.equal(p.state,'swim');
+ for(let i=0;i<180;i++){
+  p.update(1/60,input([],[],0,1),0);
+  assert.ok(Number.isFinite(p.pos.y)&&Number.isFinite(p.vel.y));
+ }
+ assert.ok(p.pos.y>1&&p.pos.y<3,'player afloat, neither sinking nor flying');
+ dry=true;
+ for(let i=0;i<80&&p.state==='swim';i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'move','water exit returns locomotion');
+});
+test('F0.11.5 shallow water never enters swimming',()=>{
+ const p=player({...ground,waterLevel:()=>.7});
+ for(let i=0;i<30;i++)p.update(1/60,input([],[],0,1),0);
+ assert.notEqual(p.state,'swim');
 });
