@@ -92,7 +92,7 @@ const kaykitAsset='addons/kaykit_character_pack_adventures/Characters/gltf/Knigh
 const kaykitModel=loc('public/models/hf-kaykit-knight.glb');
 const kaykitResult=await downloadPinned(kaykitAsset,'60428e3abc09ba83e595d256e3af8c5c976b46cdae599f0802fc82b4a3445168',kaykitModel);
 const kaykitLicense=loc('KAYKIT-FREE-LICENSE.txt');
-await downloadPinned('LICENSE.txt','ae322141814056dda0deea7540d74c41d87aee5a923629',kaykitLicense);
+await downloadPinned('LICENSE.txt','ae322141814056dda0deea7540d74c41d87aee1da319977cd1bd84ee5a923629',kaykitLicense);
 records.push({id:'kaykit-free:Knight.glb',path:'models/hf-kaykit-knight.glb',source:kaykitResult.url,commit:kaykitCommit,bytes:kaykitResult.bytes,sha256:hash(kaykitModel),license:'CC0-1.0',decision:'ALLOW',commercial:true,redistribution:true,attributionRequired:false,author:'Kay Lousberg'});
 
 
