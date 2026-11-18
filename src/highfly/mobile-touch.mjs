@@ -20,7 +20,7 @@ export function joystickVector(rect,px,py,deadzone=0.07){
 export function abilityVector(dx,dy,deadzone=9){
  const length=Math.hypot(dx,dy);
  if(!Number.isFinite(length)||length<deadzone)return null;
- return {x:dx/length,y:-dy/length};
+ return {x:dx===0?0:dx/length,y:dy===0?0:-dy/length};
 }
 export function resolveHighflyContext(p){
  const fallback={action:'climb',label:'TREPAR'};
