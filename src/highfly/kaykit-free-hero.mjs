@@ -14,6 +14,57 @@ const CLIPS={
  plunge:'Jump_Full_Long'
 };
 const HIDE=new Set(['1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shield','Round_Shield','Spike_Shield']); // Keep CC0 1H_Sword visible in Knight rig
+/**
+ * ONE-KayKit-character Android fallback: CPU-deform the original skinned GLB
+ * and render as plain Mesh, avoiding Android GPU skinning failures.
+ * 41-bone rig, 76 clips and Unsung collision/combos remain unchanged.
+ */
+class CpuKayKitSkin {
+ constructor(root) {
+  const sources=[];root.traverse(o=>{if(o.isSkinnedMesh&&o.visible)sources.push(o);});
+  if(!sources.length)throw Error('KayKit CPU: no skinned body parts');
+  this.parts=[];this.vertices=0;
+  for(const source of sources){
+   const input=source.geometry.getAttribute('position');
+   if(!input||!source.geometry.getAttribute('skinIndex')||!source.geometry.getAttribute('skinWeight'))
+    throw Error('KayKit CPU: invalid skin weights '+source.name);
+   this.vertices+=input.count;
+   const geometry=source.geometry.clone(),output=geometry.getAttribute('position');
+   output.setUsage(THREE.DynamicDrawUsage);
+   const m=Array.isArray(source.material)?source.material[0]:source.material;
+   const color=m?.color?.clone?.()??new THREE.Color(0xffffff);
+   if(color.r+color.g+color.b<.15)color.setRGB(.88,.91,.96);
+   const material=new THREE.MeshBasicMaterial({
+    map:m?.map??null,color,vertexColors:!!m?.vertexColors&&!!source.geometry.getAttribute('color'),
+    side:THREE.DoubleSide,depthTest:true,depthWrite:true,toneMapped:false
+   });
+   const mesh=new THREE.Mesh(geometry,material);
+   mesh.name=source.name+'_CPU';
+   mesh.position.copy(source.position);mesh.quaternion.copy(source.quaternion);
+   mesh.scale.copy(source.scale);mesh.matrixAutoUpdate=source.matrixAutoUpdate;
+   if(!mesh.matrixAutoUpdate)mesh.matrix.copy(source.matrix);
+   mesh.frustumCulled=false;
+   source.parent.add(mesh);
+   source.visible=false;
+   this.parts.push({source,mesh,input,output});
+  }
+  if(this.vertices>50000)throw Error('KayKit CPU: vertex budget exceeded '+this.vertices);
+  this.tmp=new THREE.Vector3();
+ }
+ update(){
+  const v=this.tmp;
+  for(const {source,mesh,input,output} of this.parts){
+   if(!mesh.visible)continue;
+   for(let i=0;i<input.count;i++){
+    v.fromBufferAttribute(input,i);
+    source.applyBoneTransform(i,v);
+    output.setXYZ(i,v.x,v.y,v.z);
+   }
+   output.needsUpdate=true;
+  }
+ }
+}
+
 export class KayKitFreeHero {
  static async load(pipe,url=import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb'){
    const data=await new GLTFLoader().loadAsync(url);
@@ -95,6 +146,12 @@ export class KayKitFreeHero {
    pipe.scene.add(this.trail);
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
+   // One-player mobile safety path. Query ?hfskin=gpu compares the old path.
+   const renderMode=new URLSearchParams(globalThis.location?.search??'').get('hfskin');
+   if(renderMode==='cpu'||(renderMode!=='gpu'&&/Android/i.test(globalThis.navigator?.userAgent??''))){
+    this.cpuSkin=new CpuKayKitSkin(this.root);
+    console.log('[HIGHFLY] CPU KayKit body '+this.cpuSkin.parts.length+' parts / '+this.cpuSkin.vertices+' vertices');
+   }
  }
  play(key,duration=0){
    if(key===this.key)return;
@@ -144,6 +201,7 @@ export class KayKitFreeHero {
    this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
    this.rollPivot.position.y=.91-(p.state==='roll'?.24*Math.sin(Math.PI*k):0);
    this.actor.updateWorldMatrix(true,true);
+   this.cpuSkin?.update();
    const {base,next}=this._swordEndpoints();
    this.bladeBase.copy(base);
    if(this.updated&&dt>0)this.tipVel.copy(next).sub(this.lastTip).divideScalar(dt);

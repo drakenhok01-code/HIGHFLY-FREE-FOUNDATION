@@ -111,5 +111,23 @@ try{
  for(const [mesh,visible] of meshes)mesh.visible=visible;
  console.log('[UNSUNG PIPELINE BODY QA] diffPixels='+bodyDiff+' bound='+JSON.stringify(bound));
  if(bodyDiff<80)throw Error('Ghost sword regression: KayKit skinned body missing from REAL Unsung pipeline; diff='+bodyDiff);
-  report(true,{unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+  // Second render: same GLB, same clips, but all body skinning on CPU.
+ // This should eliminate Android's all-skinned-parts-invisible regression.
+ const cpuHero=await KayKitFreeHero.load({scene:new THREE.Scene()});
+ const cpuAdapter=new CpuKayKitSkin(cpuHero.root);
+ cpuHero.cpuSkin=cpuAdapter;
+ // Move actor to main visible scene AFTER loading into its own isolated scene.
+ scene.add(cpuHero.actor);
+ cpuHero.update(1/60,{pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,
+   state:'move',speed:0,stateTime:0,attack:null});
+ renderer.render(scene,camera);
+ const cp=new Uint8Array(640*400*4);
+ gl.readPixels(0,0,640,400,gl.RGBA,gl.UNSIGNED_BYTE,cp);
+ let cpuPixels=0;
+ for(let i=0;i<cp.length;i+=4)
+  if(Math.abs(cp[i]-17)>25||Math.abs(cp[i+1]-11)>25||Math.abs(cp[i+2]-27)>25)cpuPixels++;
+ if(cpuAdapter.parts.length<6||cpuAdapter.vertices<500||cpuPixels<100)
+  throw Error('KayKit CPU skin not rendered: '+JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
+ console.log('[KAYKIT CPU-SKIN QA]',JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
+  report(true,{cpuParts:cpuAdapter.parts.length,cpuVertices:cpuAdapter.vertices,cpuPixels,unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}
