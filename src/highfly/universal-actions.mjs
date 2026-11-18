@@ -139,9 +139,13 @@ export function installUniversalActions(player){
   if(has('hf_climb')&&this.state==='move'&&this.grounded){
    const ledge=findMantle(this.world,this.pos,this.yaw);
    if(ledge&&this.stamina>=10&&this.spend(10)){
-    this._hfMantle={from:this.pos.clone(),target:ledge.target,t:0,duration:.62};
+    // Fast, low obstacle clearance is our first bounded PARKOUR move.
+    // Anything higher still uses the deliberate .62s ledge mantle.
+    const vault=this.speed>3.4&&ledge.rise<=.8;
+    this._hfMantle={from:this.pos.clone(),target:ledge.target,t:0,
+      duration:vault?.40:.62,kind:vault?'vault':'mantle'};
     this.setState('hf_mantle');this.grounded=false;this.vel.set(0,0,0);
-    this.emit('hfMantleStart',{rise:ledge.rise});return;
+    this.emit('hfMantleStart',{rise:ledge.rise,kind:this._hfMantle.kind});return;
    }
   }
   const keys=Object.keys(ACTIONS);

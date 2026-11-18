@@ -189,7 +189,7 @@ export class KayKitFreeHero {
    else if(p.state==='hurt')key='hurt';
    else if(p.state==='roll'){key='roll';duration=.62;}
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
-   else if(p.state==='hf_mantle'){key='mantle';duration=.62;}
+   else if(p.state==='hf_mantle'){key='mantle';duration=p._hfMantle?.duration??.62;}
    else if(p.state==='hf_action'&&p._hfActivity){
      key='raw:'+p._hfActivity.clip;duration=p._hfActivity.duration;
    }
