@@ -149,6 +149,15 @@ for(const n of ['Idle','Walking_A','Running_A','Running_B','Jump_Idle','Jump_Lan
 if(!nodes.includes('handslot.r')||clips.length<70)throw Error('Missing KayKit rig socket or clips');
 fs.writeFileSync(path.join(output,'KAYKIT_ANIMATION_INVENTORY.json'),JSON.stringify({source:kaykitResult.url,sha256:hash(kaykitModel),count:clips.length,clips,nodes:nodes.filter(n=>/hand|arm|leg|foot|root|hip|spine|head/i.test(n))},null,2));
 
+const animationModule=fs.readFileSync(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),'utf8');
+const animationMap=animationModule.match(/const CLIPS=\{([\s\S]*?)\};/)?.[1];
+if(!animationMap)throw Error('KayKit runtime CLIPS map missing');
+const mapped=[...animationMap.matchAll(/:\s*'([^']+)'/g)].map(m=>m[1]);
+for(const name of mapped)if(!clips.includes(name))throw Error('Runtime KayKit clip is unavailable: '+name);
+console.log('[KAYKIT CLIP AUDIT] '+clips.length+' exact FREE Knight animation clips; runtime mappings '+mapped.length+' (all present)');
+console.log('[KAYKIT CLIPS] '+clips.slice().sort().join(' | '));
+
+
 copy(path.join(ROOT,'LICENSES','REUSE_NOTICES.md'),path.join(output,'LICENSES','REUSE_NOTICES.md'));
 const modules=[
  ['three',['LICENSE','LICENSE.md','LICENSE.txt']],
