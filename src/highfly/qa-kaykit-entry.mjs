@@ -1,6 +1,7 @@
 /** Isolated real WebGL and GLTFLoader smoke: never loads or modifies Unsung world. */
 import * as THREE from 'three';
 import {KayKitFreeHero} from './kaykit-free-hero.mjs';
+import {Pipeline} from '../engine/pipeline.js';
 window.__hfQa={done:false,ok:false};
 const status=document.getElementById('status');
 const report=(ok,details)=>{
@@ -72,5 +73,43 @@ try{
  }
  for(const [mesh,visible] of all)mesh.visible=visible;
 
- report(true,{meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+ // Render once through Unsung's ACTUAL multi-pass shader pipeline, not just plain Three.
+ // The previous smoke test passed while the player was an invisible sword in the game.
+ const pCanvas=document.createElement('canvas');
+ pCanvas.style.width='640px';pCanvas.style.height='400px';
+ pCanvas.width=640;pCanvas.height=400;
+ document.getElementById('stage').append(pCanvas);
+ const unsung=new Pipeline(pCanvas,{renderScale:.8});
+ unsung.camera.position.set(3.2,2.6,5.5);
+ unsung.camera.lookAt(0,1,0);
+ const ph=await KayKitFreeHero.load(unsung);
+ const idle={pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,
+   state:'move',speed:0,stateTime:0,comboStep:0,attack:null};
+ for(let i=0;i<4;i++){ph.update(1/60,idle);unsung.render(1/60);}
+ const pBox=new THREE.Box3().setFromObject(ph.root);
+ const bound={minY:pBox.min.y,maxY:pBox.max.y};
+ const gl2=unsung.renderer.getContext();
+ const shot=()=>{
+   const out=new Uint8Array(unsung.renderer.domElement.width*unsung.renderer.domElement.height*4);
+   gl2.readPixels(0,0,unsung.renderer.domElement.width,unsung.renderer.domElement.height,gl2.RGBA,gl2.UNSIGNED_BYTE,out);return out;
+ };
+ // Multi-pass "body only vs sword only" comparison catches disappearing
+ // SkinnedMesh draws even when the GLB says all six parts are visible.
+ const meshes=[];ph.root.traverse(o=>{if(o.isMesh)meshes.push([o,o.visible]);});
+ const bodyNames=new Set(ph.bodyParts);
+ for(const [mesh] of meshes)mesh.visible=bodyNames.has(mesh.name);
+ for(let i=0;i<3;i++)unsung.render(1/60);
+ const skinned=shot();
+ for(const [mesh] of meshes)mesh.visible=mesh===ph.sword;
+ for(let i=0;i<3;i++)unsung.render(1/60);
+ const weaponOnly=shot();
+ let bodyDiff=0;
+ for(let i=0;i<skinned.length;i+=4)
+  if(Math.abs(skinned[i]-weaponOnly[i])+
+     Math.abs(skinned[i+1]-weaponOnly[i+1])+
+     Math.abs(skinned[i+2]-weaponOnly[i+2])>48)bodyDiff++;
+ for(const [mesh,visible] of meshes)mesh.visible=visible;
+ console.log('[UNSUNG PIPELINE BODY QA] diffPixels='+bodyDiff+' bound='+JSON.stringify(bound));
+ if(bodyDiff<80)throw Error('Ghost sword regression: KayKit skinned body missing from REAL Unsung pipeline; diff='+bodyDiff);
+  report(true,{unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}

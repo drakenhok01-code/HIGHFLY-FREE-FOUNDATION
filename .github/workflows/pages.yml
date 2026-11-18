@@ -2,7 +2,7 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab]
 permissions:
   contents: read
   pages: write
