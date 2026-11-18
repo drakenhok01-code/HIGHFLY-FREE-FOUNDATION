@@ -119,7 +119,7 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  }
  grip.lost=0;
  // Keep the capsule near the surface; never teleport through stone.
- const correction=clamp(probe.distance-.54,-.08,.07);
+ const correction=Math.hypot(x,y)>.08?clamp(probe.distance-.54,-.08,.07):0; // stationary grip never drifts
  candidate.x+=probe.dir.x*correction;candidate.z+=probe.dir.z*correction;
  const floor=p.world.groundHeight?.(candidate.x,candidate.z);
  if(y<-.1&&Number.isFinite(floor)&&candidate.y<floor+.02){
