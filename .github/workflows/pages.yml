@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: highfly-f0114-qa
+  group: highfly-f0114-fast-world-qa
   cancel-in-progress: false
 jobs:
   build:
