@@ -142,5 +142,22 @@ try{
  for(const [m,v] of allCpu)m.visible=v;
  if(headPixels<70)throw Error('CPU head is still invisible in browser, pixels='+headPixels);
   console.log('[KAYKIT CPU-SKIN QA]',JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
-  report(true,{cpuParts:cpuAdapter.parts.length,cpuVertices:cpuAdapter.vertices,cpuPixels,cpuHeadPixels:headPixels,unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+  // NEW: composite the KayKit actor over the actual Unsung Pipeline's sky pass,
+  // using the identical game camera but an independent transparent WebGL2
+  // renderer. This isolates the reported 'only sword' bug from depth/fog.
+  history.replaceState(null,'',location.pathname+'?hfskin=overlay');
+  const overlayHero=await KayKitFreeHero.load(unsung);
+  overlayHero.update(1/60,idle);
+  for(let i=0;i<4;i++)unsung.render(1/60);
+  const canvasOverlay=document.querySelector('canvas[data-hf-overlay="kaykit-body"]');
+  if(!canvasOverlay||!overlayHero.overlayRenderer)throw Error('KayKit overlay renderer missing');
+  const olgl=overlayHero.overlayRenderer.getContext();
+  const olpixels=new Uint8Array(canvasOverlay.width*canvasOverlay.height*4);
+  olgl.readPixels(0,0,canvasOverlay.width,canvasOverlay.height,olgl.RGBA,olgl.UNSIGNED_BYTE,olpixels);
+  let overlayOpaque=0;
+  for(let i=0;i<olpixels.length;i+=4)if(olpixels[i+3]>80)overlayOpaque++;
+  if(overlayOpaque<250)throw Error('Overlay body not rasterized: only '+overlayOpaque+' actual alpha pixels');
+  if(overlayHero.cpuSkin.parts.length!==6)throw Error('Overlay missing one or more KayKit body pieces');
+  console.log('[KAYKIT OVERLAY QA]',JSON.stringify({opaquePixels:overlayOpaque,bodyParts:overlayHero.cpuSkin.parts.length}));
+  report(true,{overlayOpaque,overlayBodyParts:overlayHero.cpuSkin.parts.length,cpuParts:cpuAdapter.parts.length,cpuVertices:cpuAdapter.vertices,cpuPixels,cpuHeadPixels:headPixels,unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}

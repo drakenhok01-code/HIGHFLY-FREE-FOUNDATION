@@ -146,12 +146,20 @@ export class KayKitFreeHero {
    pipe.scene.add(this.trail);
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
-   // One-player mobile safety path. Query ?hfskin=gpu compares the old path.
+   // Android compatibility: the original Unsung multi-pass depth/fog pipeline
+   // can hide SkinnedMesh and CPU-deformed proxies, while non-skinned sword draws.
+   // A separate transparent WebGL pass keeps ALL six CPU-skinned body parts and
+   // sword together with the ORIGINAL world camera. Opt out: ?hfskin=direct.
    const renderMode=new URLSearchParams(globalThis.location?.search??'').get('hfskin');
-   if(renderMode==='cpu'||(renderMode!=='gpu'&&/Android/i.test(globalThis.navigator?.userAgent??''))){
+   const android=/Android/i.test(globalThis.navigator?.userAgent??'');
+   if(renderMode==='overlay'||(android&&renderMode!=='gpu'&&renderMode!=='direct')){
     this.cpuSkin=new CpuKayKitSkin(this.root);
-    console.log('[HIGHFLY] CPU KayKit body '+this.cpuSkin.parts.length+' parts / '+this.cpuSkin.vertices+' vertices');
+    this.installCharacterOverlay();
+   }else if(renderMode==='cpu'){
+    this.cpuSkin=new CpuKayKitSkin(this.root);
    }
+   console.log('[HIGHFLY BODY MODE]',this.overlayRenderer?'overlay':this.cpuSkin?'cpu':'gpu',
+    'body=',this.bodyParts.size,'CPU=',this.cpuSkin?.vertices??0);
  }
  play(key,duration=0){
    if(key===this.key)return;
@@ -242,6 +250,43 @@ export class KayKitFreeHero {
    }
    pos.needsUpdate=true;this.trail.geometry.setDrawRange(0,(n-1)*6);
    this.trail.visible=true;this.trail.material.opacity=attack?.8:.46;
+ }
+ /** Draw ONE KayKit animated 3D actor after Unsung has rendered its world.
+  * This uses no external asset, has no impact on the physics/combos, and is
+  * intentionally a compatibility path until the original depth bug is solved.
+  * It cannot yet occlude correctly behind every tree or building.
+  */
+ installCharacterOverlay(){
+  if(typeof document==='undefined'||!this.pipe?.render||!this.pipe?.camera)return;
+  const renderer=new THREE.WebGLRenderer({
+   alpha:true,antialias:false,preserveDrawingBuffer:true,powerPreference:'low-power'
+  });
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000,0);
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.NoToneMapping;
+  renderer.autoClear=true;
+  const canvas=renderer.domElement;
+  canvas.dataset.hfOverlay='kaykit-body';
+  canvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;display:block';
+  document.body.appendChild(canvas);
+  const world=new THREE.Scene();world.background=null;
+  // Moving a Three object between scenes does not detach its skeleton/animations.
+  world.add(this.actor,this.hemi,this.sun,this.trail);
+  this.overlayRenderer=renderer;this.overlayScene=world;
+  const pipe=this.pipe,baseRender=pipe.render.bind(pipe);
+  pipe.render=(dt,opts)=>{
+   const result=baseRender(dt,opts);
+   if(opts?.toScreen===false||!canvas.isConnected)return result;
+   const width=Math.max(1,window.innerWidth),height=Math.max(1,window.innerHeight);
+   if(canvas.width!==width||canvas.height!==height)renderer.setSize(width,height,false);
+   // Use the SAME perspective and matrix as Unsung, including camera follow.
+   renderer.render(world,pipe.camera);
+   return result;
+  };
+  globalThis.__highflyOverlay={mode:'2nd-webgl',parts:this.cpuSkin?.parts.length??0,
+   vertexCount:this.cpuSkin?.vertices??0,canvas};
+  console.log('[HIGHFLY] independent transparent 3D KayKit pass installed',globalThis.__highflyOverlay.parts);
  }
  onHit(){this.hitSignal++}
  onLand(){this.landSignal++}

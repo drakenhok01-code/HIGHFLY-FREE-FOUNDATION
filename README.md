@@ -37,3 +37,6 @@ KayKit Knight FREE ahora tolera la sanitización de nombres del GLTFLoader (`han
 - [Auditoría de un personaje universal](docs/MATRIZ_REUSO_PERSONAJE_UNICO.md) — sin nueve clases ni party; rig, sockets, skills y equipo.
 - QA real Chromium/Three WebGL: carga GLB Knight, recorre 14 estados, renderiza espada/9 mallas, 76 clips, mano derecha. Este smoke es aislado: no sustituye QA de escena completa en Samsung.
 - SOURCE v7: inventario del usuario procesado de forma privada; **nunca se importa ni se publica en este repo FREE**.
+
+## F0.7 prueba: visual KayKit en capa 3D transparente
+El laboratorio añade una segunda pasada WebGL con **la misma cámara** sobre el mundo Unsung, solo para la visualización de KayKit. La física, estado, combos y ROLL siguen en Unsung. `?hfskin=overlay` fuerza esta vía; en Android sería la opción por defecto, `?hfskin=direct` la desactiva. La segunda pasada puede dibujar el personaje delante de objetos que deberían ocultarlo: es solución de compatibilidad provisional, no integración final del depth buffer. No publicar sin WebGL QA y Samsung.
