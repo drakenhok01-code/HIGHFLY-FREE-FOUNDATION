@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "generatedFor": "HIGHFLY FREE FOUNDATION",
+  "author": "Kay Lousberg",
+  "source": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+  "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+  "license": "CC0-1.0",
+  "notes": "List is a candidate inventory, not a playable equipment system",
+  "assets": [
+    {
+      "file": "arrow.gltf",
+      "category": "munición",
+      "size": 3058,
+      "blob_sha1": "1bc0ca184be48cf16eed8924c349aea4e189201f",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/arrow.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "arrow_bundle.gltf",
+      "category": "munición",
+      "size": 3078,
+      "blob_sha1": "a8b92bf249a4a9aada3deaa53ca3306adfbda180",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/arrow_bundle.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "axe_1handed.gltf",
+      "category": "arma",
+      "size": 3087,
+      "blob_sha1": "b367258502ed8f8b172d18c72c71d81befbb39f4",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/axe_1handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "axe_2handed.gltf",
+      "category": "arma",
+      "size": 3083,
+      "blob_sha1": "d0295aca8c5354070a58c6e9fca1647812b71067",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/axe_2handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "crossbow_1handed.gltf",
+      "category": "arma",
+      "size": 3083,
+      "blob_sha1": "a34c011544e29ada99ce9464edd1d040a1fa1621",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/crossbow_1handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "crossbow_2handed.gltf",
+      "category": "arma",
+      "size": 3083,
+      "blob_sha1": "6c70f58913d64db677e6a2cd8e62b9aa4cf24ae3",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/crossbow_2handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "dagger.gltf",
+      "category": "arma",
+      "size": 3065,
+      "blob_sha1": "f090037e4ecdd0e6e891a412b2c4a9409226825e",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/dagger.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "mug_empty.gltf",
+      "category": "objeto",
+      "size": 3086,
+      "blob_sha1": "6b1887233bd6d4698e57ffdfe8938a1b4cf91676",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/mug_empty.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "mug_full.gltf",
+      "category": "objeto",
+      "size": 3084,
+      "blob_sha1": "5646fcca80b4a37740b694147d8e89843ddb6fbf",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/mug_full.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "quiver.gltf",
+      "category": "munición",
+      "size": 3065,
+      "blob_sha1": "6ed3f94fff3fb02773f6437db8b0089e8ed1493d",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/quiver.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_badge.gltf",
+      "category": "escudo",
+      "size": 3080,
+      "blob_sha1": "ea24d093f903e4b0eec8131a112e3699c6297da9",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_badge.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_badge_color.gltf",
+      "category": "escudo",
+      "size": 3092,
+      "blob_sha1": "92f4326f2a98d9db1ec092ad49d6ce5a32198f27",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_badge_color.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_round.gltf",
+      "category": "escudo",
+      "size": 3083,
+      "blob_sha1": "d1a20d3ce24239a540236806c4ce424e137439ea",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_round.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_round_barbarian.gltf",
+      "category": "escudo",
+      "size": 3112,
+      "blob_sha1": "0902b868b44661f9a939929013524048b0cab06e",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_round_barbarian.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_round_color.gltf",
+      "category": "escudo",
+      "size": 3095,
+      "blob_sha1": "e1cbbc93dc970a212421e6665f3138442fc57d9e",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_round_color.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_spikes.gltf",
+      "category": "escudo",
+      "size": 3083,
+      "blob_sha1": "161bc365e18b6bce5ce65f45c3f2f9a3979e9e46",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_spikes.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_spikes_color.gltf",
+      "category": "escudo",
+      "size": 3095,
+      "blob_sha1": "5f30cfe9a24220bda5bfb669f02f521ed9487729",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_spikes_color.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_square.gltf",
+      "category": "escudo",
+      "size": 3081,
+      "blob_sha1": "0dc58f2180923885e082279d39b40f153b695508",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_square.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "shield_square_color.gltf",
+      "category": "escudo",
+      "size": 3093,
+      "blob_sha1": "a0b349271958803dda64c7d808a1d13f17e3133b",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/shield_square_color.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "smokebomb.gltf",
+      "category": "objeto",
+      "size": 3073,
+      "blob_sha1": "1360a2237a5531ad4b9fbee592dc96cd43c62054",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/smokebomb.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "spellbook_closed.gltf",
+      "category": "objeto",
+      "size": 3083,
+      "blob_sha1": "eba2a0592cc6b74863e94bd1e1677cc8090456fd",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/spellbook_closed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "spellbook_open.gltf",
+      "category": "objeto",
+      "size": 3076,
+      "blob_sha1": "2a35e30896d0ef68a4fac4d7e939ec3bb8c2acff",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/spellbook_open.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "staff.gltf",
+      "category": "arma",
+      "size": 3061,
+      "blob_sha1": "d8bbebc6f3f6fb59e152d6b45de52add254f0697",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/staff.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "sword_1handed.gltf",
+      "category": "arma",
+      "size": 3080,
+      "blob_sha1": "ea5115c52ee9c07b2128105c0701fe706add7593",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/sword_1handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "sword_2handed.gltf",
+      "category": "arma",
+      "size": 3081,
+      "blob_sha1": "593016769c491c37ce4705bc76f80e2a042ccaee",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/sword_2handed.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "sword_2handed_color.gltf",
+      "category": "arma",
+      "size": 3093,
+      "blob_sha1": "2409353269dede23008b6fc702233ec5eb8d090d",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/sword_2handed_color.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "wand.gltf",
+      "category": "arma",
+      "size": 3058,
+      "blob_sha1": "67f272fb273bdeb403674509464d7948a3aeb826",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Assets/gltf/wand.gltf",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "Barbarian.glb",
+      "category": "personaje animado",
+      "size": 3613268,
+      "blob_sha1": "66d312ab6dc02b35fb648e7585bfdddb4e02eeef",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Barbarian.glb",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "Knight.glb",
+      "category": "personaje animado",
+      "size": 3659532,
+      "blob_sha1": "717b56ca2b5ff5392679774725201ba03a3eefab",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Knight.glb",
+      "runtime": "F0.3: COMPROBAR EN ANDROID"
+    },
+    {
+      "file": "Mage.glb",
+      "category": "personaje animado",
+      "size": 3589240,
+      "blob_sha1": "c89f19f6e707f6e07e4632a08876bd6d0172b082",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Mage.glb",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "Rogue.glb",
+      "category": "personaje animado",
+      "size": 3616284,
+      "blob_sha1": "c8827661105eef7b2bfbef3bc676d41a47625733",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Rogue.glb",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    },
+    {
+      "file": "Rogue_Hooded.glb",
+      "category": "personaje animado",
+      "size": 3597652,
+      "blob_sha1": "5d2b1403240d5f9ffff12e02c007572038eca2a8",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Rogue_Hooded.glb",
+      "runtime": "CATALOGADO, NO INTEGRADO"
+    }
+  ]
+}
