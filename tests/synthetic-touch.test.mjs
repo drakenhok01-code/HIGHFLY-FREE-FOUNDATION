@@ -60,8 +60,12 @@ test('CORRER tap toggles ON/OFF while the first finger keeps steering; DASH only
   assert.ok(input.held.has('sprint'),'one tap should enable running');
   assert.ok(input.move.y>.5,'left thumb remains on joystick');
   input.held.clear();applyHighflyTouch(input);assert.ok(input.held.has('sprint'),'tap toggle persists after release');
-  dash.dispatch('pointerdown',12,25,25);input.pressed.clear();applyHighflyTouch(input);
-  assert.ok(input.pressed.has('dash'),'DASH is a distinct pulse');
+  dash.dispatch('pointerdown',12,64,64);input.pressed.clear();applyHighflyTouch(input);
+  assert.equal(input.pressed.has('dash'),false,'DASH waits for finger release');
+  dash.dispatch('pointermove',12,114,64);
+  dash.dispatch('pointerup',12,114,64);input.pressed.clear();applyHighflyTouch(input);
+  assert.ok(input.pressed.has('dash'),'DASH is a distinct release pulse');
+  assert.ok(input.highflyAbilityAim.dash?.x>.9,'rightward ability drag overrides left stick');
   input.pressed.clear();applyHighflyTouch(input);assert.ok(!input.pressed.has('dash'),'DASH must not repeat');
   sprint.dispatch('pointerdown',13,160,40);input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.held.has('sprint'),'second tap disables running');
