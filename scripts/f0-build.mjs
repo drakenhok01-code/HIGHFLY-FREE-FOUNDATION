@@ -166,6 +166,11 @@ patch('src/main.js',"import { FILM } from './engine/quality.js';","import { FILM
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
+ // Browser-only full-world collision QA mode: retain the real world, player,
+ // terrain heightfields, props and collision BVH, but shorten only the
+ // cosmetic pre-game lighting bake in software WebGL. Normal play unchanged.
+ patch('src/main.js','  const total = terrain._queue.length;',
+   "  if (params.has('hfqa')) terrain._queue.length=Math.min(terrain._queue.length,18);\\n  const total = terrain._queue.length;".replace('\\n','\n'));
 // F1 is strictly an opt-in lab, the F0 original hero stays default.
 const nativeHero=read('src/main.js').split('\n').find(s=>s.startsWith("fetch(import.meta.env.BASE_URL + 'models/hero.glb'"));
 if(!nativeHero)throw Error('Unsung original hero startup changed');

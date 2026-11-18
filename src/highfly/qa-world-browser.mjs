@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
-const url='http://127.0.0.1:5175/?hfchar=kaykit&hflook=armored';
+const url='http://127.0.0.1:5175/?hfchar=kaykit&hflook=armored&hfqa=1';
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5175','--strictPort'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
 let output='';server.stdout.on('data',b=>output+=String(b));server.stderr.on('data',b=>output+=String(b));
 let browser;
