@@ -22,7 +22,17 @@ export class KayKitFreeHero {
    return new KayKitFreeHero(pipe,data);
  }
  constructor(pipe,data){
-   this.pipe=pipe;this.profile=stylizeUniversalKayKit(data);this.root=data.scene;
+   this.pipe=pipe;
+   const styleParams=new URLSearchParams(globalThis.location?.search??'');
+   // A/B visual comparison: ?hfstyle=original keeps the authentic FREE KayKit
+   // chibi rig and all native animation data; the standard game keeps HIGHFLY V6.6.
+   this.originalLook=styleParams.get('hfstyle')==='original';
+   this.profile=this.originalLook?{
+     rig:'FREE_KNIGHT_ORIGINAL_41',bones:41,meshCount:6,clips:data.animations.length,
+     naturalHeight:2.4374973315,
+     headRatio:.45,tracks:data.animations.reduce((n,a)=>n+a.tracks.length,0)
+   }:stylizeUniversalKayKit(data);
+   this.root=data.scene;
    this.root.name='HIGHFLY_KAYKIT_FREE_KNIGHT';
    this.root.scale.setScalar(1.82/this.profile.naturalHeight);
    // The KayKit GLB is a skin, not the physics authority: one Unsung capsule.
@@ -30,7 +40,7 @@ export class KayKitFreeHero {
    this.rollPivot=new THREE.Group();this.rollPivot.name='UNSUNG_FULL_BODY_ROLL';
    this.offset=new THREE.Group();this.offset.position.y=-.91;this.rollPivot.position.y=.91;
    this.actor.add(this.rollPivot);this.rollPivot.add(this.offset);this.offset.add(this.root);
-   const armored=new URLSearchParams(globalThis.location?.search??'').get('hflook')==='armored';
+   const armored=styleParams.get('hflook')==='armored'||this.originalLook;
    const hidden=new Set(HIDE);
    if(!armored)for(const name of ['Knight_Helmet','Knight_HelmetVisor','Knight_Cape'])hidden.add(name);
    this.bodyParts=new Set();this.sword=null;
@@ -91,7 +101,7 @@ export class KayKitFreeHero {
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
    this.availableActions=[...this.clips.keys()];
-   this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',rig:this.profile.rig,
+   this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',look:this.originalLook?'original-kaykit':'anime-v66',rig:this.profile.rig,
     bodyParts:this.bodyParts.size,clips:this.availableActions.length,
     boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
     renderContexts:1,cpuSkin:false,overlay:false};

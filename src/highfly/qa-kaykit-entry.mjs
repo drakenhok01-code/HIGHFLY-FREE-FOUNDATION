@@ -100,11 +100,28 @@ try{
  for(const [o,v] of meshes)o.visible=v;
  if(bodyDifference<120)
   throw Error('GHOST regression: Unsung pipeline refuses skinned body, diff='+bodyDifference);
+ // Compare the SAME CC0 Knight GLB in native, non-stylized proportions.
+ const prevSearch=location.search;
+ history.replaceState(null,'',location.pathname+'?hfstyle=original');
+ const originalScene=new THREE.Scene();
+ const originalHero=await KayKitFreeHero.load({scene:originalScene});
+ if(!originalHero.originalLook||originalHero.bodyParts.size!==6||
+    originalHero.clips.size!==76||originalHero.profile.rig!=='FREE_KNIGHT_ORIGINAL_41')
+   throw Error('Authentic KayKit original look unavailable');
+ if(!originalHero.root.getObjectByName('Knight_Helmet')?.visible)
+   throw Error('Original KayKit option must display its Knight helmet');
+ originalHero.update(1/60,pj);
+ renderer.render(originalScene,camera);
+ const origPixels=sample(renderer,640,400);
+ const origChanged=diff(blank,origPixels);
+ history.replaceState(null,'',location.pathname+prevSearch);
+ if(origChanged<160)throw Error('Original KayKit chibi variant invisible '+origChanged);
+
  const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,trailVisible,swordCount:hero.swordMeshes};
+  rollAngle,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

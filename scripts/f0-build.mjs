@@ -115,15 +115,15 @@ patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog
 // F1 is strictly an opt-in lab, the F0 original hero stays default.
 const nativeHero=read('src/main.js').split('\n').find(s=>s.startsWith("fetch(import.meta.env.BASE_URL + 'models/hero.glb'"));
 if(!nativeHero)throw Error('Unsung original hero startup changed');
+// Game diagnostics remain in window.__highflyHeroStatus, but never display a permanent center-screen success banner.
 const freeHeroStart=[
  "const hfCharacter=params.get(\'hfchar\')===\'unsung\'?\'unsung\':\'kaykit\';",
- "const hfStatus=document.createElement(\'div\');hfStatus.style.cssText=\'position:fixed;top:8px;left:50%;transform:translateX(-50%);background:#130c2ee9;color:#fff4d3;padding:5px 12px;border-radius:14px;border:1px solid #a88e75;font:11px system-ui;z-index:9500;pointer-events:none\';document.body.append(hfStatus);",
- "hfStatus.textContent=\'HIGHFLY · Cargando KayKit FREE…\';window.__highflyHeroStatus={requested:hfCharacter,loaded:false,reason:null};",
+ "window.__highflyHeroStatus={requested:hfCharacter,loaded:false,reason:null};",
  "if(hfCharacter===\'kaykit\'){",
- " KayKitFreeHero.load(pipe).then(h=>{game.attachHero(h);window.__hero=h;window.__highflyHeroStatus.loaded=true;hfStatus.textContent=\'HIGHFLY · KayKit FREE ✓\';}).catch(err=>{console.error(\'KayKit FREE failed, restoring Unsung\',err);window.__highflyHeroStatus.reason=String(err);hfStatus.textContent=\'⚠ KayKit: \'+String(err?.message||err).slice(0,100)+\' · Unsung de respaldo\';Hero.load(pipe,import.meta.env.BASE_URL+\'models/hero.glb\').then(h=>{game.attachHero(h);window.__hero=h;}).catch(e=>console.error(e));});",
+ " KayKitFreeHero.load(pipe).then(h=>{game.attachHero(h);window.__hero=h;window.__highflyHeroStatus.loaded=true;}).catch(err=>{console.error(\'KayKit FREE failed, restoring Unsung\',err);window.__highflyHeroStatus.reason=String(err);Hero.load(pipe,import.meta.env.BASE_URL+\'models/hero.glb\').then(h=>{game.attachHero(h);window.__hero=h;}).catch(e=>console.error(e));});",
  "}else{",
  nativeHero,
- " window.__highflyHeroStatus.loaded=true;hfStatus.textContent=\'HIGHFLY · Unsung original\';",
+ " window.__highflyHeroStatus.loaded=true;",
  "}"
 ].join('\n');
 patch('src/main.js',nativeHero,freeHeroStart);

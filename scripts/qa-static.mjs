@@ -19,3 +19,8 @@ for(const forbidden of ['CpuKayKitSkin','installCharacterOverlay','new THREE.Web
 const skinSource=fs.readFileSync('src/highfly/stylize-kaykit-free.mjs','utf8');
 assert.match(skinSource,/clips.length!==76/,'All FREE 76 clip retarget gate must remain');
 console.log('PASS F0.8 clean one-GPU-scene universal actor guard');
+
+// The top-center KayKit checkmark was reported as a persistent HUD obstruction.
+const buildSource=fs.readFileSync('scripts/f0-build.mjs','utf8');
+assert.ok(!buildSource.includes('hfStatus.'),'No permanent KayKit success/fallback banner may cover the HUD');
+console.log('PASS HIGHFLY F0.8.1 no persistent character status HUD banner');
