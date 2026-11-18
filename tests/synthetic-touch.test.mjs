@@ -8,6 +8,7 @@ class El {
  addEventListener(name,cb){(this.handlers[name]??=[]).push(cb);}
  dispatch(name,id=1,x=0,y=0){const ev={pointerId:id,clientX:x,clientY:y,button:0,preventDefault(){this.prevented=true},stopPropagation(){this.stopped=true},stopImmediatePropagation(){this.immediate=true}};for(const cb of this.handlers[name]??[])cb(ev);return ev;}
  setPointerCapture(id){this.captured=id;}
+ setAttribute(key,value){this[key]=value;}
  getBoundingClientRect(){return {left:0,top:0,width:128,height:128};}
  append(...xs){this.children.push(...xs);}
  querySelector(s){return this.parts?.[s]??null;}
@@ -65,4 +66,34 @@ test('CORRER tap toggles ON/OFF while the first finger keeps steering; DASH only
   sprint.dispatch('pointerdown',13,160,40);input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.held.has('sprint'),'second tap disables running');
  }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+
+test('Android action drawer opens and climb is held; equip/mine/sit are isolated one-shot actions',()=>{
+ const prior={document:globalThis.document,matchMedia:globalThis.matchMedia,addEventListener:globalThis.addEventListener,location:globalThis.location};
+ try{
+  const root=new El('root'),stick=new El('stick'),knob=new El('knob'),cam=new El('cam'),panel=new El('panel');
+  panel.hidden=true;
+  const btns=['actions','climb','equip','mine','chop','sit','lie','cheer','pickup'].map(a=>Object.assign(new El('button'),{dataset:{a}}));
+  root.parts={'.stick':stick,'.knob':knob,'.cam':cam,'.action-panel':panel,buttons:btns};
+  const doc={head:new El('head'),body:new El('body'),divs:0,createElement:t=>t==='div'&&doc.divs++===0?root:new El(t),addEventListener(){}};
+  globalThis.document=doc;globalThis.matchMedia=()=>({matches:true});globalThis.addEventListener=()=>{};globalThis.location={search:''};
+  const input={_dx:0,_dy:0,move:{x:0,y:0},pressed:new Set(),held:new Set(),enabled:true};
+  attachHighflyTouch(input);
+  btns[0].dispatch('pointerdown',1);
+  assert.equal(panel.hidden,false,'actions menu must visibly open');
+  btns[1].dispatch('pointerdown',2);
+  applyHighflyTouch(input);
+  assert.equal(input.pressed.has('climb'),true);
+  assert.equal(input.held.has('climb'),true,'hold-to-climb must be continuous');
+  btns[1].dispatch('pointerup',2);input.held.clear();input.pressed.clear();applyHighflyTouch(input);
+  assert.equal(input.held.has('climb'),false,'release must stop climbing');
+  for(const [index,action] of [[2,'equip'],[3,'mine'],[5,'sit'],[7,'cheer']]){
+    btns[index].dispatch('pointerdown',3+index);
+    input.pressed.clear();applyHighflyTouch(input);
+    assert.equal(input.pressed.has(action),true,action+' reaches native Input');
+    input.pressed.clear();applyHighflyTouch(input);
+    assert.equal(input.pressed.has(action),false,action+' is not repeated');
+  }
+  btns[0].dispatch('pointerdown',20);assert.equal(panel.hidden,true);
+ }finally{for(const [k,v] of Object.entries(prior))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
