@@ -126,6 +126,13 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
   dropClimb(p);p.pos.y=Math.max(p.pos.y,floor);p.grounded=true;return;
  }
  const resolved=candidate.clone();p.world.resolveCapsule(resolved,.36,1.82,0);
+ const terrainTop=p.world.groundHeight?.(resolved.x,resolved.z);
+ // Native terrain is a heightfield: it is NOT inside the BVH capsule
+ // resolver. Never accept a proposed climb point inside solid mountains.
+ if(Number.isFinite(terrainTop)&&terrainTop>resolved.y+.10){
+  p._hfClimbInput={x:0,y:0};p.speed=0;
+  p.stateTime+=dt;p.vel.set(0,0,0);return;
+ }
  if(resolved.distanceTo(candidate)<.35&&resolved.distanceTo(before)<.22)p.pos.copy(resolved);
  const dx=p.pos.x-before.x,dy=p.pos.y-before.y,dz=p.pos.z-before.z;
  const lateral=dx*side.x+dz*side.z;
@@ -196,16 +203,49 @@ export function installHighflyUniversalMotion(p){
  p._hfRollVisual='forward';
  const nativeUpdate=p.update.bind(p);
  const nativeSpawn=p.spawn.bind(p);
+ const nativeSwim=p._swim.bind(p);
+ p._hfDive=false;
+ // Keep Unsung's real surface swimming/buoyancy and collisions, but allow a
+ // separate controlled descent to a floor-clamped underwater target.
+ p._swim=function(dt,input,wish,wishLen,surface){
+  const previousY=this.pos.y;
+  const result=nativeSwim(dt,input,wish,wishLen,surface);
+  if(this.state!=='swim'){this._hfDive=false;return result;}
+  if(this._hfDive&&Number.isFinite(surface)){
+   const floor=this.world.floorBelow(this.pos.x,surface-.1,this.pos.z,15);
+   if(Number.isFinite(floor)&&surface-floor>1.45){
+    const target=Math.max(floor+.68,surface-2.35);
+    const next=Math.max(target,Math.min(this.pos.y,previousY-2.15*dt));
+    // No noclip below seabed and no second water physics body.
+    this.vel.y=(next-previousY)/Math.max(.001,dt);
+    this.pos.y=next;this.viewY=this._viewY1=next;this.grounded=false;
+   }else{
+    this._hfDive=false;this.emit('highflyDiveBlocked',{reason:'shallow'});
+   }
+  }
+  return result;
+ };
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';
+  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
   this._hfJumpFx=Math.max(0,(this._hfJumpFx||0)-step);
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
+  if(input.pressed.has('dive')&&this.state==='swim'){
+   this._hfDive=!this._hfDive;
+   this.emit('highflyDiveToggle',{active:this._hfDive});
+  }
+  if(this.state!=='swim')this._hfDive=false;
+  // Like Emberfall, holding ATK continues the combo at the ORIGINAL Unsung
+  // attack cadence. Keep one native strike event/damage window per step.
+  if(input.held.has('attack')&&!input.pressed.has('attack')){
+   input={...input,pressed:new Set(input.pressed)};
+   input.pressed.add('attack');
+  }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
@@ -231,7 +271,7 @@ export function installHighflyUniversalMotion(p){
    this._hfGearCycle=(this._hfGearCycle+1)%WEAPON_MODES.length;
    this.emit('highflyEquipPreview',{variant:this._hfGearCycle});
   }
-  if(isMove(this)&&input.pressed.has('climb')){
+  if((isMove(this)||this.state==='swim')&&input.pressed.has('climb')){
    const hit=probeHighflyWall(this)||gripContact(this,this.yaw);
    if(hit){
     if(hit.ledge)startMantle(this,hit);
