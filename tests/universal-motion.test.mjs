@@ -185,3 +185,29 @@ test('F0.11.2 wall jump exits climbing and carries launch velocity',()=>{
  assert.equal(p.state,'move');assert.ok(p.vel.y>5);
  assert.equal(p._hfDoubleUsed,true,'wall jump cannot grant unintended third jump');
 });
+
+test('F0.11.3 circle TAP dash follows hero yaw, not moving left stick or camera',()=>{
+ const p=player();p.yaw=Math.PI/2; // hero facing +world X, camera forward +world Z
+ const command=input(['dash'],[],0,1);
+ command.highflyAbilityAim={dash:null};
+ p.update(1/60,command,0);
+ assert.equal(p.state,'hf_dash');
+ assert.ok(p._hfDashDir.x>.98&&Math.abs(p._hfDashDir.z)<.03);
+});
+test('F0.11.3 circle TAP roll uses hero facing with running left thumb',()=>{
+ const p=player();p.yaw=Math.PI/2;
+ const command=input(['dodge'],[],0,1);
+ command.highflyAbilityAim={dodge:null};
+ p.update(1/60,command,0);
+ assert.equal(p.state,'roll');
+ assert.ok(p.rollDir.x>.98&&Math.abs(p.rollDir.z)<.03);
+ assert.equal(p._hfRollVisual,'forward');
+});
+test('F0.11.3 independent ability dragging still overrides hero facing',()=>{
+ const p=player();p.yaw=Math.PI/2;
+ const command=input(['dash'],[],0,1);
+ command.highflyAbilityAim={dash:{x:0,y:-1}};
+ p.update(1/60,command,0);
+ assert.equal(p.state,'hf_dash');
+ assert.ok(p._hfDashDir.z<-.98,'drag backward toward camera');
+});

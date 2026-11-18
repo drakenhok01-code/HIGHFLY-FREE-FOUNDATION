@@ -218,11 +218,16 @@ export function installHighflyUniversalMotion(p){
   const startEvents=this.events?.length??0;
   const rollAttempt=isMove(this)&&this.grounded&&input.pressed.has('dodge');
   const originalFacing=this.yaw;
-  const aim=input.highflyAbilityAim?.dodge;
-  // Only the roll activation receives the independent direction; walking
-  // joystick/camera remain unchanged for all other states and frames.
-  const nativeRollInput=aim&&input.pressed.has('dodge')?
-   {...input,move:aim}:input;
+  const aimInput=input.highflyAbilityAim;
+  const aim=aimInput?.dodge;
+  const tap=!!aimInput&&Object.prototype.hasOwnProperty.call(aimInput,'dodge')&&aim===null;
+  const relYaw=this.yaw-camYaw;
+  // Native Unsung movement basis: right-stick x is inverted in world space.
+  // Choose the camera-relative wish that points along the HERO facing angle.
+  const facingWish={x:-Math.sin(relYaw),y:Math.cos(relYaw)};
+  // A circle tap ignores the left thumb; dragging keeps independent direction.
+  const nativeRollInput=input.pressed.has('dodge')&&(aim||tap)?
+   {...input,move:aim||facingWish}:input;
   const result=nativeUpdate(dt,nativeRollInput,camYaw);
   if(rollAttempt&&this.state==='roll'){
    const d=this.rollDir,front=Math.sin(originalFacing)*d.x+Math.cos(originalFacing)*d.z;

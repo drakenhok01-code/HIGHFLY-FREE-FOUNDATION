@@ -43,10 +43,15 @@ export function installHighflyDash(player){
   const allowed=this.state==='move'||(this.state==='attack'&&this.stateTime>.18);
   if(allowed&&input?.pressed?.has('dash')&&this._hfDashCd<=0&&
    this.stamina>=DASH.cost&&(this.grounded||!this._hfAirDashSpent)){
-   const targeted=input?.highflyAbilityAim?.dash;
-   const target=dashExitTarget(targeted?{...input,move:targeted}:input,camYaw,this.grounded);
-   const dx=target.speed>0?target.x:Math.sin(this.yaw);
-   const dz=target.speed>0?target.z:Math.cos(this.yaw);
+   const abilityAim=input?.highflyAbilityAim;
+   const tap=!!abilityAim&&Object.prototype.hasOwnProperty.call(abilityAim,'dash')&&abilityAim.dash===null;
+   const targeted=abilityAim?.dash;
+   const target=dashExitTarget(targeted?{...input,move:targeted}:tap?
+     {...input,move:{x:0,y:0}}:input,camYaw,this.grounded);
+   // A tap launches in the hero's current facing, even if the left thumb
+   // remains steering. Dragging the ability circle still wins as before.
+   const dx=tap?Math.sin(this.yaw):target.speed>0?target.x:Math.sin(this.yaw);
+   const dz=tap?Math.cos(this.yaw):target.speed>0?target.z:Math.cos(this.yaw);
    if(DASH.cost>0&&!this.spend(DASH.cost))return original(dt,input,camYaw);
    if(!this.grounded)this._hfAirDashSpent=true;
    this._hfDashDir={x:dx,z:dz};this._hfDashCd=DASH.cooldown;
