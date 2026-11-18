@@ -20,3 +20,7 @@ Esta rama construye el **Unsung original** desde el commit congelado \`9f61b0d80
 Todo el audio de Unsung se revisa contra \`CREDITS.md\` por archivo; se exige 129 OGG, 62 CC BY 4.0 y 67 CC0. El build publica manifest de hashes SHA-256, textos de licencia MIT y créditos completos. Se rechaza cualquier drift en las tres modificaciones de URLs de \`src/world/terrain.js\`. Nada de SOURCE/EXTRA, \`dist\` previo, materiales privados ni medios restringidos.
 
 La visualización en Samsung, apariencia real de niebla, físicas y fps están **pendientes de QA real**: no se confunden pruebas unitarias con ejecución WebGL.
+
+## F0.1 — diagnóstico del primer video Samsung
+
+El mundo Unsung cargó en un teléfono real, pero el primer HUD no obtuvo aprobación de joystick 360°. Se reforzó su stick analógico con captura de puntero, diagonales normalizadas, centro muerto y pruebas automáticas para ocho direcciones; **hasta un nuevo video Android su resultado continúa pendiente**. Para diagnosticar la dirección entregada al Input original: agrega `?hfinputdebug=1` a la URL de Pages; aparece `JOYSTICK 360° X=... Y=...` y el giro del héroe. No se modificaron el terreno, los edificios, el agua ni la cápsula física.
