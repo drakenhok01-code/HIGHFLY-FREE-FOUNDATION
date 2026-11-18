@@ -27,6 +27,10 @@ try{
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(45,640/400,.1,100);
  camera.position.set(3.2,2.6,5.5);camera.lookAt(0,1,0);
  const hero=await KayKitFreeHero.load({scene});
+ if(!hero.ualData)throw Error('Pinned Quaternius UAL CC0 pose data missing');
+ for(const name of ['Swim_Idle_Loop','Swim_Fwd_Loop','ClimbUp_1m'])
+   if(!(hero.ualData.clips?.[name]?.bones.length>=10))
+    throw Error('Quaternius clip bone retarget gate '+name);
  if(hero.bodyParts.size!==6||hero.swordMeshes!==1||hero.clips.size!==76)
   throw Error('Not six parts, one CC0 sword and 76 clips');
  if(hero.profile.bones!==41||hero.profile.tracks<6000)
@@ -142,7 +146,7 @@ try{
     throw Error('Missing original Emberfall '+mode.id);
  }
  hero.equip(0);
- const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,
+ const reportData={clips:hero.clips.size,ualClips:Object.keys(hero.ualData.clips),ualApplied:hero.ualApplied,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,

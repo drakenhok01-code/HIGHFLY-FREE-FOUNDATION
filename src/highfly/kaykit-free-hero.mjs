@@ -7,6 +7,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {createUniversalMaterial} from './kaykit-material.mjs';
 import {ACTIONS} from './universal-motion.mjs';
+import {applyUALPose} from './ual-retarget.mjs';
 import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,applyEquipment} from './universal-gear.mjs';
 
 const CLIPS={
@@ -26,9 +27,15 @@ export class KayKitFreeHero {
      try{extra[id]=(await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/'+name)).scene;}
      catch(error){console.warn('[HIGHFLY F010] optional original Emberfall model unavailable',id,error);}
    }
-   return new KayKitFreeHero(pipe,data,extra);
+   let ualData=null;
+   try{
+    const result=await fetch(import.meta.env.BASE_URL+'animation/hf-ual-retarget.json');
+    if(result.ok)ualData=await result.json();
+    else console.warn('[HIGHFLY F011] Quaternius CC0 pose data unavailable');
+   }catch(error){console.warn('[HIGHFLY F011] Quaternius retarget fallback',error);}
+   return new KayKitFreeHero(pipe,data,extra,ualData);
  }
- constructor(pipe,data,extra={}){
+ constructor(pipe,data,extra={},ualData=null){
    this.pipe=pipe;
    const styleParams=new URLSearchParams(globalThis.location?.search??'');
    // A/B visual comparison: ?hfstyle=original keeps the authentic FREE KayKit
@@ -102,6 +109,14 @@ export class KayKitFreeHero {
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
+   this.ualData=ualData;this.ualApplied=0;this._ualParentRest=new Map();
+   this.root.updateMatrixWorld(true);
+   for(const boneName of ['spine','chest','upperarm.l','lowerarm.l','hand.l',
+      'upperarm.r','lowerarm.r','hand.r','upperleg.l','lowerleg.l','foot.l',
+      'upperleg.r','lowerleg.r','foot.r']){
+    const bone=this._bone(boneName);
+    if(bone?.parent)this._ualParentRest.set(boneName,bone.parent.getWorldQuaternion(new THREE.Quaternion()));
+   }
    this._playToken='';this.lowerActions=new Map();this.lowerCurrent=null;this.lowerKey='';this._swimBlend=0;
    // Shared flash/rim uniforms already initialized before material creation.
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
@@ -129,7 +144,7 @@ export class KayKitFreeHero {
    this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',look:this.originalLook?'original-kaykit':'anime-v66',rig:this.profile.rig,
     bodyParts:this.bodyParts.size,clips:this.availableActions.length,
     boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
-    renderContexts:1,cpuSkin:false,overlay:false};
+    renderContexts:1,cpuSkin:false,overlay:false,quaterniusClips:Object.keys(this.ualData?.clips??{})};
    globalThis.__highflyActorReport=this.diagnostics;
    console.log('[HIGHFLY CLEAN HERO]',JSON.stringify(this.diagnostics));
  }
@@ -228,6 +243,12 @@ export class KayKitFreeHero {
    }
    this.mixer.update(dt);
    this._poseProcedural(Math.max(0,dt),p);
+   if(p.state==='swim'&&this.ualData){
+     // ONLY KayKit bones are animated; UAL source mannequin is never created.
+     applyUALPose(this,speed>.35?'Swim_Fwd_Loop':'Swim_Idle_Loop',this._hfPhase/3.5,.85);
+   }else if(p.state==='hf_mantle'&&this.ualData){
+     applyUALPose(this,'ClimbUp_1m',Math.min(.66,p.stateTime*.95),.88);
+   }
    // One actor transform driven exclusively by Unsung Player; no root-motion.
    this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
    this.actor.rotation.y=p.yaw;
@@ -281,7 +302,7 @@ export class KayKitFreeHero {
    this._addPose('upperarm.l','x',.62*t);
    this._addPose('upperarm.r','x',.62*t);
    this._addPose('head','x',-.12*t);
-  }else if(p.state==='swim'){
+  }else if(p.state==='swim'&&!this.ualData){
    // Original Unsung _swim controls buoyancy, direction, speed and ripples.
    // The 76-clip Knight has no swim clip, so apply a small alternating
    // stroke to the SAME 41-bone skinned character. No duplicate skeleton.
@@ -298,11 +319,13 @@ export class KayKitFreeHero {
     this._addPose('lowerleg.r','x',(.24+.3*Math.max(0,right))*amount);
     // Keep the head fixed relative to upper torso; no Power Ranger neck twist.
    }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
-   const phase=this._hfPhase*4;
-   this._addPose('upperarm.l','x',-.78+.27*Math.sin(phase));
-   this._addPose('upperarm.r','x',-.78-.27*Math.sin(phase));
-   this._addPose('upperleg.l','x',.28*Math.sin(phase));
-   this._addPose('upperleg.r','x',-.28*Math.sin(phase));
+   const move=p._hfClimbInput??{x:0,y:p.state==='hf_mantle'?1:0};
+   const strength=Math.min(1,Math.hypot(move.x,move.y));
+   const phase=this._hfPhase*3.7;
+   this._addPose('upperarm.l','x',-.86+strength*.32*Math.sin(phase));
+   this._addPose('upperarm.r','x',-.86-strength*.32*Math.sin(phase));
+   this._addPose('upperleg.l','x',strength*.28*Math.sin(phase));
+   this._addPose('upperleg.r','x',-strength*.28*Math.sin(phase));
   }
  }
  _swordEndpoints(){
