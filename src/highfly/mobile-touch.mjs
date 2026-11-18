@@ -14,6 +14,28 @@ export function joystickVector(rect,px,py,deadzone=0.07){
  // Unsung expects x = lateral right and y = camera-forward, like WASD.
  return {x:Math.abs(dx)<1e-12?0:dx,y:Math.abs(dy)<1e-12?0:-dy};
 }
+export function resolveHighflyContext(p){
+ const fallback={action:'climb',label:'TREPAR'};
+ if(!p?.world||!p?.pos)return fallback;
+ const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ // Harvest targets must have explicit resource tags, never generic rock collisions.
+ const actions={tree:['chop','TALAR'],ore:['mine','PICAR'],loot:['pickup','RECOGER']};
+ const candidates=Array.isArray(w.highflyInteractables)?w.highflyInteractables:[];
+ let best=null,dist=4;
+ for(const n of candidates){
+   if(n.available===false||!actions[n.kind])continue;
+   const dx=n.x-p.pos.x,dz=n.z-p.pos.z,d=dx*dx+dz*dz;
+   if(d<dist&&dx*fx+dz*fz>.1){dist=d;best={action:actions[n.kind][0],label:actions[n.kind][1]};}
+ }
+ if(best)return best;
+ if(p.grounded&&typeof w.waterLevel==='function'&&typeof w.groundHeight==='function'){
+   const x=p.pos.x+fx*1.4,z=p.pos.z+fz*1.4;
+   const level=w.waterLevel(x,z),floor=w.groundHeight(x,z);
+   if(Number.isFinite(level)&&Number.isFinite(floor)&&level-floor>1.15&&
+     level-p.pos.y<2.2&&level-p.pos.y>-.6)return {action:'fishing',label:'PESCAR'};
+ }
+ return fallback;
+}
 export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
  const css=[
@@ -36,6 +58,7 @@ export function attachHighflyTouch(input){
  '#hf-touch .action-panel[hidden]{display:none!important}',
  '#hf-touch .action-panel button{position:static;width:auto;height:43px;border-radius:8px;font-size:9px;padding:2px}',
  '#hf-touch .dash{right:162px;bottom:13px;width:59px;height:59px;border:2px solid #9c84fc;background:linear-gradient(135deg,#5c2eaa,#21103e)}',
+ '#hf-touch .context{right:228px;bottom:13px;width:59px;height:59px;border:2px solid #68d8ca;background:linear-gradient(135deg,#1c6267,#16182e)}',
  '#hf-rotate{display:none;position:fixed;inset:0;z-index:10000;place-items:center;background:#100e22;color:white;text-align:center;font:bold 19px system-ui}',
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
@@ -46,14 +69,14 @@ export function attachHighflyTouch(input){
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
- '<button class="full" data-a="fullscreen">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button>'+
+ '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button>'+
  '<div class="action-panel" hidden>'+
  '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
  '<button data-a="sit">SENTAR</button><button data-a="lie">ACOSTAR</button><button data-a="chop">TALAR</button><button data-a="mine">MINAR</button>'+
  '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),actionsOpen:false,actionPanel:root.querySelector('.action-panel')};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb',contextHeld:null,actionsOpen:false,actionPanel:root.querySelector('.action-panel')};
  input.highflyTouch=t;
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
@@ -104,15 +127,17 @@ export function attachHighflyTouch(input){
     b.setAttribute('aria-expanded',String(t.actionsOpen));return;
    }
    try{b.setPointerCapture(e.pointerId)}catch{}
+   const chosen=a==='context'?t.contextAction:a;
    if(a==='sprint'){
     t.sprintOn=!t.sprintOn;
     b.dataset.active=t.sprintOn?'1':'0';b.textContent=t.sprintOn?'CORRIENDO':'CORRER';
    }else{
-    t.pressed.add(a);
-    if(a==='climb')t.held.add(a); // climb requires actual sustained contact
+    t.pressed.add(chosen);
+    if(chosen==='climb')t.held.add('climb');
+    if(a==='context')t.contextHeld=chosen;
    }
   });
-  const up=e=>{if(a==='climb')t.held.delete('climb');e.preventDefault();e.stopPropagation?.();};
+  const up=e=>{if(a==='climb'||(a==='context'&&t.contextHeld==='climb'))t.held.delete('climb');if(a==='context')t.contextHeld=null;e.preventDefault();e.stopPropagation?.();};
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
@@ -130,6 +155,12 @@ export function applyHighflyTouch(input){
  for(const a of t.pressed)input.pressed.add(a);
  for(const a of t.held)input.held.add(a);
  if(t.sprintOn)input.held.add('sprint');
+ const context=resolveHighflyContext(globalThis.__game?.player);
+ t.contextAction=context.action;
+ if(t.contextButton){
+   t.contextButton.textContent=context.label;
+   t.contextButton.setAttribute('aria-label',context.label);
+ }
  const cd=globalThis.__game?.player?._hfDashCd??0;
  if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=cd>.05?'.65':'1';}
  t.pressed.clear();
