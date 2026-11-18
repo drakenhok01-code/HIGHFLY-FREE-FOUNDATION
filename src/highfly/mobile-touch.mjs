@@ -26,6 +26,13 @@ export function resolveHighflyContext(p){
  const fallback={action:'climb',label:'TREPAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ // In water, wall contact takes priority over diving.
+ if(p.state==='swim'){
+  const d=typeof w.raycast==='function'?w.raycast(
+    {x:p.pos.x,y:p.pos.y+.87,z:p.pos.z},{x:fx,y:0,z:fz},1.08):Infinity;
+  if(d>.06&&d<.96)return {action:'climb',label:'TREPAR'};
+  return {action:'dive',label:p._hfDive?'SUPERFICIE':'BUCEAR'};
+ }
  // Harvest targets must have explicit resource tags, never generic rock collisions.
  const actions={tree:['chop','TALAR'],ore:['mine','PICAR']}; // loot always uses USAR
  const candidates=Array.isArray(w.highflyInteractables)?w.highflyInteractables:[];
@@ -197,11 +204,16 @@ export function attachHighflyTouch(input){
     b.dataset.active=t.sprintOn?'1':'0';b.textContent=t.sprintOn?'CORRIENDO':'CORRER';
    }else{
     t.pressed.add(chosen);
+    if(a==='attack')t.held.add('attack'); // hold-to-combo
     // One tap toggles climbing. Do not require holding the climbing button.
     if(a==='context')t.contextHeld=chosen;
    }
   });
-  const up=e=>{if(a==='context')t.contextHeld=null;e.preventDefault();e.stopPropagation?.();};
+  const up=e=>{
+    if(a==='attack')t.held.delete('attack');
+    if(a==='context')t.contextHeld=null;
+    e.preventDefault();e.stopPropagation?.();
+   };
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
