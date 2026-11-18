@@ -174,6 +174,7 @@ function attackLocomotion(p,original,dt,input,camYaw){
  p._integrate=function(step){
   if(this.state==='attack'&&this.attack&&this.grounded){
    const x=input.move?.x||0,y=input.move?.y||0,len=Math.min(1,Math.hypot(x,y));
+   this._hfAttackSteering=len>.15;
    if(len>.15){
     const fx=Math.sin(camYaw),fz=Math.cos(camYaw);
     const speed=(input.held.has('sprint')?MOTION.combatRun:MOTION.combatWalk)*len;

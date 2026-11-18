@@ -245,7 +245,7 @@ export class KayKitFreeHero {
    // Upper-body attack lane MUST remain stable until the attack ends.
    const layered=p.state==='attack';
    this.play(key,duration,layered);
-   const physicalSpeed=layered?(p._hfAttackTravelSpeed??speed):speed;
+   const physicalSpeed=layered?(p._hfAttackSteering?(p._hfAttackTravelSpeed??speed):0):speed;
    const gait=physicalSpeed<.45?'Idle':physicalSpeed<2.65?'Walking_A':'Running_A';
    if(layered)this._playLower(gait,physicalSpeed);
    else if(this.lowerCurrent){
