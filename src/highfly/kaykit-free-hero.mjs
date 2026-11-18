@@ -19,7 +19,7 @@ const HIDE=new Set(['1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shie
  * and render as plain Mesh, avoiding Android GPU skinning failures.
  * 41-bone rig, 76 clips and Unsung collision/combos remain unchanged.
  */
-class CpuKayKitSkin {
+export class CpuKayKitSkin {
  constructor(root) {
   const sources=[];root.traverse(o=>{if(o.isSkinnedMesh&&o.visible)sources.push(o);});
   if(!sources.length)throw Error('KayKit CPU: no skinned body parts');

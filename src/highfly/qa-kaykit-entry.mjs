@@ -1,6 +1,6 @@
 /** Isolated real WebGL and GLTFLoader smoke: never loads or modifies Unsung world. */
 import * as THREE from 'three';
-import {KayKitFreeHero} from './kaykit-free-hero.mjs';
+import {KayKitFreeHero,CpuKayKitSkin} from './kaykit-free-hero.mjs';
 import {Pipeline} from '../engine/pipeline.js';
 window.__hfQa={done:false,ok:false};
 const status=document.getElementById('status');
@@ -118,6 +118,7 @@ try{
  cpuHero.cpuSkin=cpuAdapter;
  // Move actor to main visible scene AFTER loading into its own isolated scene.
  scene.add(cpuHero.actor);
+ hero.actor.visible=false;hero.trail.visible=false;
  cpuHero.update(1/60,{pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,
    state:'move',speed:0,stateTime:0,attack:null});
  renderer.render(scene,camera);
@@ -128,6 +129,18 @@ try{
   if(Math.abs(cp[i]-17)>25||Math.abs(cp[i+1]-11)>25||Math.abs(cp[i+2]-27)>25)cpuPixels++;
  if(cpuAdapter.parts.length<6||cpuAdapter.vertices<500||cpuPixels<100)
   throw Error('KayKit CPU skin not rendered: '+JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
- console.log('[KAYKIT CPU-SKIN QA]',JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
-  report(true,{cpuParts:cpuAdapter.parts.length,cpuVertices:cpuAdapter.vertices,cpuPixels,unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+ // A skinned head is the specific element missing from the user's video.
+ const proxyHead=cpuAdapter.parts.find(part=>part.source.name==='Knight_Head')?.mesh;
+ if(!proxyHead?.visible)throw Error('CPU skin head proxy absent');
+ const allCpu=[];cpuHero.root.traverse(o=>{if(o.isMesh){allCpu.push([o,o.visible]);o.visible=o===proxyHead}});
+ renderer.render(scene,camera);
+ const hPixels=new Uint8Array(640*400*4);
+ gl.readPixels(0,0,640,400,gl.RGBA,gl.UNSIGNED_BYTE,hPixels);
+ let headPixels=0;
+ for(let i=0;i<hPixels.length;i+=4)
+  if(Math.abs(hPixels[i]-17)>25||Math.abs(hPixels[i+1]-11)>25||Math.abs(hPixels[i+2]-27)>25)headPixels++;
+ for(const [m,v] of allCpu)m.visible=v;
+ if(headPixels<70)throw Error('CPU head is still invisible in browser, pixels='+headPixels);
+  console.log('[KAYKIT CPU-SKIN QA]',JSON.stringify({parts:cpuAdapter.parts.length,verts:cpuAdapter.vertices,cpuPixels}));
+  report(true,{cpuParts:cpuAdapter.parts.length,cpuVertices:cpuAdapter.vertices,cpuPixels,cpuHeadPixels:headPixels,unsungBodyDiffPixels:bodyDiff,modelBounds:bound,meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}
