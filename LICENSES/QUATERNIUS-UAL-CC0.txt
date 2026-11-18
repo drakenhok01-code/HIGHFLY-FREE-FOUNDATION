@@ -1,0 +1,8 @@
+Quaternius Universal Animation Library 1 & 2 — Standard Editions
+Author: Quaternius (@Quaternius)
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+Sources:
+https://quaternius.itch.io/universal-animation-library
+https://quaternius.itch.io/universal-animation-library-2
+Only extracted animation tracks used; no source mannequin redistributed.
