@@ -117,11 +117,34 @@ try{
  history.replaceState(null,'',location.pathname+prevSearch);
  if(origChanged<160)throw Error('Original KayKit chibi variant invisible '+origChanged);
 
+
+ // Physically existing 41-bone Medium skeleton must animate its limb channels,
+ // not just move a floating invisible collider through water.
+ if(hero._hfSwimPoseCount<4)throw Error('Missing KayKit arm/leg swim channels '+hero._hfSwimPoseCount);
+ const compareBone=hero.swimBonePairs.arms.find(Boolean);
+ const swimbefore={...pj,state:'swim',speed:2,stepPhase:0,grounded:false};
+ hero.update(1/60,swimbefore);
+ const qa0=compareBone.quaternion.clone();
+ hero.update(1/60,{...swimbefore,stepPhase:.28});
+ const swimAngle=qa0.angleTo(compareBone.quaternion);
+ if(swimAngle<.07)throw Error('Water animation is still static Idle: '+swimAngle);
+ // Real KayKit source clips for emote/social use exactly the same 41-bone Mixer.
+ const social=['Sit_Floor_Down','Lie_Down','Cheer','PickUp','Use_Item'];
+ for(const clip of social){
+  const a={key:'hf_action',clip,duration:1.0};
+  hero.update(1/60,{...pj,state:'hf_action',_hfActivity:a,grounded:true});
+  if(hero.key!=='raw:'+clip)throw Error('Social clip not mapped '+clip);
+ }
+ // A compact grounded roll should tuck the torso visibly at the midpoint.
+ hero.update(1/60,{...pj,state:'roll',stateTime:.31});
+ if(!(hero._rollTuck>.95&&hero.offset.scale.y<.75))
+  throw Error('ROLL remains tall backflip; grounded tuck not applied');
+
  const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged,swimBoneChannels:hero._hfSwimPoseCount,swimAngle,groundRollTuck:hero._rollTuck,actionsMapped:social.length};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}
