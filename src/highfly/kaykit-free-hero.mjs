@@ -21,9 +21,14 @@ const HIDE=new Set(['1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shie
 export class KayKitFreeHero {
  static async load(pipe,url=import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb'){
    const data=await new GLTFLoader().loadAsync(url);
-   return new KayKitFreeHero(pipe,data);
+   const extra={};
+   for(const [id,name] of [['spear','hf-emberfall-spear.glb'],['staff','hf-emberfall-staff.glb']]){
+     try{extra[id]=(await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/'+name)).scene;}
+     catch(error){console.warn('[HIGHFLY F010] optional original Emberfall model unavailable',id,error);}
+   }
+   return new KayKitFreeHero(pipe,data,extra);
  }
- constructor(pipe,data){
+ constructor(pipe,data,extra={}){
    this.pipe=pipe;
    const styleParams=new URLSearchParams(globalThis.location?.search??'');
    // A/B visual comparison: ?hfstyle=original keeps the authentic FREE KayKit
@@ -74,6 +79,19 @@ export class KayKitFreeHero {
      o.material=Array.isArray(o.material)?o.material.map(mk):mk(o.material);
    });
    this.socket??=handFallback??this.root;
+   this.extraWeapons=new Map();
+   for(const [id,model] of Object.entries(extra)){
+     if(!model)continue;
+     model.name='HIGHFLY_EMBERFALL_'+id.toUpperCase();
+     model.traverse(node=>{
+       if(!node.isMesh)return;
+       node.frustumCulled=false;
+       const basic=m=>new THREE.MeshBasicMaterial({color:m?.color?.clone?.()??new THREE.Color(0xb9c7d8),
+        map:m?.map??null,side:THREE.DoubleSide,depthTest:true,depthWrite:true});
+       node.material=Array.isArray(node.material)?node.material.map(basic):basic(node.material);
+     });
+     this.socket.add(model);model.visible=false;this.extraWeapons.set(id,model);
+   }
    applyEquipment(this,0);
    if(this.bodyParts.size!==6)throw Error('KayKit body incomplete: '+[...this.bodyParts].join(','));
    if(!this.sword)throw Error('KayKit 1H_Sword not found for actual tip/trail');
@@ -160,7 +178,7 @@ export class KayKitFreeHero {
       const profile=this.weaponMode?.style??'onehand';
       const arr=WEAPON_ANIMATIONS[profile]??WEAPON_ANIMATIONS.onehand;
       const step=p.comboStep===3?2:Math.max(0,Math.min(2,p.comboStep));
-      key='raw:'+arr[step];
+      key='raw:'+(this.clips.has(arr[step])?arr[step]:WEAPON_ANIMATIONS.onehand[step]);
       duration=p.attack?.t??.46;
    }else if(p.state==='swim')key='swim';
    else if(!p.grounded&&p._hfJumpFx>0)key='raw:Jump_Full_Short';
