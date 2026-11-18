@@ -2,7 +2,7 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f06-real-world-body]
 permissions:
   contents: read
   pages: write
@@ -35,6 +35,7 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.57.0 --no-audit --no-fund
           ./node_modules/.bin/playwright install chromium --with-deps
           node scripts/qa-browser.mjs
+          node scripts/qa-world-browser.mjs
       - name: Guardar pruebas visuales de personaje
         if: always()
         uses: actions/upload-artifact@v4
