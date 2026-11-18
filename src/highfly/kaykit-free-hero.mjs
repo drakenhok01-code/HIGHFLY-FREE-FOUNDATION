@@ -102,6 +102,7 @@ export class KayKitFreeHero {
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
+   this._playToken='';this.lowerActions=new Map();this.lowerCurrent=null;this.lowerKey='';
    // Shared flash/rim uniforms already initialized before material creation.
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
    this.landSignal=0;this.hitSignal=0;this.updated=false;
@@ -132,19 +133,39 @@ export class KayKitFreeHero {
    globalThis.__highflyActorReport=this.diagnostics;
    console.log('[HIGHFLY CLEAN HERO]',JSON.stringify(this.diagnostics));
  }
- play(key,duration=0){
-   if(key===this.key)return;
-   const clipName=CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle);
+ _upperTrack(track){
+   const name=track.name.slice(0,track.name.lastIndexOf('.')).split('/').pop().replace(/[^a-z]/ig,'').toLowerCase();
+   return /^(spine|chest|neck|head|shoulder|upperarm|lowerarm|hand|wrist|elbow)/.test(name);
+ }
+ _playLower(name){
+   if(this.lowerKey===name)return;
+   const source=this.clips.get(name);if(!source)return;
+   let action=this.lowerActions.get(name);
+   if(!action){
+     const clip=source.clone();
+     clip.tracks=clip.tracks.filter(t=>!this._upperTrack(t)&&!/root\.position$/i.test(t.name));
+     if(!clip.tracks.length)return;
+     action=this.mixer.clipAction(clip);this.lowerActions.set(name,action);
+   }
+   if(this.lowerCurrent&&this.lowerCurrent!==action)this.lowerCurrent.fadeOut(.12);
+   action.reset().setLoop(THREE.LoopRepeat,Infinity).fadeIn(.12).play();
+   this.lowerCurrent=action;this.lowerKey=name;
+ }
+ play(key,duration=0,layered=false){
+   const token=key+'|'+(layered?'upper':'full')+(key==='roll'?'|'+(this._rollVisualClip??'Dodge_Forward'):'');
+   if(token===this._playToken)return;
+   const clipName=key==='roll'?(this._rollVisualClip??'Dodge_Forward'):(CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle));
    const raw=this.clips.get(clipName);
    if(!raw){console.warn('[HIGHFLY] Unknown FREE clip '+clipName);return;}
    const clip=raw.clone();
    // Physics is exclusively Unsung's kinematic capsule: strip animated root translations
    // so cinematic/dodge clips cannot teleport the collision body or visual origin.
-   clip.tracks=clip.tracks.filter(t=>!/root\.position$/i.test(t.name));
-   let action=this.actions.get(key);
+   clip.tracks=clip.tracks.filter(t=>!/root\.position$/i.test(t.name)&&(!layered||this._upperTrack(t)));
+   if(!clip.tracks.length){console.warn('[HIGHFLY F010] missing animation lane',clipName);return;}
+   let action=this.actions.get(token);
    if(!action){
      action=this.mixer.clipAction(clip);
-     this.actions.set(key,action);
+     this.actions.set(token,action);
    }
    action.reset();
    const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key)||
@@ -154,7 +175,7 @@ export class KayKitFreeHero {
    action.timeScale=duration>0?Math.min(3,Math.max(.3,clip.duration/duration)):1;
    if(this.current&&this.current!==action)this.current.fadeOut(.12);
    action.fadeIn(.12).play();
-   this.current=action;this.key=key;
+   this.current=action;this.key=key;this._playToken=token;
  }
  update(dt,p){
    const speed=p.speed??0;
@@ -189,7 +210,12 @@ export class KayKitFreeHero {
    if((p._hfGearCycle??0)!==this._lastEquipCycle){
     const index=p._hfGearCycle??0;this.equip(index);this._lastEquipCycle=index;
    }
-   this.play(key,duration);
+   const layered=p.state==='attack'&&p.grounded&&speed>.3;
+   this.play(key,duration,layered);
+   if(layered)this._playLower(speed>5.8?'Running_B':speed>2.6?'Running_A':'Walking_A');
+   else if(this.lowerCurrent){
+     this.lowerCurrent.fadeOut(.12);this.lowerCurrent=null;this.lowerKey='';
+   }
    this.mixer.update(dt);
    this._poseProcedural(Math.max(0,dt),p);
    // One actor transform driven exclusively by Unsung Player; no root-motion.
