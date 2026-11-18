@@ -14,7 +14,10 @@ try{
  camera.position.set(3.2,2.6,5.5);camera.lookAt(0,1,0);
  const hero=await KayKitFreeHero.load({scene});
  if(!hero?.root?.isObject3D||hero.visibleMeshes<1)throw Error('No attached THREE scene');
- if(hero.swordMeshes<1)throw Error('No KayKit CC0 sword mesh visible');
+ if(hero.swordMeshes!==1)throw Error('Exactly one KayKit sword must be visible');
+ if(hero.bodyParts.size!==6)throw Error('No complete KayKit body: '+[...hero.bodyParts].join(','));
+ if(!hero.root.getObjectByName('Knight_Body')?.visible)throw Error('Body is hidden');
+ if(!hero.root.getObjectByName('Knight_Head')?.visible)throw Error('Head is hidden');
  if(hero.clips.size<70)throw Error('Expected complete Knight clips');
  let p={pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,state:'move',speed:0,comboStep:0,attack:{t:.46}};
  const states=[
@@ -23,10 +26,16 @@ try{
  ['attack1','attack',0,true,0],['attack2','attack',0,true,1],['attack3','attack',0,true,2],
  ['heavy','attack',0,true,3],['swim','swim',3,false],['hurt','hurt',0,true],['death','dead',0,true]
  ];
- let draws=0;
+ let draws=0,rollAngle=0,trailPass=false;
  for(const [name,state,speed,grounded,comboStep] of states){
   p={...p,state,speed,grounded,comboStep:comboStep??0};
+  p.stateTime=name==='roll'?.31:name.startsWith('attack')?.2:0;
   hero.update(1/60,p);renderer.render(scene,camera);draws++;
+  if(name==='roll')rollAngle=hero.rollPivot.rotation.x;
+  if(name.startsWith('attack')){
+    for(let j=0;j<9;j++){p.stateTime=.16+j/120;hero.update(1/120,p);}
+    trailPass ||=hero.trail.visible;
+  }
   if(hero.key!==(!grounded&&state==='move'?'jump':state==='hf_dash'?'dash':state==='swim'?'swim':state==='roll'?'roll':state==='hurt'?'hurt':state==='dead'?'dead':state==='attack'?(comboStep===3?'heavy':'attack'+(comboStep+1)):state==='move'?(speed>5.8?'sprint':speed>2.6?'run':speed>.2?'walk':'idle'):'jump'))
     throw Error('Incorrect animation routing at '+name+': '+hero.key);
  }
@@ -41,6 +50,8 @@ try{
  }
  const b=new THREE.Box3().setFromObject(hero.root),size=b.getSize(new THREE.Vector3());
  if(changed<100)throw Error('Hero model invisible: only '+changed+' non-background pixels');
+ if(!(rollAngle>2.5&&rollAngle<4))throw Error('360 roll half turn missing: '+rollAngle);
+ if(!trailPass)throw Error('Weapon trail not emitted during original Unsung hit window');
  if(!(size.y>.8&&size.y<4))throw Error('Hero model height out of range '+size.y);
- report(true,{meshCount:hero.visibleMeshes,swordCount:hero.swordMeshes,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+ report(true,{meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}

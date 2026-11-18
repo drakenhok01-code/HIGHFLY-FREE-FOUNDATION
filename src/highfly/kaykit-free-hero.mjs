@@ -23,6 +23,15 @@ export class KayKitFreeHero {
    this.pipe=pipe;this.root=data.scene;
    this.root.name='HIGHFLY_KAYKIT_FREE_KNIGHT';
    this.root.scale.setScalar(1.82/2.4374973315);
+   // The KayKit GLB is a skin, not the physics authority: one Unsung capsule.
+   this.actor=new THREE.Group();this.actor.name='HIGHFLY_ONE_KAYKIT_ACTOR';
+   this.rollPivot=new THREE.Group();this.rollPivot.name='UNSUNG_FULL_BODY_ROLL';
+   this.offset=new THREE.Group();this.offset.position.y=-.91;this.rollPivot.position.y=.91;
+   this.actor.add(this.rollPivot);this.rollPivot.add(this.offset);this.offset.add(this.root);
+   const armored=new URLSearchParams(globalThis.location?.search??'').get('hflook')==='armored';
+   const hidden=new Set(HIDE);
+   if(!armored)for(const name of ['Knight_Helmet','Knight_HelmetVisor','Knight_Cape'])hidden.add(name);
+   this.bodyParts=new Set();this.sword=null;
    this.root.frustumCulled=false;
    this.socket=null;this.visibleMeshes=0;this.swordMeshes=0;
    const norm=n=>(n??'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -33,19 +42,29 @@ export class KayKitFreeHero {
      if(n==='handslotr'||n==='righthandslot')this.socket=o;
      if(!handFallback&&['handr','righthand','handright'].includes(n))handFallback=o;
      if(!o.isMesh)return;
-     o.visible=!HIDE.has(o.name);
+     o.visible=!hidden.has(o.name);
+     if(/^Knight_(Body|Head|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(o.name)){
+       o.visible=true;this.bodyParts.add(o.name);
+     }
+     if(o.visible&&/^1H_Sword$/i.test(o.name))this.sword=o;
      if(o.visible)this.visibleMeshes++;
      if(o.visible&&/^1h.?sword$/i.test(o.name))this.swordMeshes++;
      o.frustumCulled=false;
      // Original Unsung lighting uses custom shaders, not Three's stock light objects.
      // Use the CC0 embedded texture unlit for a reliable Android visibility test.
-     const basic=m=>new THREE.MeshBasicMaterial({
-       map:m.map??null,color:0xffffff,transparent:m.transparent??false,
-       alphaTest:m.alphaTest??0,side:THREE.DoubleSide
-     });
-     o.material=Array.isArray(o.material)?o.material.map(basic):basic(o.material);
+     // Do not throw away glTF texture, vertex colors, UV and skinned PBR.
+     const faithful=m=>{
+       const mat=m.clone();mat.side=THREE.DoubleSide;mat.depthWrite=true;
+       mat.transparent=false;mat.opacity=1;
+       if('metalness' in mat)mat.metalness=0;
+       if('roughness' in mat)mat.roughness=.86;
+       mat.needsUpdate=true;return mat;
+     };
+     o.material=Array.isArray(o.material)?o.material.map(faithful):faithful(o.material);
    });
    this.socket??=handFallback??this.root;
+   if(this.bodyParts.size!==6)throw Error('KayKit body incomplete: '+[...this.bodyParts].join(','));
+   if(!this.sword)throw Error('KayKit 1H_Sword not found for actual tip/trail');
    if(this.socket===this.root)console.warn('[HIGHFLY] KayKit FREE right-hand socket not found; using root hit-effect position without blocking character rendering');
    console.log('[HIGHFLY] KayKit FREE visible meshes='+this.visibleMeshes+' swordMeshes='+this.swordMeshes+' tipSocket='+this.socket.name);
    if(!this.visibleMeshes)throw Error('KayKit FREE contains no visible character meshes');
@@ -56,7 +75,25 @@ export class KayKitFreeHero {
    this.flash={value:0};this.rim={value:0}; // Compatible with Unsung Game event handlers
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
    this.landSignal=0;this.hitSignal=0;this.updated=false;
-   pipe.scene.add(this.root);
+   // Unsung shaders do not emit Three lights; illuminate only the skinned GLTF.
+   this.hemi=new THREE.HemisphereLight(0xfff7e8,0x56516e,2.0);
+   this.sun=new THREE.DirectionalLight(0xffebd0,1.8);
+   this.sun.position.set(-3,9,7);
+   pipe.scene.add(this.hemi,this.sun,this.actor);
+   this.trailHistory=[];this.trailMax=18;
+   const geo=new THREE.BufferGeometry();
+   geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(this.trailMax*6),3));
+   const indices=[];
+   for(let i=0;i<this.trailMax-1;i++){const a=i*2;indices.push(a,a+1,a+2,a+2,a+1,a+3);}
+   geo.setIndex(indices);geo.setDrawRange(0,0);
+   this.trail=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({
+     color:0xffd77e,transparent:true,side:THREE.DoubleSide,
+     depthWrite:false,blending:THREE.AdditiveBlending,opacity:.8
+   }));
+   this.trail.frustumCulled=false;this.trail.visible=false;
+   this.trail.name='HIGHFLY_ACTUAL_SWORD_TIP_TRAIL';
+   pipe.scene.add(this.trail);
+   this.bladeBase=new THREE.Vector3();
    this.play('idle');
  }
  play(key,duration=0){
@@ -98,13 +135,55 @@ export class KayKitFreeHero {
    else if(speed>.2)key='walk';
    this.play(key,duration);
    this.mixer.update(dt);
-   this.root.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
-   this.root.rotation.y=p.yaw;
-   this.root.updateWorldMatrix(true,true);
-   const next=this.socket.getWorldPosition(new THREE.Vector3());
+   // One actor transform driven exclusively by Unsung Player; no root-motion.
+   this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
+   this.actor.rotation.y=p.yaw;
+   const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
+   const eased=k*k*(3-2*k);
+   // Unsung's 360-degree full-body ROLL, around the torso rather than the feet.
+   this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
+   this.rollPivot.position.y=.91-(p.state==='roll'?.24*Math.sin(Math.PI*k):0);
+   this.actor.updateWorldMatrix(true,true);
+   const {base,next}=this._swordEndpoints();
+   this.bladeBase.copy(base);
    if(this.updated&&dt>0)this.tipVel.copy(next).sub(this.lastTip).divideScalar(dt);
    else this.tipVel.set(0,0,0);
    this.tip.copy(next);this.lastTip.copy(next);this.updated=true;
+   this._drawBladeTrail(Math.max(0,dt),p);
+ }
+ _swordEndpoints(){
+   // Longest actual local weapon-geometry axis, rather than the hand socket.
+   const g=this.sword.geometry;
+   if(!g.boundingBox)g.computeBoundingBox();
+   const bb=g.boundingBox,span=bb.getSize(new THREE.Vector3());
+   const axis=span.y>=span.x&&span.y>=span.z?'y':span.x>=span.z?'x':'z';
+   const a=bb.getCenter(new THREE.Vector3()),b=a.clone();
+   a[axis]=bb.min[axis];b[axis]=bb.max[axis];
+   this.sword.updateWorldMatrix(true,false);
+   this.sword.localToWorld(a);this.sword.localToWorld(b);
+   const hand=this.socket.getWorldPosition(new THREE.Vector3());
+   return a.distanceToSquared(hand)<b.distanceToSquared(hand)?{base:a,next:b}:{base:b,next:a};
+ }
+ _drawBladeTrail(dt,p){
+   for(const h of this.trailHistory)h.age+=dt;
+   this.trailHistory=this.trailHistory.filter(h=>h.age<.18);
+   const attack=p.state==='attack'&&p.attack&&
+     p.stateTime>=p.attack.hit[0]-.035&&p.stateTime<=p.attack.hit[1]+.04;
+   if(attack&&this.sword.visible){
+     this.trailHistory.push({a:this.bladeBase.clone(),b:this.tip.clone(),age:0});
+     if(this.trailHistory.length>this.trailMax)this.trailHistory.shift();
+   }
+   const n=this.trailHistory.length;
+   if(n<2){this.trail.visible=false;this.trail.geometry.setDrawRange(0,0);return;}
+   const pos=this.trail.geometry.attributes.position;
+   for(let i=0;i<n;i++){
+     const h=this.trailHistory[i];
+     const start=h.a.clone().lerp(h.b,.15+.65*h.age/.18);
+     pos.setXYZ(i*2,start.x,start.y,start.z);
+     pos.setXYZ(i*2+1,h.b.x,h.b.y,h.b.z);
+   }
+   pos.needsUpdate=true;this.trail.geometry.setDrawRange(0,(n-1)*6);
+   this.trail.visible=true;this.trail.material.opacity=attack?.8:.46;
  }
  onHit(){this.hitSignal++}
  onLand(){this.landSignal++}
