@@ -135,8 +135,19 @@ export class KayKitFreeHero {
        if(item)item.visible=(item===selected);
      }
      this.sword=selected;
+     const changed=this.weaponStyle!==weapon;
      this.weaponStyle=weapon;
      this.swordMeshes=1;
+     if(changed){
+       // AnimationMixer actions cache by key. Merely changing the visible
+       // weapon leaves attack1/attack2/attack3 cached for the previous grip.
+       // Release ONLY visual attack clips; native Unsung damage never changes.
+       for(const key of ['attack1','attack2','attack3','heavy']){
+         const action=this.actions.get(key);
+         if(action){action.stop();this.actions.delete(key);}
+       }
+       this.current=null;this.key='';
+     }
      this.trailHistory.length=0;this.trail.visible=false;
    }
    if(helmet!==undefined){
