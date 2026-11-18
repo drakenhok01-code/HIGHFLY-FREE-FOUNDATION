@@ -110,17 +110,60 @@ export class KayKitFreeHero {
    pipe.scene.add(this.trail);
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
+   this.weaponStyle='onehand';
    this.availableActions=[...this.clips.keys()];
    this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',look:this.originalLook?'original-kaykit':'anime-v66',rig:this.profile.rig,
     bodyParts:this.bodyParts.size,clips:this.availableActions.length,
     boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
     renderContexts:1,cpuSkin:false,overlay:false,swimBoneChannels:this._hfSwimPoseCount};
    globalThis.__highflyActorReport=this.diagnostics;
+   this.setEquipment({weapon:'onehand'});
    console.log('[HIGHFLY CLEAN HERO]',JSON.stringify(this.diagnostics));
+ }
+ /** F0.8.2: real equipment visibility from the single CC0 Knight rig.
+  * No character/class swap. Additional GLTF weapons can use the same socket
+  * contract, but have to be imported, fitted and independently QA-tested.
+  */
+ setEquipment({weapon,helmet,shield}={}){
+   const allowed={onehand:'1H_Sword',twohand:'2H_Sword'};
+   if(weapon!==undefined){
+     if(!Object.hasOwn(allowed,weapon))return false;
+     const selected=this.root.getObjectByName(allowed[weapon]);
+     if(!selected?.isMesh)return false;
+     for(const name of Object.values(allowed)){
+       const item=this.root.getObjectByName(name);
+       if(item)item.visible=(item===selected);
+     }
+     this.sword=selected;
+     this.weaponStyle=weapon;
+     this.swordMeshes=1;
+     this.trailHistory.length=0;this.trail.visible=false;
+   }
+   if(helmet!==undefined){
+     for(const name of ['Knight_Helmet','Knight_HelmetVisor']){
+       const item=this.root.getObjectByName(name);if(item)item.visible=!!helmet;
+     }
+   }
+   if(shield!==undefined){
+     const item=this.root.getObjectByName('Round_Shield');
+     if(item)item.visible=!!shield;
+   }
+   if(this.diagnostics)this.diagnostics.equipment={
+     weapon:this.weaponStyle??'onehand',
+     helmet:!!this.root.getObjectByName('Knight_Helmet')?.visible,
+     shield:!!this.root.getObjectByName('Round_Shield')?.visible
+   };
+   return true;
  }
  play(key,duration=0){
    if(key===this.key)return;
-   const raw=this.clips.get(CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle));
+   const twoHandClips={
+     attack1:'2H_Melee_Attack_Slice',attack2:'2H_Melee_Attack_Chop',
+     attack3:'2H_Melee_Attack_Spin',heavy:'2H_Melee_Attack_Spinning'
+   };
+   const visualName=this.weaponStyle==='twohand'&&twoHandClips[key]
+      ?twoHandClips[key]:(CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle));
+   const raw=this.clips.get(visualName);
    const clip=raw.clone();
    // Physics is exclusively Unsung's kinematic capsule: strip animated root translations
    // so cinematic/dodge clips cannot teleport the collision body or visual origin.
