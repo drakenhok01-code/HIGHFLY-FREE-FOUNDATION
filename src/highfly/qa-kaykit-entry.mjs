@@ -140,11 +140,35 @@ try{
  if(!(hero._rollTuck>.95&&hero.offset.scale.y<.75))
   throw Error('ROLL remains tall backflip; grounded tuck not applied');
 
+ // A real single character can exchange rigid weapons and equipment without
+ // spawning another actor or replacing any of the 41 KayKit bones.
+ const previousActor=hero.actor;
+ if(!hero.setEquipment({weapon:'twohand',helmet:true,shield:true}))
+  throw Error('Cannot equip CC0 two-handed sword and helmet/shield');
+ if(!hero.root.getObjectByName('2H_Sword')?.visible||
+     hero.root.getObjectByName('1H_Sword')?.visible||
+     !hero.root.getObjectByName('Knight_Helmet')?.visible||
+     !hero.root.getObjectByName('Round_Shield')?.visible)
+   throw Error('Equipment slots not bound to original KayKit rig');
+ hero.update(1/60,{...pj,state:'attack',comboStep:0,attack:{t:.46,hit:[.14,.27]}});
+ const twoHandClip=hero.current.getClip().name;
+ if(twoHandClip!=='2H_Melee_Attack_Slice')
+  throw Error('2H sword combat must play its own original free KayKit clip: '+twoHandClip);
+ if(!hero.setEquipment({weapon:'onehand',helmet:false,shield:false}))
+  throw Error('Cannot equip 1H sword');
+ if(hero.actor!==previousActor||hero.root.getObjectByName('2H_Sword')?.visible||
+     !hero.root.getObjectByName('1H_Sword')?.visible)
+  throw Error('Gear switching must never change or duplicate the player body');
+ hero.update(1/60,{...pj,state:'attack',comboStep:1,attack:{t:.46,hit:[.13,.26]}});
+ const oneHandClip=hero.current.getClip().name;
+ if(oneHandClip!=='1H_Melee_Attack_Chop')
+  throw Error('1H sword combat clip lost: '+oneHandClip);
+
  const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged,swimBoneChannels:hero._hfSwimPoseCount,swimAngle,groundRollTuck:hero._rollTuck,actionsMapped:social.length};
+  rollAngle,trailVisible,swordCount:hero.swordMeshes,gearSwitchTest:{twoHandClip,oneHandClip},originalLookPixels:origChanged,swimBoneChannels:hero._hfSwimPoseCount,swimAngle,groundRollTuck:hero._rollTuck,actionsMapped:social.length};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}
