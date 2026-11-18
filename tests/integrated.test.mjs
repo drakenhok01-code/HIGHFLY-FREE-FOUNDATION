@@ -28,7 +28,7 @@ test('Joystick movement never triggers attack, explicit ATK triggers first combo
  const input={move:{x:0,y:0},pressed:new Set(['attack']),held:new Set(),look:{x:0,y:0}};
  p.update(1/60,input,0);assert.equal(p.state,'attack');assert.equal(p.comboStep,0);
 });
-test('Native input excludes pointer lock and mouse attacks for Android',()=>{
+test('Native input excludes pointer lock and mouse attacks for Android',async()=>{
  const fs=await import('node:fs');const source=fs.readFileSync('.work/unsung/src/game/input.js','utf8');
  assert.match(source,/if \(this.highflyTouch\) return; \/\/ never lock mouse/);
  assert.match(source,/if \(this.highflyTouch\) return; \/\/ never turn touch/);
