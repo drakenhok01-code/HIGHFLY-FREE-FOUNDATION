@@ -215,7 +215,11 @@ export function installHighflyUniversalMotion(p){
    const floor=this.world.floorBelow(this.pos.x,surface-.1,this.pos.z,15);
    if(Number.isFinite(floor)&&surface-floor>1.45){
     const target=Math.max(floor+.68,surface-2.35);
-    const next=Math.max(target,Math.min(this.pos.y,previousY-2.15*dt));
+    // On first water entry the native controller may still be at the bottom.
+    // Never teleport upward to the seabed clearance height.
+    const next=previousY<target?
+      Math.min(target,Math.max(this.pos.y,previousY)):
+      Math.max(target,Math.min(this.pos.y,previousY-2.15*dt));
     // No noclip below seabed and no second water physics body.
     this.vel.y=(next-previousY)/Math.max(.001,dt);
     this.pos.y=next;this.viewY=this._viewY1=next;this.grounded=false;

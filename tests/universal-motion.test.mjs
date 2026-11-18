@@ -315,3 +315,35 @@ test('F0.11.5 shallow water never enters swimming',()=>{
  for(let i=0;i<30;i++)p.update(1/60,input([],[],0,1),0);
  assert.notEqual(p.state,'swim');
 });
+
+test('F0.11.6 hold ATK chains multiple REAL Unsung 1-2-3 strikes without blocking movement',()=>{
+ const p=player(),startZ=p.pos.z;
+ for(let frame=0;frame<230;frame++)p.update(1/60,input([],['attack'],0,1),0);
+ const swings=(p.events??[]).filter(e=>e.type==='swing');
+ assert.ok(swings.length>=5,'a held attack must continue for multiple combo cycles: '+swings.length);
+ assert.deepEqual(swings.slice(0,3).map(e=>e.index),[0,1,2],'original three-step combo preserved');
+ assert.ok(p.pos.z>startZ+2.2,'actor travels while sustaining repeated strikes');
+ assert.equal(p._hfUniversalInstalled,true,'one player controller');
+});
+test('F0.11.6 BUCEAR descends under surface without passing through the seabed and resurfaces',()=>{
+ const w={...ground,waterLevel:()=>3};
+ const p=player(w);
+ for(let i=0;i<210;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'swim');
+ const top=p.pos.y;
+ p.update(1/60,input(['dive']),0);
+ assert.equal(p._hfDive,true);
+ for(let i=0;i<95;i++)p.update(1/60,input(),0);
+ assert.ok(p.pos.y<top-.40,'diving produces real downward motion');
+ assert.ok(p.pos.y>=.68-1e-3,'diving never enters terrain floor');
+ p.update(1/60,input(['dive']),0);
+ assert.equal(p._hfDive,false);
+ for(let i=0;i<150;i++)p.update(1/60,input(),0);
+ assert.ok(p.pos.y>top-.30,'buoyancy returns swimmer near surface');
+});
+test('F0.11.6 waterline near a wall can activate climbing without standing up',()=>{
+ const w={...ground,waterLevel:()=>3,raycast:()=>.48};
+ const p=player(w);p.update(1/60,input(),0);assert.equal(p.state,'swim');
+ p.update(1/60,input(['climb']),0);
+ assert.equal(p.state,'hf_climb');
+});

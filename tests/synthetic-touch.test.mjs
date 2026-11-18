@@ -40,7 +40,12 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
   assert.deepEqual(input.move,{x:0,y:0},'stick resets when finger lifts');
   btns[0].dispatch('pointerdown',4,10,10);input.pressed.clear();applyHighflyTouch(input);
   assert.ok(input.pressed.has('attack'),'ATK button is only explicit attack source');
-  input.pressed.clear();applyHighflyTouch(input);assert.ok(!input.pressed.has('attack'),'ATK is one shot');
+  assert.ok(input.held.has('attack'),'ATK is held to continue the native combo');
+  input.pressed.clear();input.held.clear();applyHighflyTouch(input);
+  assert.ok(!input.pressed.has('attack'),'one initial press per finger');
+  assert.ok(input.held.has('attack'),'hold is sustained without extra press events');
+  btns[0].dispatch('pointerup',4,10,10);input.held.clear();applyHighflyTouch(input);
+  assert.equal(input.held.has('attack'),false,'releasing ATK stops automatic chaining');
   cam.dispatch('pointermove',2,120,80);assert.equal(input._dx,80,'camera continues after stick release');
  }finally{for(const [k,v] of Object.entries(previous))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });

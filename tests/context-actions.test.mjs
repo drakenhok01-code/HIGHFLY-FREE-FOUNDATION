@@ -38,3 +38,14 @@ test('F0.11.4 native untagged trees are climbing surfaces, never chopped',()=>{
  assert.equal(resolveHighflyContext(p).action,'climb');
  assert.equal(resolveHighflyUse(p).action,'interact');
 });
+
+test('F0.11.6 in water contextual action is BUCEAR, not surface fishing',()=>{
+ const p={...player,state:'swim',grounded:false,world:{...player.world,raycast:()=>1.08}};
+ assert.deepEqual(resolveHighflyContext(p),{action:'dive',label:'BUCEAR'});
+ p._hfDive=true;
+ assert.deepEqual(resolveHighflyContext(p),{action:'dive',label:'SUPERFICIE'});
+});
+test('F0.11.6 climbable quay in water has priority over BUCEAR',()=>{
+ const p={...player,state:'swim',grounded:false,world:{...player.world,raycast:()=>.44}};
+ assert.deepEqual(resolveHighflyContext(p),{action:'climb',label:'TREPAR'});
+});

@@ -143,22 +143,26 @@ try{
  const headBone=hero._bone('head'),armBone=hero._bone('upperarm.l');
  if(!headBone||!armBone)throw Error('Missing KayKit swimming head/arm bones');
  const headRest=headBone.quaternion.clone(),armRest=armBone.quaternion.clone();
- let swimPitchMax=0,swimHeadAngleMax=0,swimArmAngleMax=0;
+ hero.actor.updateMatrixWorld(true);
+ const headWorldRest=headBone.getWorldQuaternion(new THREE.Quaternion());
+ let swimPitchMax=0,swimHeadAngleMax=0,swimHeadWorldMax=0,swimArmAngleMax=0;
  for(let k=0;k<120;k++){
   const speed=k<20?0:2.4;
   hero.update(1/60,{...p,state:'swim',grounded:false,speed,stateTime:k/60});
   swimPitchMax=Math.max(swimPitchMax,Math.abs(hero.rollPivot.rotation.x));
   swimHeadAngleMax=Math.max(swimHeadAngleMax,headBone.quaternion.angleTo(headRest));
+  swimHeadWorldMax=Math.max(swimHeadWorldMax,
+    headBone.getWorldQuaternion(new THREE.Quaternion()).angleTo(headWorldRest));
   swimArmAngleMax=Math.max(swimArmAngleMax,armBone.quaternion.angleTo(armRest));
   for(const value of [...headBone.quaternion.toArray(),...armBone.quaternion.toArray(),hero.rollPivot.rotation.x])
    if(!Number.isFinite(value))throw Error('NaN in KayKit CC0 swim animation');
  }
- if(swimPitchMax>.83||swimHeadAngleMax>1.2||swimArmAngleMax<.035)
-  throw Error('Swim animation head/strokes broken '+JSON.stringify({swimPitchMax,swimHeadAngleMax,swimArmAngleMax}));
+ if(swimPitchMax>.83||swimHeadWorldMax>.30||swimArmAngleMax<.035)
+  throw Error('WORLD-SPACE swim head still reversed '+JSON.stringify({swimPitchMax,swimHeadWorldMax,swimHeadAngleMax,swimArmAngleMax}));
  for(let k=0;k<32;k++)hero.update(1/60,neutral);
  if(Math.abs(hero.rollPivot.rotation.x)>.02)
   throw Error('Swimming body failed to return upright');
- const swimQA={swimPitchMax,swimHeadAngleMax,swimArmAngleMax,returnPitch:hero.rollPivot.rotation.x};
+ const swimQA={swimPitchMax,swimHeadWorldMax,swimHeadAngleMax,swimArmAngleMax,returnPitch:hero.rollPivot.rotation.x};
  const equipmentModes=['sword','greatsword','dual','shield','unarmed','spear','staff'];
  for(let i=0;i<equipmentModes.length;i++){
    const mode=hero.equip(i);
