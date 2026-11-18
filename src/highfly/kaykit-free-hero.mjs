@@ -171,8 +171,10 @@ export class KayKitFreeHero {
    const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key)||
     (key.startsWith('raw:')&&!/_(Idle|Pose|Shooting)$/.test(key));
    action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);
-   action.clampWhenFinished=once;
-   action.timeScale=duration>0?Math.min(3,Math.max(.3,clip.duration/duration)):1;
+   // Finished attacks cannot hold and overlay a last-frame sword pose.
+   action.clampWhenFinished=key==='dead'||key.includes('Pose');
+   // Keep Unsung attack hit windows, but avoid 3x sped-up KayKit slashes.
+   action.timeScale=duration>0?Math.min(2.1,Math.max(.75,clip.duration/duration)):1;
    if(this.current&&this.current!==action)this.current.fadeOut(.12);
    action.fadeIn(.12).play();
    this.current=action;this.key=key;this._playToken=token;
@@ -217,9 +219,10 @@ export class KayKitFreeHero {
    if((p._hfGearCycle??0)!==this._lastEquipCycle){
     const index=p._hfGearCycle??0;this.equip(index);this._lastEquipCycle=index;
    }
-   const layered=p.state==='attack'&&p.grounded&&speed>.3;
+   // Upper-body attack lane MUST remain stable until the attack ends.
+   const layered=p.state==='attack';
    this.play(key,duration,layered);
-   if(layered)this._playLower(speed>5.8?'Running_B':speed>2.6?'Running_A':'Walking_A');
+   if(layered)this._playLower(speed>5.8?'Running_B':speed>2.6?'Running_A':speed>.3?'Walking_A':'Idle');
    else if(this.lowerCurrent){
      this.lowerCurrent.fadeOut(.12);this.lowerCurrent=null;this.lowerKey='';
    }
@@ -238,7 +241,8 @@ export class KayKitFreeHero {
    this._swimBlend=THREE.MathUtils.clamp(this._swimBlend+(p.state==='swim'?1:-1)*dt*4,0,1);
    this.rollPivot.rotation.x=p.state==='roll'?
      (direction==='backward'?-1:direction==='forward'?1:0)*Math.PI*2*eased:
-     this._swimBlend*(1.16+.05*Math.sin(this._hfPhase*.65));
+     // Shoulder and head no longer inherit the 66-degree unstable body flip.
+     this._swimBlend*.78;
    this.rollPivot.rotation.z=p.state==='roll'?
      (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
@@ -292,7 +296,7 @@ export class KayKitFreeHero {
     this._addPose('upperleg.r','x',-.3*Math.sin(phase*1.7)*amount);
     this._addPose('lowerleg.l','x',(.24+.3*Math.max(0,left))*amount);
     this._addPose('lowerleg.r','x',(.24+.3*Math.max(0,right))*amount);
-    this._addPose('head','x',-.28*amount);
+    // Keep the head fixed relative to upper torso; no Power Ranger neck twist.
    }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
    const phase=this._hfPhase*4;
    this._addPose('upperarm.l','x',-.78+.27*Math.sin(phase));

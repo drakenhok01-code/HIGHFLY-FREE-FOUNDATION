@@ -147,3 +147,14 @@ test('F0.10 ROLL costs 12 and chooses visual direction',()=>{
  assert.equal(p.state,'roll');assert.equal(before-p.stamina,12);
  assert.equal(p._hfRollVisual,'backward');
 });
+
+test('F0.11 sitting or lying cancels from actual left-stick movement',()=>{
+ const p=player();p.update(1/60,input(['sit']),0);
+ assert.equal(p.state,'hf_action');
+ p.update(1/60,input([],[],.56,0),0);
+ assert.equal(p.state,'move');
+ p.update(1/60,input(['lie']),0);
+ assert.equal(p.state,'hf_action');
+ p.update(1/60,input([],[],0,.6),0);
+ assert.equal(p.state,'move');
+});

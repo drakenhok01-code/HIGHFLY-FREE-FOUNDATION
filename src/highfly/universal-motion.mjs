@@ -124,7 +124,8 @@ export function installHighflyUniversalMotion(p){
   if(this.state==='hf_action'){
    const action=this._hfAction;
    if(!action){this.setState('move');return;}
-   if(input.pressed.has('jump')||input.pressed.has('attack')||
+   const moveIntent=Math.hypot(input.move?.x??0,input.move?.y??0)>.22;
+   if(moveIntent||input.pressed.has('jump')||input.pressed.has('attack')||
       input.pressed.has('dash')||input.pressed.has('dodge')){
     this._hfAction=null;this.setState('move');
     // Pass the canceling input back to original Unsung.
@@ -133,7 +134,7 @@ export function installHighflyUniversalMotion(p){
     if(action.time>=ACTIONS[action.name].duration&&!ACTIONS[action.name].idle){
      this._hfAction=null;this.setState('move');this.emit('highflyActionEnd',{name:action.name});
     }
-    // Sit/lie remain in their idle clip until Jump, ATK, DASH or ROLL cancels.
+    // Sit/lie idle cancels on the joystick deadzone or other movement/attack action.
     return;
    }
   }
