@@ -156,6 +156,8 @@ copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/univers
 copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
+copy(path.join(ROOT,'src/highfly/qa-touch.html'),loc('qa-touch.html'));
+copy(path.join(ROOT,'src/highfly/qa-touch-entry.mjs'),loc('src/highfly/qa-touch-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));

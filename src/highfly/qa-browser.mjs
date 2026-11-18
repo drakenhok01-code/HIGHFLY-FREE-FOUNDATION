@@ -32,4 +32,40 @@ try{
  assert.equal(errors.length,0,'Browser threw JS errors');
  assert.ok(report.changedPixels>100,'Knight pixels missing');
  console.log('PASS KayKit FREE WebGL2 image + actual 14 animation states + sword and socket');
+ // F0.11 Android-specific physical viewport test: the context circle must
+ // actually render and DASH dragging must not steer the movement joystick.
+ const android=await browser.newContext({
+   viewport:{width:915,height:412},deviceScaleFactor:1,isMobile:true,hasTouch:true,
+   userAgent:'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 Chrome/140.0 Mobile Safari/537.36'
+ });
+ const mobile=await android.newPage();
+ await mobile.goto('http://127.0.0.1:5175/qa-touch.html',{waitUntil:'domcontentloaded',timeout:30000});
+ await mobile.waitForFunction('window.__hfTouchTest?.ready && !document.querySelector("#hf-touch")?.hidden',null,{timeout:10000});
+ const buttons=await mobile.evaluate(()=>{
+  const context=document.querySelector('#hf-touch .context');
+  const dash=document.querySelector('#hf-touch .dash');
+  const roll=document.querySelector('#hf-touch .roll');
+  const rect=e=>e?.getBoundingClientRect();
+  const c=rect(context),d=rect(dash),r=rect(roll);
+  return {width:innerWidth,height:innerHeight,visible:!!c&&
+   getComputedStyle(context).display!=='none'&&
+   getComputedStyle(context).visibility==='visible'&&
+   c.width>45&&c.x>=0&&c.right<=innerWidth,
+   context:{x:c?.x,y:c?.y,width:c?.width},dash:{x:d?.x,y:d?.y,width:d?.width},
+   roll:{x:r?.x,y:r?.y,width:r?.width},
+   adjacent:!!c&&!!d&&Math.abs(c.right-d.left)<22};
+ });
+ assert.ok(buttons.visible&&buttons.adjacent,'Context button must be visible next to DASH on S23 landscape: '+JSON.stringify(buttons));
+ const d=await mobile.locator('#hf-touch .dash').boundingBox();
+ await mobile.mouse.move(d.x+d.width/2,d.y+d.height/2);
+ await mobile.mouse.down();
+ await mobile.mouse.move(d.x+d.width/2+34,d.y+d.height/2,{steps:4});
+ await mobile.mouse.up();
+ await mobile.waitForFunction('window.__hfTouchTest?.dash !== null',null,{timeout:6000});
+ const drag=await mobile.evaluate(()=>window.__hfTouchTest.dash);
+ assert.ok(drag.direction?.x>.9 && Math.abs(drag.move.x)<.001,'Independent rightward DASH circle aim '+JSON.stringify(drag));
+ await mobile.screenshot({path:'qa-touch-mobile.png'});
+ fs.writeFileSync('qa-touch-report.json',JSON.stringify({buttons,drag},null,2));
+ console.log('PASS F0.11 S23 LANDSCAPE HUD / CONTEXT CIRCLE / RADIAL AIM',JSON.stringify({buttons,drag}));
+ await android.close();
 }finally{await browser?.close();server.kill('SIGTERM');}

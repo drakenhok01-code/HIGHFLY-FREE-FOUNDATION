@@ -48,6 +48,8 @@ jobs:
             .work/unsung/qa-kaykit-report.json
             .work/unsung/qa-world-kaykit.png
             .work/unsung/qa-world-kaykit-report.json
+            .work/unsung/qa-touch-mobile.png
+            .work/unsung/qa-touch-report.json
           if-no-files-found: ignore
       - name: Auditar dist antes de publicar
         run: npm run qa:dist
