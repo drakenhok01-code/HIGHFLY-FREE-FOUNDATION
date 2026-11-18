@@ -102,6 +102,7 @@ copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';","import { FILM } from './engine/quality.js';\nimport { installHighflyFog } from './highfly/fog.mjs';\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';");
