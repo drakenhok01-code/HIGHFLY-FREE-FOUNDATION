@@ -95,6 +95,37 @@ const kaykitResult=await downloadPinned(kaykitAsset,'60428e3abc09ba83e595d256e3a
 const kaykitLicense=loc('KAYKIT-FREE-LICENSE.txt');
 await downloadPinned('LICENSE.txt','ae322141814056dda0deea7540d74c41d87aee1da319977cd1bd84ee5a923629',kaykitLicense);
 records.push({id:'kaykit-free:Knight.glb',path:'models/hf-kaykit-knight.glb',source:kaykitResult.url,commit:kaykitCommit,bytes:kaykitResult.bytes,sha256:hash(kaykitModel),license:'CC0-1.0',decision:'ALLOW',commercial:true,redistribution:true,attributionRequired:false,author:'Kay Lousberg'});
+// F0.11.2: exact Standard assets from our Library, pin-verified with
+// GitHub mirror. Source 15.7 MB is converted into only ~92 KB of animations.
+// SOURCE GLBs and mannequin meshes never enter the final bundle.
+const ualCommit='bb2ce469f0ab2ccfc487faef55550ba07fae2483';
+const ualRoot='https://raw.githubusercontent.com/Barbatos6669/elderforge/'+ualCommit+'/assets/animations/';
+const ualIn=[];
+for(const [folder,fileName,expected] of [
+ ['universal_animation_library_1/','UAL1_Standard.glb','69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997'],
+ ['universal_animation_library_2/','UAL2_Standard.glb','8cee20ab1bc55130092447e810e26df22dd2803eccc54f52137a7d54d7ab88a8']
+]){
+ const url=ualRoot+folder+fileName,response=await fetch(url);
+ if(!response.ok)throw Error('Pinned Quaternius unavailable '+response.status+' '+url);
+ const file=loc('hf-ual-internal/'+fileName);
+ fs.mkdirSync(path.dirname(file),{recursive:true});
+ fs.writeFileSync(file,Buffer.from(await response.arrayBuffer()));
+ if(hash(file)!==expected)throw Error('Quaternius GLB SHA-256 mismatch '+fileName);
+ ualIn.push(file);
+}
+const ualOut=loc('public/animation/hf-ual-retarget.json');
+run('node',[path.join(ROOT,'scripts/extract-ual.mjs'),...ualIn,ualOut]);
+const ualExtract=JSON.parse(fs.readFileSync(ualOut,'utf8'));
+for(const clip of ['Swim_Idle_Loop','Swim_Fwd_Loop','ClimbUp_1m'])
+ if(!ualExtract.clips?.[clip]||ualExtract.clips[clip].bones.length<10)
+  throw Error('UAL retarget clip invalid '+clip);
+records.push({id:'quaternius-ual:retargeted-swim-climb',path:'animation/hf-ual-retarget.json',
+ source:ualRoot+'universal_animation_library_1/UAL1_Standard.glb',
+ sources:[ualRoot+'universal_animation_library_1/UAL1_Standard.glb',ualRoot+'universal_animation_library_2/UAL2_Standard.glb'],
+ commit:ualCommit,bytes:fs.statSync(ualOut).size,sha256:hash(ualOut),
+ license:'CC0-1.0',decision:'ALLOW',commercial:true,redistribution:true,
+ attributionRequired:false,author:'Quaternius',clips:Object.keys(ualExtract.clips)});
+ 
 // F0.10: two original MIT Emberfall Blender models with frozen hashes.
 const emberCommit='5d199ab4888e428b0dab80528a37ab8ac0107360';
 const emberRoot='https://raw.githubusercontent.com/we1jia/emberfall/'+emberCommit+'/public/assets/models-v3/';
@@ -122,6 +153,7 @@ copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/styl
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
+copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
@@ -175,6 +207,7 @@ copy(path.join(ROOT,'src/highfly/catalogo-free.html'),path.join(output,'catalogo
 copy(loc('LICENSE'),path.join(output,'LICENSES','UNSUNG-MIT.txt'));
 copy(loc('CREDITS.md'),path.join(output,'CREDITS_UNSUNG.md'));
 copy(kaykitLicense,path.join(output,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt'));
+copy(path.join(ROOT,'LICENSES','QUATERNIUS-UAL-CC0.txt'),path.join(output,'LICENSES','QUATERNIUS-UAL-CC0.txt'));
 copy(path.join(ROOT,'LICENSES','EMBERFALL-MIT.txt'),path.join(output,'LICENSES','EMBERFALL-MIT.txt'));
 // Inventory the actual FREE GLB animation names and sockets: no guesswork.
 const kb=fs.readFileSync(kaykitModel);
@@ -211,5 +244,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.10 EMERGENCY DASH 5S, DIRECTIONAL ROLL, EMBERFALL SPEAR AND STAFF',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.11 COMBAT RECOVERY, ROLL/DASH AIM, ANCHORED CLIMB, QUATERNIUS UAL1/2 RETARGET',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');
