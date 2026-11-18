@@ -53,5 +53,24 @@ try{
  if(!(rollAngle>2.5&&rollAngle<4))throw Error('360 roll half turn missing: '+rollAngle);
  if(!trailPass)throw Error('Weapon trail not emitted during original Unsung hit window');
  if(!(size.y>.8&&size.y<4))throw Error('Hero model height out of range '+size.y);
- report(true,{meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
+
+ // Detect the "ghost armor" regression at rasterization level. Being marked
+ // visible in glTF is not enough: ALL six BODY pieces must draw real pixels.
+ const all=[];hero.root.traverse(o=>{if(o.isMesh){all.push([o,o.visible]);o.visible=false;}});
+ hero.trail.visible=false;
+ const partPixels={};
+ for(const name of [...hero.bodyParts].sort()){
+  const mesh=hero.root.getObjectByName(name);
+  mesh.visible=true;renderer.render(scene,camera);
+  const layer=new Uint8Array(640*400*4);
+  gl.readPixels(0,0,640,400,gl.RGBA,gl.UNSIGNED_BYTE,layer);
+  let occupied=0;
+  for(let i=0;i<layer.length;i+=4)
+   if(Math.abs(layer[i]-17)>25||Math.abs(layer[i+1]-11)>25||Math.abs(layer[i+2]-27)>25)occupied++;
+  partPixels[name]=occupied;mesh.visible=false;
+  if(occupied<8)throw Error('BODY LAYER GHOST: '+name+' contributes only '+occupied+' pixels');
+ }
+ for(const [mesh,visible] of all)mesh.visible=visible;
+
+ report(true,{meshCount:hero.visibleMeshes,bodyParts:hero.bodyParts.size,partPixels,swordCount:hero.swordMeshes,rollAngle,trailPass,clipCount:hero.clips.size,draws,changedPixels:changed,modelHeight:size.y,socket:hero.socket.name});
 }catch(e){console.error(e);report(false,{error:e?.stack||String(e)});}
