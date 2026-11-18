@@ -145,6 +145,9 @@ run('npm',['ci','--no-audit','--no-fund'],origin);
 run('npm',['run','build','--','--base','/'+config.pagesRepo+'/'],origin);
 if(!fs.existsSync(loc('dist/index.html')))throw Error('No Vite output');
 fs.cpSync(loc('dist'),output,{recursive:true});
+copy(path.join(ROOT,'data/CATALOGO_FREE_KAYKIT_ADVENTURERS.json'),path.join(output,'catalogo-free.json'));
+copy(path.join(ROOT,'src/highfly/catalogo-free.html'),path.join(output,'catalogo.html'));
+
 copy(loc('LICENSE'),path.join(output,'LICENSES','UNSUNG-MIT.txt'));
 copy(loc('CREDITS.md'),path.join(output,'CREDITS_UNSUNG.md'));
 copy(kaykitLicense,path.join(output,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt'));

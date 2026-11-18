@@ -2,11 +2,11 @@
 
 **Android Samsung S23 Ultra horizontal primero.** Mundo, ciudades, biomas, agua, cielos, colisiones, navegación y entorno de [Unsung Vale](https://github.com/Leonxlnx/unsung-vale) son la base definitiva. No reconstruir, sustituir ni simplificar el mundo.
 
-## Estado actual: F0 experimental, aún no aprobado como demo 3D
+## Estado actual: F0.4 · KayKit FREE + comprobación WebGL real + dash + sprint + catálogos
 
-Esta rama construye el **Unsung original** desde el commit congelado \`9f61b0d80b18c6cf661f72372545b3f9214fb455\` **en GitHub Actions**, sin importar el historial privado. Añade un joystick táctil simple, cámara libre derecha, ATK, salto, ROLL, USAR, CORRER, fullscreen y ajuste persistente de bruma de 35%. DASH aparece bloqueado porque aún no existe como mecánica HIGHFLY independiente; no fingimos que esté implementado.
+Esta rama construye el **Unsung original** desde el commit congelado \`9f61b0d80b18c6cf661f72372545b3f9214fb455\` **en GitHub Actions**, sin importar el historial privado. Añade joystick táctil 360°, cámara libre, ATK, salto, ROLL, USAR, CORRER con toque para alternar, DASH direccional independiente, fullscreen y bruma persistente al 35%. La prueba de navegador Chromium carga el KayKit Knight GLB y valida sus animaciones, espada y socket; la jugabilidad en Samsung permanece pendiente.
 
-**No incluye todavía** personaje KayKit FREE, equipo visible, segundo salto, menús RPG, skills Emberfall ni sistemas de ClaudeCraft. Se agregan únicamente después de pruebas reales en Android.
+**Ya incluye** KayKit FREE Knight y una espada CC0 visible; **no incluye todavía** equipamiento intercambiable, segundo salto, menús RPG, skills Emberfall ni sistemas de ClaudeCraft. Estas funciones quedan pendientes de QA e integración por etapas.
 
 ## Repositorio y despliegue
 
@@ -30,3 +30,10 @@ KayKit FREE Knight se intenta cargar por defecto. Si falla, muestra ⚠ en panta
 
 ## F0.3 · Correcciones 18/11/2026
 KayKit Knight FREE ahora tolera la sanitización de nombres del GLTFLoader (`handslot.r` / `handslot_r`): no falla toda la carga por un único socket faltante. La espada CC0 incluida en el Knight queda visible. CORRER es **toggle al tocar**; el joystick continúa libre para un dedo, cámara independiente en el otro. DASH es una acción nueva (tecla V en PC) con física de cápsula Unsung, dirección analógica, cooldown de 0.78s, costo de 16 energía e invulnerabilidad limitada. La animación DASH usa Dodge_Forward temporalmente; NO es aún un set 4-direccional dedicado. Se preservan mundo Unsung, terreno y colisiones. Verificación gráfica Android obligatoria. Error específico del KayKit visible en el aviso para diagnóstico.
+
+## F0.4 · Inventarios y smoke WebGL real
+
+- [Catálogo FREE en GitHub Pages](https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/catalogo.html) — 32 assets de Adventurers 1.0 indexados con commit fijo y URLs oficiales; solo Knight GLB está integrado de momento.
+- [Auditoría de un personaje universal](docs/MATRIZ_REUSO_PERSONAJE_UNICO.md) — sin nueve clases ni party; rig, sockets, skills y equipo.
+- QA real Chromium/Three WebGL: carga GLB Knight, recorre 14 estados, renderiza espada/9 mallas, 76 clips, mano derecha. Este smoke es aislado: no sustituye QA de escena completa en Samsung.
+- SOURCE v7: inventario del usuario procesado de forma privada; **nunca se importa ni se publica en este repo FREE**.

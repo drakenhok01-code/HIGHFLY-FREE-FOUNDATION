@@ -25,4 +25,8 @@ for(const f of walk(root)){
 assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt')));
-console.log('PASS qa:dist '+JSON.stringify(groups));
+const free=JSON.parse(fs.readFileSync(path.join(root,'catalogo-free.json'),'utf8'));
+assert.equal(free.assets.length,32,'Official FREE index must remain pinned to 32 model sources');
+assert.ok(free.assets.every(x=>x.source.includes(free.commit)),'Unpinned model in official FREE index');
+assert.ok(fs.readFileSync(path.join(root,'catalogo.html'),'utf8').includes('HIGHFLY'),'Missing FREE catalog web page');
+console.log('PASS qa:dist '+JSON.stringify(groups)+' 32 public KayKit index entries');
