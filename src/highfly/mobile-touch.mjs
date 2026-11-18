@@ -14,6 +14,14 @@ export function joystickVector(rect,px,py,deadzone=0.07){
  // Unsung expects x = lateral right and y = camera-forward, like WASD.
  return {x:Math.abs(dx)<1e-12?0:dx,y:Math.abs(dy)<1e-12?0:-dy};
 }
+/** Drag from ability circle (not from walking joystick).
+ * Screen right => x+; screen up => y+; reject tiny accidental drags.
+ */
+export function abilityVector(dx,dy,deadzone=9){
+ const length=Math.hypot(dx,dy);
+ if(!Number.isFinite(length)||length<deadzone)return null;
+ return {x:dx/length,y:-dy/length};
+}
 export function resolveHighflyContext(p){
  const fallback={action:'climb',label:'TREPAR'};
  if(!p?.world||!p?.pos)return fallback;
@@ -58,7 +66,11 @@ export function attachHighflyTouch(input){
  '#hf-touch .action-panel[hidden]{display:none!important}',
  '#hf-touch .action-panel button{position:static;width:auto;height:43px;border-radius:8px;font-size:9px;padding:2px}',
  '#hf-touch .dash{right:162px;bottom:13px;width:59px;height:59px;border:2px solid #9c84fc;background:linear-gradient(135deg,#5c2eaa,#21103e)}',
- '#hf-touch .context{right:228px;bottom:13px;width:59px;height:59px;border:2px solid #68d8ca;background:linear-gradient(135deg,#1c6267,#16182e)}',
+ '#hf-touch .context{right:228px;bottom:13px;width:59px;height:59px;border:2px solid #68d8ca;background:linear-gradient(135deg,#1c6267,#16182e);z-index:5}', 
+ '#hf-touch .roll,#hf-touch .dash{z-index:6}',
+ '#hf-touch .ability-aim{display:none;position:absolute;width:108px;height:108px;box-sizing:border-box;border-radius:50%;border:2px solid #78e1fa;background:radial-gradient(circle,#473d8650,#14112d70);pointer-events:none;z-index:10;box-shadow:0 0 18px #57d4ffa0}',
+ '#hf-touch .ability-aim[data-active="1"]{display:flex;align-items:center;justify-content:center}',
+ '#hf-touch .aim-arrow{color:#e8f9ff;font:36px system-ui;text-shadow:0 0 10px #57d4ff;transform:rotate(-90deg)}',
  '#hf-rotate{display:none;position:fixed;inset:0;z-index:10000;place-items:center;background:#100e22;color:white;text-align:center;font:bold 19px system-ui}',
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
@@ -70,13 +82,14 @@ export function attachHighflyTouch(input){
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
  '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button>'+
+ '<div class="ability-aim" data-active="0"><span class="aim-arrow">➤</span></div>'+
  '<div class="action-panel" hidden>'+
  '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
  '<button data-a="sit">SENTAR</button><button data-a="lie">ACOSTAR</button><button data-a="chop">TALAR</button><button data-a="mine">MINAR</button>'+
  '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb',contextHeld:null,actionsOpen:false,actionPanel:root.querySelector('.action-panel')};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel')};
  input.highflyTouch=t;
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
@@ -116,6 +129,42 @@ export function attachHighflyTouch(input){
  camera.addEventListener('lostpointercapture',endCamera);
  for(const b of root.querySelectorAll('[data-a]')){
   const a=b.dataset.a;
+  if(a==='dash'||a==='dodge'){
+    const move=e=>{
+      if(t.abilityPointer?.id!==e.pointerId||t.abilityPointer?.kind!==a)return;
+      const v=abilityVector(e.clientX-t.abilityPointer.x,e.clientY-t.abilityPointer.y);
+      t.abilityPointer.vector=v;
+      if(t.aimOverlay)t.aimOverlay.querySelector('.aim-arrow').style.transform=
+        'rotate('+(v?Math.atan2(-v.y,v.x)*180/Math.PI: -90)+'deg)';
+      e.preventDefault();e.stopPropagation();
+    };
+    b.addEventListener('pointerdown',e=>{
+      if(t.abilityPointer)return;
+      const r=b.getBoundingClientRect();
+      t.abilityPointer={id:e.pointerId,kind:a,x:r.left+r.width/2,y:r.top+r.height/2,vector:null};
+      const overlay=t.aimOverlay;
+      if(overlay){overlay.style.left=(t.abilityPointer.x-54)+'px';overlay.style.top=(t.abilityPointer.y-54)+'px';overlay.dataset.active='1';}
+      try{b.setPointerCapture(e.pointerId)}catch{}
+      move(e);e.preventDefault();e.stopPropagation();
+    });
+    b.addEventListener('pointermove',move);
+    const end=e=>{
+      if(t.abilityPointer?.id!==e.pointerId||t.abilityPointer?.kind!==a)return;
+      move(e);
+      t.abilityAim[a]=t.abilityPointer.vector; // null means tap/fallback joystick
+      t.pressed.add(a);t.abilityPointer=null;
+      if(t.aimOverlay)t.aimOverlay.dataset.active='0';
+      e.preventDefault();e.stopPropagation();
+    };
+    const cancel=e=>{
+      if(t.abilityPointer?.id!==e.pointerId)return;
+      t.abilityPointer=null;if(t.aimOverlay)t.aimOverlay.dataset.active='0';
+    };
+    b.addEventListener('pointerup',end);
+    b.addEventListener('pointercancel',cancel);
+    b.addEventListener('lostpointercapture',cancel);
+    continue;
+  }
   b.addEventListener('pointerdown',e=>{
    e.preventDefault();e.stopPropagation();
    if(a==='fullscreen'){
@@ -141,7 +190,7 @@ export function attachHighflyTouch(input){
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
- globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;});
+ globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();}});
 }
 export function applyHighflyTouch(input){
@@ -153,6 +202,7 @@ export function applyHighflyTouch(input){
  }
  input.move.x=t.x;input.move.y=t.y;
  for(const a of t.pressed)input.pressed.add(a);
+ input.highflyAbilityAim={...t.abilityAim};t.abilityAim={};
  for(const a of t.held)input.held.add(a);
  if(t.sprintOn)input.held.add('sprint');
  const context=resolveHighflyContext(globalThis.__game?.player);

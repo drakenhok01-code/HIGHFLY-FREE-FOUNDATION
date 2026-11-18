@@ -171,7 +171,12 @@ export function installHighflyUniversalMotion(p){
   const startEvents=this.events?.length??0;
   const rollAttempt=isMove(this)&&this.grounded&&input.pressed.has('dodge');
   const originalFacing=this.yaw;
-  const result=nativeUpdate(dt,input,camYaw);
+  const aim=input.highflyAbilityAim?.dodge;
+  // Only the roll activation receives the independent direction; walking
+  // joystick/camera remain unchanged for all other states and frames.
+  const nativeRollInput=aim&&input.pressed.has('dodge')?
+   {...input,move:aim}:input;
+  const result=nativeUpdate(dt,nativeRollInput,camYaw);
   if(rollAttempt&&this.state==='roll'){
    const d=this.rollDir,front=Math.sin(originalFacing)*d.x+Math.cos(originalFacing)*d.z;
    const side=Math.cos(originalFacing)*d.x-Math.sin(originalFacing)*d.z;

@@ -16,3 +16,14 @@ test('Fishing appears only by deep water in front of player',()=>{
  const p={...player,world:{...player.world,waterLevel:()=>1.5,groundHeight:()=>0}};
  assert.equal(resolveHighflyContext(p).action,'fishing');
 });
+
+test('Ability circle directions are independent from the movement stick',()=>{
+ const mod=import('../src/highfly/mobile-touch.mjs');
+ return mod.then(({abilityVector})=>{
+  assert.equal(abilityVector(0,0),null);
+  assert.deepEqual(abilityVector(30,0),{x:1,y:0});
+  assert.deepEqual(abilityVector(0,-40),{x:0,y:1});
+  assert.deepEqual(abilityVector(-40,0),{x:-1,y:0});
+  assert.deepEqual(abilityVector(0,50),{x:0,y:-1});
+ });
+});

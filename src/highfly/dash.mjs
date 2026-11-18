@@ -43,7 +43,8 @@ export function installHighflyDash(player){
   const allowed=this.state==='move'||(this.state==='attack'&&this.stateTime>.18);
   if(allowed&&input?.pressed?.has('dash')&&this._hfDashCd<=0&&
    this.stamina>=DASH.cost&&(this.grounded||!this._hfAirDashSpent)){
-   const target=dashExitTarget(input,camYaw,this.grounded);
+   const targeted=input?.highflyAbilityAim?.dash;
+   const target=dashExitTarget(targeted?{...input,move:targeted}:input,camYaw,this.grounded);
    const dx=target.speed>0?target.x:Math.sin(this.yaw);
    const dz=target.speed>0?target.z:Math.cos(this.yaw);
    if(DASH.cost>0&&!this.spend(DASH.cost))return original(dt,input,camYaw);
