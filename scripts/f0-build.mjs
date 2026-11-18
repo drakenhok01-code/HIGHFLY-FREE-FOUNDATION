@@ -198,7 +198,7 @@ const otherFreeCharacters=[
  ['Barbarian.glb','66d312ab6dc02b35fb648e7585bfdddb4e02eeef'],
  ['Mage.glb','c89f19f6e707f6e07e4632a08876bd6d0172b082'],
  ['Rogue.glb','c8827661105eef7b2bfbef3bc676d41a47625733'],
- ['Rogue_Hooded.glb','5d2b1403240d5f9ffff12e3a38b']
+ ['Rogue_Hooded.glb','5d2b1403240d5f9ffff12e02c007572038eca2a8']
 ];
 const rigComparisons=[];
 for(const [name,sha1] of [['Knight.glb','717b56ca2b5ff5392679774725201ba03a3eefab'],...otherFreeCharacters]){
