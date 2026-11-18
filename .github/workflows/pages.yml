@@ -27,7 +27,7 @@ jobs:
       - name: Simular movimiento real sobre el Player original
         run: node --test tests/integrated.test.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
-        if: github.ref != 'refs/heads/free-foundation-v01'
+        # Gate ALL releases, including Pages, with actual WebGL skin rasterization
         env:
           PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
         run: |

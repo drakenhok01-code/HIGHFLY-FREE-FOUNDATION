@@ -10,3 +10,12 @@ const forbidden=files.filter(x=>/private_assets|phoenix-source-|kaykit.*source|u
 assert.deepEqual(forbidden,[],'Bootstrap cannot contain private or unaudited binaries');
 for(const name of ['src/highfly/mobile-touch.mjs','src/highfly/fog.mjs','src/highfly/kaykit-free-hero.mjs','scripts/f0-build.mjs','scripts/qa-dist.mjs'])assert.ok(fs.existsSync(name));
 console.log('PASS qa:static '+files.length+' clean source-only files; no SOURCE media or history');
+
+const heroCode=fs.readFileSync('src/highfly/kaykit-free-hero.mjs','utf8');
+assert.match(heroCode,/stylizeUniversalKayKit\(data\)/,'One hero must use the continuous body/rest transform');
+assert.match(heroCode,/createUniversalMaterial\(/,'Body must use Unsung native vertex shader');
+for(const forbidden of ['CpuKayKitSkin','installCharacterOverlay','new THREE.WebGLRenderer','overlayRenderer'])
+ assert.ok(!heroCode.includes(forbidden),'Forbidden ghost avatar compatibility patch: '+forbidden);
+const skinSource=fs.readFileSync('src/highfly/stylize-kaykit-free.mjs','utf8');
+assert.match(skinSource,/clips.length!==76/,'All FREE 76 clip retarget gate must remain');
+console.log('PASS F0.8 clean one-GPU-scene universal actor guard');
