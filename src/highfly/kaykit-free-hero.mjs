@@ -152,8 +152,7 @@ export class KayKitFreeHero {
    const name=track.name.slice(0,track.name.lastIndexOf('.')).split('/').pop().replace(/[^a-z]/ig,'').toLowerCase();
    return /^(spine|chest|neck|head|shoulder|upperarm|lowerarm|hand|wrist|elbow)/.test(name);
  }
- _playLower(name){
-   if(this.lowerKey===name)return;
+ _playLower(name,speed=0){
    const source=this.clips.get(name);if(!source)return;
    let action=this.lowerActions.get(name);
    if(!action){
@@ -162,8 +161,17 @@ export class KayKitFreeHero {
      if(!clip.tracks.length)return;
      action=this.mixer.clipAction(clip);this.lowerActions.set(name,action);
    }
-   if(this.lowerCurrent&&this.lowerCurrent!==action)this.lowerCurrent.fadeOut(.12);
-   action.reset().setLoop(THREE.LoopRepeat,Infinity).fadeIn(.12).play();
+   // Foot gait cadence follows actual capsule speed; idle is fully planted.
+   const reference=name==='Running_A'?5.2:name==='Running_B'?7.8:name==='Walking_A'?1.7:1;
+   const cadence=name==='Idle'?1:THREE.MathUtils.clamp(speed/reference,.8,1.35);
+   if(this.lowerKey===name){
+     action.timeScale=cadence;return;
+   }
+   const prev=this.lowerCurrent;
+   const phase=prev?.getClip()?.duration?(prev.time/prev.getClip().duration)%1:0;
+   if(prev&&prev!==action)prev.fadeOut(.16);
+   action.reset().setLoop(THREE.LoopRepeat,Infinity).fadeIn(.16).play();
+   action.time=source.duration*phase;action.timeScale=cadence;
    this.lowerCurrent=action;this.lowerKey=name;
  }
  play(key,duration=0,layered=false){
@@ -209,7 +217,7 @@ export class KayKitFreeHero {
    }
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
-   else if(p.state==='hf_climb'){key='raw:Interact';duration=.65;}
+   else if(p.state==='hf_climb'){key='idle';} // anchored hands procedurally, not an endless Interact flap
    else if(p.state==='hf_action'&&p._hfAction){
       const cfg=ACTIONS[p._hfAction.name];
       if(cfg){
@@ -237,7 +245,9 @@ export class KayKitFreeHero {
    // Upper-body attack lane MUST remain stable until the attack ends.
    const layered=p.state==='attack';
    this.play(key,duration,layered);
-   if(layered)this._playLower(speed>5.8?'Running_B':speed>2.6?'Running_A':speed>.3?'Walking_A':'Idle');
+   const physicalSpeed=layered?(p._hfAttackTravelSpeed??speed):speed;
+   const gait=physicalSpeed<.45?'Idle':physicalSpeed<2.65?'Walking_A':'Running_A';
+   if(layered)this._playLower(gait,physicalSpeed);
    else if(this.lowerCurrent){
      this.lowerCurrent.fadeOut(.12);this.lowerCurrent=null;this.lowerKey='';
    }
@@ -318,12 +328,15 @@ export class KayKitFreeHero {
     this._addPose('lowerleg.l','x',(.24+.3*Math.max(0,left))*amount);
     this._addPose('lowerleg.r','x',(.24+.3*Math.max(0,right))*amount);
     // Keep the head fixed relative to upper torso; no Power Ranger neck twist.
-   }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
+   }else if(p.state==='hf_climb'||(p.state==='hf_mantle'&&!this.ualData)){
    const move=p._hfClimbInput??{x:0,y:p.state==='hf_mantle'?1:0};
    const strength=Math.min(1,Math.hypot(move.x,move.y));
    const phase=this._hfPhase*3.7;
+   // 0 speed = fixed gripping posture, no false cycling near blocked rocks.
    this._addPose('upperarm.l','x',-.86+strength*.32*Math.sin(phase));
    this._addPose('upperarm.r','x',-.86-strength*.32*Math.sin(phase));
+   this._addPose('lowerarm.l','x',-.15);
+   this._addPose('lowerarm.r','x',-.15);
    this._addPose('upperleg.l','x',strength*.28*Math.sin(phase));
    this._addPose('upperleg.r','x',-strength*.28*Math.sin(phase));
   }
