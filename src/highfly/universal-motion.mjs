@@ -5,6 +5,7 @@
  * Only CC0 KayKit FREE visual clips are used; no paid SOURCE imports.
  */
 import * as THREE from 'three';
+import {TUNE} from '../game/player.js';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -101,12 +102,14 @@ function startAction(p,name){
 export function installHighflyUniversalMotion(p){
  if(p._hfUniversalInstalled)return p;
  p._hfUniversalInstalled=true;
+ TUNE.rollCost=12; // lighter grounded roll; native Unsung roll physics unchanged
+ p._hfRollVisual='forward';
  const nativeUpdate=p.update.bind(p);
  const nativeSpawn=p.spawn.bind(p);
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfGearCycle=0;
+  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfGearCycle=0;this._hfRollVisual='forward';
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
@@ -164,7 +167,16 @@ export function installHighflyUniversalMotion(p){
    input=otherInput(input,['jump']);
   }
   const startEvents=this.events?.length??0;
+  const rollAttempt=isMove(this)&&this.grounded&&input.pressed.has('dodge');
+  const originalFacing=this.yaw;
   const result=nativeUpdate(dt,input,camYaw);
+  if(rollAttempt&&this.state==='roll'){
+   const d=this.rollDir,front=Math.sin(originalFacing)*d.x+Math.cos(originalFacing)*d.z;
+   const side=Math.cos(originalFacing)*d.x-Math.sin(originalFacing)*d.z;
+   this._hfRollVisual=front<-.45?'backward':Math.abs(side)>.45?(side>0?'right':'left'):'forward';
+   if(this._hfRollVisual!=='forward')this.yaw=originalFacing;
+   this.emit('hfRollDirection',{direction:this._hfRollVisual});
+  }
   if(this.events?.slice(startEvents).some(e=>e.type==='jump')){
    this._hfJumpPrimed=true;this._hfDoubleUsed=false;
   }

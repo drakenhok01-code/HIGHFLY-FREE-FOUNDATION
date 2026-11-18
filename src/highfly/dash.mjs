@@ -1,7 +1,7 @@
 /** HIGHFLY F0.4: real directional DASH with braking to idle / current steering.
  * Unsung Player and its collision integrator remain authoritative. ONE capsule.
  */
-export const DASH={time:.24,speed:15.5,cooldown:.78,cost:16,iframes:[.035,.18]};
+export const DASH={time:.24,speed:15.5,cooldown:5,cost:0,iframes:[.035,.18]};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function dashExitTarget(input,camYaw,grounded=true){
  const x=input?.move?.x??0,y=input?.move?.y??0;
@@ -46,7 +46,7 @@ export function installHighflyDash(player){
    const target=dashExitTarget(input,camYaw,this.grounded);
    const dx=target.speed>0?target.x:Math.sin(this.yaw);
    const dz=target.speed>0?target.z:Math.cos(this.yaw);
-   if(!this.spend(DASH.cost))return original(dt,input,camYaw);
+   if(DASH.cost>0&&!this.spend(DASH.cost))return original(dt,input,camYaw);
    if(!this.grounded)this._hfAirDashSpent=true;
    this._hfDashDir={x:dx,z:dz};this._hfDashCd=DASH.cooldown;
    // A DASH cancels a prior swing explicitly; it never runs both full-body actions.
