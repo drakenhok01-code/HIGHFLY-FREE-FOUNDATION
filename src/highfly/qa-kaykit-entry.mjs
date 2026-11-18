@@ -136,6 +136,29 @@ try{
    hero.update(1/60,{...p,...sample});
    if(!hero.current)throw Error('Missing animation for '+sample.state);
  }
+ // F0.11.5 SWIM: real pinned UAL strokes + KayKit neck safety for 120 frames.
+ // The swimmer is still ONE actor, without a second Quaternius model.
+ const neutral={...p,state:'move',grounded:true,speed:0,stateTime:0};
+ for(let k=0;k<14;k++)hero.update(1/60,neutral);
+ const headBone=hero._bone('head'),armBone=hero._bone('upperarm.l');
+ if(!headBone||!armBone)throw Error('Missing KayKit swimming head/arm bones');
+ const headRest=headBone.quaternion.clone(),armRest=armBone.quaternion.clone();
+ let swimPitchMax=0,swimHeadAngleMax=0,swimArmAngleMax=0;
+ for(let k=0;k<120;k++){
+  const speed=k<20?0:2.4;
+  hero.update(1/60,{...p,state:'swim',grounded:false,speed,stateTime:k/60});
+  swimPitchMax=Math.max(swimPitchMax,Math.abs(hero.rollPivot.rotation.x));
+  swimHeadAngleMax=Math.max(swimHeadAngleMax,headBone.quaternion.angleTo(headRest));
+  swimArmAngleMax=Math.max(swimArmAngleMax,armBone.quaternion.angleTo(armRest));
+  for(const value of [...headBone.quaternion.toArray(),...armBone.quaternion.toArray(),hero.rollPivot.rotation.x])
+   if(!Number.isFinite(value))throw Error('NaN in KayKit CC0 swim animation');
+ }
+ if(swimPitchMax>.83||swimHeadAngleMax>1.2||swimArmAngleMax<.035)
+  throw Error('Swim animation head/strokes broken '+JSON.stringify({swimPitchMax,swimHeadAngleMax,swimArmAngleMax}));
+ for(let k=0;k<32;k++)hero.update(1/60,neutral);
+ if(Math.abs(hero.rollPivot.rotation.x)>.02)
+  throw Error('Swimming body failed to return upright');
+ const swimQA={swimPitchMax,swimHeadAngleMax,swimArmAngleMax,returnPitch:hero.rollPivot.rotation.x};
  const equipmentModes=['sword','greatsword','dual','shield','unarmed','spear','staff'];
  for(let i=0;i<equipmentModes.length;i++){
    const mode=hero.equip(i);
@@ -150,7 +173,7 @@ try{
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,rollNearGround,gearModes:equipmentModes,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}
