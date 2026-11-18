@@ -77,7 +77,7 @@ test('DASH impulse applies actual Unsung capsule movement in forward/back/side a
   const p=installHighflyDash(new Player(flat));p.spawn(0,0,0);p.grounded=true;
   const input={move:joystickVector(rect,...point),held:new Set(),pressed:new Set(['dash']),look:{x:0,y:0}};
   const stamina=p.stamina;p.update(1/60,input,0);
-  assert.equal(p.state,'hf_dash');assert.ok(p.stamina<stamina);
+  assert.equal(p.state,'hf_dash');assert.equal(p.stamina,stamina,'F0.10 cooldown-only emergency dash');
   assert.ok(Math.hypot(p.pos.x,p.pos.z)>.1);
   input.pressed.clear();
   for(let n=0;n<16;n++)p.update(1/60,input,0);
@@ -99,7 +99,7 @@ test('DASH refuses spam on cooldown; grants brief i-frames, not permanent immuni
  for(let n=0;n<15;n++)p.update(1/60,i,0);
  assert.equal(p.state,'move');
  i.pressed.add('dash');p.update(1/60,i,0);assert.equal(p.state,'move','cooldown blocks repeat');
- for(let n=0;n<70;n++){i.pressed.clear();p.update(1/60,i,0);}
+ for(let n=0;n<310;n++){i.pressed.clear();p.update(1/60,i,0);}
  i.pressed.add('dash');p.update(1/60,i,0);assert.equal(p.state,'hf_dash','DASH usable after cooldown');
 });
 test('DASH respects original capsule world collision at a hard wall',async()=>{
