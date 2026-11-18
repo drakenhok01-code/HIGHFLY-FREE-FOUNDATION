@@ -94,9 +94,9 @@ test('Android action drawer opens and climb is held; equip/mine/sit are isolated
   btns[1].dispatch('pointerdown',2);
   applyHighflyTouch(input);
   assert.equal(input.pressed.has('climb'),true);
-  assert.equal(input.held.has('climb'),true,'hold-to-climb must be continuous');
+  assert.equal(input.held.has('climb'),false,'climb now latches with a single press');
   btns[1].dispatch('pointerup',2);input.held.clear();input.pressed.clear();applyHighflyTouch(input);
-  assert.equal(input.held.has('climb'),false,'release must stop climbing');
+  assert.equal(input.held.has('climb'),false,'release does not change the latched climb state');
   for(const [index,action] of [[2,'equip'],[3,'mine'],[5,'sit'],[7,'cheer']]){
     btns[index].dispatch('pointerdown',3+index);
     input.pressed.clear();applyHighflyTouch(input);

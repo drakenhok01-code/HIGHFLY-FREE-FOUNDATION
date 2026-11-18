@@ -27,7 +27,7 @@ export function resolveHighflyContext(p){
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  // Harvest targets must have explicit resource tags, never generic rock collisions.
- const actions={tree:['chop','TALAR'],ore:['mine','PICAR'],loot:['pickup','RECOGER']};
+ const actions={tree:['chop','TALAR'],ore:['mine','PICAR']}; // loot always uses USAR
  const candidates=Array.isArray(w.highflyInteractables)?w.highflyInteractables:[];
  let best=null,dist=4;
  for(const n of candidates){
@@ -43,6 +43,18 @@ export function resolveHighflyContext(p){
      level-p.pos.y<2.2&&level-p.pos.y>-.6)return {action:'fishing',label:'PESCAR'};
  }
  return fallback;
+}
+export function resolveHighflyUse(p){
+ if(!p?.world||!p?.pos)return {action:'interact',label:'USAR'};
+ const facing={x:Math.sin(p.yaw),z:Math.cos(p.yaw)};
+ const targets=Array.isArray(p.world.highflyInteractables)?p.world.highflyInteractables:[];
+ for(const n of targets){
+  if(n.kind!=='loot'||n.available===false)continue;
+  const dx=n.x-p.pos.x,dz=n.z-p.pos.z;
+  if(dx*dx+dz*dz<4&&dx*facing.x+dz*facing.z>.12)
+   return {action:'pickup',label:'USAR'};
+ }
+ return {action:'interact',label:'USAR'};
 }
 export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
@@ -179,17 +191,17 @@ export function attachHighflyTouch(input){
     b.setAttribute('aria-expanded',String(t.actionsOpen));return;
    }
    try{b.setPointerCapture(e.pointerId)}catch{}
-   const chosen=a==='context'?t.contextAction:a;
+   const chosen=a==='context'?t.contextAction:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
    if(a==='sprint'){
     t.sprintOn=!t.sprintOn;
     b.dataset.active=t.sprintOn?'1':'0';b.textContent=t.sprintOn?'CORRIENDO':'CORRER';
    }else{
     t.pressed.add(chosen);
-    if(chosen==='climb')t.held.add('climb');
+    // One tap toggles climbing. Do not require holding the climbing button.
     if(a==='context')t.contextHeld=chosen;
    }
   });
-  const up=e=>{if(a==='climb'||(a==='context'&&t.contextHeld==='climb'))t.held.delete('climb');if(a==='context')t.contextHeld=null;e.preventDefault();e.stopPropagation?.();};
+  const up=e=>{if(a==='context')t.contextHeld=null;e.preventDefault();e.stopPropagation?.();};
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
