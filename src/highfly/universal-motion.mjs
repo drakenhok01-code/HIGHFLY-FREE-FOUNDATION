@@ -6,6 +6,7 @@
  */
 import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
+import {WEAPON_MODES} from './universal-gear.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -137,7 +138,7 @@ export function installHighflyUniversalMotion(p){
    }
   }
   if(input.pressed.has('equip')&&isMove(this)){
-   this._hfGearCycle=(this._hfGearCycle+1)%5;
+   this._hfGearCycle=(this._hfGearCycle+1)%WEAPON_MODES.length;
    this.emit('highflyEquipPreview',{variant:this._hfGearCycle});
   }
   if(isMove(this)&&this.grounded&&input.pressed.has('climb')){
