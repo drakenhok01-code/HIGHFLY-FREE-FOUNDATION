@@ -102,7 +102,7 @@ export class KayKitFreeHero {
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
-   this._playToken='';this.lowerActions=new Map();this.lowerCurrent=null;this.lowerKey='';
+   this._playToken='';this.lowerActions=new Map();this.lowerCurrent=null;this.lowerKey='';this._swimBlend=0;
    // Shared flash/rim uniforms already initialized before material creation.
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
    this.landSignal=0;this.hitSignal=0;this.updated=false;
@@ -182,7 +182,14 @@ export class KayKitFreeHero {
    let key='idle',duration=0;
    if(p.state==='dead')key='dead';
    else if(p.state==='hurt')key='hurt';
-   else if(p.state==='roll'){key='roll';duration=.62;}
+   else if(p.state==='roll'){
+     key='roll';duration=.62;
+     this._rollVisualClip={
+       forward:'Dodge_Forward',backward:'Dodge_Backward',
+       left:'Dodge_Left',right:'Dodge_Right'
+     }[p._hfRollVisual]??'Dodge_Forward';
+     if(!this.clips.has(this._rollVisualClip))this._rollVisualClip='Dodge_Forward';
+   }
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
    else if(p.state==='hf_climb'){key='raw:Interact';duration=.65;}
@@ -227,10 +234,15 @@ export class KayKitFreeHero {
    // Ground-hugging Unsung ROLL: tuck into a short cylinder. The old
    // 0.91 m high pivot rotated a standing avatar like an aerial flic-flac.
    const tuck=p.state==='roll'?Math.pow(Math.max(0,Math.sin(Math.PI*k)),.72):0;
-   this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
-   this.rollPivot.rotation.z=-.08*tuck;
+   const direction=p._hfRollVisual??'forward';
+   this._swimBlend=THREE.MathUtils.clamp(this._swimBlend+(p.state==='swim'?1:-1)*dt*4,0,1);
+   this.rollPivot.rotation.x=p.state==='roll'?
+     (direction==='backward'?-1:direction==='forward'?1:0)*Math.PI*2*eased:
+     this._swimBlend*(1.16+.05*Math.sin(this._hfPhase*.65));
+   this.rollPivot.rotation.z=p.state==='roll'?
+     (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
-   this.rollPivot.position.y=.91-.39*tuck;
+   this.rollPivot.position.y=.91-.39*tuck+this._swimBlend*.08;
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
@@ -269,16 +281,19 @@ export class KayKitFreeHero {
    // Original Unsung _swim controls buoyancy, direction, speed and ripples.
    // The 76-clip Knight has no swim clip, so apply a small alternating
    // stroke to the SAME 41-bone skinned character. No duplicate skeleton.
-   const phase=this._hfPhase,amount=.22+Math.min(1,(p.speed??0)/3)*.72;
-   this._addPose('upperarm.l','x',(-.52+.79*Math.sin(phase))*amount);
-   this._addPose('upperarm.r','x',(-.52-.79*Math.sin(phase))*amount);
-   this._addPose('lowerarm.l','x',-.35*amount);
-   this._addPose('lowerarm.r','x',-.35*amount);
-   this._addPose('upperleg.l','x',.20*Math.sin(phase*1.25)*amount);
-   this._addPose('upperleg.r','x',-.20*Math.sin(phase*1.25)*amount);
-   this._addPose('lowerleg.l','x',.32*Math.sin(phase*1.25)*amount);
-   this._addPose('lowerleg.r','x',-.32*Math.sin(phase*1.25)*amount);
-  }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
+   // Original HIGHFLY surface crawl, not a protected ClaudeCraft animation.
+    const phase=this._hfPhase,amount=.3+Math.min(1,(p.speed??0)/3)*.7;
+    const left=Math.sin(phase),right=Math.sin(phase+Math.PI);
+    this._addPose('upperarm.l','x',(-1.1+.65*left)*amount);
+    this._addPose('upperarm.r','x',(-1.1+.65*right)*amount);
+    this._addPose('lowerarm.l','x',(-.3+.4*Math.max(0,left))*amount);
+    this._addPose('lowerarm.r','x',(-.3+.4*Math.max(0,right))*amount);
+    this._addPose('upperleg.l','x',.3*Math.sin(phase*1.7)*amount);
+    this._addPose('upperleg.r','x',-.3*Math.sin(phase*1.7)*amount);
+    this._addPose('lowerleg.l','x',(.24+.3*Math.max(0,left))*amount);
+    this._addPose('lowerleg.r','x',(.24+.3*Math.max(0,right))*amount);
+    this._addPose('head','x',-.28*amount);
+   }else if(p.state==='hf_climb'||p.state==='hf_mantle'){
    const phase=this._hfPhase*4;
    this._addPose('upperarm.l','x',-.78+.27*Math.sin(phase));
    this._addPose('upperarm.r','x',-.78-.27*Math.sin(phase));
