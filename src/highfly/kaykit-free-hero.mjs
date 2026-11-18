@@ -9,7 +9,7 @@ import {createUniversalMaterial} from './kaykit-material.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
- jump:'Jump_Idle',land:'Jump_Land',swim:'Idle',
+ jump:'Jump_Idle',jump2:'Jump_Full_Short',mantle:'Jump_Full_Long',land:'Jump_Land',swim:'Idle',
  roll:'Dodge_Forward',dash:'Dodge_Forward',attack1:'1H_Melee_Attack_Slice_Horizontal',
  attack2:'1H_Melee_Attack_Chop',attack3:'1H_Melee_Attack_Slice_Diagonal',
  heavy:'2H_Melee_Attack_Slice',hurt:'Block_Hit',dead:'Death_A',
@@ -40,6 +40,7 @@ export class KayKitFreeHero {
    this.rollPivot=new THREE.Group();this.rollPivot.name='UNSUNG_FULL_BODY_ROLL';
    this.offset=new THREE.Group();this.offset.position.y=-.91;this.rollPivot.position.y=.91;
    this.actor.add(this.rollPivot);this.rollPivot.add(this.offset);this.offset.add(this.root);
+   this._rollTuck=0;this._hfSwimPoseCount=0;
    const armored=styleParams.get('hflook')==='armored'||this.originalLook;
    const hidden=new Set(HIDE);
    if(!armored)for(const name of ['Knight_Helmet','Knight_HelmetVisor','Knight_Cape'])hidden.add(name);
@@ -76,6 +77,15 @@ export class KayKitFreeHero {
    console.log('[HIGHFLY] KayKit FREE visible meshes='+this.visibleMeshes+' swordMeshes='+this.swordMeshes+' tipSocket='+this.socket.name);
    if(!this.visibleMeshes)throw Error('KayKit FREE contains no visible character meshes');
    this.mixer=new THREE.AnimationMixer(this.root);
+   // The same Medium bones drive both the original chibi and Anime V6.6.
+   this.mediumBones=new Map();
+   this.root.traverse(o=>{if(o.isBone)this.mediumBones.set(o.name.toLowerCase().replace(/[^a-z0-9]/g,''),o);});
+   this.swimBonePairs={
+     arms:[this.mediumBones.get('upperarml'),this.mediumBones.get('upperarmr')],
+     legs:[this.mediumBones.get('upperlegl'),this.mediumBones.get('upperlegr')],
+     elbows:[this.mediumBones.get('lowerarml'),this.mediumBones.get('lowerarmr')]
+   };
+   this._hfSwimPoseCount=Object.values(this.swimBonePairs).flat().filter(Boolean).length;
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
@@ -104,7 +114,7 @@ export class KayKitFreeHero {
    this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',look:this.originalLook?'original-kaykit':'anime-v66',rig:this.profile.rig,
     bodyParts:this.bodyParts.size,clips:this.availableActions.length,
     boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
-    renderContexts:1,cpuSkin:false,overlay:false};
+    renderContexts:1,cpuSkin:false,overlay:false,swimBoneChannels:this._hfSwimPoseCount};
    globalThis.__highflyActorReport=this.diagnostics;
    console.log('[HIGHFLY CLEAN HERO]',JSON.stringify(this.diagnostics));
  }
@@ -121,7 +131,7 @@ export class KayKitFreeHero {
      this.actions.set(key,action);
    }
    action.reset();
-   const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key);
+   const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge|jump2|mantle)$/.test(key)||(key.startsWith('raw:')&&!/(?:Idle|Pose|Aiming|Spellcasting)$/.test(key));
    action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);
    action.clampWhenFinished=once;
    action.timeScale=duration>0?Math.min(3,Math.max(.3,clip.duration/duration)):1;
@@ -136,25 +146,48 @@ export class KayKitFreeHero {
    else if(p.state==='hurt')key='hurt';
    else if(p.state==='roll'){key='roll';duration=.62;}
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
+   else if(p.state==='hf_mantle'){key='mantle';duration=.62;}
+   else if(p.state==='hf_action'&&p._hfActivity){
+     key='raw:'+p._hfActivity.clip;duration=p._hfActivity.duration;
+   }
    else if(p.state==='plunge')key='plunge';
    else if(p.state==='attack'){
       key=p.comboStep===3?'heavy':p.comboStep===1?'attack2':p.comboStep===2?'attack3':'attack1';
       duration=p.attack?.t??.46;
    }else if(p.state==='swim')key='swim'; // FREE swim clip absent: no false animation claim.
-   else if(!p.grounded)key='jump';
+   else if(!p.grounded)key=p._hfJumpVisual>0?'jump2':'jump';
    else if(speed>5.8)key='sprint';
    else if(speed>2.6)key='run';
    else if(speed>.2)key='walk';
    this.play(key,duration);
-   this.mixer.update(dt);
+   this.mixer.update(Math.max(0,dt));
+   // Native Knight FREE has no swim clip: apply a mild procedural stroke
+   // to its original bones after Mixer has placed the Idle rest pose.
+   if(p.state==='swim'){
+     const phase=(p.stepPhase??0)*Math.PI*2,slow=(p.speed??0)<.25?.35:1;
+     const a=this.swimBonePairs.arms,e=this.swimBonePairs.elbows,l=this.swimBonePairs.legs;
+     for(let i=0;i<2;i++){
+       const sign=i?-1:1;
+       if(a[i]){a[i].rotation.x+=Math.sin(phase+Math.PI*i)*.48*slow;
+        a[i].rotation.z+=sign*.20*slow;}
+       if(e[i])e[i].rotation.x+=.20+Math.max(0,Math.sin(phase+Math.PI*i))*.25*slow;
+       if(l[i])l[i].rotation.x+=Math.sin(phase*1.05+Math.PI*i)*.26*slow;
+     }
+   }
    // One actor transform driven exclusively by Unsung Player; no root-motion.
    this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
    this.actor.rotation.y=p.yaw;
    const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
    const eased=k*k*(3-2*k);
    // Unsung's 360-degree full-body ROLL, around the torso rather than the feet.
-   this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
-   this.rollPivot.position.y=.91-(p.state==='roll'?.24*Math.sin(Math.PI*k):0);
+   const rolling=p.state==='roll',tuck=rolling?Math.sin(Math.PI*k):0;
+   // Compact ground roll, preserving the capsule and native Unsung i-frames.
+   this.rollPivot.rotation.x=rolling?Math.PI*2*eased:p.state==='swim'?-.18:0;
+   this.rollPivot.position.y=.91-.26*tuck;
+   this.offset.position.y=-this.rollPivot.position.y;
+   this.offset.scale.y=1-.30*tuck;
+   this.offset.scale.z=1-.10*tuck;
+   this._rollTuck=tuck;
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
