@@ -34,8 +34,28 @@ export function attachActionMenu(input){
   });
   panel.appendChild(button);
  }
+ // These are ACTUAL mesh visibility toggles on the same KayKit skeleton.
+ // The full item/equipment data model and external weapon grippage come next.
+ const equipment=[
+  ['onehand','ESPADA 1M'],['twohand','ESPADA 2M'],
+  ['helmetOn','CASCO SÍ'],['helmetOff','CASCO NO'],
+  ['shieldOn','ESCUDO SÍ'],['shieldOff','ESCUDO NO']
+ ];
+ for(const [value,label] of equipment){
+  const button=document.createElement('button');button.textContent=label;
+  button.addEventListener('pointerdown',e=>{
+   e.preventDefault();e.stopPropagation();
+   const hero=globalThis.__hero;
+   if(!hero?.setEquipment)return;
+   if(value==='onehand'||value==='twohand')hero.setEquipment({weapon:value});
+   else if(value.startsWith('helmet'))hero.setEquipment({helmet:value==='helmetOn'});
+   else if(value.startsWith('shield'))hero.setEquipment({shield:value==='shieldOn'});
+   root.dataset.open='0';toggle.setAttribute('aria-expanded','false');
+  });
+  panel.appendChild(button);
+ }
  const hint=document.createElement('div');hint.className='hint';
- hint.textContent='TREPADA = saliente bajo • TALAR/MINAR = recurso cercano • Animaciones de trabajo provisionales';
+ hint.textContent='TREPADA = saliente bajo • TALAR/MINAR = prototipo • Armas: espada 1M/2M, casco y escudo de KayKit FREE';
  panel.appendChild(hint);
  toggle.addEventListener('pointerdown',e=>{
   e.preventDefault();e.stopPropagation();
