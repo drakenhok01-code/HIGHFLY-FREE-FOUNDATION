@@ -1,5 +1,5 @@
 /** Optional collapsible Android actions palette (?hfactions=1). */
-import {isTouchDevice} from './mobile-touch.mjs';
+import {isTouchDevice} from './highfly-touch.mjs';
 const ENTRIES=[
  ['hf_climb','TREPAR'],['hf_sit','SENTARSE'],['hf_lie','ACOSTARSE'],
  ['hf_cheer','GESTO'],['hf_pickup','RECOGER'],['hf_use','USAR ITEM'],

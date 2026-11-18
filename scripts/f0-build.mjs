@@ -107,6 +107,8 @@ copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
+copy(path.join(ROOT,'src/highfly/universal-actions.mjs'),loc('src/game/highfly-universal.mjs'));
+copy(path.join(ROOT,'src/highfly/action-menu.mjs'),loc('src/game/highfly-action-menu.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';","import { FILM } from './engine/quality.js';\nimport { installHighflyFog } from './highfly/fog.mjs';\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';");
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
@@ -128,9 +130,10 @@ const freeHeroStart=[
 ].join('\n');
 patch('src/main.js',nativeHero,freeHeroStart);
 
-patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';");
-patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);');
-patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
+patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installUniversalActions } from './highfly-universal.mjs';\nimport { attachActionMenu } from './highfly-action-menu.mjs';");
+patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installUniversalActions(this.player);');
+patch('src/game/game.js','    this.input = new Input(canvas);','    this.input = new Input(canvas);\n    attachActionMenu(this.input);');
+patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], hf_climb:['KeyT'], hf_sit:['Digit5'], hf_lie:['Digit6'], hf_cheer:['Digit7'], hf_pickup:['Digit8'], hf_chop:['Digit9'], hf_mine:['Digit0'], hf_use:['KeyU'], hf_cast:['KeyI'], hf_fish:['KeyO'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
 patch('src/game/input.js','    this._down = new Set();','    this._down = new Set();\n    attachHighflyTouch(this);');
