@@ -10,7 +10,7 @@ import {WEAPON_MODES} from './universal-gear.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
-  climbSpeed:1.85,climbCostPerSecond:8,
+  climbSpeed:1.85,climbStrafeSpeed:1.55,climbCostPerSecond:6,climbIdleCost:1.5,
   workTime:.74,
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -60,20 +60,63 @@ function stepMantle(p,dt){
  p.viewY=p._viewY1=p.pos.y;p.speed=0;
  if(t>=1){p._hfMantle=null;p.setState('move');p.grounded=true;p.vel.set(0,0,0);p.emit('highflyMantleEnd');}
 }
-function stepClimb(p,dt,input){
- const held=input.held?.has('climb')||input.pressed?.has('climb');
- const hit=probeHighflyWall(p);
- if(hit?.ledge){startMantle(p,hit);return;}
- if(!held||!hit||p.stateTime>2.8||p.stamina<=0){
-  p.setState('move');p.vel.y=0;p.grounded=false;return;
- }
- p.stateTime+=dt;p.stamina=Math.max(0,p.stamina-MOTION.climbCostPerSecond*dt);
- p.staminaWait=.65;
- const speed=MOTION.climbSpeed*(input.move?.y<-.2?.35:1);
- p.pos.y+=speed*dt;
- p.vel.set(0,0,0);p.world.resolveCapsule(p.pos,.36,1.82,speed);
- p.viewY=p._viewY1=p.pos.y;p.grounded=false;p.speed=0;
+function dropClimb(p){
+ p._hfClimb=null;p.setState('move');p.grounded=false;p.vel.set(0,0,0);
+ p.emit('highflyClimbEnd');
 }
+function stepClimb(p,dt,input,camYaw,nativeUpdate){
+ const anchor=p._hfClimb;
+ if(!anchor){dropClimb(p);return;}
+ const held=input.held?.has('climb')||input.pressed?.has('climb');
+ if(input.pressed.has('dash')){
+  dropClimb(p);
+  return nativeUpdate(dt,input,camYaw); // DASH keeps its real cooldown and air limit
+ }
+ if(input.pressed.has('jump')){
+  dropClimb(p);
+  const fx=Math.sin(anchor.yaw),fz=Math.cos(anchor.yaw);
+  p.vel.set(-fx*3.5,5.8,-fz*3.5);
+  p._hfJumpPrimed=false;p._hfDoubleUsed=true;
+  p.emit('highflyWallJump');
+  return;
+ }
+ if(!held||p.stamina<=0){dropClimb(p);return;}
+ const x=Number(input.move?.x)||0,y=Number(input.move?.y)||0;
+ const f={x:Math.sin(anchor.yaw),z:Math.cos(anchor.yaw)};
+ const tangent={x:f.z,z:-f.x};
+ const candidate=p.pos.clone();
+ candidate.x+=tangent.x*x*MOTION.climbStrafeSpeed*dt;
+ candidate.z+=tangent.z*x*MOTION.climbStrafeSpeed*dt;
+ candidate.y+=y*MOTION.climbSpeed*dt;
+ // Stable contact: probe at the proposed position BEFORE committing.
+ // A missing side wall cannot pull the capsule into empty space.
+ const fake={pos:candidate,yaw:anchor.yaw,world:p.world};
+ const hit=probeHighflyWall(fake,anchor.yaw);
+ if(hit?.ledge&&y>.15){startMantle(p,hit);p._hfClimb=null;return;}
+ if(!hit){
+  anchor.lost+=dt;
+  if(anchor.lost>.18)dropClimb(p);
+  return;
+ }
+ anchor.lost=0;
+ // Avoid underground descent and positional jitter at the wall.
+ const floor=p.world.groundHeight?.(candidate.x,candidate.z);
+ if(Number.isFinite(floor)&&candidate.y<floor+.03&&y<0){
+   dropClimb(p);p.grounded=true;p.pos.y=floor;return;
+ }
+ const resolved=candidate.clone();
+ p.world.resolveCapsule(resolved,.36,1.82,0);
+ if(resolved.distanceTo(candidate)<.20)p.pos.copy(resolved);
+ else if(Math.abs(x)+Math.abs(y)<.06)p.pos.copy(p.pos);
+ // No arbitrary 2.8-second cutoff: only energy, wall contact or user release.
+ const moving=Math.hypot(x,y)>.12;
+ p.stamina=Math.max(0,p.stamina-(moving?MOTION.climbCostPerSecond:MOTION.climbIdleCost)*dt);
+ p.staminaWait=.65;
+ p.stateTime+=dt;p.vel.set(0,0,0);
+ p.viewY=p._viewY1=p.pos.y;p.grounded=false;p.speed=moving?1:0;
+ p._hfClimbInput={x,y};
+}
+
 function closestTree(p){
  const caps=p.world?.caps;if(!caps?.length)return null;
  const f=vec(p.yaw);let best=-1,bd=9;
@@ -110,7 +153,7 @@ export function installHighflyUniversalMotion(p){
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfGearCycle=0;this._hfRollVisual='forward';
+  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
@@ -120,7 +163,7 @@ export function installHighflyUniversalMotion(p){
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
-  if(this.state==='hf_climb'){stepClimb(this,step,input);return;}
+  if(this.state==='hf_climb'){stepClimb(this,step,input,camYaw,nativeUpdate);return;}
   if(this.state==='hf_action'){
    const action=this._hfAction;
    if(!action){this.setState('move');return;}
@@ -142,11 +185,15 @@ export function installHighflyUniversalMotion(p){
    this._hfGearCycle=(this._hfGearCycle+1)%WEAPON_MODES.length;
    this.emit('highflyEquipPreview',{variant:this._hfGearCycle});
   }
-  if(isMove(this)&&this.grounded&&input.pressed.has('climb')){
+  if(isMove(this)&&input.pressed.has('climb')){
    const hit=probeHighflyWall(this);
    if(hit){
     if(hit.ledge)startMantle(this,hit);
-    else{this.vel.set(0,0,0);this.setState('hf_climb');this.grounded=false;}
+    else{
+     this.vel.set(0,0,0);this._hfClimb={yaw:this.yaw,lost:0};
+     this.setState('hf_climb');this.grounded=false;
+     this.emit('highflyClimbStart',{airborne:!this.grounded});
+    }
     return;
    }
   }

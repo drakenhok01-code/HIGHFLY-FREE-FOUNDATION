@@ -56,7 +56,7 @@ test('Conservative wall probe: only close collidable wall enables climbing',()=>
  p.update(1/60,input(['climb'],['climb']),0);
  assert.equal(p.state,'hf_climb');
  const start=p.pos.y;
- for(let i=0;i<12;i++)p.update(1/60,input([],['climb']),0);
+ for(let i=0;i<12;i++)p.update(1/60,input([],['climb'],0,1),0);
  assert.ok(p.pos.y>start+.25,'body climbs up using collision probe and stamina');
  p.update(1/60,input(),0);
  assert.equal(p.state,'move','releasing climb cancels safely');
@@ -157,4 +157,31 @@ test('F0.11 sitting or lying cancels from actual left-stick movement',()=>{
  assert.equal(p.state,'hf_action');
  p.update(1/60,input([],[],0,.6),0);
  assert.equal(p.state,'move');
+});
+
+test('F0.11.2 jump into valid wall -> attach in air, hold without teleport',()=>{
+ const wall={...ground,raycast(origin,dir,max){return origin.x<1.8&&origin.x>-1.8?.48:max;}};
+ const p=player(wall);
+ p.update(1/60,input(['jump']),0);
+ assert.equal(p.grounded,false);
+ p.update(1/60,input(['climb'],['climb']),0);
+ assert.equal(p.state,'hf_climb');
+ const before=p.pos.clone();
+ for(let i=0;i<25;i++)p.update(1/60,input([],['climb']),0);
+ assert.equal(p.state,'hf_climb','no arbitrary three-second timer');
+ assert.ok(p.pos.distanceTo(before)<.12,'holding a wall keeps a stable anchor');
+ p.update(1/60,input([],['climb'],.6,.7),0);
+ assert.ok(p.pos.x>before.x,'climbing left/right moves laterally');
+ assert.ok(p.pos.y>before.y,'up stick climbs up');
+ p.update(1/60,input(),0);
+ assert.equal(p.state,'move','release means detach');
+});
+test('F0.11.2 wall jump exits climbing and carries launch velocity',()=>{
+ const wall={...ground,raycast:()=>.48};
+ const p=player(wall);
+ p.update(1/60,input(['climb'],['climb']),0);
+ assert.equal(p.state,'hf_climb');
+ p.update(1/60,input(['jump'],['climb']),0);
+ assert.equal(p.state,'move');assert.ok(p.vel.y>5);
+ assert.equal(p._hfDoubleUsed,true,'wall jump cannot grant unintended third jump');
 });
