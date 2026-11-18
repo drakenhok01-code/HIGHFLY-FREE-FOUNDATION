@@ -1,0 +1,10 @@
+.work/
+dist/
+node_modules/
+.env*
+private_assets/
+source_assets/
+*.glb
+*.fbx
+*.zip
+.DS_Store

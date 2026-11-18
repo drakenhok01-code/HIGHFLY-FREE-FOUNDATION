@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root='dist';
+assert.ok(fs.existsSync(path.join(root,'index.html')),'Unsung Vite HTML not found');
+const prov=JSON.parse(fs.readFileSync(path.join(root,'BUILD_PROVENANCE.json'),'utf8'));
+assert.equal(prov.originalUnsungCommit,'9f61b0d80b18c6cf661f72372545b3f9214fb455');
+assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/\/HIGHFLY-FREE-FOUNDATION\//);
+const m=JSON.parse(fs.readFileSync(path.join(root,'ASSET_MANIFEST.json'),'utf8'));
+const groups={};assert.equal(m.records.length,133,'Expected 129 audio and 4 original model/world assets');
+for(const a of m.records){
+ assert.equal(a.decision,'ALLOW');
+ const f=path.join(root,a.path);assert.ok(fs.existsSync(f),'Missing asset '+a.path);
+ assert.equal(crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'),a.sha256,'Unexpected file hash '+a.path);
+ assert.ok(a.source.includes(prov.originalUnsungCommit));groups[a.license]=(groups[a.license]||0)+1;
+}
+assert.equal(groups['CC-BY-4.0'],62);assert.equal(groups['CC0-1.0'],67);
+assert.equal(groups['MIT (original Unsung)'],4);
+function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);}
+for(const f of walk(root)){
+ assert.ok(!/private_assets|phoenix-source|kaykit.*source|\.fbx$|\.zip$/i.test(f),'Restricted file '+f);
+ if(/\.(js|css|html|json)$/.test(f))assert.ok(!/phoenix-source-stage|HIGHFLY_CI_MOCK_SOURCE|private_assets\//i.test(fs.readFileSync(f,'utf8')),'Private dependency '+f);
+}
+assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
+assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
+console.log('PASS qa:dist '+JSON.stringify(groups));

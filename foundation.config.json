@@ -1,0 +1,11 @@
+{
+  "project": "HIGHFLY FREE FOUNDATION",
+  "phase": "F0 Android input lab",
+  "unsungRepository": "https://github.com/Leonxlnx/unsung-vale.git",
+  "unsungCommit": "9f61b0d80b18c6cf661f72372545b3f9214fb455",
+  "pagesRepo": "HIGHFLY-FREE-FOUNDATION",
+  "fogDefault": 0.35,
+  "allowPrivateAssets": false,
+  "allowKaykitPaid": false,
+  "allowClaudeAssets": false
+}

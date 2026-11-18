@@ -1,0 +1,40 @@
+name: HIGHFLY FREE - Unsung original Android baseline
+on:
+  workflow_dispatch:
+  push:
+    branches: [free-foundation-v01]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-free-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Auditar fuente y pruebas
+        run: |
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Compilar Unsung original congelado
+        run: npm run build
+      - name: Auditar dist antes de publicar
+        run: npm run qa:dist
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

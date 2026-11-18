@@ -1,0 +1,15 @@
+{
+  "name": "highfly-free-foundation",
+  "version": "0.1.0-f0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "qa:static": "node scripts/qa-static.mjs",
+    "qa:gameplay": "node --test tests/*.test.mjs",
+    "build": "node scripts/f0-build.mjs",
+    "qa:dist": "node scripts/qa-dist.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
