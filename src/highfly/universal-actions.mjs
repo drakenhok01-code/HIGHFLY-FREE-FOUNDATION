@@ -67,18 +67,18 @@ export function findMantle(world,pos,yaw){
 export function installUniversalActions(player){
  if(player._hfUniversalInstalled)return player;
  player._hfUniversalInstalled=true;
- player._hfAirJumpUsed=false;player._hfTime=0;player._hfBag={wood:0,stone:0};
+ player._hfAirJumpUsed=false;player._hfJumpVisual=0;player._hfTime=0;player._hfBag={wood:0,stone:0};
  player._hfResourceCooldowns=new Map();player._hfActivity=null;player._hfMantle=null;
  const original=player.update.bind(player),spawn=player.spawn.bind(player);
  player.spawn=function(...args){
   const result=spawn(...args);
-  this._hfAirJumpUsed=false;this._hfActivity=null;this._hfMantle=null;
+  this._hfAirJumpUsed=false;this._hfJumpVisual=0;this._hfActivity=null;this._hfMantle=null;
   this._hfResourceCooldowns.clear();
   return result;
  };
  player.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.06);
-  this._hfTime+=step;
+  this._hfTime+=step;this._hfJumpVisual=Math.max(0,(this._hfJumpVisual||0)-step);
   const has=x=>input?.pressed?.has(x)??false;
   const cancel=has('jump')||has('dodge')||has('dash')||has('attack');
   if(this.state==='hf_mantle'){
@@ -131,7 +131,7 @@ export function installUniversalActions(player){
       this.airTime>.10&&!this._hfAirJumpUsed &&
       this.stamina>=9 && this.world.waterLevel(this.pos.x,this.pos.z)-this.pos.y<.8){
    if(this.spend(9)){
-    this.vel.y=Math.max(0,this.vel.y,6.6);this._hfAirJumpUsed=true;
+    this.vel.y=Math.max(0,this.vel.y,6.6);this._hfAirJumpUsed=true;this._hfJumpVisual=.48;
     this.jumpBuffer=0;input.pressed.delete('jump');
     this.emit('hfDoubleJump');
    }
