@@ -24,3 +24,18 @@ console.log('PASS F0.8 clean one-GPU-scene universal actor guard');
 const buildSource=fs.readFileSync('scripts/f0-build.mjs','utf8');
 assert.ok(!buildSource.includes('hfStatus.'),'No permanent KayKit success/fallback banner may cover the HUD');
 console.log('PASS HIGHFLY F0.8.1 no persistent character status HUD banner');
+
+for(const file of ['src/highfly/universal-motion.mjs','src/highfly/universal-gear.mjs',
+ 'scripts/qa-free-rigs.mjs','tests/universal-motion.test.mjs'])
+ assert.ok(fs.existsSync(file),'Missing universal action or rig-audit module '+file);
+const dash=fs.readFileSync('src/highfly/dash.mjs','utf8');
+assert.match(dash,/installHighflyDash/);
+const motion=fs.readFileSync('src/highfly/universal-motion.mjs','utf8');
+assert.match(motion,/installHighflyUniversalMotion/);
+assert.match(motion,/probeHighflyWall/);
+assert.match(motion,/highflyDoubleJump/);
+assert.match(motion,/highflyActionStart/);
+const hud=fs.readFileSync('src/highfly/mobile-touch.mjs','utf8');
+for(const name of ['climb','equip','sit','lie','chop','mine','pickup','cheer'])
+ assert.ok(hud.includes('data-a="'+name+'"'),'Missing Android action '+name);
+console.log('PASS F0.9 one universal action controller, no SOURCE, weapon preview and Android action drawer');
