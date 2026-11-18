@@ -26,6 +26,10 @@ jobs:
         run: npm run build
       - name: Simular movimiento real sobre el Player original
         run: node --test tests/integrated.test.mjs tests/universal.test.mjs
+      - name: Auditar archivo oficial de animaciones FREE 1.1 (laboratorio)
+        if: github.ref == 'refs/heads/f082-universal-movement-lab'
+        continue-on-error: true
+        run: node scripts/audit-free-animations.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
         # Gate ALL releases, including Pages, with actual WebGL skin rasterization
         env:
@@ -43,6 +47,7 @@ jobs:
           path: |
             .work/unsung/qa-kaykit.png
             .work/unsung/qa-kaykit-report.json
+            qa-kaykit-free-animations.json
             .work/unsung/qa-world-kaykit.png
             .work/unsung/qa-world-kaykit-report.json
           if-no-files-found: ignore
