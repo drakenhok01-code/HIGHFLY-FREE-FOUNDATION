@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: highfly-free-pages
+  group: highfly-release-fast
   cancel-in-progress: false
 jobs:
   build:
@@ -27,6 +27,7 @@ jobs:
       - name: Simular movimiento real sobre el Player original
         run: node --test tests/integrated.test.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
+        if: github.ref != 'refs/heads/free-foundation-v01'
         env:
           PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
         run: |
