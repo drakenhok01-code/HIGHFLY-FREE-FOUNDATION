@@ -12,7 +12,7 @@ export function joystickVector(rect,px,py,deadzone=0.07){
  const scale=amplitude/distance;
  dx*=scale;dy*=scale;
  // Unsung expects x = lateral right and y = camera-forward, like WASD.
- return {x:dx,y:-dy};
+ return {x:Math.abs(dx)<1e-12?0:dx,y:Math.abs(dy)<1e-12?0:-dy};
 }
 export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!mobile())return;
