@@ -99,6 +99,7 @@ records.push({id:'kaykit-free:Knight.glb',path:'models/hf-kaykit-knight.glb',sou
 copy(path.join(ROOT,'src/highfly/fog.mjs'),loc('src/highfly/fog.mjs'));
 copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
+copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';","import { FILM } from './engine/quality.js';\nimport { installHighflyFog } from './highfly/fog.mjs';\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';");
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
@@ -112,13 +113,17 @@ const freeHeroStart=[
  "const hfStatus=document.createElement(\'div\');hfStatus.style.cssText=\'position:fixed;top:8px;left:50%;transform:translateX(-50%);background:#130c2ee9;color:#fff4d3;padding:5px 12px;border-radius:14px;border:1px solid #a88e75;font:11px system-ui;z-index:9500;pointer-events:none\';document.body.append(hfStatus);",
  "hfStatus.textContent=\'HIGHFLY · Cargando KayKit FREE…\';window.__highflyHeroStatus={requested:hfCharacter,loaded:false,reason:null};",
  "if(hfCharacter===\'kaykit\'){",
- " KayKitFreeHero.load(pipe).then(h=>{game.attachHero(h);window.__hero=h;window.__highflyHeroStatus.loaded=true;hfStatus.textContent=\'HIGHFLY · KayKit FREE ✓\';}).catch(err=>{console.error(\'KayKit FREE failed, restoring Unsung\',err);window.__highflyHeroStatus.reason=String(err);hfStatus.textContent=\'⚠ KayKit falló · Unsung de respaldo\';Hero.load(pipe,import.meta.env.BASE_URL+\'models/hero.glb\').then(h=>{game.attachHero(h);window.__hero=h;}).catch(e=>console.error(e));});",
+ " KayKitFreeHero.load(pipe).then(h=>{game.attachHero(h);window.__hero=h;window.__highflyHeroStatus.loaded=true;hfStatus.textContent=\'HIGHFLY · KayKit FREE ✓\';}).catch(err=>{console.error(\'KayKit FREE failed, restoring Unsung\',err);window.__highflyHeroStatus.reason=String(err);hfStatus.textContent=\'⚠ KayKit: \'+String(err?.message||err).slice(0,100)+\' · Unsung de respaldo\';Hero.load(pipe,import.meta.env.BASE_URL+\'models/hero.glb\').then(h=>{game.attachHero(h);window.__hero=h;}).catch(e=>console.error(e));});",
  "}else{",
  nativeHero,
  " window.__highflyHeroStatus.loaded=true;hfStatus.textContent=\'HIGHFLY · Unsung original\';",
  "}"
 ].join('\n');
 patch('src/main.js',nativeHero,freeHeroStart);
+
+patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';");
+patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);');
+patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
 patch('src/game/input.js','    this._down = new Set();','    this._down = new Set();\n    attachHighflyTouch(this);');
@@ -128,7 +133,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js']);
+const allowed=new Set(['src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
@@ -155,6 +160,7 @@ if(!animationMap)throw Error('KayKit runtime CLIPS map missing');
 const mapped=[...animationMap.matchAll(/:\s*'([^']+)'/g)].map(m=>m[1]);
 for(const name of mapped)if(!clips.includes(name))throw Error('Runtime KayKit clip is unavailable: '+name);
 console.log('[KAYKIT CLIP AUDIT] '+clips.length+' exact FREE Knight animation clips; runtime mappings '+mapped.length+' (all present)');
+console.log('[KAYKIT MODEL WEAPONS] '+nodes.filter(n=>/sword|shield|handslot/i.test(n)).join(' | '));
 console.log('[KAYKIT CLIPS] '+clips.slice().sort().join(' | '));
 
 
@@ -174,5 +180,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.2 KAYKIT FREE DEFAULT',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.3 KAYKIT FREE SWORD + DASH + SPRINT TOGGLE',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');

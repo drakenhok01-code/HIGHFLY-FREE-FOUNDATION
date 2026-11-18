@@ -70,3 +70,44 @@ test('Unsung swim is buoyancy and forward motion, not a proven swimming animatio
  assert.equal(p.state,'swim');assert.ok(p.pos.y>.8&&p.pos.y<2.5,'float near surface');
  assert.ok(p.pos.z>2,'forward motion in deep water');
 });
+
+test('DASH impulse applies actual Unsung capsule movement in forward/back/side and preserves player physics',async()=>{
+ const {installHighflyDash,DASH}=await import('../src/highfly/dash.mjs');
+ for(const point of [[64,4],[64,124],[124,64],[4,64]]){
+  const p=installHighflyDash(new Player(flat));p.spawn(0,0,0);p.grounded=true;
+  const input={move:joystickVector(rect,...point),held:new Set(),pressed:new Set(['dash']),look:{x:0,y:0}};
+  const stamina=p.stamina;p.update(1/60,input,0);
+  assert.equal(p.state,'hf_dash');assert.ok(p.stamina<stamina);
+  assert.ok(Math.hypot(p.pos.x,p.pos.z)>.1);
+  input.pressed.clear();
+  for(let n=0;n<16;n++)p.update(1/60,input,0);
+  assert.equal(p.state,'move');
+  assert.ok(Math.hypot(p.pos.x,p.pos.z)>2,'DASH moves character in actual capsule collision update');
+  assert.ok(p._hfDashCd>0);
+  assert.ok(DASH.time<.3);
+ }
+});
+test('DASH refuses spam on cooldown; grants brief i-frames, not permanent immunity',async()=>{
+ const {installHighflyDash,DASH}=await import('../src/highfly/dash.mjs');
+ const p=installHighflyDash(new Player(flat));p.spawn(0,0,0);p.grounded=true;
+ const i={move:{x:0,y:1},held:new Set(),pressed:new Set(['dash'])};
+ p.update(1/60,i,0);assert.equal(p.state,'hf_dash');
+ i.pressed.clear();
+ for(let n=0;n<5;n++)p.update(1/60,i,0);
+ let hp=p.health;assert.equal(p.damage(5),false,'mid-DASH i-frames must evade');
+ assert.equal(p.health,hp);
+ for(let n=0;n<15;n++)p.update(1/60,i,0);
+ assert.equal(p.state,'move');
+ i.pressed.add('dash');p.update(1/60,i,0);assert.equal(p.state,'move','cooldown blocks repeat');
+ for(let n=0;n<70;n++){i.pressed.clear();p.update(1/60,i,0);}
+ i.pressed.add('dash');p.update(1/60,i,0);assert.equal(p.state,'hf_dash','DASH usable after cooldown');
+});
+test('DASH respects original capsule world collision at a hard wall',async()=>{
+ const {installHighflyDash}=await import('../src/highfly/dash.mjs');
+ const wall={...flat,resolveCapsule(pos){if(pos.z>1)pos.z=1;if(pos.y<=0)pos.y=0;return pos.y<=0}};
+ const p=installHighflyDash(new Player(wall));p.spawn(0,0,0);p.grounded=true;
+ const inp={move:{x:0,y:1},held:new Set(),pressed:new Set(['dash'])};
+ p.update(1/60,inp,0);inp.pressed.clear();
+ for(let n=0;n<20;n++)p.update(1/60,inp,0);
+ assert.ok(p.pos.z<=1.0001,'dash never teleports through wall');
+});

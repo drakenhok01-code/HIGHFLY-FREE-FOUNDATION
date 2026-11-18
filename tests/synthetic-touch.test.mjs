@@ -17,7 +17,7 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
  const previous={document:globalThis.document,matchMedia:globalThis.matchMedia,addEventListener:globalThis.addEventListener,location:globalThis.location};
  try{
   const root=new El('root'),stick=new El('stick'),knob=new El('knob'),cam=new El('cam');
-  const btns=['attack','jump','dodge','interact','sprint','fullscreen'].map(a=>Object.assign(new El('button'),{dataset:{a}}));
+  const btns=['attack','jump','dodge','interact','sprint','dash','fullscreen'].map(a=>Object.assign(new El('button'),{dataset:{a}}));
   root.parts={'.stick':stick,'.knob':knob,'.cam':cam,buttons:btns};
   const fakeDoc={head:new El('head'),body:new El('body'),createElement:t=>t==='div'&&fakeDoc.divs++===0?root:new El(t),divs:0,addEventListener(){}};
   globalThis.document=fakeDoc;globalThis.matchMedia=()=>({matches:true});globalThis.addEventListener=()=>{};globalThis.location={search:''};
@@ -42,4 +42,27 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
   input.pressed.clear();applyHighflyTouch(input);assert.ok(!input.pressed.has('attack'),'ATK is one shot');
   cam.dispatch('pointermove',2,120,80);assert.equal(input._dx,80,'camera continues after stick release');
  }finally{for(const [k,v] of Object.entries(previous))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+// Sprint is an explicit tap-toggle. DASH is a one-shot that never stays pressed.
+test('CORRER tap toggles ON/OFF while the first finger keeps steering; DASH only pulses once',()=>{
+ const saved={document:globalThis.document,matchMedia:globalThis.matchMedia,addEventListener:globalThis.addEventListener,location:globalThis.location};
+ try{
+  const root=new El('root'),stick=new El('stick'),knob=new El('knob'),cam=new El('cam'),dash=new El('dash'),sprint=new El('sprint');
+  sprint.dataset={a:'sprint'};dash.dataset={a:'dash'};
+  root.parts={'.stick':stick,'.knob':knob,'.cam':cam,'.dash':dash,buttons:[sprint,dash]};
+  const doc={head:new El('head'),body:new El('body'),divs:0,createElement:t=>t==='div'&&doc.divs++===0?root:new El(t),addEventListener(){}};
+  globalThis.document=doc;globalThis.matchMedia=()=>({matches:true});globalThis.addEventListener=()=>{};globalThis.location={search:''};
+  const input={_dx:0,_dy:0,move:{x:0,y:0},pressed:new Set(),held:new Set(),enabled:true};
+  attachHighflyTouch(input);
+  stick.dispatch('pointerdown',10,64,12);
+  sprint.dispatch('pointerdown',11,160,40);applyHighflyTouch(input);
+  assert.ok(input.held.has('sprint'),'one tap should enable running');
+  assert.ok(input.move.y>.5,'left thumb remains on joystick');
+  input.held.clear();applyHighflyTouch(input);assert.ok(input.held.has('sprint'),'tap toggle persists after release');
+  dash.dispatch('pointerdown',12,25,25);input.pressed.clear();applyHighflyTouch(input);
+  assert.ok(input.pressed.has('dash'),'DASH is a distinct pulse');
+  input.pressed.clear();applyHighflyTouch(input);assert.ok(!input.pressed.has('dash'),'DASH must not repeat');
+  sprint.dispatch('pointerdown',13,160,40);input.held.clear();applyHighflyTouch(input);
+  assert.ok(!input.held.has('sprint'),'second tap disables running');
+ }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });

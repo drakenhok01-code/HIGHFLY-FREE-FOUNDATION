@@ -59,3 +59,13 @@ test('Eight-way joystick steering remains independent from ATK one-shot inputs',
  t.pressed.add('attack');applyHighflyTouch(input);assert.equal(input.pressed.has('attack'),true);
  input.pressed.clear();applyHighflyTouch(input);assert.equal(input.pressed.has('attack'),false);
 });
+
+// KayKit GLTFLoader sanitizes node names; asset loader must accept both raw and normalized names.
+test('KayKit runtime accepts sanitized hand socket name and no longer hides FREE 1H_Sword',async()=>{
+ const fs=await import('node:fs');
+ const code=fs.readFileSync('src/highfly/kaykit-free-hero.mjs','utf8');
+ assert.match(code,/handslotr/);
+ assert.match(code,/this.socket\?\?=handFallback\?\?this.root/);
+ assert.doesNotMatch(code,/HIDE=new Set\(\['1H_Sword'/);
+ assert.match(code,/dash:'Dodge_Forward'/);
+});

@@ -8,12 +8,12 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
  jump:'Jump_Idle',land:'Jump_Land',swim:'Idle',
- roll:'Dodge_Forward',attack1:'1H_Melee_Attack_Slice_Horizontal',
+ roll:'Dodge_Forward',dash:'Dodge_Forward',attack1:'1H_Melee_Attack_Slice_Horizontal',
  attack2:'1H_Melee_Attack_Chop',attack3:'1H_Melee_Attack_Slice_Diagonal',
  heavy:'2H_Melee_Attack_Slice',hurt:'Block_Hit',dead:'Death_A',
  plunge:'Jump_Full_Long'
 };
-const HIDE=new Set(['1H_Sword','1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shield','Round_Shield','Spike_Shield']);
+const HIDE=new Set(['1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shield','Round_Shield','Spike_Shield']); // Keep CC0 1H_Sword visible in Knight rig
 export class KayKitFreeHero {
  static async load(pipe,url=import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb'){
    const data=await new GLTFLoader().loadAsync(url);
@@ -24,12 +24,18 @@ export class KayKitFreeHero {
    this.root.name='HIGHFLY_KAYKIT_FREE_KNIGHT';
    this.root.scale.setScalar(1.82/2.4374973315);
    this.root.frustumCulled=false;
-   this.socket=null;this.visibleMeshes=0;
+   this.socket=null;this.visibleMeshes=0;this.swordMeshes=0;
+   const norm=n=>(n??'').toLowerCase().replace(/[^a-z0-9]/g,'');
+   let handFallback=null;
    this.root.traverse(o=>{
-     if(o.name==='handslot.r')this.socket=o;
+     const n=norm(o.name);
+     // Three GLTFLoader sanitizes dotted names: handslot.r can become handslot_r.
+     if(n==='handslotr'||n==='righthandslot')this.socket=o;
+     if(!handFallback&&['handr','righthand','handright'].includes(n))handFallback=o;
      if(!o.isMesh)return;
      o.visible=!HIDE.has(o.name);
      if(o.visible)this.visibleMeshes++;
+     if(o.visible&&/^1h.?sword$/i.test(o.name))this.swordMeshes++;
      o.frustumCulled=false;
      // Original Unsung lighting uses custom shaders, not Three's stock light objects.
      // Use the CC0 embedded texture unlit for a reliable Android visibility test.
@@ -39,12 +45,15 @@ export class KayKitFreeHero {
      });
      o.material=Array.isArray(o.material)?o.material.map(basic):basic(o.material);
    });
-   if(!this.socket)throw Error('KayKit FREE missing hands lot right socket');
+   this.socket??=handFallback??this.root;
+   if(this.socket===this.root)console.warn('[HIGHFLY] KayKit FREE right-hand socket not found; using root hit-effect position without blocking character rendering');
+   console.log('[HIGHFLY] KayKit FREE visible meshes='+this.visibleMeshes+' swordMeshes='+this.swordMeshes+' tipSocket='+this.socket.name);
    if(!this.visibleMeshes)throw Error('KayKit FREE contains no visible character meshes');
    this.mixer=new THREE.AnimationMixer(this.root);
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
+   this.flash={value:0};this.rim={value:0}; // Compatible with Unsung Game event handlers
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
    this.landSignal=0;this.hitSignal=0;this.updated=false;
    pipe.scene.add(this.root);
@@ -63,7 +72,7 @@ export class KayKitFreeHero {
      this.actions.set(key,action);
    }
    action.reset();
-   const once=/^(roll|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key);
+   const once=/^(roll|dash|attack1|attack2|attack3|heavy|land|hurt|dead|plunge)$/.test(key);
    action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);
    action.clampWhenFinished=once;
    action.timeScale=duration>0?Math.min(3,Math.max(.3,clip.duration/duration)):1;
@@ -77,6 +86,7 @@ export class KayKitFreeHero {
    if(p.state==='dead')key='dead';
    else if(p.state==='hurt')key='hurt';
    else if(p.state==='roll'){key='roll';duration=.62;}
+   else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='plunge')key='plunge';
    else if(p.state==='attack'){
       key=p.comboStep===3?'heavy':p.comboStep===1?'attack2':p.comboStep===2?'attack3':'attack1';

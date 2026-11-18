@@ -28,9 +28,10 @@ export function attachHighflyTouch(input){
  '#hf-touch .jump{right:96px;bottom:13px}',
  '#hf-touch .roll{right:98px;bottom:80px}',
  '#hf-touch .use{right:21px;bottom:108px}',
- '#hf-touch .sprint{left:152px;bottom:44px}',
+ '#hf-touch .sprint{left:152px;bottom:64px;width:62px;height:62px;z-index:3}',
+ '#hf-touch .sprint[data-active="1"]{border:2px solid #ffdc87;background:linear-gradient(135deg,#755221,#25112f);box-shadow:0 0 16px #e4b85b88}',
  '#hf-touch .full{right:12px;top:8px;width:38px;height:38px}',
- '#hf-touch .dash{right:162px;bottom:13px;opacity:.38}',
+ '#hf-touch .dash{right:162px;bottom:13px;width:59px;height:59px;border:2px solid #9c84fc;background:linear-gradient(135deg,#5c2eaa,#21103e)}',
  '#hf-rotate{display:none;position:fixed;inset:0;z-index:10000;place-items:center;background:#100e22;color:white;text-align:center;font:bold 19px system-ui}',
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
@@ -40,11 +41,11 @@ export function attachHighflyTouch(input){
  root.innerHTML='<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
- '<button class="sprint" data-a="sprint">CORRER</button><button class="dash" disabled aria-label="DASH aún en desarrollo">🔒 DASH</button>'+
+ '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
  '<button class="full" data-a="fullscreen">⛶</button>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash')};
  input.highflyTouch=t;
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
@@ -91,25 +92,31 @@ export function attachHighflyTouch(input){
     p?.catch?.(()=>{});return;
    }
    try{b.setPointerCapture(e.pointerId)}catch{}
-   if(a==='sprint')t.held.add(a);else t.pressed.add(a);
+   if(a==='sprint'){
+    t.sprintOn=!t.sprintOn;
+    b.dataset.active=t.sprintOn?'1':'0';b.textContent=t.sprintOn?'CORRIENDO':'CORRER';
+   }else t.pressed.add(a);
   });
-  const up=e=>{e.preventDefault();if(a==='sprint')t.held.delete(a)};
+  const up=e=>{e.preventDefault();e.stopPropagation?.();};
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
- globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();});
+ globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();}});
 }
 export function applyHighflyTouch(input){
  const t=input.highflyTouch;if(!t)return;
  t.root.hidden=!input.enabled;
  if(!input.enabled){
-  t.pressed.clear();t.held.clear();t.x=t.y=0;t.active=false;
+  t.pressed.clear();t.held.clear();t.sprintOn=false;t.x=t.y=0;t.active=false;
   return;
  }
  input.move.x=t.x;input.move.y=t.y;
  for(const a of t.pressed)input.pressed.add(a);
  for(const a of t.held)input.held.add(a);
+ if(t.sprintOn)input.held.add('sprint');
+ const cd=globalThis.__game?.player?._hfDashCd??0;
+ if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=cd>.05?'.65':'1';}
  t.pressed.clear();
  if(t.debug){
   const fx=Math.round(input.move.x*100),fy=Math.round(input.move.y*100);
