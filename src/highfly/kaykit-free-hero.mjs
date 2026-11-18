@@ -301,30 +301,13 @@ export class KayKitFreeHero {
    this.rollPivot.rotation.x=p.state==='roll'?
      (direction==='backward'?-1:direction==='forward'?1:0)*Math.PI*2*eased:
      // Shoulder and head no longer inherit the 66-degree unstable body flip.
-     this._swimBlend*.78;
+     this._swimBlend*.18; // first isolate world-space head reversal
    this.rollPivot.rotation.z=p.state==='roll'?
      (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
    this.rollPivot.position.y=.91-.39*tuck+this._swimBlend*.08;
-   // Swimming pitched the entire body, including the head. GLTF rest transforms
-   // can contain mirrored/nonuniform scales, so subtracting two WORLD head
-   // quaternions may jump 180 degrees. Compensate ONLY the known body pitch.
-   const face=this._bone('head');
-   if(face?.parent&&this._swimBlend>.001&&p.state!=='roll'){
-    this.actor.updateMatrixWorld(true);
-    const pitch=this.rollPivot.rotation.x;
-    const worldYaw=new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0,1,0),p.yaw);
-    const invYaw=worldYaw.clone().invert();
-    const counter=new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(1,0,0),-pitch*.93);
-    // Actor-local counter-pitch transformed to world and then head-parent local.
-    const worldCorrection=worldYaw.multiply(counter).multiply(invYaw);
-    const parentWorld=face.parent.getWorldQuaternion(new THREE.Quaternion());
-    const local=parentWorld.clone().invert().multiply(worldCorrection).multiply(parentWorld);
-    // Correction magnitude is bounded by the body pitch, never a full flip.
-    face.quaternion.premultiply(local).normalize();
-   }
+   // No head correction quaternion: KayKit's stylized mirrored rig turned
+   // previous compensators into 180-degree flips. UAL1 controls the strokes.
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
