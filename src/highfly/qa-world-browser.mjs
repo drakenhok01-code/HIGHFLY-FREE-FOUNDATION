@@ -33,16 +33,30 @@ try {
  page.on('pageerror',e=>errors.push('pageerror: '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text().slice(0,200));});
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:40000});
- await page.waitForFunction(()=>{
-   const g=window.__game;
-   return window.__highflyHeroStatus?.loaded===true&&g?.hero&&
-    document.getElementById('boot')?.classList.contains('gone');
- },null,{timeout:165000});
+ try {
+  await page.waitForFunction(()=>{
+    const g=window.__game;
+    return window.__highflyHeroStatus?.loaded===true&&!!g?.hero;
+  },null,{timeout:140000});
+ }catch(e){
+  const state=await page.evaluate(()=>({
+   boot:document.getElementById('boot')?.className??'already removed',
+   loader:document.getElementById('boot')?.textContent?.slice(0,240),
+   game:!!window.__game,
+   hero:!!window.__game?.hero,
+   status:window.__highflyHeroStatus??null,
+   ready:document.readyState
+  })).catch(err=>({evaluationError:String(err)}));
+  console.log('[HIGHFLY WORLD LOAD DIAG]',JSON.stringify({state,errors}));
+  fs.writeFileSync('qa-world-kaykit-report.json',JSON.stringify({failure:String(e),state,errors},null,2));
+  await page.screenshot({path:'qa-world-kaykit.png',timeout:10000}).catch(()=>{});
+  throw e;
+ }
  const before=await page.evaluate(()=>{
   const g=window.__game;g.input.lockPointer=()=>{};g.start();
   return {pos:g.player.pos.toArray(),status:window.__highflyHeroStatus};
  });
- await delay(1200);
+ await delay(400);
  const report=await page.evaluate(()=>{
   const g=window.__game,h=g.hero,p=h.pipe;
   if(!h.cpuSkin?.parts?.length)throw Error('Android CPU skin was not installed');
