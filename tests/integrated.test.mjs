@@ -33,3 +33,40 @@ test('Native input excludes pointer lock and mouse attacks for Android',async()=
  assert.match(source,/if \(this.highflyTouch\) return; \/\/ never lock mouse/);
  assert.match(source,/if \(this.highflyTouch\) return; \/\/ never turn touch/);
 });
+test('Jump: native Unsung player rises then lands on flat terrain',()=>{
+ const p=new Player(flat);p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:0},held:new Set(),pressed:new Set(['jump']),look:{x:0,y:0}};
+ p.update(1/60,input,0);assert.ok(p.pos.y>.04,'jump impulse must lift capsule');
+ input.pressed.clear();let maxY=p.pos.y;
+ for(let n=0;n<140;n++){p.update(1/60,input,0);maxY=Math.max(maxY,p.pos.y);}
+ assert.ok(maxY>.5,'jump reaches altitude');
+ assert.ok(p.grounded&&Math.abs(p.pos.y)<.05,'jump returns to floor');
+});
+test('ROLL: original 0.62s dodge has effective i-frames then vulnerability',()=>{
+ const p=new Player(flat);p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:1},held:new Set(),pressed:new Set(['dodge']),look:{x:0,y:0}};
+ p.update(1/60,input,0);assert.equal(p.state,'roll');input.pressed.clear();
+ for(let n=0;n<10;n++)p.update(1/60,input,0);
+ const hp=p.health;assert.equal(p.damage(12),false,'hit inside dodge i-frames');assert.equal(p.health,hp);
+ for(let n=0;n<23;n++)p.update(1/60,input,0);
+ assert.equal(p.damage(12),true,'hit outside i-frames');assert.equal(p.health,hp-12);
+});
+test('Unsung original attack combo respects 1→2→3 queued strikes',()=>{
+ const p=new Player(flat);p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:0},held:new Set(),pressed:new Set(['attack']),look:{x:0,y:0}};
+ p.update(1/60,input,0);assert.equal(p.comboStep,0);assert.equal(p.state,'attack');
+ input.pressed.clear();
+ for(let n=0;n<18;n++)p.update(1/60,input,0);
+ input.pressed.add('attack');p.update(1/60,input,0);assert.equal(p.comboStep,1);
+ input.pressed.clear();
+ for(let n=0;n<18;n++)p.update(1/60,input,0);
+ input.pressed.add('attack');p.update(1/60,input,0);assert.equal(p.comboStep,2);
+});
+test('Unsung swim is buoyancy and forward motion, not a proven swimming animation',()=>{
+ const water={...flat,waterLevel:()=>3};
+ const p=new Player(water);p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:1},held:new Set(),pressed:new Set(),look:{x:0,y:0}};
+ for(let n=0;n<140;n++)p.update(1/60,input,0);
+ assert.equal(p.state,'swim');assert.ok(p.pos.y>.8&&p.pos.y<2.5,'float near surface');
+ assert.ok(p.pos.z>2,'forward motion in deep water');
+});

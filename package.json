@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "qa:static": "node scripts/qa-static.mjs",
-    "qa:gameplay": "node --test tests/mechanics.test.mjs",
+    "qa:gameplay": "node --test tests/mechanics.test.mjs tests/synthetic-touch.test.mjs",
     "build": "node scripts/f0-build.mjs",
     "qa:dist": "node scripts/qa-dist.mjs"
   },
