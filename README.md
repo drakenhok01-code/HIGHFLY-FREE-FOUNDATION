@@ -49,3 +49,11 @@ Eliminado el aviso fijo de confirmación «HIGHFLY · KayKit FREE ✓» del cent
 
 ## F0.9 — Laboratorio universal de movimientos
 Un solo personaje KayKit Medium (41 huesos) y un Player de Unsung. Doble salto con energía y límite, nado con brazadas procedurales, ROLL pegado al suelo, TREPAR mediante colisiones y vault de salientes bajos; animaciones de gesto, sentarse, acostarse, recoger, talar, minar y pescar (acciones demostrativas, sin recursos ni inventario todavía). El menú ACCIONES agrupa controles móviles. ARMA alterna las piezas CC0 integradas: espada, mandoble, doble empuñadura, espada+escudo y puños. El daño del combo aún es Unsung, sin perfiles de daño individual. SOURCE no incluido.
+
+## F0.10 — laboratorio de movilidad y armas
+Rama `f010-weapon-motion-lab`: 12 energía ROLL, DASH de emergencia CD 5 s
+sin energía, direcciones de ROLL, dos armas originales MIT de Emberfall
+(lanza y bastón), y mezclador de torso/piernas para ataque en movimiento.
+El combate 1-2-3 y sus ventanas de daño siguen siendo Unsung. Sin importar
+animaciones o skins restringidos de ClaudeCraft. No se promete todavía
+magia con daño, alcance especializado, buceo, ni outfits alternativos.

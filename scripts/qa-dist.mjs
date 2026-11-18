@@ -8,15 +8,18 @@ const prov=JSON.parse(fs.readFileSync(path.join(root,'BUILD_PROVENANCE.json'),'u
 assert.equal(prov.originalUnsungCommit,'9f61b0d80b18c6cf661f72372545b3f9214fb455');
 assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/\/HIGHFLY-FREE-FOUNDATION\//);
 const m=JSON.parse(fs.readFileSync(path.join(root,'ASSET_MANIFEST.json'),'utf8'));
-const groups={};assert.equal(m.records.length,134,'Expected 129 audio, 4 original world/model assets and 1 FREE KayKit Knight');
+const groups={};assert.equal(m.records.length,136,'134 baseline assets plus 2 original Emberfall weapons');
 for(const a of m.records){
  assert.equal(a.decision,'ALLOW');
  const f=path.join(root,a.path);assert.ok(fs.existsSync(f),'Missing asset '+a.path);
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'),a.sha256,'Unexpected file hash '+a.path);
- assert.ok(a.source.includes(a.id==='kaykit-free:Knight.glb'?prov.kaykitCommit:prov.originalUnsungCommit));groups[a.license]=(groups[a.license]||0)+1;
+ const commit=a.id.startsWith('emberfall-original:')?'5d199ab4888e428b0dab80528a37ab8ac0107360':
+ (a.id==='kaykit-free:Knight.glb'?prov.kaykitCommit:prov.originalUnsungCommit);
+ assert.ok(a.source.includes(commit));groups[a.license]=(groups[a.license]||0)+1;
 }
 assert.equal(groups['CC-BY-4.0'],62);assert.equal(groups['CC0-1.0'],68);
 assert.equal(groups['MIT (original Unsung)'],4);
+assert.equal(groups['MIT (Emberfall original geometry)'],2);
 function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);}
 for(const f of walk(root)){
  assert.ok(!/private_assets|phoenix-source|kaykit.*source|\.fbx$|\.zip$/i.test(f),'Restricted file '+f);
@@ -25,6 +28,7 @@ for(const f of walk(root)){
 assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt')));
+assert.ok(fs.existsSync(path.join(root,'LICENSES','EMBERFALL-MIT.txt')));
 const free=JSON.parse(fs.readFileSync(path.join(root,'catalogo-free.json'),'utf8'));
 assert.equal(free.assets.length,32,'Official FREE index must remain pinned to 32 model sources');
 assert.ok(free.assets.every(x=>x.source.includes(free.commit)),'Unpinned model in official FREE index');

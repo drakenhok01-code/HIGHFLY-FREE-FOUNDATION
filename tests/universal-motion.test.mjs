@@ -93,13 +93,13 @@ test('Work interactions are only contextual previews; never invent ore or loot',
  assert.equal(p.inventory,undefined);
 });
 test('Equipment animation groups support original, two-handed, dual, shield and fists',()=>{
- assert.equal(WEAPON_MODES.length,5);
- assert.deepEqual(WEAPON_MODES.map(x=>x.id),['sword','greatsword','dual','shield','unarmed']);
+ assert.equal(WEAPON_MODES.length,7);
+ assert.deepEqual(WEAPON_MODES.map(x=>x.id),['sword','greatsword','dual','shield','unarmed','spear','staff']);
  for(const [id,clips] of Object.entries(WEAPON_ANIMATIONS))assert.equal(clips.length,3,id);
  const p=player();p.update(1/60,input(['equip']),0);
  assert.equal(p._hfGearCycle,1);
  p.update(1/60,input(['equip']),0);assert.equal(p._hfGearCycle,2);
- assert.equal(weaponMode(4).id,'unarmed');
+ assert.equal(weaponMode(4).id,'unarmed');assert.equal(weaponMode(5).style,'spear');assert.equal(weaponMode(6).style,'staff');
 });
 test('No roll/dash state collision with double jump, climb or social action',()=>{
  const p=player();
@@ -128,4 +128,22 @@ test('Sitting/lying keeps its pose until interrupted; not a 3-second timer',()=>
  assert.equal(p.state,'hf_action','lying pose must persist');
  p.update(1/60,input(['dodge']),0);
  assert.equal(p.state,'roll','Unsung original roll cancels lying');
+});
+
+test('F0.10 emergency DASH: 5s cooldown and zero energy cost',()=>{
+ const p=player(),before=p.stamina;
+ p.update(1/60,input(['dash']),0);
+ assert.equal(p.state,'hf_dash');assert.equal(p.stamina,before);
+ assert.ok(p._hfDashCd>4.9);
+ for(let i=0;i<18;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'move');
+ const remaining=p._hfDashCd;
+ p.update(1/60,input(['dash']),0);
+ assert.equal(p.state,'move');assert.ok(p._hfDashCd<remaining);
+});
+test('F0.10 ROLL costs 12 and chooses visual direction',()=>{
+ const p=player(),before=p.stamina;
+ p.update(1/60,input(['dodge'],[],0,-1),0);
+ assert.equal(p.state,'roll');assert.equal(before-p.stamina,12);
+ assert.equal(p._hfRollVisual,'backward');
 });

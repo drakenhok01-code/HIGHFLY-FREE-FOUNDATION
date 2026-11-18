@@ -132,12 +132,14 @@ try{
    hero.update(1/60,{...p,...sample});
    if(!hero.current)throw Error('Missing animation for '+sample.state);
  }
- const equipmentModes=['sword','greatsword','dual','shield','unarmed'];
+ const equipmentModes=['sword','greatsword','dual','shield','unarmed','spear','staff'];
  for(let i=0;i<equipmentModes.length;i++){
    const mode=hero.equip(i);
    if(mode.id!==equipmentModes[i])throw Error('Gear cycle mismatch '+mode.id);
    if(hero.weaponMode.style==='unarmed'&&hero.sword)throw Error('Unarmed sword visible');
-   if(i!==4&&!hero.sword)throw Error('Missing '+mode.id+' weapon');
+   if(i<4&&!hero.sword)throw Error('Missing '+mode.id+' embedded weapon');
+   if(i>=5&&!hero.extraWeapons?.get(mode.external)?.visible)
+    throw Error('Missing original Emberfall '+mode.id);
  }
  hero.equip(0);
  const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,

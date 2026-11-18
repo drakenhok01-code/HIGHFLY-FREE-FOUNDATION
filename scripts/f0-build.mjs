@@ -95,6 +95,24 @@ const kaykitResult=await downloadPinned(kaykitAsset,'60428e3abc09ba83e595d256e3a
 const kaykitLicense=loc('KAYKIT-FREE-LICENSE.txt');
 await downloadPinned('LICENSE.txt','ae322141814056dda0deea7540d74c41d87aee1da319977cd1bd84ee5a923629',kaykitLicense);
 records.push({id:'kaykit-free:Knight.glb',path:'models/hf-kaykit-knight.glb',source:kaykitResult.url,commit:kaykitCommit,bytes:kaykitResult.bytes,sha256:hash(kaykitModel),license:'CC0-1.0',decision:'ALLOW',commercial:true,redistribution:true,attributionRequired:false,author:'Kay Lousberg'});
+// F0.10: two original MIT Emberfall Blender models with frozen hashes.
+const emberCommit='5d199ab4888e428b0dab80528a37ab8ac0107360';
+const emberRoot='https://raw.githubusercontent.com/we1jia/emberfall/'+emberCommit+'/public/assets/models-v3/';
+for(const [fileName,outName,expected] of [
+ ['Lightning_Spear.glb','hf-emberfall-spear.glb','fa0ca2b83f5e12aa23c74a429b43d49c78a99982b3b12a3d623b949d9646c429'],
+ ['Water_Staff.glb','hf-emberfall-staff.glb','d38e82e7aea27ef140498ecec1d2815e4825f9daa054d09536e06e13e4ed9e64']
+]){
+ const url=emberRoot+fileName,resp=await fetch(url);
+ if(!resp.ok)throw Error('Emberfall original weapon unavailable '+resp.status+' '+fileName);
+ const dest=loc('public/models/'+outName);
+ fs.writeFileSync(dest,Buffer.from(await resp.arrayBuffer()));
+ if(hash(dest)!==expected)throw Error('Emberfall SHA mismatch '+fileName);
+ records.push({id:'emberfall-original:'+fileName,path:'models/'+outName,source:url,
+  commit:emberCommit,sha256:expected,bytes:fs.statSync(dest).size,
+  license:'MIT (Emberfall original geometry)',decision:'ALLOW',commercial:true,
+  redistribution:true,attributionRequired:true,author:'we1jia / Emberfall'});
+}
+
 
 
 copy(path.join(ROOT,'src/highfly/fog.mjs'),loc('src/highfly/fog.mjs'));
@@ -157,6 +175,7 @@ copy(path.join(ROOT,'src/highfly/catalogo-free.html'),path.join(output,'catalogo
 copy(loc('LICENSE'),path.join(output,'LICENSES','UNSUNG-MIT.txt'));
 copy(loc('CREDITS.md'),path.join(output,'CREDITS_UNSUNG.md'));
 copy(kaykitLicense,path.join(output,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt'));
+copy(path.join(ROOT,'LICENSES','EMBERFALL-MIT.txt'),path.join(output,'LICENSES','EMBERFALL-MIT.txt'));
 // Inventory the actual FREE GLB animation names and sockets: no guesswork.
 const kb=fs.readFileSync(kaykitModel);
 if(kb.toString('ascii',0,4)!=='glTF'||kb.readUInt32LE(4)!==2||kb.readUInt32LE(8)!==kb.length||kb.toString('ascii',16,20)!=='JSON')throw Error('Invalid KayKit GLB structure');
@@ -192,5 +211,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.9 UNIVERSAL MOTION LAB (DOUBLE JUMP, SWIM, GROUND ROLL, CLIMB, ACTIONS, NATIVE GEAR)',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.10 EMERGENCY DASH 5S, DIRECTIONAL ROLL, EMBERFALL SPEAR AND STAFF',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');
