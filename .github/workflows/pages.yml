@@ -27,6 +27,8 @@ jobs:
       - name: Simular movimiento real sobre el Player original
         run: node --test tests/integrated.test.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
         run: |
           cd .work/unsung
           npm install --no-save --no-package-lock playwright@1.57.0 --no-audit --no-fund
