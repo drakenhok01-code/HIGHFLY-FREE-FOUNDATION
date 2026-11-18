@@ -49,3 +49,13 @@ test('Joystick center is stationary, diagonals normalized, any angle supported',
  const v=joystickVector(r,95,48);
  assert.ok(v.x>0&&v.y>0,'analog noncardinal angle');
 });
+
+test('Eight-way joystick steering remains independent from ATK one-shot inputs',()=>{
+ const r={left:0,top:0,width:128,height:128};
+ for(const [px,py] of [[4,64],[124,64],[64,4],[64,124],[4,4],[124,4],[4,124],[124,124]])assert.ok(Math.hypot(...Object.values(joystickVector(r,px,py)))>.9);
+ const t={root:{hidden:true},x:-1,y:0,pressed:new Set(),held:new Set()};
+ const input={highflyTouch:t,enabled:true,pressed:new Set(),held:new Set(),move:{x:0,y:0}};
+ applyHighflyTouch(input);assert.equal(input.move.x,-1);assert.equal(input.pressed.has('attack'),false);
+ t.pressed.add('attack');applyHighflyTouch(input);assert.equal(input.pressed.has('attack'),true);
+ input.pressed.clear();applyHighflyTouch(input);assert.equal(input.pressed.has('attack'),false);
+});

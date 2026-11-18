@@ -24,6 +24,8 @@ jobs:
           npm run qa:gameplay
       - name: Compilar Unsung original congelado
         run: npm run build
+      - name: Simular movimiento real sobre el Player original
+        run: node --test tests/integrated.test.mjs
       - name: Auditar dist antes de publicar
         run: npm run qa:dist
       - uses: actions/configure-pages@v5

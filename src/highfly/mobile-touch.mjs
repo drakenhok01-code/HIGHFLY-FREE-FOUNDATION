@@ -1,5 +1,5 @@
 /** HIGHFLY F0.1: Android-native analog 360° with original Unsung Input/Player. */
-const mobile=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
+export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
@@ -15,7 +15,7 @@ export function joystickVector(rect,px,py,deadzone=0.07){
  return {x:Math.abs(dx)<1e-12?0:dx,y:Math.abs(dy)<1e-12?0:-dy};
 }
 export function attachHighflyTouch(input){
- if(typeof document==='undefined'||!mobile())return;
+ if(typeof document==='undefined'||!isTouchDevice())return;
  const css=[
  '#hf-touch{position:fixed;inset:0;z-index:9000;pointer-events:none;color:#fff;font:bold 11px system-ui;user-select:none;-webkit-user-select:none}',
  '#hf-touch[hidden]{display:none!important}',
@@ -35,7 +35,7 @@ export function attachHighflyTouch(input){
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
  ].join('');
- const style=document.createElement('style');style.textContent=css;document.head.append(style);
+ const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab{display:none!important}';document.head.append(style);
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
  root.innerHTML='<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
@@ -44,7 +44,7 @@ export function attachHighflyTouch(input){
  '<button class="full" data-a="fullscreen">⛶</button>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0};
  input.highflyTouch=t;
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
@@ -61,10 +61,10 @@ export function attachHighflyTouch(input){
  stick.addEventListener('pointerdown',e=>{
   if(sid!==null)return;
   sid=e.pointerId;try{stick.setPointerCapture(sid)}catch{}
-  steer(e);e.preventDefault();e.stopPropagation();
+  steer(e);t.gestureCount++;e.preventDefault();e.stopImmediatePropagation?.();e.stopPropagation();
  });
  stick.addEventListener('pointermove',e=>{if(e.pointerId===sid){steer(e);e.preventDefault();e.stopPropagation();}});
- const endStick=e=>{if(e.pointerId!==sid)return;sid=null;center();};
+ const endStick=e=>{if(e.pointerId!==sid)return;sid=null;center();e.preventDefault?.();e.stopPropagation?.();};
  stick.addEventListener('pointerup',endStick);stick.addEventListener('pointercancel',endStick);
  stick.addEventListener('lostpointercapture',endStick);
  const camera=root.querySelector('.cam');let cid=null,px=0,py=0;
@@ -116,6 +116,6 @@ export function applyHighflyTouch(input){
   const yaw=globalThis.__game?.player?.yaw;
   t.debug.textContent='JOYSTICK 360° X='+fx+' Y='+fy+'\n'+
    (Number.isFinite(yaw)?'GIRO personaje='+yaw.toFixed(2):'GIRO personaje=...')+
-   '\nMové en horizontal, vertical y diagonal';
+   '\nGESTOS='+t.gestureCount+' '+(t.active?'ACTIVO':'LIBRE')+'\n'+(globalThis.__game?.player?.pos?'POS X='+globalThis.__game.player.pos.x.toFixed(2)+' Z='+globalThis.__game.player.pos.z.toFixed(2):'POS esperando');
  }
 }

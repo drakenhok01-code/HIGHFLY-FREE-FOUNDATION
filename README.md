@@ -24,3 +24,6 @@ La visualización en Samsung, apariencia real de niebla, físicas y fps están *
 ## F0.1 — diagnóstico del primer video Samsung
 
 El mundo Unsung cargó en un teléfono real, pero el primer HUD no obtuvo aprobación de joystick 360°. Se reforzó su stick analógico con captura de puntero, diagonales normalizadas, centro muerto y pruebas automáticas para ocho direcciones; **hasta un nuevo video Android su resultado continúa pendiente**. Para diagnosticar la dirección entregada al Input original: agrega `?hfinputdebug=1` a la URL de Pages; aparece `JOYSTICK 360° X=... Y=...` y el giro del héroe. No se modificaron el terreno, los edificios, el agua ni la cápsula física.
+
+## F0.2 · Corrección 18/11/2026
+KayKit FREE Knight se intenta cargar por defecto. Si falla, muestra ⚠ en pantalla y restaura Unsung original. Comparación original: `?hfchar=unsung`. Diagnóstico del joystick y coordenadas: `?hfinputdebug=1`. El mouse-lock y los clicks derivados de toques quedan aislados en el Input. El CI valida las ocho direcciones con la cápsula física **real** de Unsung, giros de cámara, combate y lista exacta de animaciones del GLB. Ver `docs/AUDITORIA_MOVIMIENTO_F02.md`. Persisten pruebas visuales Android y sistemas de natación/parkour/dash.
