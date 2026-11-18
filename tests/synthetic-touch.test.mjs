@@ -66,6 +66,12 @@ test('CORRER tap toggles ON/OFF while the first finger keeps steering; DASH only
   dash.dispatch('pointerup',12,114,64);input.pressed.clear();applyHighflyTouch(input);
   assert.ok(input.pressed.has('dash'),'DASH is a distinct release pulse');
   assert.ok(input.highflyAbilityAim.dash?.x>.9,'rightward ability drag overrides left stick');
+   input.pressed.clear();applyHighflyTouch(input);
+   dash.dispatch('pointerdown',14,93,91);
+   dash.dispatch('pointerup',14,93,91); // off-center, but no finger movement
+   applyHighflyTouch(input);
+   assert.ok(input.pressed.has('dash'),'off-center simple tap still activates DASH');
+   assert.equal(input.highflyAbilityAim.dash,null,'button rim tap is not a diagonal aim');
   input.pressed.clear();applyHighflyTouch(input);assert.ok(!input.pressed.has('dash'),'DASH must not repeat');
   sprint.dispatch('pointerdown',13,160,40);input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.held.has('sprint'),'second tap disables running');

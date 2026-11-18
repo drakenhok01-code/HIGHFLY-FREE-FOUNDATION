@@ -141,9 +141,12 @@ export function attachHighflyTouch(input){
     b.addEventListener('pointerdown',e=>{
       if(t.abilityPointer)return;
       const r=b.getBoundingClientRect();
-      t.abilityPointer={id:e.pointerId,kind:a,x:r.left+r.width/2,y:r.top+r.height/2,vector:null};
+      // Fingertip movement defines the aim. A tap anywhere in the button
+      // (including near the rim) has no aim vector, so it uses hero facing.
+      const centerX=r.left+r.width/2,centerY=r.top+r.height/2;
+      t.abilityPointer={id:e.pointerId,kind:a,x:e.clientX,y:e.clientY,vector:null};
       const overlay=t.aimOverlay;
-      if(overlay){overlay.style.left=(t.abilityPointer.x-54)+'px';overlay.style.top=(t.abilityPointer.y-54)+'px';overlay.dataset.active='1';}
+      if(overlay){overlay.style.left=(centerX-54)+'px';overlay.style.top=(centerY-54)+'px';overlay.dataset.active='1';}
       try{b.setPointerCapture(e.pointerId)}catch{}
       move(e);e.preventDefault();e.stopPropagation();
     });
