@@ -118,8 +118,10 @@ test('Sitting/lying keeps its pose until interrupted; not a 3-second timer',()=>
  for(let i=0;i<250;i++)p.update(1/60,input(),0);
  assert.equal(p.state,'hf_action','seated pose must persist');
  assert.equal(p._hfAction.name,'sit');
- p.update(1/60,input(['jump']),0);
- assert.equal(p.state,'move','jump cancels sitting');
+ p.update(1/60,input(['attack']),0);
+ assert.equal(p.state,'attack','ATK cancels sitting and retains Unsung combo');
+ for(let i=0;i<60;i++)p.update(1/60,input(),0);
+ assert.equal(p.state,'move','native combat recovery returns to locomotion');
  p.update(1/60,input(['lie']),0);
  assert.equal(p.state,'hf_action');
  for(let i=0;i<250;i++)p.update(1/60,input(),0);
