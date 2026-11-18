@@ -111,3 +111,26 @@ test('DASH respects original capsule world collision at a hard wall',async()=>{
  for(let n=0;n<20;n++)p.update(1/60,inp,0);
  assert.ok(p.pos.z<=1.0001,'dash never teleports through wall');
 });
+
+test('DASH stops completely after letting go: no residual ice-skating',async()=>{
+ const {installHighflyDash}=await import('../src/highfly/dash.mjs');
+ const p=installHighflyDash(new Player(flat));p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:1},held:new Set(),pressed:new Set(['dash']),look:{x:0,y:0}};
+ p.update(1/60,input,0);input.pressed.clear();input.move={x:0,y:0};
+ for(let i=0;i<16;i++)p.update(1/60,input,0);
+ assert.equal(p.state,'move');
+ assert.ok(Math.hypot(p.vel.x,p.vel.z)<.06,'DASH end cannot retain impulse');
+ const place=p.pos.clone();
+ for(let i=0;i<22;i++)p.update(1/60,input,0);
+ assert.ok(p.pos.distanceTo(place)<.08,'Player must not skate after releasing stick');
+});
+test('DASH ends in active new joystick direction, not its original impulse',async()=>{
+ const {installHighflyDash}=await import('../src/highfly/dash.mjs');
+ const p=installHighflyDash(new Player(flat));p.spawn(0,0,0);p.grounded=true;
+ const input={move:{x:0,y:1},held:new Set(),pressed:new Set(['dash']),look:{x:0,y:0}};
+ p.update(1/60,input,0);input.pressed.clear();input.move={x:-1,y:0};
+ for(let i=0;i<16;i++)p.update(1/60,input,0);
+ assert.equal(p.state,'move');
+ assert.ok(p.vel.x>3&&p.vel.x<6,'New joystick steers the landing');
+ assert.ok(Math.abs(p.vel.z)<.3,'Old dash direction has been released');
+});
