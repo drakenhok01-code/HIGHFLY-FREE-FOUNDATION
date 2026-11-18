@@ -17,7 +17,11 @@ export function applyUALPose(hero,name,time,weight=0.6){
  const clip=hero.ualData?.clips?.[name];if(!clip||weight<=0)return 0;
  let done=0;
  for(const track of clip.bones){
-  if(track.target==='head')continue;
+  // UAL swim torso orientations are NOT equivalent to KayKit's V6.6
+  // stylized parent basis. They turned the head 126+ degrees in WORLD space
+  // although the local head bone never moved. Preserve only swim limb tracks.
+  if(track.target==='head'||
+    (name.startsWith('Swim_')&&(track.target==='spine'||track.target==='chest')))continue;
   const bone=hero._bone(track.target),basis=hero._ualParentRest?.get(track.target);
   if(!bone||!basis)continue;
   // delta in Quaternius parent rest frame -> world rest -> KayKit local parent rest
