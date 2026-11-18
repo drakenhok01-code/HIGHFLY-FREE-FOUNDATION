@@ -25,7 +25,7 @@ jobs:
       - name: Compilar Unsung original congelado
         run: npm run build
       - name: Simular movimiento real sobre el Player original
-        run: node --test tests/integrated.test.mjs
+        run: node --test tests/integrated.test.mjs tests/universal.test.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
         # Gate ALL releases, including Pages, with actual WebGL skin rasterization
         env:
