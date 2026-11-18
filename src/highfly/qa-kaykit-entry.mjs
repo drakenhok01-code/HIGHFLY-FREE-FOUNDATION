@@ -27,7 +27,7 @@ try{
  for(const [name,state,speed,grounded,comboStep] of states){
   p={...p,state,speed,grounded,comboStep:comboStep??0};
   hero.update(1/60,p);renderer.render(scene,camera);draws++;
-  if(hero.key!==(state==='hf_dash'?'dash':state==='swim'?'swim':state==='roll'?'roll':state==='hurt'?'hurt':state==='dead'?'dead':state==='attack'?(comboStep===3?'heavy':'attack'+(comboStep+1)):state==='move'?(speed>5.8?'sprint':speed>2.6?'run':speed>.2?'walk':'idle'):'jump'))
+  if(hero.key!==(!grounded&&state==='move'?'jump':state==='hf_dash'?'dash':state==='swim'?'swim':state==='roll'?'roll':state==='hurt'?'hurt':state==='dead'?'dead':state==='attack'?(comboStep===3?'heavy':'attack'+(comboStep+1)):state==='move'?(speed>5.8?'sprint':speed>2.6?'run':speed>.2?'walk':'idle'):'jump'))
     throw Error('Incorrect animation routing at '+name+': '+hero.key);
  }
  // Pixels ensure mesh actually renders, not just data object initialization.
