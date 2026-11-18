@@ -19,7 +19,7 @@ try{
  if(!hero.root.getObjectByName('Knight_Body')?.visible)throw Error('Body is hidden');
  if(!hero.root.getObjectByName('Knight_Head')?.visible)throw Error('Head is hidden');
  if(hero.clips.size<70)throw Error('Expected complete Knight clips');
- let p={pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,state:'move',speed:0,comboStep:0,attack:{t:.46}};
+ let p={pos:new THREE.Vector3(),viewY:0,yaw:0,grounded:true,state:'move',speed:0,comboStep:0,attack:{t:.46,hit:[.14,.27]}};
  const states=[
  ['idle','move',0,true],['walk','move',1.5,true],['run','move',4,true],['sprint','move',7,true],
  ['jump','move',0,false],['roll','roll',0,true],['dash','hf_dash',0,true],

@@ -167,7 +167,7 @@ export class KayKitFreeHero {
  _drawBladeTrail(dt,p){
    for(const h of this.trailHistory)h.age+=dt;
    this.trailHistory=this.trailHistory.filter(h=>h.age<.18);
-   const attack=p.state==='attack'&&p.attack&&
+   const attack=p.state==='attack'&&Array.isArray(p.attack?.hit)&&
      p.stateTime>=p.attack.hit[0]-.035&&p.stateTime<=p.attack.hit[1]+.04;
    if(attack&&this.sword.visible){
      this.trailHistory.push({a:this.bladeBase.clone(),b:this.tip.clone(),age:0});
