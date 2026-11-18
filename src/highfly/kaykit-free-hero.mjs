@@ -152,28 +152,53 @@ export class KayKitFreeHero {
    const name=track.name.slice(0,track.name.lastIndexOf('.')).split('/').pop().replace(/[^a-z]/ig,'').toLowerCase();
    return /^(spine|chest|neck|head|shoulder|upperarm|lowerarm|hand|wrist|elbow)/.test(name);
  }
- _playLower(name,speed=0){
-   const source=this.clips.get(name);if(!source)return;
-   let action=this.lowerActions.get(name);
-   if(!action){
-     const clip=source.clone();
-     clip.tracks=clip.tracks.filter(t=>!this._upperTrack(t)&&!/root\.position$/i.test(t.name));
-     if(!clip.tracks.length)return;
-     action=this.mixer.clipAction(clip);this.lowerActions.set(name,action);
+ _blendLower(p,dt,active){
+   // Emberfall-style continuously weighted locomotion: no clip restarts
+   // when a running attack turns into strafe/backward movement.
+   const speed=active&&p._hfAttackSteering?(p._hfAttackTravelSpeed??0):0;
+   const moving=THREE.MathUtils.clamp((speed-.14)/.60,0,1);
+   const facingX=Math.sin(p.yaw),facingZ=Math.cos(p.yaw);
+   const vx=p.vel?.x??0,vz=p.vel?.z??0;
+   const denom=Math.hypot(vx,vz)||1;
+   const forward=(vx*facingX+vz*facingZ)/denom;
+   const side=(vx*facingZ-vz*facingX)/denom;
+   const dirs=[
+      Math.max(0,forward)**2,Math.max(0,-forward)**2,
+      Math.max(0,-side)**2,Math.max(0,side)**2
+   ];
+   const total=dirs.reduce((acc,x)=>acc+x,0)||1;
+   const run=THREE.MathUtils.clamp((speed-2.15)/2.1,0,1);
+   const targets={
+     Idle:1-moving,
+     Walking_A:moving*dirs[0]/total*(1-run),
+     Running_A:moving*dirs[0]/total*run,
+     Walking_Backwards:moving*dirs[1]/total,
+     Running_Strafe_Left:moving*dirs[2]/total,
+     Running_Strafe_Right:moving*dirs[3]/total
+   };
+   this._lowerWeights??=new Map();
+   for(const [name,target] of Object.entries(targets)){
+     const source=this.clips.get(name);
+     if(!source)continue;
+     let action=this.lowerActions.get(name);
+     if(!action){
+       const clip=source.clone();
+       clip.tracks=clip.tracks.filter(t=>!this._upperTrack(t)&&!/root\.position$/i.test(t.name));
+       if(!clip.tracks.length)continue;
+       action=this.mixer.clipAction(clip);
+       action.setLoop(THREE.LoopRepeat,Infinity).setEffectiveWeight(0).play();
+       this.lowerActions.set(name,action);
+     }
+     const prior=this._lowerWeights.get(name)||0;
+     const weight=active?prior+(target-prior)*(1-Math.exp(-14*Math.max(dt,0))):0;
+     this._lowerWeights.set(name,weight);
+     const cadence=name==='Idle'?1:THREE.MathUtils.clamp(speed/
+       (name.includes('Running')?4.7:2.4),.62,1.52);
+     action.setEffectiveTimeScale(cadence);
+     action.setEffectiveWeight(weight);
    }
-   // Foot gait cadence follows actual capsule speed; idle is fully planted.
-   const reference=name==='Running_A'?5.2:name==='Running_B'?7.8:name==='Walking_A'?1.7:1;
-   const cadence=name==='Idle'?1:THREE.MathUtils.clamp(speed/reference,.8,1.35);
-   if(this.lowerKey===name){
-     action.timeScale=cadence;return;
-   }
-   const prev=this.lowerCurrent;
-   const phase=prev?.getClip()?.duration?(prev.time/prev.getClip().duration)%1:0;
-   if(prev&&prev!==action)prev.fadeOut(.16);
-   action.reset().setLoop(THREE.LoopRepeat,Infinity).fadeIn(.16).play();
-   action.time=source.duration*phase;action.timeScale=cadence;
-   this.lowerCurrent=action;this.lowerKey=name;
  }
+
  play(key,duration=0,layered=false){
    const token=key+'|'+(layered?'upper':'full')+(key==='roll'?'|'+(this._rollVisualClip??'Dodge_Forward'):'');
    if(token===this._playToken)return;
@@ -245,11 +270,14 @@ export class KayKitFreeHero {
    // Upper-body attack lane MUST remain stable until the attack ends.
    const layered=p.state==='attack';
    this.play(key,duration,layered);
-   const physicalSpeed=layered?(p._hfAttackSteering?(p._hfAttackTravelSpeed??speed):0):speed;
-   const gait=physicalSpeed<.45?'Idle':physicalSpeed<2.65?'Walking_A':'Running_A';
-   if(layered)this._playLower(gait,physicalSpeed);
-   else if(this.lowerCurrent){
-     this.lowerCurrent.fadeOut(.12);this.lowerCurrent=null;this.lowerKey='';
+   this._blendLower(p,dt,layered);
+   if(layered&&this.current&&p.attack){
+     // Emberfall-style fixed normalized action phase, exactly one sword
+     // swing per native Unsung damage window (no arbitrary 2.1x speed cap).
+     const clip=this.current.getClip(),length=Math.max(.001,clip.duration);
+     this.current.paused=true;
+     this.current.time=Math.min(length-.00001,
+       Math.max(0,(p.stateTime??0)/Math.max(.05,p.attack.t))*length);
    }
    this.mixer.update(dt);
    this._poseProcedural(Math.max(0,dt),p);
