@@ -89,3 +89,17 @@ test('No underwater double jump or pseudo-climb; swimming remains original physi
  assert.ok(p.pos.y>y-.25,'swim remains buoyant');
  assert.equal(p.state,'swim');
 });
+
+
+test('Bounded PARKOUR: a running character vaults an actual low obstacle faster',()=>{
+ const world={...flat,raycast:(from,dir,max)=>dir.y>.5?max:.42,
+  floorBelow:(x,y,z)=>z>.9?.7:0};
+ const p=make(world),i=inp();
+ p.speed=5.2;i.pressed.add('hf_climb');p.update(1/60,i,0);
+ assert.equal(p.state,'hf_mantle');
+ assert.equal(p._hfMantle.kind,'vault');
+ assert.ok(p._hfMantle.duration<.5);
+ i.pressed.clear();for(let k=0;k<35;k++)p.update(1/60,i,0);
+ assert.equal(p.state,'move');
+ assert.ok(p.pos.y>.65);
+});
