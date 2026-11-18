@@ -40,3 +40,6 @@ KayKit Knight FREE ahora tolera la sanitización de nombres del GLTFLoader (`han
 
 ## F0.7 prueba: visual KayKit en capa 3D transparente
 El laboratorio añade una segunda pasada WebGL con **la misma cámara** sobre el mundo Unsung, solo para la visualización de KayKit. La física, estado, combos y ROLL siguen en Unsung. `?hfskin=overlay` fuerza esta vía; en Android sería la opción por defecto, `?hfskin=direct` la desactiva. La segunda pasada puede dibujar el personaje delante de objetos que deberían ocultarlo: es solución de compatibilidad provisional, no integración final del depth buffer. No publicar sin WebGL QA y Samsung.
+
+## F0.8 — reconstrucción limpia del personaje (rama de pruebas)
+Un **KayKit FREE CC0 Knight** con rig intacto de 41 huesos y **76 clips** retargeteados a un cuerpo estilizado usando el método continuo de HIGHFLY Anime V6.6. Se retiraron CPU skinning, el segundo WebGL/canvas, luces redundantes y superposiciones. El render ahora utiliza exactamente el shader de piel del héroe original de Unsung (un único renderer y depth buffer). Se conservan Player físico original, ATK 1→2→3 con hit windows, ROLL 360, DASH y salto. Los 76 clips están disponibles como catálogo visual; sus acciones físicas adicionales deberán integrarse y ensayarse antes de afirmarlas jugables. NO incluye SOURCE de pago.

@@ -2,13 +2,13 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero]
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: highfly-overlay-qa
+  group: highfly-f08-clean-qa
   cancel-in-progress: false
 jobs:
   build:

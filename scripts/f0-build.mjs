@@ -71,6 +71,7 @@ patch('src/world/terrain.js',"loadHeights('/world/core_h.bin', meta.core)","load
 patch('src/world/terrain.js',"loadHeights('/world/region_h.bin', meta.region)","loadHeights(import.meta.env.BASE_URL + 'world/region_h.bin', meta.region)");
 patch('src/main.js',"fetch('/models/hero.glb', { method: 'HEAD' })","fetch(import.meta.env.BASE_URL + 'models/hero.glb', { method: 'HEAD' })");
 patch('src/anim/hero.js',"url = '/models/hero.glb'","url = import.meta.env.BASE_URL + 'models/hero.glb'");
+patch('src/anim/hero.js',"const HERO_VERT = /* glsl */ `","export const HERO_VERT = /* glsl */ `");
 patch('src/audio/audio.js',"async init(base = '/audio/')","async init(base = import.meta.env.BASE_URL + 'audio/')");
 patch('src/ui/ui.js','<h1>Unsung Vale</h1>','<h1>HIGHFLY FREE FOUNDATION</h1>');
 
@@ -99,6 +100,8 @@ records.push({id:'kaykit-free:Knight.glb',path:'models/hf-kaykit-knight.glb',sou
 copy(path.join(ROOT,'src/highfly/fog.mjs'),loc('src/highfly/fog.mjs'));
 copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
+copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
+copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
@@ -187,5 +190,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.3 KAYKIT FREE SWORD + DASH + SPRINT TOGGLE',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.8 CLEAN 41-BONE UNIVERSAL CC0 KAYKIT + UNSUNG NATIVE GPU ATK123',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');
