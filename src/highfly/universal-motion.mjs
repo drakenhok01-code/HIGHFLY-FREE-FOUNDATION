@@ -11,6 +11,7 @@ export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
   climbSpeed:1.85,climbStrafeSpeed:1.55,climbCostPerSecond:6,climbIdleCost:1.5,
+  combatWalk:3.25,combatRun:4.6,combatResponse:12,
   workTime:.74,
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -64,57 +65,78 @@ function dropClimb(p){
  p._hfClimb=null;p.setState('move');p.grounded=false;p.vel.set(0,0,0);
  p.emit('highflyClimbEnd');
 }
+
+/** Test multiple collision heights and nearby normals on uneven rock/trunks. */
+function gripContact(p,yaw,reach=1.25){
+ if(typeof p.world?.raycast!=='function')return null;
+ let best=null;
+ for(const delta of [0,.22,-.22,.44,-.44]){
+  const ang=yaw+delta,dir={x:Math.sin(ang),z:Math.cos(ang)};
+  for(const height of [.75,1.18,.4]){
+   const d=p.world.raycast(new THREE.Vector3(p.pos.x,p.pos.y+height,p.pos.z),
+       new THREE.Vector3(dir.x,0,dir.z),reach);
+   if(d>.04&&d<reach-.03&&(!best||d<best.distance))best={distance:d,dir,ang};
+  }
+  if(best&&best.distance<.65)break;
+ }
+ return best;
+}
+function gripLedge(p,grip){
+ const w=p.world,f=vec(grip.yaw),tx=p.pos.x+f.x*.83,tz=p.pos.z+f.z*.83;
+ const floor=w.floorBelow(tx,p.pos.y+1.5,tz,2.2),rise=floor-p.pos.y;
+ if(!Number.isFinite(floor)||rise<-.12||rise>1.22)return null;
+ const head=w.raycast(new THREE.Vector3(p.pos.x,p.pos.y+1.65,p.pos.z),
+ new THREE.Vector3(f.x,0,f.z),1.06);
+ return head<.9?null:{tx,tz,targetY:floor,rise};
+}
 function stepClimb(p,dt,input,camYaw,nativeUpdate){
- const anchor=p._hfClimb;
- if(!anchor){dropClimb(p);return;}
- const held=input.held?.has('climb')||input.pressed?.has('climb');
- if(input.pressed.has('dash')){
-  dropClimb(p);
-  return nativeUpdate(dt,input,camYaw); // DASH keeps its real cooldown and air limit
- }
+ const grip=p._hfClimb;if(!grip){dropClimb(p);return;}
+ // One press latches. Press again, jump, or dash to leave.
+ if(input.pressed.has('climb')){dropClimb(p);return;}
+ if(input.pressed.has('dash')){dropClimb(p);return nativeUpdate(dt,input,camYaw);}
  if(input.pressed.has('jump')){
-  dropClimb(p);
-  const fx=Math.sin(anchor.yaw),fz=Math.cos(anchor.yaw);
-  p.vel.set(-fx*3.5,5.8,-fz*3.5);
-  p._hfJumpPrimed=false;p._hfDoubleUsed=true;
-  p.emit('highflyWallJump');
-  return;
+  dropClimb(p);const f=vec(grip.yaw);
+  p.vel.set(-f.x*3.5,5.8,-f.z*3.5);
+  p._hfJumpPrimed=false;p._hfDoubleUsed=true;p.emit('highflyWallJump');return;
  }
- if(!held||p.stamina<=0){dropClimb(p);return;}
- const x=Number(input.move?.x)||0,y=Number(input.move?.y)||0;
- const f={x:Math.sin(anchor.yaw),z:Math.cos(anchor.yaw)};
- const tangent={x:f.z,z:-f.x};
- const candidate=p.pos.clone();
- candidate.x+=tangent.x*x*MOTION.climbStrafeSpeed*dt;
- candidate.z+=tangent.z*x*MOTION.climbStrafeSpeed*dt;
+ if(p.stamina<=0){dropClimb(p);return;}
+ const x=clamp(input.move?.x||0,-1,1),y=clamp(input.move?.y||0,-1,1);
+ const f=vec(grip.yaw),side={x:f.z,z:-f.x};
+ const before=p.pos.clone(),candidate=before.clone();
+ candidate.x-=side.x*x*MOTION.climbStrafeSpeed*dt;
+ candidate.z-=side.z*x*MOTION.climbStrafeSpeed*dt;
  candidate.y+=y*MOTION.climbSpeed*dt;
- // Stable contact: probe at the proposed position BEFORE committing.
- // A missing side wall cannot pull the capsule into empty space.
- const fake={pos:candidate,yaw:anchor.yaw,world:p.world};
- const hit=probeHighflyWall(fake,anchor.yaw);
- if(hit?.ledge&&y>.15){startMantle(p,hit);p._hfClimb=null;return;}
- if(!hit){
-  anchor.lost+=dt;
-  if(anchor.lost>.18)dropClimb(p);
-  return;
+ const probe=gripContact({...p,pos:candidate},grip.yaw);
+ const top=y>.16?gripLedge({...p,pos:candidate},grip):null;
+ if(top&&(!probe||probe.distance>.72)){
+   startMantle(p,top);p._hfClimb=null;p._hfClimbInput={x:0,y:0};return;
  }
- anchor.lost=0;
- // Avoid underground descent and positional jitter at the wall.
+ if(!probe){
+   grip.lost+=dt;p._hfClimbInput={x:0,y:0};
+   p.stateTime+=dt;p.vel.set(0,0,0);p.speed=0;
+   if(grip.lost>.52)dropClimb(p);
+   return;
+ }
+ grip.lost=0;
+ // Keep the capsule near the surface; never teleport through stone.
+ const correction=clamp(probe.distance-.54,-.08,.07);
+ candidate.x+=probe.dir.x*correction;candidate.z+=probe.dir.z*correction;
  const floor=p.world.groundHeight?.(candidate.x,candidate.z);
- if(Number.isFinite(floor)&&candidate.y<floor+.03&&y<0){
-   dropClimb(p);p.grounded=true;p.pos.y=floor;return;
+ if(y<-.1&&Number.isFinite(floor)&&candidate.y<floor+.02){
+  dropClimb(p);p.pos.y=Math.max(p.pos.y,floor);p.grounded=true;return;
  }
- const resolved=candidate.clone();
- p.world.resolveCapsule(resolved,.36,1.82,0);
- if(resolved.distanceTo(candidate)<.20)p.pos.copy(resolved);
- else if(Math.abs(x)+Math.abs(y)<.06)p.pos.copy(p.pos);
- // No arbitrary 2.8-second cutoff: only energy, wall contact or user release.
- const moving=Math.hypot(x,y)>.12;
- p.stamina=Math.max(0,p.stamina-(moving?MOTION.climbCostPerSecond:MOTION.climbIdleCost)*dt);
- p.staminaWait=.65;
- p.stateTime+=dt;p.vel.set(0,0,0);
- p.viewY=p._viewY1=p.pos.y;p.grounded=false;p.speed=moving?1:0;
- p._hfClimbInput={x,y};
+ const resolved=candidate.clone();p.world.resolveCapsule(resolved,.36,1.82,0);
+ if(resolved.distanceTo(candidate)<.35&&resolved.distanceTo(before)<.22)p.pos.copy(resolved);
+ const dx=p.pos.x-before.x,dy=p.pos.y-before.y,dz=p.pos.z-before.z;
+ const lateral=dx*side.x+dz*side.z;
+ // Limb movement is measured from ACTUAL collision-accepted travel.
+ p._hfClimbInput={
+  x:Math.abs(lateral)<.001?0:clamp(-lateral/(dt*MOTION.climbStrafeSpeed),-1,1),
+  y:Math.abs(dy)<.001?0:clamp(dy/(dt*MOTION.climbSpeed),-1,1)};
+ const moved=Math.hypot(dx,dy,dz);
+ p.stamina=Math.max(0,p.stamina-(moved>.002?MOTION.climbCostPerSecond:MOTION.climbIdleCost)*dt);
+ p.staminaWait=.65;p.stateTime+=dt;p.vel.set(0,0,0);p.grounded=false;
+ p.speed=moved>.002?moved/dt:0;p.viewY=p._viewY1=p.pos.y;
 }
 
 function closestTree(p){
@@ -142,6 +164,29 @@ function startAction(p,name){
  p._hfAction={name,time:0,done:false,target:cfg.kind==='work'?workTarget(p,name):null};
  p.setState('hf_action');p.vel.x=p.vel.z=0;p.speed=0;
  p.emit('highflyActionStart',{name,target:p._hfAction.target?.kind??'none'});
+}
+
+/** Let Unsung integrate exactly once while attack steering supplies velocity.
+ * No duplicate capsule, hitbox or combo timing, even when attacking in motion.
+ */
+function attackLocomotion(p,original,dt,input,camYaw){
+ const integrate=p._integrate;
+ p._integrate=function(step){
+  if(this.state==='attack'&&this.attack&&this.grounded){
+   const x=input.move?.x||0,y=input.move?.y||0,len=Math.min(1,Math.hypot(x,y));
+   if(len>.15){
+    const fx=Math.sin(camYaw),fz=Math.cos(camYaw);
+    const speed=(input.held.has('sprint')?MOTION.combatRun:MOTION.combatWalk)*len;
+    const vx=(fx*y-fz*x)/len*speed,vz=(fz*y+fx*x)/len*speed;
+    const mix=clamp(step*MOTION.combatResponse,0,1);
+    this.vel.x+=(vx-this.vel.x)*mix;this.vel.z+=(vz-this.vel.z)*mix;
+   }
+  }
+  const out=integrate.call(this,step);
+  this._hfAttackTravelSpeed=this.state==='attack'?Math.hypot(this.vel.x,this.vel.z):0;
+  return out;
+ };
+ try{return original(dt,input,camYaw);}finally{p._integrate=integrate;}
 }
 export function installHighflyUniversalMotion(p){
  if(p._hfUniversalInstalled)return p;
@@ -186,13 +231,14 @@ export function installHighflyUniversalMotion(p){
    this.emit('highflyEquipPreview',{variant:this._hfGearCycle});
   }
   if(isMove(this)&&input.pressed.has('climb')){
-   const hit=probeHighflyWall(this);
+   const hit=probeHighflyWall(this)||gripContact(this,this.yaw);
    if(hit){
     if(hit.ledge)startMantle(this,hit);
     else{
-     this.vel.set(0,0,0);this._hfClimb={yaw:this.yaw,lost:0};
+     const wasAirborne=!this.grounded;
+     this.vel.set(0,0,0);this._hfClimb={yaw:this.yaw,lost:0};this._hfClimbInput={x:0,y:0};
      this.setState('hf_climb');this.grounded=false;
-     this.emit('highflyClimbStart',{airborne:!this.grounded});
+     this.emit('highflyClimbStart',{airborne:wasAirborne});
     }
     return;
    }
@@ -228,7 +274,7 @@ export function installHighflyUniversalMotion(p){
   // A circle tap ignores the left thumb; dragging keeps independent direction.
   const nativeRollInput=input.pressed.has('dodge')&&(aim||tap)?
    {...input,move:aim||facingWish}:input;
-  const result=nativeUpdate(dt,nativeRollInput,camYaw);
+  const result=attackLocomotion(this,nativeUpdate,dt,nativeRollInput,camYaw);
   if(rollAttempt&&this.state==='roll'){
    const d=this.rollDir,front=Math.sin(originalFacing)*d.x+Math.cos(originalFacing)*d.z;
    const side=Math.cos(originalFacing)*d.x-Math.sin(originalFacing)*d.z;
