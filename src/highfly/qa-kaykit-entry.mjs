@@ -56,7 +56,8 @@ try{
     trailVisible ||=hero.trail.visible;
    }
   }
-  if(hero.key!==name)throw Error('State animation '+name+' mapped as '+hero.key);
+  if(hero.key!==name&&!(state==='attack'&&hero.key.startsWith('raw:')))
+   throw Error('State animation '+name+' mapped as '+hero.key);
  }
  if(Math.abs(rollAngle-Math.PI)>.02||!trailVisible)
   throw Error('Unsung 360-roll or three-hit blade trail missing');
@@ -117,11 +118,33 @@ try{
  history.replaceState(null,'',location.pathname+prevSearch);
  if(origChanged<160)throw Error('Original KayKit chibi variant invisible '+origChanged);
 
+ // The new roll tucks down rather than flipping while standing.
+ p={...p,state:'roll',stateTime:.31,grounded:true};
+ hero.update(1/60,p);
+ const rollNearGround=hero.rollPivot.position.y<.62&&hero.offset.scale.y<.67;
+ if(!rollNearGround)throw Error('Aerial roll regression '+hero.rollPivot.position.y);
+ for(const sample of [
+   {state:'swim',speed:2.5},{state:'hf_climb',speed:0},
+   {state:'hf_mantle',speed:0},
+   {state:'hf_action',_hfAction:{name:'sit',time:.25}},
+   {state:'hf_action',_hfAction:{name:'mine',time:.1}}
+ ]){
+   hero.update(1/60,{...p,...sample});
+   if(!hero.current)throw Error('Missing animation for '+sample.state);
+ }
+ const equipmentModes=['sword','greatsword','dual','shield','unarmed'];
+ for(let i=0;i<equipmentModes.length;i++){
+   const mode=hero.equip(i);
+   if(mode.id!==equipmentModes[i])throw Error('Gear cycle mismatch '+mode.id);
+   if(hero.weaponMode.style==='unarmed'&&hero.sword)throw Error('Unarmed sword visible');
+   if(i!==4&&!hero.sword)throw Error('Missing '+mode.id+' weapon');
+ }
+ hero.equip(0);
  const reportData={clips:hero.clips.size,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,gearModes:equipmentModes,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

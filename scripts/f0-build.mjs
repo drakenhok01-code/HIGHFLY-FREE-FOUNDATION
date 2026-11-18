@@ -102,6 +102,8 @@ copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
+copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
+copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
@@ -128,8 +130,8 @@ const freeHeroStart=[
 ].join('\n');
 patch('src/main.js',nativeHero,freeHeroStart);
 
-patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';");
-patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);');
+patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';");
+patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
 patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
@@ -190,5 +192,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.8 CLEAN 41-BONE UNIVERSAL CC0 KAYKIT + UNSUNG NATIVE GPU ATK123',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.9 UNIVERSAL MOTION LAB (DOUBLE JUMP, SWIM, GROUND ROLL, CLIMB, ACTIONS, NATIVE GEAR)',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');

@@ -46,3 +46,6 @@ Un **KayKit FREE CC0 Knight** con rig intacto de 41 huesos y **76 clips** retarg
 
 ## F0.8.1 — HUD limpio y comparación de aspecto
 Eliminado el aviso fijo de confirmación «HIGHFLY · KayKit FREE ✓» del centro superior. Los estados de diagnóstico siguen en `window.__highflyHeroStatus` y en consola. El aspecto HIGHFLY Anime V6.6 se mantiene por defecto. Para comparar con el modelo original FREE KayKit *chibi* con casco, sin deformación Anime V6.6, abrir `?hfstyle=original`. Para el aspecto estilizado con casco y capa usar `?hflook=armored`. Ambas opciones usan una sola cápsula Unsung, el mismo ATK 1→2→3 y el mismo GLB CC0; la opción original solo modifica la apariencia. Animaciones de natación, escalada y parkour siguen no implementadas.
+
+## F0.9 — Laboratorio universal de movimientos
+Un solo personaje KayKit Medium (41 huesos) y un Player de Unsung. Doble salto con energía y límite, nado con brazadas procedurales, ROLL pegado al suelo, TREPAR mediante colisiones y vault de salientes bajos; animaciones de gesto, sentarse, acostarse, recoger, talar, minar y pescar (acciones demostrativas, sin recursos ni inventario todavía). El menú ACCIONES agrupa controles móviles. ARMA alterna las piezas CC0 integradas: espada, mandoble, doble empuñadura, espada+escudo y puños. El daño del combo aún es Unsung, sin perfiles de daño individual. SOURCE no incluido.
