@@ -173,7 +173,7 @@ test('F0.11.2 jump into valid wall -> attach in air, hold without teleport',()=>
  assert.equal(p.state,'hf_climb','no arbitrary three-second timer');
  assert.ok(p.pos.distanceTo(before)<.12,'holding a wall keeps a stable anchor');
  p.update(1/60,input([],['climb'],.6,.7),0);
- assert.ok(p.pos.x>before.x,'climbing left/right moves laterally');
+ assert.ok(p.pos.x<before.x,'screen-right joystick follows native Unsung negative-X basis');
  assert.ok(p.pos.y>before.y,'up stick climbs up');
  p.update(1/60,input(),0);
  assert.equal(p.state,'hf_climb','grip persists without hold');
