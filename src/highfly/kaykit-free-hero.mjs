@@ -4,6 +4,8 @@
  */
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
+import {createUniversalMaterial} from './kaykit-material.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
@@ -14,66 +16,15 @@ const CLIPS={
  plunge:'Jump_Full_Long'
 };
 const HIDE=new Set(['1H_Sword_Offhand','2H_Sword','Badge_Shield','Rectangle_Shield','Round_Shield','Spike_Shield']); // Keep CC0 1H_Sword visible in Knight rig
-/**
- * ONE-KayKit-character Android fallback: CPU-deform the original skinned GLB
- * and render as plain Mesh, avoiding Android GPU skinning failures.
- * 41-bone rig, 76 clips and Unsung collision/combos remain unchanged.
- */
-export class CpuKayKitSkin {
- constructor(root) {
-  const sources=[];root.traverse(o=>{if(o.isSkinnedMesh&&o.visible)sources.push(o);});
-  if(!sources.length)throw Error('KayKit CPU: no skinned body parts');
-  this.parts=[];this.vertices=0;
-  for(const source of sources){
-   const input=source.geometry.getAttribute('position');
-   if(!input||!source.geometry.getAttribute('skinIndex')||!source.geometry.getAttribute('skinWeight'))
-    throw Error('KayKit CPU: invalid skin weights '+source.name);
-   this.vertices+=input.count;
-   const geometry=source.geometry.clone(),output=geometry.getAttribute('position');
-   output.setUsage(THREE.DynamicDrawUsage);
-   const m=Array.isArray(source.material)?source.material[0]:source.material;
-   const color=m?.color?.clone?.()??new THREE.Color(0xffffff);
-   if(color.r+color.g+color.b<.15)color.setRGB(.88,.91,.96);
-   const material=new THREE.MeshBasicMaterial({
-    map:m?.map??null,color,vertexColors:!!m?.vertexColors&&!!source.geometry.getAttribute('color'),
-    side:THREE.DoubleSide,depthTest:true,depthWrite:true,toneMapped:false
-   });
-   const mesh=new THREE.Mesh(geometry,material);
-   mesh.name=source.name+'_CPU';
-   mesh.position.copy(source.position);mesh.quaternion.copy(source.quaternion);
-   mesh.scale.copy(source.scale);mesh.matrixAutoUpdate=source.matrixAutoUpdate;
-   if(!mesh.matrixAutoUpdate)mesh.matrix.copy(source.matrix);
-   mesh.frustumCulled=false;
-   source.parent.add(mesh);
-   source.visible=false;
-   this.parts.push({source,mesh,input,output});
-  }
-  if(this.vertices>50000)throw Error('KayKit CPU: vertex budget exceeded '+this.vertices);
-  this.tmp=new THREE.Vector3();
- }
- update(){
-  const v=this.tmp;
-  for(const {source,mesh,input,output} of this.parts){
-   if(!mesh.visible)continue;
-   for(let i=0;i<input.count;i++){
-    v.fromBufferAttribute(input,i);
-    source.applyBoneTransform(i,v);
-    output.setXYZ(i,v.x,v.y,v.z);
-   }
-   output.needsUpdate=true;
-  }
- }
-}
-
 export class KayKitFreeHero {
  static async load(pipe,url=import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb'){
    const data=await new GLTFLoader().loadAsync(url);
    return new KayKitFreeHero(pipe,data);
  }
  constructor(pipe,data){
-   this.pipe=pipe;this.root=data.scene;
+   this.pipe=pipe;this.profile=stylizeUniversalKayKit(data);this.root=data.scene;
    this.root.name='HIGHFLY_KAYKIT_FREE_KNIGHT';
-   this.root.scale.setScalar(1.82/2.4374973315);
+   this.root.scale.setScalar(1.82/this.profile.naturalHeight);
    // The KayKit GLB is a skin, not the physics authority: one Unsung capsule.
    this.actor=new THREE.Group();this.actor.name='HIGHFLY_ONE_KAYKIT_ACTOR';
    this.rollPivot=new THREE.Group();this.rollPivot.name='UNSUNG_FULL_BODY_ROLL';
@@ -83,6 +34,7 @@ export class KayKitFreeHero {
    const hidden=new Set(HIDE);
    if(!armored)for(const name of ['Knight_Helmet','Knight_HelmetVisor','Knight_Cape'])hidden.add(name);
    this.bodyParts=new Set();this.sword=null;
+   this.flash={value:0};this.rim={value:0};
    this.root.frustumCulled=false;
    this.socket=null;this.visibleMeshes=0;this.swordMeshes=0;
    const norm=n=>(n??'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -104,14 +56,8 @@ export class KayKitFreeHero {
      // Original Unsung lighting uses custom shaders, not Three's stock light objects.
      // Use the CC0 embedded texture unlit for a reliable Android visibility test.
      // Do not throw away glTF texture, vertex colors, UV and skinned PBR.
-     const faithful=m=>{
-       const mat=m.clone();mat.side=THREE.DoubleSide;mat.depthWrite=true;
-       mat.transparent=false;mat.opacity=1;
-       if('metalness' in mat)mat.metalness=0;
-       if('roughness' in mat)mat.roughness=.86;
-       mat.needsUpdate=true;return mat;
-     };
-     o.material=Array.isArray(o.material)?o.material.map(faithful):faithful(o.material);
+     const mk=m=>createUniversalMaterial(m,this.flash,this.rim);
+     o.material=Array.isArray(o.material)?o.material.map(mk):mk(o.material);
    });
    this.socket??=handFallback??this.root;
    if(this.bodyParts.size!==6)throw Error('KayKit body incomplete: '+[...this.bodyParts].join(','));
@@ -123,14 +69,12 @@ export class KayKitFreeHero {
    const clips=new Map(data.animations.map(c=>[c.name,c]));
    for(const [key,name] of Object.entries(CLIPS))if(!clips.has(name))throw Error('Required FREE animation missing: '+key+' '+name);
    this.clips=clips;this.actions=new Map();this.current=null;this.key='';
-   this.flash={value:0};this.rim={value:0}; // Compatible with Unsung Game event handlers
+   // Shared flash/rim uniforms already initialized before material creation.
    this.tip=new THREE.Vector3();this.tipVel=new THREE.Vector3();this.lastTip=new THREE.Vector3();
    this.landSignal=0;this.hitSignal=0;this.updated=false;
    // Unsung shaders do not emit Three lights; illuminate only the skinned GLTF.
-   this.hemi=new THREE.HemisphereLight(0xfff7e8,0x56516e,2.0);
-   this.sun=new THREE.DirectionalLight(0xffebd0,1.8);
-   this.sun.position.set(-3,9,7);
-   pipe.scene.add(this.hemi,this.sun,this.actor);
+   // The original Unsung render pipeline owns one scene and one GPU context.
+   pipe.scene.add(this.actor);
    this.trailHistory=[];this.trailMax=18;
    const geo=new THREE.BufferGeometry();
    geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(this.trailMax*6),3));
@@ -146,24 +90,17 @@ export class KayKitFreeHero {
    pipe.scene.add(this.trail);
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
-   // Android compatibility: the original Unsung multi-pass depth/fog pipeline
-   // can hide SkinnedMesh and CPU-deformed proxies, while non-skinned sword draws.
-   // A separate transparent WebGL pass keeps ALL six CPU-skinned body parts and
-   // sword together with the ORIGINAL world camera. Opt out: ?hfskin=direct.
-   const renderMode=new URLSearchParams(globalThis.location?.search??'').get('hfskin');
-   const android=/Android/i.test(globalThis.navigator?.userAgent??'');
-   if(renderMode==='overlay'||(android&&renderMode!=='gpu'&&renderMode!=='direct')){
-    this.cpuSkin=new CpuKayKitSkin(this.root);
-    this.installCharacterOverlay();
-   }else if(renderMode==='cpu'){
-    this.cpuSkin=new CpuKayKitSkin(this.root);
-   }
-   console.log('[HIGHFLY BODY MODE]',this.overlayRenderer?'overlay':this.cpuSkin?'cpu':'gpu',
-    'body=',this.bodyParts.size,'CPU=',this.cpuSkin?.vertices??0);
+   this.availableActions=[...this.clips.keys()];
+   this.diagnostics={mode:'NATIVE_UNSUNG_GPU_SKINNING',rig:this.profile.rig,
+    bodyParts:this.bodyParts.size,clips:this.availableActions.length,
+    boneTracks:this.profile.tracks,headRatio:this.profile.headRatio,
+    renderContexts:1,cpuSkin:false,overlay:false};
+   globalThis.__highflyActorReport=this.diagnostics;
+   console.log('[HIGHFLY CLEAN HERO]',JSON.stringify(this.diagnostics));
  }
  play(key,duration=0){
    if(key===this.key)return;
-   const raw=this.clips.get(CLIPS[key]||CLIPS.idle);
+   const raw=this.clips.get(CLIPS[key]||(key.startsWith('raw:')?key.slice(4):CLIPS.idle));
    const clip=raw.clone();
    // Physics is exclusively Unsung's kinematic capsule: strip animated root translations
    // so cinematic/dodge clips cannot teleport the collision body or visual origin.
@@ -208,8 +145,8 @@ export class KayKitFreeHero {
    // Unsung's 360-degree full-body ROLL, around the torso rather than the feet.
    this.rollPivot.rotation.x=p.state==='roll'?Math.PI*2*eased:0;
    this.rollPivot.position.y=.91-(p.state==='roll'?.24*Math.sin(Math.PI*k):0);
-   this.actor.updateWorldMatrix(true,true);
-   this.cpuSkin?.update();
+   this.actor.updateMatrixWorld(true);
+   // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const {base,next}=this._swordEndpoints();
    this.bladeBase.copy(base);
    if(this.updated&&dt>0)this.tipVel.copy(next).sub(this.lastTip).divideScalar(dt);
@@ -251,43 +188,8 @@ export class KayKitFreeHero {
    pos.needsUpdate=true;this.trail.geometry.setDrawRange(0,(n-1)*6);
    this.trail.visible=true;this.trail.material.opacity=attack?.8:.46;
  }
- /** Draw ONE KayKit animated 3D actor after Unsung has rendered its world.
-  * This uses no external asset, has no impact on the physics/combos, and is
-  * intentionally a compatibility path until the original depth bug is solved.
-  * It cannot yet occlude correctly behind every tree or building.
-  */
- installCharacterOverlay(){
-  if(typeof document==='undefined'||!this.pipe?.render||!this.pipe?.camera)return;
-  const renderer=new THREE.WebGLRenderer({
-   alpha:true,antialias:false,preserveDrawingBuffer:true,powerPreference:'low-power'
-  });
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000,0);
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.toneMapping=THREE.NoToneMapping;
-  renderer.autoClear=true;
-  const canvas=renderer.domElement;
-  canvas.dataset.hfOverlay='kaykit-body';
-  canvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;display:block';
-  document.body.appendChild(canvas);
-  const world=new THREE.Scene();world.background=null;
-  // Moving a Three object between scenes does not detach its skeleton/animations.
-  world.add(this.actor,this.hemi,this.sun,this.trail);
-  this.overlayRenderer=renderer;this.overlayScene=world;
-  const pipe=this.pipe,baseRender=pipe.render.bind(pipe);
-  pipe.render=(dt,opts)=>{
-   const result=baseRender(dt,opts);
-   if(opts?.toScreen===false||!canvas.isConnected)return result;
-   const width=Math.max(1,window.innerWidth),height=Math.max(1,window.innerHeight);
-   if(canvas.width!==width||canvas.height!==height)renderer.setSize(width,height,false);
-   // Use the SAME perspective and matrix as Unsung, including camera follow.
-   renderer.render(world,pipe.camera);
-   return result;
-  };
-  globalThis.__highflyOverlay={mode:'2nd-webgl',parts:this.cpuSkin?.parts.length??0,
-   vertexCount:this.cpuSkin?.vertices??0,canvas};
-  console.log('[HIGHFLY] independent transparent 3D KayKit pass installed',globalThis.__highflyOverlay.parts);
- }
+ // All original 76 CC0 clips can be selected for future abilities.
+ playRawClip(name){if(!this.clips.has(name))return false;this.play('raw:'+name);return true;}
  onHit(){this.hitSignal++}
  onLand(){this.landSignal++}
 }
