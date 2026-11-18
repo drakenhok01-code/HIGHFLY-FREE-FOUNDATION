@@ -8,5 +8,5 @@ function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.
 const files=walk('.').map(x=>x.replaceAll('\\','/')).filter(x=>!x.startsWith('.git/')&&!x.startsWith('.work/')&&!x.startsWith('dist/'));
 const forbidden=files.filter(x=>/private_assets|phoenix-source-|kaykit.*source|upstream\/|\.glb$|\.fbx$|\.ogg$|\.wav$|\.bin$|\.zip$/i.test(x));
 assert.deepEqual(forbidden,[],'Bootstrap cannot contain private or unaudited binaries');
-for(const name of ['src/highfly/mobile-touch.mjs','src/highfly/fog.mjs','scripts/f0-build.mjs','scripts/qa-dist.mjs'])assert.ok(fs.existsSync(name));
+for(const name of ['src/highfly/mobile-touch.mjs','src/highfly/fog.mjs','src/highfly/kaykit-free-hero.mjs','scripts/f0-build.mjs','scripts/qa-dist.mjs'])assert.ok(fs.existsSync(name));
 console.log('PASS qa:static '+files.length+' clean source-only files; no SOURCE media or history');

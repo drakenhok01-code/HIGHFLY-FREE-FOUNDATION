@@ -2,7 +2,7 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01]
+    branches: [free-foundation-v01, f1-kaykit-free-lab]
 permissions:
   contents: read
   pages: write
@@ -31,6 +31,7 @@ jobs:
         with:
           path: dist
   deploy:
+    if: github.ref == 'refs/heads/free-foundation-v01'
     environment:
       name: highfly-free-preview
     runs-on: ubuntu-latest

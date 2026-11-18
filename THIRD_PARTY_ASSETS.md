@@ -4,7 +4,7 @@
 |---|---|---|---|
 | Unsung Vale | \`src/**\`, \`public/world/**\`, \`public/models/hero.glb\` | MIT con texto de licencia | ALLOW. Mundo congelado en SHA fijo |
 | Unsung audio | \`public/audio/**\` | 62 CC BY 4.0 + 67 CC0, según \`CREDITS.md\` | ALLOW, cada hash y fila de crédito se verifican al compilar |
-| KayKit FREE | \`KayKit-Character-Pack-Adventures-1.0/Characters/gltf/Knight.glb\` | CC0 1.0 (Kay Lousberg); blob SHA \`717b56ca2b5ff5392679774725201ba03a3eefab\` | ALLOW como candidato; todavía NO COPIADO |
+| KayKit FREE | \`KayKit-Character-Pack-Adventures-1.0/Characters/gltf/Knight.glb\` | CC0 1.0 (Kay Lousberg); blob SHA \`717b56ca2b5ff5392679774725201ba03a3eefab\` | ALLOW en F1 experimental si SHA-256 y licencia CC0 coinciden; no publicado en Pages por ahora |
 | KayKit FREE | \`Assets/gltf/sword_1handed.gltf\` + su \`.bin\` | CC0 1.0, sujeto a manifiesto binario exacto | ALLOW como candidato; NO COPIADO |
 | Emberfall | \`src/skill-effects.js\`, \`src/audio.js\` | Código original MIT | Estudio; NO COPIADO |
 | Emberfall | \`public/assets/audio/skill-fire.wav\` y otros | Sus documentos alegan síntesis original; hash/alcance pendiente | PENDING; NO COPIADO |

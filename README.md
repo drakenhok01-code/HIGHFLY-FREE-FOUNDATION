@@ -20,3 +20,7 @@ Esta rama construye el **Unsung original** desde el commit congelado \`9f61b0d80
 Todo el audio de Unsung se revisa contra \`CREDITS.md\` por archivo; se exige 129 OGG, 62 CC BY 4.0 y 67 CC0. El build publica manifest de hashes SHA-256, textos de licencia MIT y créditos completos. Se rechaza cualquier drift en las tres modificaciones de URLs de \`src/world/terrain.js\`. Nada de SOURCE/EXTRA, \`dist\` previo, materiales privados ni medios restringidos.
 
 La visualización en Samsung, apariencia real de niebla, físicas y fps están **pendientes de QA real**: no se confunden pruebas unitarias con ejecución WebGL.
+
+## F1 — rama aislada KayKit FREE
+
+La rama f1-kaykit-free-lab descarga solo Knight.glb CC0 del GitHub oficial a una revisión inmutable y verifica SHA-256 junto con su licencia. El personaje se activa con ?hfchar=kaykit al compilar esta rama. La cápsula, mundo, cámara, física y daño 1–2–3 siguen en Unsung. Las armas visuales del personaje están ocultas hasta equipamiento real. No significa PASS 3D en Samsung ni modifica la URL pública F0 hasta aprobar la rama.
