@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
+import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -173,25 +174,45 @@ function startAction(p,name){
  p.emit('highflyActionStart',{name,target:p._hfAction.target?.kind??'none'});
 }
 
-/** Let Unsung integrate exactly once while attack steering supplies velocity.
- * No duplicate capsule, hitbox or combo timing, even when attacking in motion.
+/** F0.12: independent physical steering while an Unsung combo is active.
+ * The native attack state applies 7.5/s drag. Reuse actual LAST accepted
+ * locomotion velocity rather than blending from a value already decelerated.
+ * The original capsule, hit windows, target validation and damage stay native.
  */
 function attackLocomotion(p,original,dt,input,camYaw){
  const integrate=p._integrate;
  p._integrate=function(step){
-  if(this.state==='attack'&&this.attack&&this.grounded){
-   const x=input.move?.x||0,y=input.move?.y||0,len=Math.min(1,Math.hypot(x,y));
-   this._hfAttackSteering=len>.15;
-   if(len>.15){
+  const attacking=this.state==='attack'&&!!this.attack&&this.grounded;
+  if(attacking){
+    const x=input.move?.x||0,y=input.move?.y||0,len=Math.min(1,Math.hypot(x,y));
+    this._hfAttackSteering=len>.15;
     const fx=Math.sin(camYaw),fz=Math.cos(camYaw);
-    const speed=(input.held.has('sprint')?MOTION.combatRun:MOTION.combatWalk)*len;
-    const vx=(fx*y-fz*x)/len*speed,vz=(fz*y+fx*x)/len*speed;
-    const mix=clamp(step*MOTION.combatResponse,0,1);
-    this.vel.x+=(vx-this.vel.x)*mix;this.vel.z+=(vz-this.vel.z)*mix;
-   }
-  }
+    const top=input.held.has('sprint')&&this.stamina>1?TUNE.sprint:
+      len>.55&&!this.walking?TUNE.run:TUNE.walk;
+    const vx=(fx*y-fz*x)*top,vz=(fz*y+fx*x)*top;
+    const previous=this._hfFlowVelocity??{x:this.vel.x,z:this.vel.z};
+    const gap=Math.hypot(vx-previous.x,vz-previous.z);
+    // Same acceleration budget as grounded Unsung movement; no FPS-dependent
+    // velocity ratio and NO second kinematic capsule.
+    const k=Math.min(1,(TUNE.accel*step)/Math.max(.001,gap));
+    const value={x:previous.x+(vx-previous.x)*k,z:previous.z+(vz-previous.z)*k};
+    this._hfFlowVelocity=value;
+    this.vel.x=value.x;this.vel.z=value.z;
+    if(len>.15&&!this.lockTarget){
+      const aim=Math.atan2(vx,vz);
+      const delta=Math.atan2(Math.sin(aim-this.yaw),Math.cos(aim-this.yaw));
+      this.yaw+=delta*Math.min(1,TUNE.turn*step);
+    }
+  }else this._hfFlowVelocity=null;
+  const beforeX=this.pos.x,beforeZ=this.pos.z;
   const out=integrate.call(this,step);
-  this._hfAttackTravelSpeed=this.state==='attack'?Math.hypot(this.vel.x,this.vel.z):0;
+  if(attacking){
+    const traveled=Math.hypot(this.pos.x-beforeX,this.pos.z-beforeZ)/Math.max(step,1e-5);
+    this._hfAttackTravelSpeed=traveled;
+    this._hfAttackSteering=traveled>.25&&this._hfAttackSteering;
+    // Terrain/props may stop the capsule: never animate legs against a wall.
+    if(traveled<.2)this._hfFlowVelocity={x:0,z:0};
+  }else this._hfAttackTravelSpeed=0;
   return out;
  };
  try{return original(dt,input,camYaw);}finally{p._integrate=integrate;}
@@ -204,46 +225,83 @@ export function installHighflyUniversalMotion(p){
  const nativeUpdate=p.update.bind(p);
  const nativeSpawn=p.spawn.bind(p);
  const nativeSwim=p._swim.bind(p);
- p._hfDive=false;
+ const nativeStart=p.startAttack.bind(p);
+ p._hfFlowCombat=true;p._hfFlowClock=0;p._hfFlowHistory=[];
+ p._hfMana=100;p._hfManaMax=100;p._hfOxygen=100;p._hfOxygenMax=100;
+ p._hfDrownTimer=0;p._hfFlowVelocity=null;
+ // True direction/timing bonus belongs to the real Unsung damage descriptor.
+ // Normal 3-hit sword chains cost no energy; special/heavy moves keep costs.
+ p.startAttack=function(desc,index){
+   const aim=this._hfFlowQueuedDirection??null;
+   const dir=directionFromAim(aim);
+   const flow=recordFlowStrike(this._hfFlowHistory,this._hfFlowClock,dir,
+     WEAPON_MODES[this._hfGearCycle]?.id??'sword');
+   const charged=(index===3||index===2&&desc===TUNE.dash);
+   const basic=!charged&&index>=0&&index<3;
+   const bonus=basic&&dir?(flow.secret?1.22:1.08):1;
+   const modified=basic?{...desc,cost:0,dmg:desc.dmg*bonus}:desc;
+   const prior={x:this.vel.x,z:this.vel.z,yaw:this.yaw};
+   const ok=nativeStart(modified,index);
+   if(ok){
+     this.vel.x=prior.x;this.vel.z=prior.z;
+     // Preserve facing across chained attacks when the joystick is moving.
+     this.yaw=prior.yaw;
+     this._hfFlowHistory=flow.history;
+     this._hfFlowDirection=dir;this._hfFlowSecret=flow.secret;
+     this._hfFlowQueuedDirection=null;
+     this.emit('highflyFlowStrike',{index,dir,bonus:bonus-1,secret:flow.secret});
+     if(flow.secret)this.emit('highflySecretCombo',{weapon:WEAPON_MODES[this._hfGearCycle]?.id??'sword',dir});
+   }
+   return ok;
+ };
+ p._hfDive=false;p._hfDiveEntering=false;
  // Keep Unsung's real surface swimming/buoyancy and collisions, but allow a
  // separate controlled descent to a floor-clamped underwater target.
  p._swim=function(dt,input,wish,wishLen,surface){
-  const previousY=this.pos.y;
+  const oldY=this.pos.y;
   const result=nativeSwim(dt,input,wish,wishLen,surface);
-  if(this.state!=='swim'){this._hfDive=false;return result;}
+  if(this.state!=='swim'){this._hfDive=false;this._hfDiveEntering=false;return result;}
   if(this._hfDive&&Number.isFinite(surface)){
    const floor=this.world.floorBelow(this.pos.x,surface-.1,this.pos.z,15);
-   if(Number.isFinite(floor)&&surface-floor>1.45){
-    const target=Math.max(floor+.68,surface-2.35);
-    // On first water entry the native controller may still be at the bottom.
-    // Never teleport upward to the seabed clearance height.
-    const next=previousY<target?
-      Math.min(target,Math.max(this.pos.y,previousY)):
-      Math.max(target,Math.min(this.pos.y,previousY-2.15*dt));
-    // No noclip below seabed and no second water physics body.
-    this.vel.y=(next-previousY)/Math.max(.001,dt);
-    this.pos.y=next;this.viewY=this._viewY1=next;this.grounded=false;
-   }else{
-    this._hfDive=false;this.emit('highflyDiveBlocked',{reason:'shallow'});
-   }
+   if(Number.isFinite(floor)&&surface-floor>2.25){
+    const minY=floor+.70,maxY=surface-1.79;
+    const fast=input.held.has('sprint')?3.6:2.6;
+    const pitch=clamp(this._hfCameraPitch??0,-1.0,1.0);
+    const forward=clamp(input.move?.y??0,-1,1);
+    const vertical=Math.sin(pitch)*forward*fast;
+    const desired=this._hfDiveEntering?
+      Math.max(minY,Math.min(oldY-.0,oldY-2.5*dt)):
+      clamp(oldY+vertical*dt,minY,maxY);
+    const next=clamp(desired,minY,maxY);
+    this.pos.y=next;this.vel.y=(next-oldY)/Math.max(dt,.001);
+    this.viewY=this._viewY1=next;this.grounded=false;
+    if(next<=maxY+.015)this._hfDiveEntering=false;
+    // The next Unsung swim tick still runs native horizontal collision and
+    // buoyancy, but vertical positioning is replaced by this 3D dive control.
+   }else{this._hfDive=false;this._hfDiveEntering=false;this.emit('highflyDiveBlocked',{reason:'shallow'});}
   }
   return result;
  };
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;
+  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
   this._hfJumpFx=Math.max(0,(this._hfJumpFx||0)-step);
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
+  this._hfFlowClock+=step;
+  this._hfCameraPitch=Number.isFinite(this._hfCameraPitch)?this._hfCameraPitch:0;
+  if(input.highflyAbilityAim&&Object.prototype.hasOwnProperty.call(input.highflyAbilityAim,'attack')){
+    this._hfFlowQueuedDirection=input.highflyAbilityAim.attack;
+  }
   if(input.pressed.has('dive')&&this.state==='swim'){
-   this._hfDive=!this._hfDive;
+   this._hfDive=!this._hfDive;this._hfDiveEntering=this._hfDive;
    this.emit('highflyDiveToggle',{active:this._hfDive});
   }
-  if(this.state!=='swim')this._hfDive=false;
+  if(this.state!=='swim'){this._hfDive=false;this._hfDiveEntering=false;}
   // Like Emberfall, holding ATK continues the combo at the ORIGINAL Unsung
   // attack cadence. Keep one native strike event/damage window per step.
   if(input.held.has('attack')&&!input.pressed.has('attack')){
@@ -320,6 +378,15 @@ export function installHighflyUniversalMotion(p){
   const nativeRollInput=input.pressed.has('dodge')&&(aim||tap)?
    {...input,move:aim||facingWish}:input;
   const result=attackLocomotion(this,nativeUpdate,dt,nativeRollInput,camYaw);
+  // Oxygen is strictly head-submerged time, not merely standing in water.
+  const water=this.world?.waterLevel?.(this.pos.x,this.pos.z)??-Infinity;
+  const underwater=this.state==='swim'&&Number.isFinite(water)&&this.pos.y+1.62<water;
+  this._hfUnderwater=underwater;
+  this._hfOxygen=clamp(this._hfOxygen+(underwater?-11:28)*step,0,this._hfOxygenMax);
+  if(underwater&&this._hfOxygen<=0){
+    this._hfDrownTimer=(this._hfDrownTimer??0)+step;
+    if(this._hfDrownTimer>=.9){this._hfDrownTimer-=.9;this.damage(8,null);this.emit('highflyDrowning');}
+  }else this._hfDrownTimer=0;
   if(rollAttempt&&this.state==='roll'){
    const d=this.rollDir,front=Math.sin(originalFacing)*d.x+Math.cos(originalFacing)*d.z;
    const side=Math.cos(originalFacing)*d.x-Math.sin(originalFacing)*d.z;
