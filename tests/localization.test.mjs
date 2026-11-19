@@ -11,3 +11,19 @@ test('Mission event IDs and invisible technical content remain unchanged',()=>{
  assert.equal(translateHighfly('Return to Maren'),'Volvé con Maren');
  assert.equal(translateHighfly('42 fps · 85%'),'42 FPS · resolución 85 %');
 });
+
+test('All 18 quest storylines provide translated spoken offer/wait/done lines',async()=>{
+ const {QUEST_DIALOGUE_ES,localizeQuestData}=await import('../src/highfly/es-quest-data.mjs');
+ assert.equal(Object.keys(QUEST_DIALOGUE_ES).length,18);
+ const fake=Object.entries(QUEST_DIALOGUE_ES).map(([id,q])=>({id,
+  title:'The Keeper\'s Count',verb:'Find lost notes of the old song',
+  offer:q.offer.map(()=>'English dialogue'),wait:q.wait.map(()=>'English dialogue'),
+  done:q.done.map(()=>'English dialogue')}));
+ const converted=localizeQuestData(fake,{},{},translateHighfly);
+ assert.ok(converted>100);
+ for(const q of fake){
+  assert.ok(!q.offer.includes('English dialogue'));
+  assert.ok(!q.wait.includes('English dialogue'));
+  assert.ok(!q.done.includes('English dialogue'));
+ }
+});

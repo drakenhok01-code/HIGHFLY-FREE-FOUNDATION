@@ -73,6 +73,10 @@ patch('src/main.js',"fetch('/models/hero.glb', { method: 'HEAD' })","fetch(impor
 patch('src/anim/hero.js',"url = '/models/hero.glb'","url = import.meta.env.BASE_URL + 'models/hero.glb'");
 patch('src/anim/hero.js',"const HERO_VERT = /* glsl */ `","export const HERO_VERT = /* glsl */ `");
 patch('src/audio/audio.js',"async init(base = '/audio/')","async init(base = import.meta.env.BASE_URL + 'audio/')");
+patch('src/game/quests.js',"import * as THREE from 'three';",
+ "import * as THREE from 'three';\nimport {translateHighfly} from '../highfly/es-localization.mjs';\nimport {localizeQuestData} from '../highfly/es-quest-data.mjs';");
+patch('src/game/quests.js','export class Quests {',
+ "localizeQuestData(QUESTS,IDLE,CHAT,translateHighfly);\nexport class Quests {");
 patch('src/ui/ui.js','<h1>Unsung Vale</h1>','<h1>HIGHFLY FREE FOUNDATION</h1>');
 
 // F1 opt-in: one official FREE KayKit GLB, downloaded from a frozen public commit
@@ -155,7 +159,7 @@ copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-m
 copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
 copy(path.join(ROOT,'src/highfly/flow-combat.mjs'),loc('src/highfly/flow-combat.mjs'));
-for(const name of ['directional-rig','wall-physics','oxygen-progression','visual-profile','es-localization','professions','profession-yard'])
+for(const name of ['directional-rig','wall-physics','oxygen-progression','visual-profile','es-localization','es-quest-data','professions','profession-yard'])
   copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));

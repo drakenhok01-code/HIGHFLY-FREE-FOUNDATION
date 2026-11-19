@@ -20,7 +20,7 @@ const PAIRS=[
  ['It is breaking. So is its patience.','Está cediendo. Y también se le acaba la paciencia.'],
  ['It gathers itself, and calls the others to it.','Recupera fuerzas y llama a los demás.'],
  ['The court has heard. So have the Mute.','El patio lo ha oído. Los Silentes también.'],
- ['Low, Middle, High','Grave, medio, agudo'],['Set chimes right on the mesas','Afiná las campanillas de las mesetas'],
+ ["The Keeper's Count",'La cuenta del guardián'],['Low, Middle, High','Grave, medio, agudo'],['Set chimes right on the mesas','Afiná las campanillas de las mesetas'],
  ['Amber for the Mason','Ámbar para el cantero'],['Break song-crystals open in the meadows','Rompé cristales de canción en las praderas'],
  ['What the Singers Kept','Lo que guardaron los cantores'],['Open reliquaries on the mesas','Abrí relicarios en las mesetas'],
  ['Nine Bells','Nueve campanas'],['Ring the bells out on the mesas','Hacé sonar las campanas de las mesetas'],
