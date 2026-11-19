@@ -183,6 +183,8 @@ export function attachHighflyTouch(input){
 /* F0.13.1 Android design: saved per-control inline opacity overrides defaults */
 #ui #hud .compass{transform:scale(var(--hf-compass-scale,1));transform-origin:center top}
 #hf-touch button[data-a]{opacity:.70;border-radius:50%}
+#hf-touch .rpg-menu{right:242px;top:8px;width:45px;height:45px;font-size:10px;border-radius:50%;border-color:#f0d08e;background:linear-gradient(135deg,#69429e,#1b1030)}
+#hf-touch .rpg-menu[hidden]{display:none!important}
 #hf-touch .stick{opacity:.70}
 #hf-touch .hf-settings button,#hf-touch .action-panel button,#hf-touch .hf-talk-next{opacity:.70}
 #hf-touch .actions,#hf-touch .hud-edit{width:44px;height:44px;border-radius:50%;font-size:12px}
@@ -224,7 +226,7 @@ export function attachHighflyTouch(input){
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
- '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
+ '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="rpg-menu" data-a="rpg-menu" hidden aria-label="Abrir menú RPG">✧ MENÚ</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
  '<button class="lock" data-a="lock" aria-label="Fijar enemigo">⊕<small>FIJAR</small></button>'+
  '<button class="skill1" data-a="skill1" aria-label="Resonancia" data-locked="1">🔒</button>'+
  '<button class="skill2" data-a="skill2" aria-label="Ataque pesado">S2</button>'+
@@ -379,6 +381,7 @@ export function attachHighflyTouch(input){
    if(a==='hud-edit'){t.hudEditor?.toggle();return;}
    if(a==='dialogue-next'){t.pressed.add('interact');return;}
    if(a==='settings'){t.settingsPanel.hidden=!t.settingsPanel.hidden;return;}
+    if(a==='rpg-menu'){globalThis.__highflyRpg?.toggle();return;}
    if(a==='actions'){
     t.actionsOpen=!t.actionsOpen;t.actionPanel.hidden=!t.actionsOpen;
     if(t.actionsOpen){const rect=b.getBoundingClientRect(),p=t.actionPanel;
