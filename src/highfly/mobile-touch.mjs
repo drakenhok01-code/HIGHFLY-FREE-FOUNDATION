@@ -26,7 +26,7 @@ export function abilityVector(dx,dy,deadzone=9){
  return {x:dx===0?0:dx/length,y:dy===0?0:-dy/length};
 }
 export function resolveHighflyContext(p){
- const fallback={action:'climb',label:'TREPAR'};
+ const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  // In water, wall contact takes priority over diving.
@@ -34,7 +34,7 @@ export function resolveHighflyContext(p){
   const d=typeof w.raycast==='function'?w.raycast(
     {x:p.pos.x,y:p.pos.y+.87,z:p.pos.z},{x:fx,y:0,z:fz},1.08):Infinity;
   if(d>.06&&d<.96)return {action:'climb',label:'TREPAR'};
-  return {action:'dive',label:p._hfDive?'SUPERFICIE':'BUCEAR'};
+  return {action:'dive',label:p._hfDive?'SUBIR':'BUCEAR'};
  }
  // Harvest targets must have explicit resource tags, never generic rock collisions.
  const tagged=findProfessionTarget(w,p.pos,p.yaw);
@@ -253,45 +253,22 @@ export function attachHighflyTouch(input){
  for(const b of root.querySelectorAll('[data-a]')){
   const a=b.dataset.a;
   if(a==='attack'){
-   const aim=e=>{
-    const active=t.attackPointer;if(!active||active.id!==e.pointerId)return;
-    const v=abilityVector(e.clientX-active.x,e.clientY-active.y,13);
-    active.vector=v;
-    if(v&&!active.directionSent){
-      // Critical F0.12 fix: send the directional input on POINTERMOVE,
-      // not after the release when an ordinary attack may already have begun.
-      t.abilityAim.attack=v;t.pressed.add('attack');
-      active.directionSent=true;active.started=true;
-      t.lastAttackSwipe=v;
-      const direction=Math.abs(v.x)>Math.abs(v.y)?
-        (v.x>0?'DERECHA':'IZQUIERDA'):(v.y>0?'ASCENDENTE':'DESCENDENTE');
-      if(t.attackCue){t.attackCue.hidden=false;t.attackCue.textContent='CORTE '+direction;}
-    }
-    e.preventDefault();e.stopPropagation();
-   };
+   let active=null;
    b.addEventListener('pointerdown',e=>{
-    if(t.attackPointer)return;
-    t.attackPointer={id:e.pointerId,x:e.clientX,y:e.clientY,frames:0,
-      started:false,directionSent:false,vector:null};
+    if(active!==null)return;
+    active=e.pointerId;t.pressed.add('attack');t.held.add('attack');
+    t.abilityAim.attack=null;
     try{b.setPointerCapture(e.pointerId)}catch{}
     e.preventDefault();e.stopPropagation();
    });
-   b.addEventListener('pointermove',aim);
-   b.addEventListener('pointerup',e=>{
-    const a=t.attackPointer;if(!a||a.id!==e.pointerId)return;
-    aim(e); // capture last movement if pointermove was coalesced by Android
-    if(!a.started){t.pressed.add('attack');t.abilityAim.attack=null;}
-    t.held.delete('attack');t.attackPointer=null;
-    if(t.attackCue)t.attackCue.hidden=true;
-    e.preventDefault();e.stopPropagation();
-   });
-   const cancel=e=>{
-    if(t.attackPointer?.id===e.pointerId){
-      t.attackPointer=null;t.held.delete('attack');if(t.attackCue)t.attackCue.hidden=true;
-    }
+   const finish=e=>{
+    if(e.pointerId!==active)return;
+    active=null;t.held.delete('attack');
+    e.preventDefault?.();e.stopPropagation?.();
    };
-   b.addEventListener('pointercancel',cancel);
-   b.addEventListener('lostpointercapture',cancel);
+   b.addEventListener('pointerup',finish);
+   b.addEventListener('pointercancel',finish);
+   b.addEventListener('lostpointercapture',finish);
    continue;
   }
   if(a==='dash'||a==='dodge'){
@@ -355,7 +332,7 @@ export function attachHighflyTouch(input){
    const chosen=a==='context'?t.contextAction:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
    if(a==='sprint'){
     t.sprintOn=!t.sprintOn;
-    b.dataset.active=t.sprintOn?'1':'0';b.textContent=t.sprintOn?'CORRIENDO':'CORRER';
+    b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
    }else{
     t.pressed.add(chosen);
     if(a==='attack')t.held.add('attack'); // hold-to-combo
@@ -412,11 +389,6 @@ export function applyHighflyTouch(input){
   return;
  }
  input.move.x=t.x;input.move.y=t.y;
- if(t.attackPointer&&!t.attackPointer.started){
-  if(++t.attackPointer.frames>=9){
-   t.attackPointer.started=true;t.held.add('attack');t.pressed.add('attack');t.abilityAim.attack=null;
-  }
- }
  for(const a of t.pressed)input.pressed.add(a);
  input.highflyAbilityAim={...t.abilityAim};t.abilityAim={};
  for(const a of t.held)input.held.add(a);
