@@ -63,9 +63,38 @@ export function resolveHighflyUse(p){
  }
  return {action:'interact',label:'USAR'};
 }
+export function vitalSnapshot(p){
+ const spec=[['hp','HP',p?.health,p?.healthMax],['en','ENERGÍA',p?.stamina,p?.staminaMax],
+  ['mp','MANÁ',p?._hfMana,p?._hfManaMax],['o2','O₂',p?._hfOxygen,p?._hfOxygenMax]];
+ return spec.map(([id,label,v,m])=>{
+  const max=Number.isFinite(m)&&m>0?m:100;
+  return {id,label,max,value:Number.isFinite(v)?Math.max(0,Math.min(max,v)):max};
+ });
+}
+const hfHud=()=>'<div class="hf-vitals"><div class="hf-profile"><span class="hf-avatar">✦</span><div><b>CAZADOR UNIVERSAL</b><small>HIGHFLY · NIVEL 01</small></div></div>'+
+ ['hp','en','mp','o2'].map((id,i)=>'<div class="hf-vital hf-'+id+'"><b>'+['HP','ENERGÍA','MANÁ','O₂'][i]+'</b><span class="hf-track"><i class="hf-fill"></i></span><span class="hf-number">100/100</span></div>').join('')+
+ '<small class="hf-motto">EL PODER SE CONSTRUYE</small></div>';
 export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
  const css=[
+ `
+ #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:246px;box-sizing:border-box;padding:9px 11px 7px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
+ #hf-touch .hf-profile{display:flex;align-items:center;gap:9px;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid #9080c23b}
+ #hf-touch .hf-avatar{width:34px;height:34px;flex:none;border-radius:50%;border:2px solid #bc9be8;background:#30254e;color:#e8d3ff;font:bold 23px system-ui;display:grid;place-items:center;box-shadow:0 0 10px #7a53d96b}
+ #hf-touch .hf-profile b{display:block;color:#f6f0ff;font:700 10px system-ui;letter-spacing:.7px}
+ #hf-touch .hf-profile small{display:block;color:#ada8d1;font:8px system-ui;letter-spacing:1px;margin-top:3px}
+ #hf-touch .hf-vital{display:grid;grid-template-columns:44px 1fr 47px;gap:5px;align-items:center;height:20px}
+ #hf-touch .hf-vital b{font:700 8px system-ui}
+ #hf-touch .hf-number{font:8px monospace;color:#f2eefe;text-align:right;font-variant-numeric:tabular-nums}
+ #hf-touch .hf-track{height:9px;overflow:hidden;border-radius:8px;background:#1b1930;border:1px solid #ffffff26;box-shadow:inset 0 1px 2px #0009}
+ #hf-touch .hf-fill{display:block;height:100%;transform-origin:left;transform:scaleX(1);transition:transform .14s linear;border-radius:7px}
+ #hf-touch .hf-hp b{color:#ff697e}#hf-touch .hf-hp .hf-fill{background:linear-gradient(90deg,#b72a49,#fa5f74)}
+ #hf-touch .hf-en b{color:#f1cd75}#hf-touch .hf-en .hf-fill{background:linear-gradient(90deg,#b47a2a,#eac25f)}
+ #hf-touch .hf-mp b{color:#779dff}#hf-touch .hf-mp .hf-fill{background:linear-gradient(90deg,#2c54bc,#6195ff)}
+ #hf-touch .hf-o2 b{color:#66edf6}#hf-touch .hf-o2 .hf-fill{background:linear-gradient(90deg,#218eab,#59e8f4)}
+ #hf-touch .hf-o2[data-low="1"] .hf-track{border-color:#ff7e95;box-shadow:0 0 8px #ff5365}
+ #hf-touch .hf-motto{display:block;text-align:center;color:#8d82ae;font:7px system-ui;letter-spacing:1.6px;padding-top:4px}
+ `,
  '#hf-touch{position:fixed;inset:0;z-index:9000;pointer-events:none;color:#fff;font:bold 11px system-ui;user-select:none;-webkit-user-select:none}',
  '#hf-touch[hidden]{display:none!important}',
  '#hf-touch .cam{position:absolute;inset:0 0 0 48%;pointer-events:auto;touch-action:none}',
@@ -94,9 +123,9 @@ export function attachHighflyTouch(input){
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
  ].join('');
- const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab{display:none!important}';document.head.append(style);
+ const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab,#ui #hud .vitals{display:none!important}';document.head.append(style);
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML='<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
@@ -108,8 +137,9 @@ export function attachHighflyTouch(input){
  '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel')};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{}};
  input.highflyTouch=t;
+ for(const id of ['hp','en','mp','o2'])t.resources[id]=root.querySelector('.hf-'+id);
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
  const stick=root.querySelector('.stick'),knob=root.querySelector('.knob');
@@ -148,6 +178,30 @@ export function attachHighflyTouch(input){
  camera.addEventListener('lostpointercapture',endCamera);
  for(const b of root.querySelectorAll('[data-a]')){
   const a=b.dataset.a;
+  if(a==='attack'){
+   const aim=e=>{
+    const active=t.attackPointer;if(!active||active.id!==e.pointerId)return;
+    active.vector=abilityVector(e.clientX-active.x,e.clientY-active.y,13);
+    e.preventDefault();e.stopPropagation();
+   };
+   b.addEventListener('pointerdown',e=>{
+    if(t.attackPointer)return;
+    t.attackPointer={id:e.pointerId,x:e.clientX,y:e.clientY,frames:0,started:false,vector:null};
+    try{b.setPointerCapture(e.pointerId)}catch{}
+    e.preventDefault();e.stopPropagation();
+   });
+   b.addEventListener('pointermove',aim);
+   b.addEventListener('pointerup',e=>{
+    const a=t.attackPointer;if(!a||a.id!==e.pointerId)return;
+    aim(e);
+    if(!a.started||a.vector)t.pressed.add('attack');
+    if(a.vector)t.abilityAim.attack=a.vector;
+    t.held.delete('attack');t.attackPointer=null;
+   });
+   const cancel=e=>{if(t.attackPointer?.id===e.pointerId){t.attackPointer=null;t.held.delete('attack');}};
+   b.addEventListener('pointercancel',cancel);b.addEventListener('lostpointercapture',cancel);
+   continue;
+  }
   if(a==='dash'||a==='dodge'){
     const move=e=>{
       if(t.abilityPointer?.id!==e.pointerId||t.abilityPointer?.kind!==a)return;
@@ -217,8 +271,8 @@ export function attachHighflyTouch(input){
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
- globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
- document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();}});
+ globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.attackPointer=null;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();t.attackPointer=null;}});
 }
 export function applyHighflyTouch(input){
  const t=input.highflyTouch;if(!t)return;
@@ -228,6 +282,11 @@ export function applyHighflyTouch(input){
   return;
  }
  input.move.x=t.x;input.move.y=t.y;
+ if(t.attackPointer&&!t.attackPointer.started){
+  if(++t.attackPointer.frames>=6){
+   t.attackPointer.started=true;t.held.add('attack');t.pressed.add('attack');
+  }
+ }
  for(const a of t.pressed)input.pressed.add(a);
  input.highflyAbilityAim={...t.abilityAim};t.abilityAim={};
  for(const a of t.held)input.held.add(a);
@@ -240,6 +299,13 @@ export function applyHighflyTouch(input){
  }
  const cd=globalThis.__game?.player?._hfDashCd??0;
  if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=cd>.05?'.65':'1';}
+ for(const bar of vitalSnapshot(globalThis.__game?.player)){
+  const el=t.resources[bar.id];if(!el)continue;
+  const fill=el.querySelector('.hf-fill'),num=el.querySelector('.hf-number');
+  if(fill)fill.style.transform='scaleX('+(bar.value/bar.max)+')';
+  if(num)num.textContent=Math.ceil(bar.value)+'/'+Math.ceil(bar.max);
+  if(bar.id==='o2')el.dataset.low=bar.value/bar.max<.22?'1':'0';
+ }
  t.pressed.clear();
  if(t.debug){
   const fx=Math.round(input.move.x*100),fy=Math.round(input.move.y*100);
