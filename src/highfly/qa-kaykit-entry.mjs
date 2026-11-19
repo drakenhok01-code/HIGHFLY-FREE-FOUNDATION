@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import {KayKitFreeHero} from './kaykit-free-hero.mjs';
 import {WEAPON_MODES,WEAPON_ANIMATIONS,attackAnimation} from './universal-gear.mjs';
+import {ACTIONS} from './universal-motion.mjs';
 import {Pipeline} from '../engine/pipeline.js';
 window.__hfQa={done:false,ok:false};
 const info=document.getElementById('status');
@@ -137,6 +138,17 @@ try{
    hero.update(1/60,{...p,...sample});
    if(!hero.current)throw Error('Missing animation for '+sample.state);
  }
+ // F0.12.1 profession animation QA: all original clips actually bound
+ // to ONE visible KayKit 41-bone hero, not merely strings in a table.
+ let professionAnimationsChecked=0;
+ for(const profession of ['chop','mine','fishing','plant','water','harvest','smelt','forge']){
+   const cfg=ACTIONS[profession];
+   const state={...p,state:'hf_action',_hfAction:{name:profession,time:.08},speed:0,grounded:true};
+   hero.update(1/60,state);
+   if(!hero.current||hero.key!=='raw:'+cfg.clip||!hero.clips.has(cfg.clip))
+      throw Error('Profession has no REAL KayKit animation '+profession+':'+cfg.clip);
+   professionAnimationsChecked++;
+ }
  // F0.11.5 SWIM: real pinned UAL strokes + KayKit neck safety for 120 frames.
  // The swimmer is still ONE actor, without a second Quaternius model.
  const neutral={...p,state:'move',grounded:true,speed:0,stateTime:0};
@@ -209,7 +221,7 @@ try{
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,professionAnimationsChecked,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

@@ -49,3 +49,27 @@ test('F0.11.6 climbable quay in water has priority over BUCEAR',()=>{
  const p={...player,state:'swim',grounded:false,world:{...player.world,raycast:()=>.44}};
  assert.deepEqual(resolveHighflyContext(p),{action:'climb',label:'TREPAR'});
 });
+
+test('F0.12.1 labelled profession stations and farm plots select only valid contextual action',()=>{
+ const kinds=[
+  ['tree','chop','TALAR'],
+  ['ore','mine','PICAR'],
+  ['fishSpot','fishing','PESCAR'],
+  ['forge','forge','FORJAR'],
+  ['furnace','smelt','FUNDIR']
+ ];
+ for(const [kind,action,label] of kinds){
+  const p={...player,world:{...player.world,highflyInteractables:[
+    {id:kind,kind,x:0,z:1,charges:2}]}};
+  assert.deepEqual(resolveHighflyContext(p),{action,label},kind);
+ }
+ for(const [phase,action,label] of [
+  ['empty','plant','SEMBRAR'],['seeded','water','REGAR'],['ripe','harvest','COSECHAR']]){
+  const p={...player,world:{...player.world,highflyInteractables:[
+    {id:'plot',kind:'soil',phase,x:0,z:1}]}};
+  assert.deepEqual(resolveHighflyContext(p),{action,label},phase);
+ }
+ const growing={...player,world:{...player.world,highflyInteractables:[
+   {id:'plot',kind:'soil',phase:'growing',x:0,z:1}]}};
+ assert.equal(resolveHighflyContext(growing).action,'climb','growing plots cannot be harvested early');
+});
