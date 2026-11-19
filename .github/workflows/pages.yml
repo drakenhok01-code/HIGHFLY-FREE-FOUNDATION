@@ -2,13 +2,13 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen, f013-unified-highfly-upgrade]
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: highfly-f0122-attack-hud-slope-qa
+  group: highfly-f013-unified-qa
   cancel-in-progress: false
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
         run: npm run build
       - name: Simular movimiento real sobre el Player original
         run: |
-          node --test tests/integrated.test.mjs tests/universal-motion.test.mjs tests/context-actions.test.mjs
+          node --test tests/integrated.test.mjs tests/universal-motion.test.mjs tests/context-actions.test.mjs tests/unified-systems.test.mjs tests/localization.test.mjs
       - name: Auditar familia completa KayKit FREE (5 GLB reales)
         run: node scripts/qa-free-rigs.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
@@ -58,7 +58,7 @@ jobs:
         with:
           path: dist
   deploy:
-    if: github.ref == 'refs/heads/f0122-directional-attack-hud-slope-oxygen'
+    if: github.ref == 'refs/heads/f013-unified-highfly-upgrade'
     environment:
       name: highfly-free-preview
     runs-on: ubuntu-latest

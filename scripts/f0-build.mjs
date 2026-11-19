@@ -155,6 +155,8 @@ copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-m
 copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
 copy(path.join(ROOT,'src/highfly/flow-combat.mjs'),loc('src/highfly/flow-combat.mjs'));
+for(const name of ['directional-rig','wall-physics','oxygen-progression','visual-profile','es-localization'])
+  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
@@ -164,10 +166,14 @@ copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'))
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
-patch('src/main.js',"import { FILM } from './engine/quality.js';","import { FILM } from './engine/quality.js';\nimport { installHighflyFog } from './highfly/fog.mjs';\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';");
+patch('src/main.js',"import { FILM } from './engine/quality.js';",
+ "import { FILM } from './engine/quality.js';\\nimport { installHighflyFog } from './highfly/fog.mjs';\\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';\\nimport { installHighflyGraphics } from './highfly/visual-profile.mjs';\\nimport { installSpanishLocalization } from './highfly/es-localization.mjs';".replaceAll('\\n','\n'));
+patch('src/main.js',"const settings = new Settings(pipe.renderer);",
+ "const settings = new Settings(pipe.renderer);\\nwindow.__hfGraphics=installHighflyGraphics(pipe,settings,location.search);".replaceAll('\\n','\n'));
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
+patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);");
  // Browser-only full-world collision QA mode: retain the real world, player,
  // terrain heightfields, props and collision BVH, but shorten only the
  // cosmetic pre-game lighting bake in software WebGL. Normal play unchanged.

@@ -95,7 +95,7 @@ try{
  const shifted=await mobile.locator('#hf-touch .atk').boundingBox();
  assert.ok(original.x-shifted.x>12&&original.y-shifted.y>12,
    'HUD editor must drag ATK without firing native combat');
- const saved=await mobile.evaluate(()=>!!localStorage.getItem('highfly-hud-layout-f0122'));
+ const saved=await mobile.evaluate(()=>!!localStorage.getItem('highfly-hud-layout-f013'));
  assert.ok(saved,'HUD layout must persist to browser storage');
  await mobile.locator('[data-hud-op="save"]').click({force:true});
  await mobile.reload({waitUntil:'domcontentloaded'});
@@ -106,6 +106,20 @@ try{
  await mobile.locator('#hf-touch .hud-edit').click({force:true});
  await mobile.locator('[data-hud-op="reset"]').click({force:true});
  await mobile.locator('[data-hud-op="save"]').click({force:true});
+ // Simulate Android browser chrome/fullscreen shrinking and expanding viewport.
+ await mobile.locator('#hf-touch .hud-edit').click({force:true});
+ await mobile.locator('#hf-touch .full').click({force:true}).catch(()=>{});
+ await mobile.locator('[data-hud-op="save"]').click({force:true});
+ await mobile.setViewportSize({width:850,height:362});
+ await mobile.waitForTimeout(100);
+ const resized=await mobile.locator('#hf-touch .atk').boundingBox();
+ assert.ok(resized.x>=0&&resized.y>=0&&resized.x+resized.width<=850&&resized.y+resized.height<=362,
+   'HUD should remain in the screen after browser chrome resize');
+ await mobile.setViewportSize({width:915,height:412});
+ await mobile.waitForTimeout(100);
+ const skillButtons=await mobile.locator('#hf-touch button[data-a^="skill"]').count();
+ assert.equal(skillButtons,6,'HIGHFLY universal hunter has 6 skill slots');
+ assert.ok(await mobile.locator('#hf-touch .lock').count()===1,'lock-on reticle available');
  await mobile.screenshot({path:'qa-touch-mobile.png'});
  fs.writeFileSync('qa-touch-report.json',JSON.stringify({buttons,drag},null,2));
  console.log('PASS F0.11 S23 LANDSCAPE HUD / CONTEXT CIRCLE / RADIAL AIM',JSON.stringify({buttons,drag}));

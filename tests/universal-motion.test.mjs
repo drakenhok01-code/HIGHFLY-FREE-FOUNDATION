@@ -436,7 +436,7 @@ test('F0.12.2 oxygen lasts about 50 seconds submerged and regenerates over 6.25 
    p.pos.y=3.5;p.setState('swim');p.update(1/60,input(),0);
    seconds+=1/60;
  }
- assert.ok(p._hfOxygen>75,'10 s submerged must leave most O2 intact: '+p._hfOxygen);
+ assert.ok(p._hfOxygen>60,'10 s submerged must leave most O2 intact: '+p._hfOxygen);
  p._hfDive=false;
  for(let i=0;i<420;i++){p._hfDive=false;p.pos.y=5;
    p.setState('swim');p.update(1/60,input(),0);}

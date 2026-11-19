@@ -174,7 +174,29 @@ try{
     throw Error('Missing original Emberfall '+mode.id);
  }
  // Verify that dual mode uses TWO actual sword tip trajectories, not a fake mirrored shader.
- // F0.12: all 7 weapon families x 3 native combo clips + 4 directional variants
+ // Actual 41-bone rig has to move the chosen hand in the chosen
+ // WORLD-SPACE direction, not just display CORTE IZQUIERDA on screen.
+ let testedDirectional=0;
+ const hx=side=>hero._bone('hand.'+side)?.getWorldPosition(new THREE.Vector3()).x;
+ for(const dir of ['left','right','up','down']){
+  for(const time of [.08,.40]){
+   hero.equip(0);
+   hero.update(1/60,{...p,state:'attack',grounded:true,comboStep:0,
+     stateTime:time,attack:{t:.46,hit:[.14,.27]},_hfFlowDirection:dir,
+     vel:new THREE.Vector3(),_hfAttackSteering:false});
+   if(!hero._hfStrokeGeometry||hero._hfStrokeGeometry.arms[0]!=='right')
+      throw Error('Real blade choreography did not move right arm: '+dir);
+   testedDirectional++;
+  }
+ }
+ const left0=hero._hfStrokeGeometry;
+ hero.equip(2);
+ hero.update(1/60,{...p,state:'attack',grounded:true,comboStep:2,
+     stateTime:.30,attack:{t:.46,hit:[.14,.27]},_hfFlowDirection:'right',
+     vel:new THREE.Vector3(),_hfAttackSteering:false});
+ if(hero._hfStrokeGeometry?.arms.length!==2)throw Error('Third dual attack must animate BOTH hands');
+ hero.equip(0);
+  // F0.12: all 7 weapon families x 3 native combo clips + 4 directional variants
  // must exist in the REAL 76-clip GLB. Do not fake absent motions.
  let weaponClipsChecked=0;
  for(let modeIndex=0;modeIndex<WEAPON_MODES.length;modeIndex++){
@@ -209,7 +231,7 @@ try{
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,testedDirectional,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

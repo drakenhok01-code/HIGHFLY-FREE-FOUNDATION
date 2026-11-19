@@ -1,6 +1,6 @@
 /** HIGHFLY F0 fog adapter: world geometry and shader source stay original. */
 export const FOG_KEY='highfly-free-fog-v1';
-export function fogLevel(raw,fallback=0.35){
+export function fogLevel(raw,fallback=0.25){
  const n=Number(raw);
  return raw!==null && raw!=='' && Number.isFinite(n)?Math.max(0,Math.min(1,n)):fallback;
 }
