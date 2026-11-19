@@ -69,3 +69,15 @@ test('F0.13.1: a physical cliff face is detectable by the same grip/wallrun came
  assert.equal(allowCliffCapsule(cliff,p,{x:0,y:.1,z:.6}).ok,false);
  assert.equal(allowCliffCapsule(flat,p,{x:0,y:.1,z:.6}).ok,true);
 });
+
+test('F0.13.1 viewport-safe HUD anchors preserve right/bottom physical placement and 70% opacity',async()=>{
+ const {captureAnchor,positionFromAnchor}=await import('../src/highfly/hud-editor.mjs');
+ const r={left:780,top:310,right:850,bottom:380,width:70,height:70};
+ const original=captureAnchor(r,915,412,1,.7);
+ const same=positionFromAnchor(original,915,412,70,70);
+ assert.ok(Math.abs(same.left-780)<1&&Math.abs(same.top-310)<1);
+ assert.equal(same.opacity,.7);
+ const resized=positionFromAnchor(original,850,362,70,70);
+ assert.ok(resized.left>=0&&resized.top>=0);
+ assert.ok(resized.left+70<=850&&resized.top+70<=362);
+});

@@ -86,6 +86,33 @@ try{
  const editor=mobile.locator('#hf-touch .hud-edit');
  await editor.click({force:true});
  await mobile.waitForFunction('document.querySelector("#hf-touch")?.dataset.editing==="1"');
+ // The editor is centred by default and moves entirely independently of game inputs.
+ const panel=mobile.locator('#hf-touch .hf-hud-editor');
+ const panelHome=await panel.boundingBox();
+ assert.ok(Math.abs(panelHome.x+panelHome.width/2-915/2)<30,'HUD editor starts centred');
+ const handle=await mobile.locator('[data-hud-panel-handle]').boundingBox();
+ await mobile.mouse.move(handle.x+40,handle.y+handle.height/2);
+ await mobile.mouse.down();
+ await mobile.mouse.move(handle.x-100,handle.y+handle.height/2,{steps:5});
+ await mobile.mouse.up();
+ const panelDragged=await panel.boundingBox();
+ assert.ok(panelDragged.x<panelHome.x-90,'HUD editor drag must clear game view');
+ await mobile.locator('[data-hud-op="collapse"]').click({force:true});
+ assert.equal(await panel.getAttribute('data-minimized'),'1','editor collapses to floating bar');
+ await mobile.locator('[data-hud-op="collapse"]').click({force:true});
+ assert.equal(await panel.getAttribute('data-minimized'),'0','editor expands without resetting controls');
+ // Every combat button is circular with default 70 percent translucency.
+ const circles=await mobile.evaluate(()=>{
+  const names=['atk','jump','roll','dash','context','actions','full','hud-edit','skill1','skill2','skill3','skill4','skill5','skill6'];
+  return Object.fromEntries(names.map(name=>{
+   const e=document.querySelector('#hf-touch .'+name),c=getComputedStyle(e);
+   return [name,{radius:c.borderRadius,opacity:parseFloat(c.opacity)}];
+  }));
+ });
+ for(const [name,data] of Object.entries(circles)){
+  assert.equal(data.radius,'50%',name+' must be circular');
+  assert.ok(data.opacity>=.68&&data.opacity<=.72,name+' must default to 70% opacity');
+ }
  const original=await mobile.locator('#hf-touch .atk').boundingBox();
  await mobile.mouse.move(original.x+original.width/2,original.y+original.height/2);
  await mobile.mouse.down();
