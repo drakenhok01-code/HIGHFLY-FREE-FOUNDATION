@@ -216,7 +216,7 @@ function attackLocomotion(p,original,dt,input,camYaw){
       const current=this.world.groundHeight(beforeX,beforeZ);
       const next=this.world.groundHeight(beforeX+dx,beforeZ+dz);
       if(Number.isFinite(current)&&Number.isFinite(next)&&
-        next-current>0.06&&(next-current)/travel>MAX_ATTACK_WALK_SLOPE){
+        next-current>0.002&&(next-current)/travel>MAX_ATTACK_WALK_SLOPE){
          this.vel.x=this.vel.z=0;
          this._hfFlowVelocity={x:0,z:0};
          this._hfAttackSteering=false;
@@ -227,8 +227,8 @@ function attackLocomotion(p,original,dt,input,camYaw){
   const out=integrate.call(this,step);
   // Second guard catches native auto-step and collider edge cases. Never
   // convert ATTACK into an uncommanded vertical mantle.
-  if(attacking&&this.pos.y-beforeY>.15&&
-     this.pos.y-beforeY>Math.hypot(this.pos.x-beforeX,this.pos.z-beforeZ)*MAX_ATTACK_WALK_SLOPE+.08){
+  if(attacking&&this.pos.y-beforeY>.035&&
+     this.pos.y-beforeY>Math.hypot(this.pos.x-beforeX,this.pos.z-beforeZ)*MAX_ATTACK_WALK_SLOPE+.012){
     this.pos.set(beforeX,beforeY,beforeZ);
     this.vel.x=this.vel.z=0;this.vel.y=0;
     this._hfFlowVelocity={x:0,z:0};
