@@ -2,13 +2,13 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab]
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: highfly-f0116-emberfall-combat-swim-qa
+  group: highfly-f012-flow-combat-qa
   cancel-in-progress: false
 jobs:
   build:

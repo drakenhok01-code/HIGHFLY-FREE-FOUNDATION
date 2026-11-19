@@ -153,6 +153,7 @@ copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/styl
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
+copy(path.join(ROOT,'src/highfly/flow-combat.mjs'),loc('src/highfly/flow-combat.mjs'));
 copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit.html'),loc('qa-kaykit.html'));
@@ -189,6 +190,8 @@ patch('src/main.js',nativeHero,freeHeroStart);
 
 patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';");
 patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
+patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
+ '    p._hfCameraPitch=this.rig.pitch;\n    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);');
 patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");

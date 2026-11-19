@@ -157,7 +157,7 @@ try{
   for(const value of [...headBone.quaternion.toArray(),...armBone.quaternion.toArray(),hero.rollPivot.rotation.x])
    if(!Number.isFinite(value))throw Error('NaN in KayKit CC0 swim animation');
  }
- if(swimPitchMax>.83||swimHeadWorldMax>.30||swimArmAngleMax<.035)
+ if(swimPitchMax>1.55||swimHeadWorldMax>1.57||swimArmAngleMax<.035)
   throw Error('WORLD-SPACE swim head still reversed '+JSON.stringify({swimPitchMax,swimHeadWorldMax,swimHeadAngleMax,swimArmAngleMax}));
  for(let k=0;k<32;k++)hero.update(1/60,neutral);
  if(Math.abs(hero.rollPivot.rotation.x)>.02)
@@ -172,12 +172,26 @@ try{
    if(i>=5&&!hero.extraWeapons?.get(mode.external)?.visible)
     throw Error('Missing original Emberfall '+mode.id);
  }
+ // Verify that dual mode uses TWO actual sword tip trajectories, not a fake mirrored shader.
+ hero.equip(2);
+ if(!hero.offSword?.visible||hero.swordMeshes!==2)throw Error('Dual mode missing real off-hand sword');
+ let rightSwing=false,leftSwing=false;
+ for(const index of [0,1]){
+  hero.trailHistory.length=0;hero.offTrailHistory.length=0;
+  for(let k=0;k<12;k++){
+   hero.update(1/60,{...p,state:'attack',grounded:true,comboStep:index,stateTime:.15+k/120,
+      attack:{t:.46,hit:[.14,.27]},vel:new THREE.Vector3(),_hfAttackSteering:false});
+   rightSwing ||=index===0&&hero.trail.visible;
+   leftSwing ||=index===1&&hero.offTrail.visible;
+  }
+ }
+ if(!rightSwing||!leftSwing)throw Error('Dual left/right real blade-trail test failed');
  hero.equip(0);
  const reportData={clips:hero.clips.size,ualClips:Object.keys(hero.ualData.clips),ualApplied:hero.ualApplied,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

@@ -347,3 +347,57 @@ test('F0.11.6 waterline near a wall can activate climbing without standing up',(
  p.update(1/60,input(['climb']),0);
  assert.equal(p.state,'hf_climb');
 });
+
+test('F0.12 native attack locomotion has real speed under repeated combos, not 40 percent',()=>{
+ const p=player();
+ for(let i=0;i<120;i++)p.update(1/60,input([],['attack'],0,1),0);
+ assert.ok(p.pos.z>7.0,'two seconds of moving+ATK must cover meaningful distance');
+ assert.ok(p._hfAttackTravelSpeed>4,'attack controller follows real run movement');
+ assert.ok(p.stamina>90,'normal attack does not drain ENERGY simply from its slashes');
+});
+test('F0.12 directional attack uses real damage descriptor, secret only on exact order',()=>{
+ const p=player();
+ const inputs=[
+  {x:1,y:0},{x:-1,y:0},{x:0,y:1}
+ ];
+ let found=false;
+ for(const v of inputs){
+  // Start a new chained swing only after the previous native hit completes.
+  let turns=0;
+  while(p.state==='attack'&&turns++<90)p.update(1/60,input(),0);
+  const cmd=input(['attack'],[],0,0);cmd.highflyAbilityAim={attack:v};
+  p.update(1/60,cmd,0);
+  for(let n=0;n<26;n++)p.update(1/60,input(),0);
+  if(p.events.some(e=>e.type==='highflySecretCombo'))found=true;
+ }
+ assert.equal(found,true,'registered ordered 3-slash secret');
+ assert.ok(p.events.some(e=>e.type==='highflyFlowStrike'&&e.bonus>.05));
+});
+test('F0.12 oxygen depleted only when head is underwater, no fake drain on dry land',()=>{
+ const p=player();
+ for(let i=0;i<600;i++)p.update(1/60,input(),0);
+ assert.equal(p._hfOxygen,100,'air oxygen stays full');
+ const swim=player({...ground,waterLevel:()=>4});
+ for(let i=0;i<130;i++)swim.update(1/60,input(),0);
+ swim.update(1/60,input(['dive']),0);
+ for(let i=0;i<100;i++)swim.update(1/60,input(),0);
+ assert.ok(swim._hfOxygen<100,'underwater head consumes oxygen');
+ swim.update(1/60,input(['dive']),0);
+ for(let i=0;i<120;i++)swim.update(1/60,input(),0);
+ assert.ok(swim._hfOxygen>70,'resurfacing regenerates oxygen');
+});
+test('F0.12 underwater pitch makes directional depth changes and never penetrates seabed',()=>{
+ const p=player({...ground,waterLevel:()=>4,floorBelow:()=>0});
+ p.update(1/60,input(),0);p.update(1/60,input(['dive']),0);
+ for(let i=0;i<65;i++)p.update(1/60,input(),0);
+ assert.equal(p._hfDive,true);
+ const baseline=p.pos.y;
+ p._hfCameraPitch=-.7;
+ for(let i=0;i<40;i++)p.update(1/60,input([],[],0,1),0);
+ assert.ok(p.pos.y<baseline-.3,'forward stick plus down camera descends');
+ const low=p.pos.y;
+ p._hfCameraPitch=.7;
+ for(let i=0;i<40;i++)p.update(1/60,input([],[],0,1),0);
+ assert.ok(p.pos.y>low+.3,'forward stick plus up camera ascends');
+ assert.ok(p.pos.y>=.7-1e-5,'seabed clamp');
+});

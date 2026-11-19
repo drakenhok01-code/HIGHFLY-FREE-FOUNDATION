@@ -38,8 +38,9 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
   applyHighflyTouch(input);assert.ok(input.move.x>.9,'other finger cannot hijack stick pointer');
   stick.dispatch('pointerup',1,124,64);applyHighflyTouch(input);
   assert.deepEqual(input.move,{x:0,y:0},'stick resets when finger lifts');
-  btns[0].dispatch('pointerdown',4,10,10);input.pressed.clear();applyHighflyTouch(input);
-  assert.ok(input.pressed.has('attack'),'ATK button is only explicit attack source');
+  btns[0].dispatch('pointerdown',4,10,10);
+  for(let i=0;i<6;i++){input.pressed.clear();input.held.clear();applyHighflyTouch(input);}
+  assert.ok(input.pressed.has('attack'),'ATK begins a held attack after 6 input frames');
   assert.ok(input.held.has('attack'),'ATK is held to continue the native combo');
   input.pressed.clear();input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.pressed.has('attack'),'one initial press per finger');
@@ -111,4 +112,27 @@ test('Android action drawer opens and climb is held; equip/mine/sit are isolated
   }
   btns[0].dispatch('pointerdown',20);assert.equal(panel.hidden,true);
  }finally{for(const [k,v] of Object.entries(prior))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+
+test('F0.12 directional ATK swipe uses its own touch pointer, independent of movement joystick',()=>{
+ const saved={document:globalThis.document,matchMedia:globalThis.matchMedia,addEventListener:globalThis.addEventListener,location:globalThis.location};
+ try{
+  const root=new El('root'),stick=new El('stick'),knob=new El('knob'),cam=new El('cam'),
+    atk=Object.assign(new El('atk'),{dataset:{a:'attack'}});
+  root.parts={'.stick':stick,'.knob':knob,'.cam':cam,buttons:[atk]};
+  const doc={head:new El('head'),body:new El('body'),createElement:t=>t==='div'&&doc.divs++===0?root:new El(t),divs:0,addEventListener(){}};
+  globalThis.document=doc;globalThis.matchMedia=()=>({matches:true});
+  globalThis.addEventListener=()=>{};globalThis.location={search:''};
+  const input={_dx:0,_dy:0,move:{x:0,y:0},pressed:new Set(),held:new Set(),enabled:true};
+  attachHighflyTouch(input);
+  stick.dispatch('pointerdown',1,64,64);stick.dispatch('pointermove',1,124,64);
+  atk.dispatch('pointerdown',2,20,20);
+  atk.dispatch('pointermove',2,20,-26);
+  atk.dispatch('pointerup',2,20,-26);
+  input.pressed.clear();applyHighflyTouch(input);
+  assert.ok(input.move.x>.9,'left stick remains free for locomotion');
+  assert.ok(input.pressed.has('attack'));
+  assert.deepEqual(input.highflyAbilityAim.attack,{x:0,y:1},'upward swipe selects rising slash');
+  assert.equal(input.held.has('attack'),false,'short swipe is not interpreted as a spam hold');
+ }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
