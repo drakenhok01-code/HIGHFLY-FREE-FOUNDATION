@@ -283,6 +283,11 @@ export function attachHighflyTouch(input){
   globalThis.__highflyRpg?.open('misiones');
   e.stopPropagation();e.preventDefault();
  });
+ t.questPanel?.querySelector('.hf-side-quests')?.addEventListener('click',e=>{
+  if(t.editing||!e.target?.closest?.('.hf-quest-row'))return;
+  globalThis.__highflyRpg?.open('misiones');
+  e.stopPropagation();
+ });
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
  const stick=root.querySelector('.stick'),knob=root.querySelector('.knob');
