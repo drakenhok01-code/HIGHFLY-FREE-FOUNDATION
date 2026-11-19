@@ -3,6 +3,7 @@ export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??
 
 import {installHudEditor} from '../highfly/hud-editor.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
+import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
@@ -36,6 +37,13 @@ export function resolveHighflyContext(p){
   return {action:'dive',label:p._hfDive?'SUPERFICIE':'BUCEAR'};
  }
  // Harvest targets must have explicit resource tags, never generic rock collisions.
+ const tagged=findProfessionTarget(w,p.pos,p.yaw);
+ if(tagged){
+  const type=professionActionFor(tagged);
+  const label={chop:'TALAR',mine:'MINAR',fishing:'PESCAR',
+    plant:'SEMBRAR',water:'REGAR',harvest:'COSECHAR',smelt:'FUNDIR',forge:'FORJAR'}[type];
+  if(label)return {action:type,label};
+ }
  const actions={tree:['chop','TALAR'],ore:['mine','PICAR']}; // loot always uses USAR
  const candidates=Array.isArray(w.highflyInteractables)?w.highflyInteractables:[];
  let best=null,dist=4;
@@ -187,7 +195,10 @@ export function attachHighflyTouch(input){
  '<div class="action-panel" hidden>'+
  '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
  '<button data-a="sit">SENTAR</button><button data-a="lie">ACOSTAR</button><button data-a="chop">TALAR</button><button data-a="mine">MINAR</button>'+
- '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
+ '<button data-a="fishing">PESCAR</button><button data-a="plant">SEMBRAR</button>'+
+ '<button data-a="water">REGAR</button><button data-a="harvest">COSECHAR</button>'+
+ '<button data-a="smelt">FUNDIR</button><button data-a="forge">FORJAR</button>'+
+ '<button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
  const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},

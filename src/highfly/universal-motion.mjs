@@ -10,6 +10,7 @@ import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
 import {allowTerrainTraverse,wallRunEligible,WALL_RUN} from './wall-physics.mjs';
+import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -30,7 +31,12 @@ export const ACTIONS=Object.freeze({
  use:{clip:'Use_Item',duration:.8,kind:'interaction'},
  chop:{clip:'1H_Melee_Attack_Chop',duration:.8,kind:'work'},
  mine:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
- fishing:{clip:'1H_Ranged_Shooting',duration:1.6,kind:'preview'},
+ fishing:{clip:'Use_Item',duration:1.6,kind:'work'},
+ plant:{clip:'PickUp',duration:.85,kind:'work'},
+ water:{clip:'Use_Item',duration:.8,kind:'work'},
+ harvest:{clip:'PickUp',duration:.9,kind:'work'},
+ smelt:{clip:'Use_Item',duration:1.5,kind:'work'},
+ forge:{clip:'1H_Melee_Attack_Chop',duration:1.7,kind:'work'},
 });
 const isMove=p=>p.state==='move';
 function otherInput(input,ignored){
@@ -206,6 +212,8 @@ function closestTree(p){
  return best<0?null:{kind:'tree',index:best,distance:Math.sqrt(bd)};
 }
 export function workTarget(p,kind){
+ const tagged=findProfessionTarget(p.world,p.pos,p.yaw,kind);
+ if(tagged)return {kind:tagged.kind,id:tagged.id,distance:Math.hypot(tagged.x-p.pos.x,tagged.z-p.pos.z)};
  if(kind==='chop')return closestTree(p);
  if(kind==='mine'&&typeof p.world?.raycast==='function'){
   const f=vec(p.yaw);
@@ -217,9 +225,18 @@ export function workTarget(p,kind){
 }
 function startAction(p,name){
  const cfg=ACTIONS[name];if(!cfg)return;
- p._hfAction={name,time:0,done:false,target:cfg.kind==='work'?workTarget(p,name):null};
+ const target=cfg.kind==='work'?workTarget(p,name):null;
+ let job=null;
+ if(PROFESSION_RULES[name]&&target?.id){
+   const prep=prepareProfession(p._hfProfession,p.world,name,p.pos,p.yaw);
+   if(!prep.ok){p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
+   job=prep.job;
+ }else if(PROFESSION_RULES[name]&&!['chop','mine','fishing'].includes(name)){
+   p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
+ }
+ p._hfAction={name,time:0,done:false,target,job};
  p.setState('hf_action');p.vel.x=p.vel.z=0;p.speed=0;
- p.emit('highflyActionStart',{name,target:p._hfAction.target?.kind??'none'});
+ p.emit('highflyActionStart',{name,target:target?.kind??'none',simulated:!job});
 }
 
 /** F0.12: independent physical steering while an Unsung combo is active.
@@ -306,6 +323,18 @@ export function installHighflyUniversalMotion(p){
  p._hfMana=100;p._hfManaMax=100;p._hfLevel=1;p._hfTrainingScore=0;
  p._hfOxygenMax=oxygenMax(1,0);p._hfOxygen=p._hfOxygenMax;
  p._hfDrownTimer=0;p._hfFlowVelocity=null;
+ p._hfProfession=professionState();
+ p._hfProfessionLoad=function(){
+   try{
+     const v=JSON.parse(globalThis.localStorage?.getItem('highfly-profession-f013')??'null');
+     if(v&&typeof v==='object')this._hfProfession=professionState(v.inventory||{},v.tools||[]);
+   }catch{}
+ };
+ p._hfProfessionSave=function(){
+   try{globalThis.localStorage?.setItem('highfly-profession-f013',
+    JSON.stringify({inventory:this._hfProfession.inventory,tools:[...this._hfProfession.tools]}));}catch{}
+ };
+ p._hfProfessionLoad();
  p.setHighflyProgression=function(level=1,verifiedPoints=0){
   this._hfLevel=Math.max(1,Math.trunc(level));
   this._hfTrainingScore=Math.max(0,Math.trunc(verifiedPoints));
@@ -379,6 +408,7 @@ export function installHighflyUniversalMotion(p){
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
   this._hfFlowClock+=step;
+  advanceCrops(this.world,step);
   this._hfCameraPitch=Number.isFinite(this._hfCameraPitch)?this._hfCameraPitch:0;
   if(input.highflyAbilityAim&&Object.prototype.hasOwnProperty.call(input.highflyAbilityAim,'attack')){
     this._hfFlowQueuedDirection=input.highflyAbilityAim.attack;
@@ -410,7 +440,13 @@ export function installHighflyUniversalMotion(p){
    }else{
     this.stateTime+=step;action.time+=step;this.speed=0;
     if(action.time>=ACTIONS[action.name].duration&&!ACTIONS[action.name].idle){
-     this._hfAction=null;this.setState('move');this.emit('highflyActionEnd',{name:action.name});
+     if(action.job){
+       const finished=commitProfession(this._hfProfession,this.world,action.job);
+       this.emit(finished.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{name:action.name,...finished});
+       if(finished.ok)this._hfProfessionSave();
+     }
+     this._hfAction=null;this.setState('move');
+     this.emit('highflyActionEnd',{name:action.name,completed:!!action.job});
     }
     // Sit/lie idle cancels on the joystick deadzone or other movement/attack action.
     return;
