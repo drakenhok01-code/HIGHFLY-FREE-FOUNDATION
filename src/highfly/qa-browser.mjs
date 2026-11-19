@@ -83,10 +83,11 @@ try{
  assert.equal(missionInfo.total,5,'Quest tracker must display ALL 5 missions, not slice(0,3)');
  assert.equal(missionInfo.count,'5');
  assert.ok(missionInfo.scrollHeight>missionInfo.clientHeight,'Quest list must be vertically scrollable '+JSON.stringify(missionInfo));
- await mobile.locator('#hf-touch .hf-quest-row').first().click({force:true});
- assert.equal(await mobile.locator('#hf-touch .hf-quests').getAttribute('data-collapsed'),'0','Touching a quest must not collapse whole tracker');
  await mobile.evaluate(()=>{window.__hfQuestOpened=null;window.__hfRpgTapped=false;
   window.__highflyRpg={open(tab){window.__hfQuestOpened=tab;},toggle(){window.__hfRpgTapped=true;}};});
+ await mobile.locator('#hf-touch .hf-quest-row').first().click({force:true});
+ assert.equal(await mobile.locator('#hf-touch .hf-quests').getAttribute('data-collapsed'),'0','Touching a quest must not collapse whole tracker');
+ assert.equal(await mobile.evaluate(()=>window.__hfQuestOpened),'misiones','Touching a quest must open the complete diary');
  await mobile.locator('#hf-touch [data-hf-quest-open]').click({force:true});
  assert.equal(await mobile.evaluate(()=>window.__hfQuestOpened),'misiones','Full quest journal must open from HUD');
  await mobile.locator('#hf-touch [data-hf-quest-toggle]').click({force:true});
