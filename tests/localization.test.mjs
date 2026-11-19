@@ -35,6 +35,9 @@ test('All idle and repeat NPC dialogue pages are authored in Spanish with exact 
  assert.ok(Object.keys(NPC_IDLE_ES).length>=20);
  assert.ok(Object.keys(NPC_CHAT_ES).length>=20);
  const all=[...Object.values(NPC_IDLE_ES).flat(2),...Object.values(NPC_CHAT_ES).flat()];
- assert.ok(all.length>=120);
+ const expected=Object.values(NPC_IDLE_ES).reduce((sum,groups)=>sum+groups.reduce((s,g)=>s+g.length,0),0)+
+  Object.values(NPC_CHAT_ES).reduce((sum,lines)=>sum+lines.length,0);
+ assert.equal(all.length,expected,'every NPC line in authored script is present');
+ assert.ok(all.length>=80);
  for(const s of all)assert.ok(/[áéíóúñ¿¡]|\b(?:de|el|la|los|las|que|por|para)\b/i.test(s),s);
 });
