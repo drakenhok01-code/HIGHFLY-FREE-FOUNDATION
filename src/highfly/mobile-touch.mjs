@@ -378,8 +378,8 @@ export function attachHighflyTouch(input){
    if(a==='actions'){
     t.actionsOpen=!t.actionsOpen;t.actionPanel.hidden=!t.actionsOpen;
     if(t.actionsOpen){const rect=b.getBoundingClientRect(),p=t.actionPanel;
-      p.style.left=Math.max(0,Math.min(innerWidth-193,rect.left+rect.width/2-96))+'px';
-      p.style.right='auto';p.style.top=Math.max(54,Math.min(innerHeight-70,rect.bottom+6))+'px';
+      p.style.left=Math.max(0,Math.min((globalThis.innerWidth??915)-193,rect.left+rect.width/2-96))+'px';
+      p.style.right='auto';p.style.top=Math.max(54,Math.min((globalThis.innerHeight??412)-70,(rect.bottom??(rect.top+rect.height))+6))+'px';
     }
     b.setAttribute('aria-expanded',String(t.actionsOpen));return;
    }
@@ -457,7 +457,7 @@ export function applyHighflyTouch(input){
  if(t.sprintOn)input.held.add('sprint');
  const g=globalThis.__game,p=g?.player;
  const talking=!!g?.people?.talk;
- t.root.dataset.talking=talking?'1':'0';
+ if(t.root?.dataset)t.root.dataset.talking=talking?'1':'0';
  if(t.talkNext)t.talkNext.hidden=!talking;
  if(t.settingsPanel&&!t.settingsPanel.hidden){
   const box=t.settingsPanel.querySelector('[data-hf-settings-metrics]');
