@@ -8,7 +8,7 @@ import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {createUniversalMaterial} from './kaykit-material.mjs';
 import {ACTIONS} from './universal-motion.mjs';
 import {applyUALPose} from './ual-retarget.mjs';
-import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,applyEquipment} from './universal-gear.mjs';
+import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,attackAnimation,applyEquipment} from './universal-gear.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
@@ -264,7 +264,8 @@ export class KayKitFreeHero {
       const profile=this.weaponMode?.style??'onehand';
       const arr=WEAPON_ANIMATIONS[profile]??WEAPON_ANIMATIONS.onehand;
       const step=p.comboStep===3?2:Math.max(0,Math.min(2,p.comboStep));
-      key='raw:'+(this.clips.has(arr[step])?arr[step]:WEAPON_ANIMATIONS.onehand[step]);
+      const anim=attackAnimation(profile,step,p._hfFlowDirection);
+      key='raw:'+(this.clips.has(anim)?anim:WEAPON_ANIMATIONS.onehand[step]);
       duration=p.attack?.t??.46;
    }else if(p.state==='swim')key='swim';
    else if(!p.grounded&&p._hfJumpFx>0)key='raw:Jump_Full_Short';
@@ -434,12 +435,14 @@ export class KayKitFreeHero {
    attr.needsUpdate=true;
    trail.geometry.setDrawRange(0,(history.length-1)*6);
    trail.visible=true;trail.material.opacity=slash?.8:.46;
+   trail.material.color.setHex(p._hfFlowSecret?0x70dfff:0xffd77e);
  }
  _drawBladeTrail(dt,p){
    const dual=this.weaponMode?.style==='dual';
    // Dual 1=>left, 0=>right, 2=>both; no fake duplicate of the same tip.
-   const rightActive=!dual||p.comboStep!==1;
-   const leftActive=dual&&(p.comboStep===1||p.comboStep===2);
+   const dir=p._hfFlowDirection;
+   const rightActive=!dual||(dir==='right'||dir==='down'||!dir&&p.comboStep!==1);
+   const leftActive=dual&&(dir==='left'||dir==='up'||!dir&&(p.comboStep===1||p.comboStep===2));
    const right=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
    this._renderWeaponTrail(dt,p,right,this.trail,this.trailHistory,
      {base:this.bladeBase,next:this.lastTip},rightActive);
