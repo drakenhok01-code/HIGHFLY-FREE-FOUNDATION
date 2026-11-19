@@ -178,6 +178,13 @@ const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe 
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
 patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);");
+// Reset TAA history whenever the dynamic-resolution governor changes pixel count.
+patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
+ "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");
+patch('src/engine/governor.js',"this.max = max; this.target = target;",
+ "this.max = max; this.target = target; this.min = Math.max(0.60,Math.min(0.88,max-0.12));");
+patch('src/main.js',"const apply = () => applySettings(settings, { pipe, game, cover, audio, gloss, governor });",
+ "const apply = () => applySettings(settings, { pipe, game, cover, audio, gloss, governor });\nwindow.__highflySetGraphics = mode => { const ok = window.__hfGraphics?.set(mode); if(ok){apply();pipe.taa.reset=true;} return !!ok; };");
 patch('src/main.js',"window.__game = game;",
  "window.__game = game;\nif(params.get('hfworkshop')==='1')window.__hfProfessionYard=installProfessionYard(game,pipe);");
  // Browser-only full-world collision QA mode: retain the real world, player,
@@ -215,7 +222,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js']);
+const allowed=new Set(['src/engine/pipeline.js','src/engine/governor.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));

@@ -16,11 +16,13 @@ export function installHighflyGraphics(pipe,settings,search='',storage=globalThi
  settings.values.targetFps=spec.targetFps;
  if(pipe.ao)pipe.ao.enabled=false; // F0.13 SSAO streaks are unacceptable
  if(pipe.tonemap?.uniforms?.uSharpen)pipe.tonemap.uniforms.uSharpen.value=spec.sharpen;
+ if(pipe.taa)pipe.taa.reset=true;
  if(pipe.bloomStrength!==undefined)pipe.bloomStrength=Math.min(pipe.bloomStrength,.075);
  const set=mode=>{
   if(!GRAPHICS[mode])return false;
   const g=GRAPHICS[mode];
   settings.values.renderScale=g.renderScale;settings.values.targetFps=g.targetFps;
+  if(pipe.taa)pipe.taa.reset=true;
   if(pipe.ao)pipe.ao.enabled=false;
   if(pipe.tonemap?.uniforms?.uSharpen)pipe.tonemap.uniforms.uSharpen.value=g.sharpen;
   try{storage?.setItem('highfly-graphics-profile-v1',mode)}catch{}
