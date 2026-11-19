@@ -47,7 +47,12 @@ try{
   const roll=document.querySelector('#hf-touch .roll');
   const rect=e=>e?.getBoundingClientRect();
   const c=rect(context),d=rect(dash),r=rect(roll);
-  return {width:innerWidth,height:innerHeight,visible:!!c&&
+  const hud=document.querySelector('#hf-touch .hf-vitals'),rectHud=rect(hud);
+  const labels=[...document.querySelectorAll('#hf-touch .hf-vital b')].map(e=>e.textContent);
+  return {width:innerWidth,height:innerHeight,
+   premiumHud:{visible:!!rectHud&&rectHud.width>220&&rectHud.x>=0&&rectHud.right<innerWidth&&
+       rectHud.top>=0,labels,rect:{x:rectHud?.x,y:rectHud?.y,width:rectHud?.width,height:rectHud?.height}},
+   visible:!!c&&
    getComputedStyle(context).display!=='none'&&
    getComputedStyle(context).visibility==='visible'&&
    c.width>45&&c.x>=0&&c.right<=innerWidth,
@@ -55,6 +60,8 @@ try{
    roll:{x:r?.x,y:r?.y,width:r?.width},
    adjacent:!!c&&!!d&&Math.abs(c.right-d.left)<22};
  });
+ assert.ok(buttons.premiumHud.visible&&JSON.stringify(buttons.premiumHud.labels)===JSON.stringify(['HP','ENERGÍA','MANÁ','O₂']),
+   'Premium four-resource HUD missing or outside Samsung landscape viewport '+JSON.stringify(buttons.premiumHud));
  assert.ok(buttons.visible&&buttons.adjacent,'Context button must be visible next to DASH on S23 landscape: '+JSON.stringify(buttons));
  const d=await mobile.locator('#hf-touch .dash').boundingBox();
  await mobile.mouse.move(d.x+d.width/2,d.y+d.height/2);

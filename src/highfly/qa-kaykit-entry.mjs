@@ -4,6 +4,7 @@
  */
 import * as THREE from 'three';
 import {KayKitFreeHero} from './kaykit-free-hero.mjs';
+import {WEAPON_MODES,WEAPON_ANIMATIONS,attackAnimation} from './universal-gear.mjs';
 import {Pipeline} from '../engine/pipeline.js';
 window.__hfQa={done:false,ok:false};
 const info=document.getElementById('status');
@@ -173,6 +174,23 @@ try{
     throw Error('Missing original Emberfall '+mode.id);
  }
  // Verify that dual mode uses TWO actual sword tip trajectories, not a fake mirrored shader.
+ // F0.12: all 7 weapon families x 3 native combo clips + 4 directional variants
+ // must exist in the REAL 76-clip GLB. Do not fake absent motions.
+ let weaponClipsChecked=0;
+ for(let modeIndex=0;modeIndex<WEAPON_MODES.length;modeIndex++){
+  const mode=hero.equip(modeIndex);
+  for(let combo=0;combo<3;combo++){
+   for(const dir of [null,'left','right','up','down']){
+    const name=attackAnimation(mode.style,combo,dir);
+    if(!hero.clips.has(name))throw Error('Missing real KayKit attack clip '+mode.id+':'+name);
+    hero.update(1/60,{...p,state:'attack',grounded:true,comboStep:combo,
+      stateTime:.19,attack:{t:.46,hit:[.14,.27]},_hfFlowDirection:dir,
+      vel:new THREE.Vector3(),_hfAttackSteering:false});
+    if(hero.key!=='raw:'+name)throw Error('Wrong actual clip for '+mode.id+':'+dir);
+    weaponClipsChecked++;
+   }
+  }
+ }
  hero.equip(2);
  if(!hero.offSword?.visible||hero.swordMeshes!==2)throw Error('Dual mode missing real off-hand sword');
  let rightSwing=false,leftSwing=false;
@@ -191,7 +209,7 @@ try{
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
   partPixels,changedPixels:changed,bodyDifference,
-  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
+  rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
 }catch(e){console.error(e);report(false,{error:e.stack??String(e)});}

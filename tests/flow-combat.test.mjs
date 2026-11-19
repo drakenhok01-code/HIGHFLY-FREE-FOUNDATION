@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {SECRET_FLOWS,directionFromAim,recordFlowStrike} from '../src/highfly/flow-combat.mjs';
+import {WEAPON_ANIMATIONS,attackAnimation} from '../src/highfly/universal-gear.mjs';
 test('Seven weapon-specific SECRET combos with exact directions and strict windows',()=>{
  assert.equal(Object.keys(SECRET_FLOWS).length,7);
  for(const [weapon,sequence] of Object.entries(SECRET_FLOWS)){
@@ -33,4 +34,16 @@ test('Direction is chosen by ATK swipe, independent of running-stick coordinates
  assert.equal(directionFromAim({x:-.9,y:0}),'left');
  assert.equal(directionFromAim({x:.1,y:.95}),'up');
  assert.equal(directionFromAim({x:0,y:-1}),'down');
+});
+
+test('Weapon motion catalog covers seven styles using only existing 3-key clip definitions',()=>{
+ const modes=['onehand','twohand','dual','unarmed','spear','staff'];
+ for(const style of modes){
+  for(let i=0;i<3;i++){
+   for(const dir of [null,'left','right','up','down']){
+    const clip=attackAnimation(style,i,dir);
+    assert.ok(WEAPON_ANIMATIONS[style].includes(clip),style+'/'+dir+' must use a real native clip');
+   }
+  }
+ }
 });
