@@ -29,3 +29,12 @@ test('All 18 quest storylines provide translated spoken offer/wait/done lines',a
   assert.ok(!q.done.includes('English dialogue'));
  }
 });
+
+test('All idle and repeat NPC dialogue pages are authored in Spanish with exact phase counts',async()=>{
+ const {NPC_IDLE_ES,NPC_CHAT_ES}=await import('../src/highfly/es-npc-dialogues.mjs');
+ assert.ok(Object.keys(NPC_IDLE_ES).length>=20);
+ assert.ok(Object.keys(NPC_CHAT_ES).length>=20);
+ const all=[...Object.values(NPC_IDLE_ES).flat(2),...Object.values(NPC_CHAT_ES).flat()];
+ assert.ok(all.length>=120);
+ for(const s of all)assert.ok(/[áéíóúñ¿¡]|\b(?:de|el|la|los|las|que|por|para)\b/i.test(s),s);
+});
