@@ -4,6 +4,7 @@ export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??
 import {installHudEditor} from '../highfly/hud-editor.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
 import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
+import {terrainWallContact} from '../highfly/wall-physics.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
@@ -33,7 +34,7 @@ export function resolveHighflyContext(p){
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
     {x:p.pos.x,y:p.pos.y+.87,z:p.pos.z},{x:fx,y:0,z:fz},1.08):Infinity;
-  if(d>.06&&d<.96)return {action:'climb',label:'TREPAR'};
+  if(d>.06&&d<.96||terrainWallContact(w,p.pos,{x:fx,z:fz},1.08,.75))return {action:'climb',label:'TREPAR'};
   return {action:'dive',label:p._hfDive?'SUBIR':'BUCEAR'};
  }
  // Harvest targets must have explicit resource tags, never generic rock collisions.
@@ -59,6 +60,10 @@ export function resolveHighflyContext(p){
    if(Number.isFinite(level)&&Number.isFinite(floor)&&level-floor>1.15&&
      level-p.pos.y<2.2&&level-p.pos.y>-.6)return {action:'fishing',label:'PESCAR'};
  }
+ const wall=typeof w.raycast==='function'?w.raycast(
+   {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
+ if((wall>.04&&wall<.91)||terrainWallContact(w,p.pos,{x:fx,z:fz},1.08,.7))
+  return {action:'climb',label:'TREPAR'};
  return fallback;
 }
 export function resolveHighflyUse(p){
@@ -242,10 +247,15 @@ export function attachHighflyTouch(input){
  const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},
  attackCue:root.querySelector('.hf-attack-cue'),lastAttackSwipe:null,
  questPanel:root.querySelector('.hf-quests'),fpsBadge:root.querySelector('.hf-fps'),
- questExpanded:true,frames:0,skillButtons:{}};
+ questExpanded:true,frames:0,skillButtons:{},
+ settingsPanel:root.querySelector('.hf-settings'),talkNext:root.querySelector('.hf-talk-next')};
  input.highflyTouch=t;
  for(const id of ['hp','en','mp','o2'])t.resources[id]=root.querySelector('.hf-'+id);
  t.hudEditor=installHudEditor(t);
+ t.settingsPanel?.querySelectorAll('[data-graphics]')?.forEach(btn=>btn.addEventListener('pointerdown',e=>{
+  e.preventDefault();e.stopPropagation();
+  if(globalThis.__highflySetGraphics?.(btn.dataset.graphics))t.settingsPanel.hidden=true;
+ }));
  for(let i=1;i<=6;i++)t.skillButtons[i]=root.querySelector('.skill'+i);
  t.questPanel?.addEventListener('pointerdown',e=>{
   if(t.editing)return;
@@ -355,8 +365,14 @@ export function attachHighflyTouch(input){
     p?.catch?.(()=>{});return;
    }
    if(a==='hud-edit'){t.hudEditor?.toggle();return;}
+   if(a==='dialogue-next'){t.pressed.add('interact');return;}
+   if(a==='settings'){t.settingsPanel.hidden=!t.settingsPanel.hidden;return;}
    if(a==='actions'){
     t.actionsOpen=!t.actionsOpen;t.actionPanel.hidden=!t.actionsOpen;
+    if(t.actionsOpen){const rect=b.getBoundingClientRect(),p=t.actionPanel;
+      p.style.left=Math.max(0,Math.min(innerWidth-193,rect.left+rect.width/2-96))+'px';
+      p.style.right='auto';p.style.top=Math.max(54,Math.min(innerHeight-70,rect.bottom+6))+'px';
+    }
     b.setAttribute('aria-expanded',String(t.actionsOpen));return;
    }
    try{b.setPointerCapture(e.pointerId)}catch{}
@@ -373,7 +389,7 @@ export function attachHighflyTouch(input){
     b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
    }else{
     t.pressed.add(chosen);
-    if(a==='attack')t.held.add('attack'); // hold-to-combo
+    if(['sit','lie','cheer'].includes(a)){t.actionPanel.hidden=true;t.actionsOpen=false;}
     // One tap toggles climbing. Do not require holding the climbing button.
     if(a==='context')t.contextHeld=chosen;
    }
@@ -431,7 +447,14 @@ export function applyHighflyTouch(input){
  input.highflyAbilityAim={...t.abilityAim};t.abilityAim={};
  for(const a of t.held)input.held.add(a);
  if(t.sprintOn)input.held.add('sprint');
- const p=globalThis.__game?.player;
+ const g=globalThis.__game,p=g?.player;
+ const talking=!!g?.people?.talk;
+ t.root.dataset.talking=talking?'1':'0';
+ if(t.talkNext)t.talkNext.hidden=!talking;
+ if(t.settingsPanel&&!t.settingsPanel.hidden){
+  const box=t.settingsPanel.querySelector('[data-hf-settings-metrics]');
+  if(box)box.textContent='Resolución '+Math.round((globalThis.__pipe?.renderScale??1)*100)+' % · '+Math.round(globalThis.__gov?.fps??0)+' FPS';
+ }
  if(t.skillButtons){
    const ready=[!!p?.skills?.has('pulse'),true,!!p?.refrains];
    for(let i=1;i<=6;i++){
