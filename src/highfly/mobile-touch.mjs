@@ -240,6 +240,7 @@ export function attachHighflyTouch(input){
  '<div class="hf-settings" hidden><b>CALIDAD GRÁFICA</b><div class="hf-setting-buttons">'+
  '<button data-graphics="performance">FLUIDO</button><button data-graphics="balanced">BALANCE</button>'+
  '<button data-graphics="quality">NÍTIDO</button></div>'+
+ '<button data-a="equip" aria-label="Cambiar arma">⚔ ARMA</button>'+
  '<div data-hf-settings-metrics>Resolución y FPS</div></div>'+
  '<button class="hf-talk-next" data-a="dialogue-next" hidden>SEGUIR</button>';
  document.body.append(root);

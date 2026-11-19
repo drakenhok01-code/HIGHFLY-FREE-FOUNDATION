@@ -36,6 +36,9 @@ assert.match(motion,/probeHighflyWall/);
 assert.match(motion,/highflyDoubleJump/);
 assert.match(motion,/highflyActionStart/);
 const hud=fs.readFileSync('src/highfly/mobile-touch.mjs','utf8');
-for(const name of ['climb','equip','sit','lie','chop','mine','pickup','cheer'])
- assert.ok(hud.includes('data-a="'+name+'"'),'Missing Android action '+name);
-console.log('PASS F0.9 one universal action controller, no SOURCE, weapon preview and Android action drawer');
+for(const name of ['context','equip','sit','lie','cheer','settings'])
+ assert.ok(hud.includes('data-a="'+name+'"'),'Missing Android contextual/gesture action '+name);
+for(const name of ['chop','mine','fishing','plant','water','harvest','smelt','forge'])
+ assert.ok(motion.includes(name),'Missing real profession implementation '+name);
+assert.match(hud,/resolveHighflyContext/,'Resource interactions must be contextual, not a giant action drawer');
+console.log('PASS F0.13.1 one universal action, three-emote drawer, weapon preview and Android options');
