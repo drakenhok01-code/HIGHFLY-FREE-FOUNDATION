@@ -388,7 +388,9 @@ test('F0.12 oxygen depleted only when head is underwater, no fake drain on dry l
 });
 test('F0.12 underwater pitch makes directional depth changes and never penetrates seabed',()=>{
  const p=player({...ground,waterLevel:()=>4,floorBelow:()=>0});
- p.update(1/60,input(),0);p.update(1/60,input(['dive']),0);
+ for(let i=0;i<210;i++)p.update(1/60,input(),0); // establish real native surface buoyancy first
+ assert.equal(p.state,'swim');
+ p.update(1/60,input(['dive']),0);
  for(let i=0;i<65;i++)p.update(1/60,input(),0);
  assert.equal(p._hfDive,true);
  const baseline=p.pos.y;
