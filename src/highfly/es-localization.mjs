@@ -78,7 +78,7 @@ const PAIRS=[
  ['Press E to interact','Pulsá E para interactuar'],
  ['One note. One song.','Una nota. Una canción.'],
  ['A new path opens','Se abre un nuevo camino'],
- ['The Vale stays open. At its spire every court will wake an echo of its silence for you to answer, and there are notes, trials and reliquaries still out on the mesas.','El Valle permanece abierto. Las agujas de cada patio despertarán ecos del silencio que deberás enfrentar. Aún quedan notas, pruebas y relicarios en las mesetas.']
+ ['The Vale stays open. At its spire every court will wake an echo of its silence for you to answer, and there are notes, trials and reliquaries still out on the mesas.','El Valle permanece abierto. Las agujas de cada patio despertarán ecos del silencio que deberás enfrentar. Aún quedan notas, pruebas y relicarios en las mesetas.'],
  ["Controls","Controles"],
  ["Audio","Audio"],
  ["Off","Desactivado"],
