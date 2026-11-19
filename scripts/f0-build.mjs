@@ -226,7 +226,7 @@ patch('src/game/camera.js',
 patch('src/game/people.js',
  "const y = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6);",
  "const rawY = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6); const baseY=W.groundHeight(x,z); const y=Number.isFinite(rawY)?Math.max(rawY,baseY):baseY;");
-patch('src/game/input.js',"  interact: ['KeyE'],""  dash: ['KeyV'], interact: ['KeyE'],");
+patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
 patch('src/game/input.js','    this._down = new Set();','    this._down = new Set();\n    attachHighflyTouch(this);');
