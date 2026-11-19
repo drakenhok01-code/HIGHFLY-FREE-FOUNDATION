@@ -110,7 +110,9 @@ test('Android action drawer opens and climb is held; equip/mine/sit are isolated
     input.pressed.clear();applyHighflyTouch(input);
     assert.equal(input.pressed.has(action),false,action+' is not repeated');
   }
-  btns[0].dispatch('pointerdown',20);assert.equal(panel.hidden,true);
+  assert.equal(panel.hidden,true,'emote action closes compact panel automatically');
+  btns[0].dispatch('pointerdown',20);assert.equal(panel.hidden,false,'the emote panel can reopen');
+  btns[0].dispatch('pointerdown',21);assert.equal(panel.hidden,true,'emote panel can close again');
  }finally{for(const [k,v] of Object.entries(prior))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
 
@@ -132,7 +134,7 @@ test('F0.13.1 ATK swipe never selects directional IK; classic combo and left joy
   assert.ok(input.pressed.has('attack'),'classic ATK begins immediately on press');
   assert.equal(input.highflyAbilityAim.attack,null,'no directional IK command from swipe');
   atk.dispatch('pointerup',2,20,-26);
-  input.pressed.clear();applyHighflyTouch(input);
+  input.pressed.clear();input.held.clear();applyHighflyTouch(input);
   assert.ok(input.move.x>.9,'left stick remains free for locomotion');
   assert.ok(!input.pressed.has('attack'),'release never produces a duplicate attack');
   assert.equal(input.highflyAbilityAim.attack,undefined,'no directional command after release');
