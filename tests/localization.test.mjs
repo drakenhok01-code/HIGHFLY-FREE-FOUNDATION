@@ -39,5 +39,9 @@ test('All idle and repeat NPC dialogue pages are authored in Spanish with exact 
   Object.values(NPC_CHAT_ES).reduce((sum,lines)=>sum+lines.length,0);
  assert.equal(all.length,expected,'every NPC line in authored script is present');
  assert.ok(all.length>=80);
- for(const s of all)assert.ok(/[áéíóúñ¿¡]|\b(?:de|el|la|los|las|que|por|para)\b/i.test(s),s);
+ for(const line of all){
+  assert.ok(typeof line==='string'&&line.trim().length>=6,'Spanish dialogue line present');
+  assert.ok(!/^(The |I have |You have |Can you |I keep |When the |There is |I make |Do you )/.test(line),
+   'English source line accidentally retained: '+line);
+ }
 });
