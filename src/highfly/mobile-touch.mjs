@@ -78,6 +78,7 @@ export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
  const css=[
  `
+ #ui #hud .goal{left:13px!important;top:163px!important;max-width:235px!important;zoom:.76!important}
  #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:246px;box-sizing:border-box;padding:9px 11px 7px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
  #hf-touch .hf-profile{display:flex;align-items:center;gap:9px;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid #9080c23b}
  #hf-touch .hf-avatar{width:34px;height:34px;flex:none;border-radius:50%;border:2px solid #bc9be8;background:#30254e;color:#e8d3ff;font:bold 23px system-ui;display:grid;place-items:center;box-shadow:0 0 10px #7a53d96b}
