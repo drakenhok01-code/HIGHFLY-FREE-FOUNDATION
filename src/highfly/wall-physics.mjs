@@ -27,3 +27,44 @@ export function wallRunEligible({grounded,stamina,held,move,contact,speed}){
    (move?.y??0)>.4&&speed>=2.3&&contact?.distance>.08&&contact?.distance<1.12;
 }
 export const WALL_RUN={duration:1.0,costPerSecond:10,maxRise:.45,contactDistance:1.20};
+
+/** Additional solid proxy for cliffs represented only by heightfield elevations.
+ * Unlike BVH rays, this considers a high-gradient terrain face to be a wall
+ * before the player capsule's centre can enter it. Not a true overhang mesh.
+ */
+export function terrainWallContact(world,pos,dir,reach=1.15,height=.82){
+ if(typeof world?.groundHeight!=='function'||!pos||!dir)return null;
+ const mag=Math.hypot(dir.x,dir.z);
+ if(mag<.001)return null;
+ const dx=dir.x/mag,dz=dir.z/mag;
+ for(let distance=.12;distance<=reach+.001;distance+=.07){
+  const x=pos.x+dx*distance,z=pos.z+dz*distance;
+  const g=terrainGradient(world,x,z,.2),h=world.groundHeight(x,z);
+  if(!g||!Number.isFinite(h))continue;
+  const facing=dx*g.dx+dz*g.dz;
+  if(g.slope>1.08&&facing>0.84&&h>pos.y+Math.max(.22,height*.43))
+   return {distance,kind:'steep-heightfield',slope:g.slope,
+     normal:{x:-g.dx/g.slope,y:0,z:-g.dz/g.slope},x,z,height:h};
+ }
+ return null;
+}
+/** Accepts downhill travel and gentle slopes; rejects travel INTO very
+ * steep faces even when native capsule BVH did not report the terrain.
+ */
+export function allowCliffCapsule(world,previous,next,radius=.35){
+ if(!previous||!next)return {ok:true};
+ const dx=next.x-previous.x,dz=next.z-previous.z,len=Math.hypot(dx,dz);
+ if(len<.001)return {ok:true};
+ const direct=allowTerrainTraverse(world,previous,next,1.0);
+ if(!direct.ok)return {...direct,reason:'steep-ascent'};
+ const endH=world?.groundHeight?.(next.x,next.z);
+ const g=terrainGradient(world,next.x,next.z,.2);
+ if(g&&Number.isFinite(endH)&&g.slope>1.08&&endH>next.y+.12){
+  return {ok:false,reason:'embedded-cliff',slope:g.slope};
+ }
+ const projection={x:dx/len,z:dz/len};
+ const wall=terrainWallContact(world,previous,projection,Math.min(len+radius,.9),.58);
+ if(wall&&wall.distance<=len+radius*.2&&Number.isFinite(endH)&&endH>previous.y+.18)
+  return {ok:false,reason:'rock-face-contact',slope:wall.slope};
+ return {ok:true};
+}
