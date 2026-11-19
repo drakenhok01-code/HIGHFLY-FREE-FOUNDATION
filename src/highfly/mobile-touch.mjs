@@ -1,6 +1,7 @@
 /** HIGHFLY F0.1: Android-native analog 360° with original Unsung Input/Player. */
 export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
+import {installHudEditor} from '../highfly/hud-editor.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
@@ -78,23 +79,23 @@ export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
  const css=[
  `
- #ui #hud .goal{left:13px!important;top:163px!important;max-width:235px!important;zoom:.76!important}
- #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:246px;box-sizing:border-box;padding:9px 11px 7px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
- #hf-touch .hf-profile{display:flex;align-items:center;gap:9px;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid #9080c23b}
- #hf-touch .hf-avatar{width:34px;height:34px;flex:none;border-radius:50%;border:2px solid #bc9be8;background:#30254e;color:#e8d3ff;font:bold 23px system-ui;display:grid;place-items:center;box-shadow:0 0 10px #7a53d96b}
- #hf-touch .hf-profile b{display:block;color:#f6f0ff;font:700 10px system-ui;letter-spacing:.7px}
- #hf-touch .hf-profile small{display:block;color:#ada8d1;font:8px system-ui;letter-spacing:1px;margin-top:3px}
- #hf-touch .hf-vital{display:grid;grid-template-columns:44px 1fr 47px;gap:5px;align-items:center;height:20px}
+ #ui #hud .goal{left:13px!important;top:120px!important;max-width:315px!important;zoom:.70!important}
+ #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:330px;box-sizing:border-box;padding:6px 9px 5px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:9px;row-gap:1px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
+ #hf-touch .hf-profile{display:flex;align-items:center;gap:7px;grid-column:1/-1;padding-bottom:4px;margin-bottom:3px;border-bottom:1px solid #9080c23b}
+ #hf-touch .hf-avatar{width:24px;height:24px;flex:none;border-radius:50%;border:2px solid #bc9be8;background:#30254e;color:#e8d3ff;font:bold 17px system-ui;display:grid;place-items:center;box-shadow:0 0 10px #7a53d96b}
+ #hf-touch .hf-profile b{display:block;color:#f6f0ff;font:700 9px system-ui;letter-spacing:.55px}
+ #hf-touch .hf-profile small{display:block;color:#ada8d1;font:7px system-ui;letter-spacing:1px;margin-top:1px}
+ #hf-touch .hf-vital{display:grid;grid-template-columns:42px minmax(0,1fr) 37px;gap:3px;align-items:center;height:19px}
  #hf-touch .hf-vital b{font:700 8px system-ui}
- #hf-touch .hf-number{font:8px monospace;color:#f2eefe;text-align:right;font-variant-numeric:tabular-nums}
- #hf-touch .hf-track{height:9px;overflow:hidden;border-radius:8px;background:#1b1930;border:1px solid #ffffff26;box-shadow:inset 0 1px 2px #0009}
+ #hf-touch .hf-number{font:7px monospace;color:#f2eefe;text-align:right;font-variant-numeric:tabular-nums}
+ #hf-touch .hf-track{height:8px;overflow:hidden;border-radius:8px;background:#1b1930;border:1px solid #ffffff26;box-shadow:inset 0 1px 2px #0009}
  #hf-touch .hf-fill{display:block;height:100%;transform-origin:left;transform:scaleX(1);transition:transform .14s linear;border-radius:7px}
  #hf-touch .hf-hp b{color:#ff697e}#hf-touch .hf-hp .hf-fill{background:linear-gradient(90deg,#b72a49,#fa5f74)}
  #hf-touch .hf-en b{color:#f1cd75}#hf-touch .hf-en .hf-fill{background:linear-gradient(90deg,#b47a2a,#eac25f)}
  #hf-touch .hf-mp b{color:#779dff}#hf-touch .hf-mp .hf-fill{background:linear-gradient(90deg,#2c54bc,#6195ff)}
  #hf-touch .hf-o2 b{color:#66edf6}#hf-touch .hf-o2 .hf-fill{background:linear-gradient(90deg,#218eab,#59e8f4)}
  #hf-touch .hf-o2[data-low="1"] .hf-track{border-color:#ff7e95;box-shadow:0 0 8px #ff5365}
- #hf-touch .hf-motto{display:block;text-align:center;color:#8d82ae;font:7px system-ui;letter-spacing:1.6px;padding-top:4px}
+ #hf-touch .hf-motto{display:block;grid-column:1/-1;text-align:center;color:#8d82ae;font:7px system-ui;letter-spacing:1.6px;padding-top:3px}
  `,
  '#hf-touch{position:fixed;inset:0;z-index:9000;pointer-events:none;color:#fff;font:bold 11px system-ui;user-select:none;-webkit-user-select:none}',
  '#hf-touch[hidden]{display:none!important}',
@@ -111,6 +112,15 @@ export function attachHighflyTouch(input){
  '#hf-touch .sprint[data-active="1"]{border:2px solid #ffdc87;background:linear-gradient(135deg,#755221,#25112f);box-shadow:0 0 16px #e4b85b88}',
  '#hf-touch .full{right:12px;top:8px;width:38px;height:38px}',
  '#hf-touch .actions{right:63px;top:8px;width:62px;height:38px;border-radius:17px}',
+ '#hf-touch .hud-edit{right:133px;top:8px;width:47px;height:38px;border-radius:14px;border-color:#79ddd9;background:linear-gradient(135deg,#174956,#251936)}',
+ '#hf-touch .hud-edit[data-active="1"]{box-shadow:0 0 16px #73f2eab4;border-width:2px}',
+ '#hf-touch .hf-hud-editor{position:absolute;right:9px;top:54px;width:274px;padding:9px;border:1px solid #60ddd3;background:#11172aef;border-radius:10px;box-shadow:0 12px 24px #0008;pointer-events:auto;z-index:20;font:10px system-ui}',
+ '#hf-touch .hf-hud-editor[hidden]{display:none!important}',
+ '#hf-touch .hf-hud-editor .controls{display:flex;gap:5px;margin-top:8px}',
+ '#hf-touch .hf-hud-editor button{position:static;flex:1;width:auto;height:33px;border-radius:8px;font-size:10px}',
+ '#hf-touch[data-editing="1"] .stick,#hf-touch[data-editing="1"] button[data-a]:not(.hud-edit),#hf-touch[data-editing="1"] .hf-vitals{outline:2px dashed #80ffec;outline-offset:2px;cursor:grab}',
+ '#hf-touch .hf-attack-cue{position:absolute;right:110px;bottom:112px;color:#6deffa;pointer-events:none;padding:3px 8px;background:#121d32dd;border:1px solid #55ceef;border-radius:8px;font:700 11px system-ui}',
+ '#hf-touch .hf-attack-cue[hidden]{display:none!important}',
  '#hf-touch .action-panel{position:absolute;right:8px;top:51px;width:260px;padding:6px;border:1px solid #e0c37e;border-radius:9px;background:#141026eb;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;pointer-events:auto}',
  '#hf-touch .action-panel[hidden]{display:none!important}',
  '#hf-touch .action-panel button{position:static;width:auto;height:43px;border-radius:8px;font-size:9px;padding:2px}',
@@ -130,7 +140,10 @@ export function attachHighflyTouch(input){
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
- '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button>'+
+ '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button>'+
+ '<div class="hf-attack-cue" hidden></div>'+
+ '<div class="hf-hud-editor" hidden><b>EDITOR DE HUD</b><div>Arrastrá cada botón o las barras. Seleccioná uno y cambiá su tamaño.</div><div class="controls">'+
+ '<button data-hud-op="smaller">−</button><button data-hud-op="larger">+</button><button data-hud-op="reset">RESET</button><button data-hud-op="save">GUARDAR</button></div></div>'+
  '<div class="ability-aim" data-active="0"><span class="aim-arrow">➤</span></div>'+
  '<div class="action-panel" hidden>'+
  '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
@@ -138,9 +151,10 @@ export function attachHighflyTouch(input){
  '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{}};
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},attackCue:root.querySelector('.hf-attack-cue'),lastAttackSwipe:null};
  input.highflyTouch=t;
  for(const id of ['hp','en','mp','o2'])t.resources[id]=root.querySelector('.hf-'+id);
+ t.hudEditor=installHudEditor(t);
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
  if(dbg){t.debug=document.createElement('div');t.debug.id='hf-input-debug';root.append(t.debug);}
  const stick=root.querySelector('.stick'),knob=root.querySelector('.knob');
@@ -182,25 +196,43 @@ export function attachHighflyTouch(input){
   if(a==='attack'){
    const aim=e=>{
     const active=t.attackPointer;if(!active||active.id!==e.pointerId)return;
-    active.vector=abilityVector(e.clientX-active.x,e.clientY-active.y,13);
+    const v=abilityVector(e.clientX-active.x,e.clientY-active.y,13);
+    active.vector=v;
+    if(v&&!active.directionSent){
+      // Critical F0.12 fix: send the directional input on POINTERMOVE,
+      // not after the release when an ordinary attack may already have begun.
+      t.abilityAim.attack=v;t.pressed.add('attack');
+      active.directionSent=true;active.started=true;
+      t.lastAttackSwipe=v;
+      const direction=Math.abs(v.x)>Math.abs(v.y)?
+        (v.x>0?'DERECHA':'IZQUIERDA'):(v.y>0?'ASCENDENTE':'DESCENDENTE');
+      if(t.attackCue){t.attackCue.hidden=false;t.attackCue.textContent='CORTE '+direction;}
+    }
     e.preventDefault();e.stopPropagation();
    };
    b.addEventListener('pointerdown',e=>{
     if(t.attackPointer)return;
-    t.attackPointer={id:e.pointerId,x:e.clientX,y:e.clientY,frames:0,started:false,vector:null};
+    t.attackPointer={id:e.pointerId,x:e.clientX,y:e.clientY,frames:0,
+      started:false,directionSent:false,vector:null};
     try{b.setPointerCapture(e.pointerId)}catch{}
     e.preventDefault();e.stopPropagation();
    });
    b.addEventListener('pointermove',aim);
    b.addEventListener('pointerup',e=>{
     const a=t.attackPointer;if(!a||a.id!==e.pointerId)return;
-    aim(e);
-    if(!a.started||a.vector)t.pressed.add('attack');
-    if(a.vector)t.abilityAim.attack=a.vector;
+    aim(e); // capture last movement if pointermove was coalesced by Android
+    if(!a.started){t.pressed.add('attack');t.abilityAim.attack=null;}
     t.held.delete('attack');t.attackPointer=null;
+    if(t.attackCue)t.attackCue.hidden=true;
+    e.preventDefault();e.stopPropagation();
    });
-   const cancel=e=>{if(t.attackPointer?.id===e.pointerId){t.attackPointer=null;t.held.delete('attack');}};
-   b.addEventListener('pointercancel',cancel);b.addEventListener('lostpointercapture',cancel);
+   const cancel=e=>{
+    if(t.attackPointer?.id===e.pointerId){
+      t.attackPointer=null;t.held.delete('attack');if(t.attackCue)t.attackCue.hidden=true;
+    }
+   };
+   b.addEventListener('pointercancel',cancel);
+   b.addEventListener('lostpointercapture',cancel);
    continue;
   }
   if(a==='dash'||a==='dodge'){
@@ -248,6 +280,7 @@ export function attachHighflyTouch(input){
     const p=document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();
     p?.catch?.(()=>{});return;
    }
+   if(a==='hud-edit'){t.hudEditor?.toggle();return;}
    if(a==='actions'){
     t.actionsOpen=!t.actionsOpen;t.actionPanel.hidden=!t.actionsOpen;
     b.setAttribute('aria-expanded',String(t.actionsOpen));return;
@@ -272,7 +305,7 @@ export function attachHighflyTouch(input){
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
- globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.attackPointer=null;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
+ globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.attackPointer=null;if(t.attackCue)t.attackCue.hidden=true;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();t.attackPointer=null;}});
 }
 export function applyHighflyTouch(input){
@@ -284,8 +317,8 @@ export function applyHighflyTouch(input){
  }
  input.move.x=t.x;input.move.y=t.y;
  if(t.attackPointer&&!t.attackPointer.started){
-  if(++t.attackPointer.frames>=6){
-   t.attackPointer.started=true;t.held.add('attack');t.pressed.add('attack');
+  if(++t.attackPointer.frames>=9){
+   t.attackPointer.started=true;t.held.add('attack');t.pressed.add('attack');t.abilityAim.attack=null;
   }
  }
  for(const a of t.pressed)input.pressed.add(a);
