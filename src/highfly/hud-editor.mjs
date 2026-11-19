@@ -12,7 +12,7 @@ export function hudNodeId(n){
   if(n.classList?.contains(c))return v;
  return n.dataset?.a??null;
 }
-export function captureAnchor(rect,w,h,scale=1,opacity=1){
+export function captureAnchor(rect,w,h,scale=1,opacity=.7){
  const xSide=rect.left+rect.width/2<w/2?'left':'right';
  const ySide=rect.top+rect.height/2<h/2?'top':'bottom';
  return {xSide,ySide,
@@ -25,7 +25,7 @@ export function positionFromAnchor(a,w,h,bw,bh){
  const left=a.xSide==='right'?w-w*(Number(a.x)||0)-width:w*(Number(a.x)||0);
  const top=a.ySide==='bottom'?h-h*(Number(a.y)||0)-height:h*(Number(a.y)||0);
  return {left:clamp(left,0,Math.max(0,w-width)),top:clamp(top,0,Math.max(0,h-height)),scale,
-  opacity:clamp(Number(a.opacity)||1,.20,1)};
+  opacity:clamp(a.opacity===undefined?.7:Number(a.opacity),.20,1)};
 }
 export function installHudEditor(t){
  const root=t.root,button=root?.querySelector?.('.hud-edit'),panel=root?.querySelector?.('.hf-hud-editor');
@@ -44,7 +44,7 @@ export function installHudEditor(t){
     const elw=node?.offsetWidth??55,elh=node?.offsetHeight??55;
     const {w,h}=vp(),px=o.x*Math.max(1,w-elw),py=o.y*Math.max(1,h-elh);
     layout[id]=captureAnchor({left:px,top:py,right:px+elw,bottom:py+elh,width:elw,height:elh},
-       w,h,o.scale??1,1);
+       w,h,o.scale??1,.7);
    }
    return layout;
   }catch{return {}}
@@ -63,7 +63,7 @@ export function installHudEditor(t){
  };
  const anchored=node=>{
   const rect=node.getBoundingClientRect(),{w,h}=vp();
-  return captureAnchor(rect,w,h,Number(node.dataset.hfScale)||1,Number(node.dataset.hfOpacity)||1);
+  return captureAnchor(rect,w,h,Number(node.dataset.hfScale)||1,Number(node.dataset.hfOpacity)||.7);
  };
  const collect=()=>{
   const layout=read();
@@ -93,7 +93,7 @@ export function installHudEditor(t){
   const n=api.selected,dim=n?.getBoundingClientRect(),{w,h}=vp();
   if(label)label.textContent=n?(n.getAttribute('aria-label')||n.textContent?.trim()?.slice(0,20)||hudNodeId(n)):'Elegí un control';
   const pct=Math.round(100*(Number(n?.dataset?.hfScale)||1));
-  const op=Math.round(100*(Number(n?.dataset?.hfOpacity)||1));
+  const op=Math.round(100*(Number(n?.dataset?.hfOpacity)||.7));
   if(percent)percent.value=String(pct);if(sizeNum)sizeNum.value=String(pct);
   if(alpha)alpha.value=String(op);if(opacityNum)opacityNum.value=String(op);
   if(xNum)xNum.value=String(dim?Math.round(100*dim.left/w):0);
@@ -103,7 +103,7 @@ export function installHudEditor(t){
   const n=api.selected;if(!n)return;
   const rect=n.getBoundingClientRect(),{w,h}=vp();
   const anchor=captureAnchor(rect,w,h,clamp(pct/100,.60,1.70),
-    Number(n.dataset.hfOpacity)||1);
+    Number(n.dataset.hfOpacity)||.7);
   show(n,anchor);save();updateControls();
  }
  function opacitySelected(pct){
@@ -118,7 +118,7 @@ export function installHudEditor(t){
   const top=axis==='y'?clamp(pct,0,100)*h/100:rect.top;
   const anchor=captureAnchor({left,top,right:left+rect.width,bottom:top+rect.height,
    width:rect.width,height:rect.height},w,h,Number(n.dataset.hfScale)||1,
-   Number(n.dataset.hfOpacity)||1);
+   Number(n.dataset.hfOpacity)||.7);
   show(n,anchor);save();updateControls();
  }
  const toggle=(forced)=>{
@@ -150,7 +150,7 @@ export function installHudEditor(t){
   const top=clamp(drag.top+e.clientY-drag.startY,0,Math.max(0,h-rect.height));
   const anchor=captureAnchor({left,top,right:left+rect.width,bottom:top+rect.height,
     width:rect.width,height:rect.height},w,h,Number(n.dataset.hfScale)||1,
-    Number(n.dataset.hfOpacity)||1);
+    Number(n.dataset.hfOpacity)||.7);
   show(n,anchor);updateControls();
  },true);
  for(const evt of ['pointerup','pointercancel','lostpointercapture'])
@@ -173,10 +173,41 @@ export function installHudEditor(t){
   el?.addEventListener?.('input',()=>fn(Number(el.value)));
   el?.addEventListener?.('change',()=>fn(Number(el.value)));
  }
+ // Move the editor itself, without touching the saved HUD layout.
+ const panelHandle=panel.querySelector('[data-hud-panel-handle]');
+ let pd=null;
+ panelHandle?.addEventListener('pointerdown',e=>{
+  if(e.target.closest('button'))return;
+  const r=panel.getBoundingClientRect();
+  panel.style.left=r.left+'px';panel.style.top=r.top+'px';
+  panel.style.right='auto';panel.style.bottom='auto';panel.style.transform='none';
+  pd={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top};
+  try{panelHandle.setPointerCapture(e.pointerId)}catch{}
+  e.preventDefault();e.stopPropagation();
+ });
+ panelHandle?.addEventListener('pointermove',e=>{
+  if(!pd||e.pointerId!==pd.id)return;
+  const {w,h}=vp();
+  panel.style.left=clamp(pd.left+e.clientX-pd.x,0,Math.max(0,w-panel.offsetWidth))+'px';
+  panel.style.top=clamp(pd.top+e.clientY-pd.y,0,Math.max(0,h-panel.offsetHeight))+'px';
+  e.preventDefault();e.stopPropagation();
+ });
+ const endPanel=e=>{if(pd&&e.pointerId===pd.id){pd=null;e.preventDefault();e.stopPropagation();}};
+ panelHandle?.addEventListener('pointerup',endPanel);
+ panelHandle?.addEventListener('pointercancel',endPanel);
+ const collapse=panel.querySelector('[data-hud-op="collapse"]');
+ collapse?.addEventListener('pointerdown',e=>{
+  const small=panel.dataset.minimized!=='1';
+  panel.dataset.minimized=small?'1':'0';collapse.textContent=small?'□':'−';
+  e.stopPropagation();e.preventDefault();
+ });
  const reflow=()=>{
   if(root.hidden)return;
   const layout=read();
   for(const n of all())if(layout[hudNodeId(n)])show(n,layout[hudNodeId(n)]);
+  const {w,h}=vp();
+  if(panel.style.left)panel.style.left=clamp(parseFloat(panel.style.left)||0,0,Math.max(0,w-panel.offsetWidth))+'px';
+  if(panel.style.top)panel.style.top=clamp(parseFloat(panel.style.top)||0,0,Math.max(0,h-panel.offsetHeight))+'px';
   updateControls();
  };
  // Fullscreen and mobile browser toolbars change viewport independently.
