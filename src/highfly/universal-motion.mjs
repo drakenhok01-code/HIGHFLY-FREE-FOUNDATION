@@ -15,6 +15,8 @@ export const MOTION={
   combatWalk:3.25,combatRun:4.6,combatResponse:12,
   workTime:.74,
 };
+export const OXYGEN_TUNE=Object.freeze({normal:2,sprint:3,regenerate:16});
+export const MAX_ATTACK_WALK_SLOPE=1.0; // 45deg. No wall-walking via attack impulse.
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const vec=(yaw)=>({x:Math.sin(yaw),z:Math.cos(yaw)});
 const lerp=(a,b,t)=>a+(b-a)*t;
@@ -204,8 +206,36 @@ function attackLocomotion(p,original,dt,input,camYaw){
       this.yaw+=delta*Math.min(1,TUNE.turn*step);
     }
   }else this._hfFlowVelocity=null;
-  const beforeX=this.pos.x,beforeZ=this.pos.z;
+  const beforeX=this.pos.x,beforeZ=this.pos.z,beforeY=this.pos.y;
+  // Unlike generic stairs, terrain *heightfield* can instantly elevate a
+  // grounded attacker as it snaps to the next sampled height. Inspect the
+  // upcoming grade BEFORE the native step-up and reject truly steep ascents.
+  if(attacking){
+    const dx=this.vel.x*step,dz=this.vel.z*step,travel=Math.hypot(dx,dz);
+    if(travel>.002&&typeof this.world?.groundHeight==='function'){
+      const current=this.world.groundHeight(beforeX,beforeZ);
+      const next=this.world.groundHeight(beforeX+dx,beforeZ+dz);
+      if(Number.isFinite(current)&&Number.isFinite(next)&&
+        next-current>0.06&&(next-current)/travel>MAX_ATTACK_WALK_SLOPE){
+         this.vel.x=this.vel.z=0;
+         this._hfFlowVelocity={x:0,z:0};
+         this._hfAttackSteering=false;
+         this.emit('highflySteepAttackBlocked',{rise:next-current,run:travel});
+      }
+    }
+  }
   const out=integrate.call(this,step);
+  // Second guard catches native auto-step and collider edge cases. Never
+  // convert ATTACK into an uncommanded vertical mantle.
+  if(attacking&&this.pos.y-beforeY>.15&&
+     this.pos.y-beforeY>Math.hypot(this.pos.x-beforeX,this.pos.z-beforeZ)*MAX_ATTACK_WALK_SLOPE+.08){
+    this.pos.set(beforeX,beforeY,beforeZ);
+    this.vel.x=this.vel.z=0;this.vel.y=0;
+    this._hfFlowVelocity={x:0,z:0};
+    this.viewY=this._viewY1=beforeY;this.fallStart=beforeY;
+    this.grounded=true;this.speed=0;this._hfAttackSteering=false;
+    this.emit('highflySteepAttackBlocked',{reason:'auto-step'});
+  }
   if(attacking){
     const traveled=Math.hypot(this.pos.x-beforeX,this.pos.z-beforeZ)/Math.max(step,1e-5);
     this._hfAttackTravelSpeed=traveled;
@@ -230,7 +260,8 @@ export function installHighflyUniversalMotion(p){
  p._hfMana=100;p._hfManaMax=100;p._hfOxygen=100;p._hfOxygenMax=100;
  p._hfDrownTimer=0;p._hfFlowVelocity=null;
  // True direction/timing bonus belongs to the real Unsung damage descriptor.
- // Normal 3-hit sword chains cost no energy; special/heavy moves keep costs.
+ // F0.12.2 normal slashes now have small visible ENERGY costs (3/3/5).
+ // Specials/heavy actions retain their original costs; normal chains still flow.
  p.startAttack=function(desc,index){
    const aim=this._hfFlowQueuedDirection??null;
    const dir=directionFromAim(aim);
@@ -239,7 +270,7 @@ export function installHighflyUniversalMotion(p){
    const charged=(index===3||index===2&&desc===TUNE.dash);
    const basic=!charged&&index>=0&&index<3;
    const bonus=basic&&flow.accepted?(flow.secret?1.22:1.08):1;
-   const modified=basic?{...desc,cost:0,dmg:desc.dmg*bonus}:desc;
+   const modified=basic?{...desc,cost:index===2?5:3,dmg:desc.dmg*bonus}:desc;
    const prior={x:this.vel.x,z:this.vel.z,yaw:this.yaw};
    const ok=nativeStart(modified,index);
    if(ok){
@@ -382,7 +413,11 @@ export function installHighflyUniversalMotion(p){
   const water=this.world?.waterLevel?.(this.pos.x,this.pos.z)??-Infinity;
   const underwater=this.state==='swim'&&Number.isFinite(water)&&this.pos.y+1.62<water;
   this._hfUnderwater=underwater;
-  this._hfOxygen=clamp(this._hfOxygen+(underwater?-11:28)*step,0,this._hfOxygenMax);
+  // 50s of normal submerged breathing from 100 O2; 33s sprint swim.
+  const oxygenRate=underwater?
+     -(input.held.has('sprint')?OXYGEN_TUNE.sprint:OXYGEN_TUNE.normal):
+      OXYGEN_TUNE.regenerate;
+  this._hfOxygen=clamp(this._hfOxygen+oxygenRate*step,0,this._hfOxygenMax);
   if(underwater&&this._hfOxygen<=0){
     this._hfDrownTimer=(this._hfDrownTimer??0)+step;
     if(this._hfDrownTimer>=.9){this._hfDrownTimer-=.9;this.damage(8,null);this.emit('highflyDrowning');}
