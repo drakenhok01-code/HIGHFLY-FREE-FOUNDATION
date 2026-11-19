@@ -1,126 +1,190 @@
-/** F0.12.2: Android portrait-safe, per-player movable HIGHFLY HUD.
- * Persist normalized widget position/scale in same-origin localStorage.
- * Always restore stock layout by pressing RESET. Native game physics untouched.
+/** HIGHFLY F0.13 HUD v3: EVERY control, including HUD, actions, fullscreen,
+ * skill 1-6, lock-on, quest, FPS, vitals, stick. Fullscreen-safe anchor layout.
  */
-const STORAGE='highfly-hud-layout-f0122';
-const SELECTOR='.hf-vitals,.stick,.atk,.jump,.roll,.use,.sprint,.dash,.context';
-const names=['vitals','stick','attack','jump','dodge','interact','sprint','dash','context'];
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const win=()=>({w:Math.max(1,globalThis.innerWidth??915),h:Math.max(1,globalThis.innerHeight??412)});
-export function hudNodeId(node){
- if(!node)return null;
- if(node.classList?.contains('hf-vitals'))return 'vitals';
- if(node.classList?.contains('stick'))return 'stick';
- const value=node.dataset?.a;
- return names.includes(value)?value:null;
+export const LAYOUT_KEY='highfly-hud-layout-f013';
+const PREVIOUS_KEY='highfly-hud-layout-f0122';
+const query='#hf-touch [data-a],#hf-touch .stick,#hf-touch .hf-vitals,#hf-touch .hf-quests,#hf-touch .hf-fps';
+const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
+const vp=()=>({w:Math.max(1,globalThis.innerWidth??915),h:Math.max(1,globalThis.innerHeight??412)});
+export function hudNodeId(n){
+ if(!n)return null;
+ for(const [c,v] of [['hf-vitals','vitals'],['hf-quests','quests'],['hf-fps','fps'],['stick','stick']])
+  if(n.classList?.contains(c))return v;
+ return n.dataset?.a??null;
+}
+export function captureAnchor(rect,w,h,scale=1,opacity=1){
+ const xSide=rect.left+rect.width/2<w/2?'left':'right';
+ const ySide=rect.top+rect.height/2<h/2?'top':'bottom';
+ return {xSide,ySide,
+  x:clamp((xSide==='left'?rect.left:w-rect.right)/w,0,.98),
+  y:clamp((ySide==='top'?rect.top:h-rect.bottom)/h,0,.98),
+  scale:clamp(Number(scale)||1,.60,1.70),opacity:clamp(Number(opacity)||1,.20,1)};
+}
+export function positionFromAnchor(a,w,h,bw,bh){
+ const scale=clamp(Number(a.scale)||1,.60,1.70),width=bw*scale,height=bh*scale;
+ const left=a.xSide==='right'?w-w*(Number(a.x)||0)-width:w*(Number(a.x)||0);
+ const top=a.ySide==='bottom'?h-h*(Number(a.y)||0)-height:h*(Number(a.y)||0);
+ return {left:clamp(left,0,Math.max(0,w-width)),top:clamp(top,0,Math.max(0,h-height)),scale,
+  opacity:clamp(Number(a.opacity)||1,.20,1)};
 }
 export function installHudEditor(t){
- const root=t.root,button=root?.querySelector?.('.hud-edit');
- const panel=root?.querySelector?.('.hf-hud-editor');
- const ui={active:false,drag:null,selected:null,restore:null,toggle:null,reset:null,save:null};
- if(!button||!panel)return ui; // synthetic touch adapters don't need a live editor
- const all=()=>[...root.querySelectorAll(SELECTOR)];
- const read=()=>{try{return JSON.parse(globalThis.localStorage?.getItem(STORAGE)||'{}')}catch{return {}}};
- const save=()=>{
-  const {w,h}=win();const layout={};
-  for(const node of all()){
-   const id=hudNodeId(node);
-   if(!id)continue;
-   const rect=node.getBoundingClientRect(),scale=Number(node.dataset.hfScale||1);
-   if(node.dataset.hfModified==='1'){
-    layout[id]={x:clamp(rect.left/Math.max(1,w-rect.width),0,1),
-      y:clamp(rect.top/Math.max(1,h-rect.height),0,1),scale:clamp(scale,.65,1.4)};
+ const root=t.root,button=root?.querySelector?.('.hud-edit'),panel=root?.querySelector?.('.hf-hud-editor');
+ const api={active:false,selected:null,restore:null,toggle:null,reset:null,save:null,restored:false};
+ if(!root||!button||!panel)return api;
+ const all=()=>[...root.querySelectorAll(query.replaceAll('#hf-touch ',''))].filter(n=>!!hudNodeId(n));
+ const read=()=>{
+  try{
+   const newer=globalThis.localStorage?.getItem(LAYOUT_KEY);
+   if(newer)return JSON.parse(newer);
+   const old=JSON.parse(globalThis.localStorage?.getItem(PREVIOUS_KEY)||'{}');
+   const layout={};
+   for(const [id,o] of Object.entries(old)){
+    if(!o||!Number.isFinite(o.x)||!Number.isFinite(o.y))continue;
+    const node=all().find(n=>hudNodeId(n)===id);
+    const elw=node?.offsetWidth??55,elh=node?.offsetHeight??55;
+    const {w,h}=vp(),px=o.x*Math.max(1,w-elw),py=o.y*Math.max(1,h-elh);
+    layout[id]=captureAnchor({left:px,top:py,right:px+elw,bottom:py+elh,width:elw,height:elh},
+       w,h,o.scale??1,1);
    }
-  }
-  try{globalThis.localStorage?.setItem(STORAGE,JSON.stringify(layout))}catch{}
+   return layout;
+  }catch{return {}}
+ };
+ const persist=layout=>{try{globalThis.localStorage?.setItem(LAYOUT_KEY,JSON.stringify(layout))}catch{}};
+ const size=n=>({w:n.offsetWidth||n.getBoundingClientRect().width,h:n.offsetHeight||n.getBoundingClientRect().height});
+ const show=(node,anchor)=>{
+  if(!node||!anchor)return;
+  const {w,h}=vp(),dim=size(node),p=positionFromAnchor(anchor,w,h,dim.w,dim.h);
+  node.style.left=p.left+'px';node.style.top=p.top+'px';
+  node.style.right='auto';node.style.bottom='auto';
+  node.style.transform='scale('+p.scale+')';node.style.transformOrigin='top left';
+  node.style.opacity=String(p.opacity);
+  node.dataset.hfModified='1';node.dataset.hfScale=String(p.scale);
+  node.dataset.hfOpacity=String(p.opacity);
+ };
+ const anchored=node=>{
+  const rect=node.getBoundingClientRect(),{w,h}=vp();
+  return captureAnchor(rect,w,h,Number(node.dataset.hfScale)||1,Number(node.dataset.hfOpacity)||1);
+ };
+ const collect=()=>{
+  const layout=read();
+  for(const node of all())if(node.dataset.hfModified==='1')layout[hudNodeId(node)]=anchored(node);
   return layout;
  };
- const place=(node,entry)=>{
-  if(!node||!entry)return;
-  const scale=clamp(Number(entry.scale)||1,.65,1.4);
-  node.style.transform='scale('+scale+')';
-  node.style.transformOrigin='top left';
-  node.dataset.hfScale=String(scale);
-  const rect=node.getBoundingClientRect(),{w,h}=win();
-  const x=clamp(Number(entry.x)||0,0,1)*Math.max(1,w-rect.width);
-  const y=clamp(Number(entry.y)||0,0,1)*Math.max(1,h-rect.height);
-  node.style.left=x+'px';node.style.top=y+'px';
-  node.style.right='auto';node.style.bottom='auto';
-  node.dataset.hfModified='1';
- };
+ const save=()=>{const layout=collect();persist(layout);return layout};
  const restore=()=>{
-  // Hidden root has zero-size DOMRect: normalize only after HUD is visible.
-  if(root.hidden)return false;
-  const layout=read();
-  for(const node of all()){
-   const id=hudNodeId(node);
-   if(layout[id])place(node,layout[id]);
-  }
+  if(root.hidden)return false;const layout=read();
+  for(const node of all())if(layout[hudNodeId(node)])show(node,layout[hudNodeId(node)]);
   return true;
  };
  const reset=()=>{
-  for(const node of all()){
-   node.style.left='';node.style.top='';node.style.right='';node.style.bottom='';
-   node.style.transform='';node.style.transformOrigin='';
-   delete node.dataset.hfModified;delete node.dataset.hfScale;
+  for(const n of all()){
+   for(const key of ['left','top','right','bottom','transform','transformOrigin','opacity'])n.style[key]='';
+   for(const key of ['hfModified','hfScale','hfOpacity'])delete n.dataset[key];
   }
-  ui.selected=null;
-  try{globalThis.localStorage?.removeItem(STORAGE)}catch{}
+  try{globalThis.localStorage?.removeItem(LAYOUT_KEY);
+      globalThis.localStorage?.removeItem(PREVIOUS_KEY)}catch{}
+  api.selected=null;updateControls();
  };
- const toggle=(force)=>{
-  ui.active=force===undefined?!ui.active:!!force;
-  t.editing=ui.active;root.dataset.editing=ui.active?'1':'0';
-  button.dataset.active=ui.active?'1':'0';
-  panel.hidden=!ui.active;
-  t.held.clear();t.pressed.clear();t.x=t.y=0;
-  if(ui.active){
-   t.actionPanel&&(t.actionPanel.hidden=true);t.actionsOpen=false;
-   ui.selected=root.querySelector('.atk');
-  }else{ui.drag=null;save();}
-  return ui.active;
+ const by=s=>panel.querySelector(s),label=by('[data-hud-selected]'),
+  percent=by('[data-hud-size]'),alpha=by('[data-hud-opacity]'),
+  sizeNum=by('[data-hud-size-number]'),opacityNum=by('[data-hud-opacity-number]'),
+  xNum=by('[data-hud-x]'),yNum=by('[data-hud-y]');
+ function updateControls(){
+  const n=api.selected,dim=n?.getBoundingClientRect(),{w,h}=vp();
+  if(label)label.textContent=n?(n.getAttribute('aria-label')||n.textContent?.trim()?.slice(0,20)||hudNodeId(n)):'Elegí un control';
+  const pct=Math.round(100*(Number(n?.dataset?.hfScale)||1));
+  const op=Math.round(100*(Number(n?.dataset?.hfOpacity)||1));
+  if(percent)percent.value=String(pct);if(sizeNum)sizeNum.value=String(pct);
+  if(alpha)alpha.value=String(op);if(opacityNum)opacityNum.value=String(op);
+  if(xNum)xNum.value=String(dim?Math.round(100*dim.left/w):0);
+  if(yNum)yNum.value=String(dim?Math.round(100*dim.top/h):0);
+ }
+ function resizeSelected(pct){
+  const n=api.selected;if(!n)return;
+  const rect=n.getBoundingClientRect(),{w,h}=vp();
+  const anchor=captureAnchor(rect,w,h,clamp(pct/100,.60,1.70),
+    Number(n.dataset.hfOpacity)||1);
+  show(n,anchor);save();updateControls();
+ }
+ function opacitySelected(pct){
+  const n=api.selected;if(!n)return;
+  n.dataset.hfOpacity=String(clamp(pct/100,.20,1));n.style.opacity=n.dataset.hfOpacity;
+  n.dataset.hfModified='1';save();updateControls();
+ }
+ function moveSelected(axis,pct){
+  const n=api.selected;if(!n)return;
+  const rect=n.getBoundingClientRect(),{w,h}=vp();
+  const left=axis==='x'?clamp(pct,0,100)*w/100:rect.left;
+  const top=axis==='y'?clamp(pct,0,100)*h/100:rect.top;
+  const anchor=captureAnchor({left,top,right:left+rect.width,bottom:top+rect.height,
+   width:rect.width,height:rect.height},w,h,Number(n.dataset.hfScale)||1,
+   Number(n.dataset.hfOpacity)||1);
+  show(n,anchor);save();updateControls();
+ }
+ const toggle=(forced)=>{
+  api.active=forced===undefined?!api.active:!!forced;
+  root.dataset.editing=api.active?'1':'0';t.editing=api.active;
+  button.dataset.active=api.active?'1':'0';panel.hidden=!api.active;
+  t.held?.clear?.();t.pressed?.clear?.();t.x=t.y=0;
+  if(api.active){t.actionPanel&&(t.actionPanel.hidden=true);t.actionsOpen=false;
+   api.selected=root.querySelector('.atk');updateControls();
+  }else{drag=null;save();}
+  return api.active;
  };
- // Root CAPTURE receives pointer events before attack, camera and joystick
- // listeners, so HUD dragging can never also trigger an attack or dash.
+ let drag=null;
  root.addEventListener('pointerdown',e=>{
-  if(!ui.active||e.target?.closest?.('.hf-hud-editor,.hud-edit'))return;
-  const node=e.target?.closest?.(SELECTOR);
+  if(!api.active||e.target?.closest?.('.hf-hud-editor'))return;
+  const node=e.target?.closest?.('[data-a],.stick,.hf-vitals,.hf-quests,.hf-fps');
   if(!node||!hudNodeId(node))return;
   e.preventDefault?.();e.stopImmediatePropagation?.();
-  const rect=node.getBoundingClientRect();ui.selected=node;
-  ui.drag={node,id:e.pointerId,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top};
+  const rect=node.getBoundingClientRect();
+  drag={node,id:e.pointerId,startX:e.clientX,startY:e.clientY,left:rect.left,top:rect.top};
+  api.selected=node;updateControls();
   try{node.setPointerCapture(e.pointerId)}catch{}
  },true);
  root.addEventListener('pointermove',e=>{
-  const drag=ui.drag;if(!ui.active||!drag||drag.id!==e.pointerId)return;
+  if(!api.active||!drag||drag.id!==e.pointerId)return;
   e.preventDefault?.();e.stopImmediatePropagation?.();
-  const rect=drag.node.getBoundingClientRect(),{w,h}=win();
-  const x=clamp(drag.left+e.clientX-drag.x,0,Math.max(0,w-rect.width));
-  const y=clamp(drag.top+e.clientY-drag.y,0,Math.max(0,h-rect.height));
-  drag.node.style.left=x+'px';drag.node.style.top=y+'px';
-  drag.node.style.right='auto';drag.node.style.bottom='auto';
-  drag.node.dataset.hfModified='1';
+  const n=drag.node,{w,h}=vp(),rect=n.getBoundingClientRect();
+  const left=clamp(drag.left+e.clientX-drag.startX,0,Math.max(0,w-rect.width));
+  const top=clamp(drag.top+e.clientY-drag.startY,0,Math.max(0,h-rect.height));
+  const anchor=captureAnchor({left,top,right:left+rect.width,bottom:top+rect.height,
+    width:rect.width,height:rect.height},w,h,Number(n.dataset.hfScale)||1,
+    Number(n.dataset.hfOpacity)||1);
+  show(n,anchor);updateControls();
  },true);
- for(const event of ['pointerup','pointercancel','lostpointercapture'])
-  root.addEventListener(event,e=>{
-   if(!ui.drag||ui.drag.id!==e.pointerId)return;
-   e.preventDefault?.();e.stopImmediatePropagation?.();
-   ui.drag=null;save();
+ for(const evt of ['pointerup','pointercancel','lostpointercapture'])
+  root.addEventListener(evt,e=>{
+   if(!drag||e.pointerId!==drag.id)return;
+   e.preventDefault?.();e.stopImmediatePropagation?.();drag=null;save();
   },true);
- for(const control of panel.querySelectorAll('[data-hud-op]'))
-  control.addEventListener('pointerdown',e=>{
+ for(const ctrl of panel.querySelectorAll('[data-hud-op]'))
+  ctrl.addEventListener('pointerdown',e=>{
    e.preventDefault?.();e.stopPropagation?.();
-   const op=control.dataset.hudOp;
-   if(op==='reset'){reset();return;}
+   const op=ctrl.dataset.hudOp;
    if(op==='save'){toggle(false);return;}
-   if(!ui.selected)return;
-   const rect=ui.selected.getBoundingClientRect(),{w,h}=win();
-   const scale=Number(ui.selected.dataset.hfScale||1);
-   const next=clamp(scale+(op==='larger'?.1:-.1),.65,1.4);
-   place(ui.selected,{x:rect.left/Math.max(1,w-rect.width),
-     y:rect.top/Math.max(1,h-rect.height),scale:next});
-   save();
+   if(op==='reset'){reset();return;}
+   if(op==='smaller'||op==='larger')resizeSelected((Number(api.selected?.dataset.hfScale)||1)*100+
+     (op==='smaller'?-5:5));
   });
- ui.restored=!root.hidden&&restore();
- ui.toggle=toggle;ui.reset=reset;ui.restore=restore;ui.save=save;
- return ui;
+ for(const [el,fn] of [[percent,resizeSelected],[sizeNum,resizeSelected],
+  [alpha,opacitySelected],[opacityNum,opacitySelected],
+  [xNum,v=>moveSelected('x',v)],[yNum,v=>moveSelected('y',v)]]){
+  el?.addEventListener?.('input',()=>fn(Number(el.value)));
+  el?.addEventListener?.('change',()=>fn(Number(el.value)));
+ }
+ const reflow=()=>{
+  if(root.hidden)return;
+  const layout=api.active?save():read();
+  for(const n of all())if(layout[hudNodeId(n)])show(n,layout[hudNodeId(n)]);
+  updateControls();
+ };
+ // Fullscreen and mobile browser toolbars change viewport independently.
+ const postResize=()=>{globalThis.requestAnimationFrame?.(()=>globalThis.requestAnimationFrame?.(reflow));};
+ globalThis.addEventListener?.('resize',postResize);
+ globalThis.addEventListener?.('orientationchange',postResize);
+ globalThis.document?.addEventListener?.('fullscreenchange',postResize);
+ api.restored=!root.hidden&&restore();
+ Object.assign(api,{toggle,reset,save,restore,reflow});
+ return api;
 }
