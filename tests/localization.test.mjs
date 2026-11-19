@@ -20,7 +20,9 @@ test('All 18 quest storylines provide translated spoken offer/wait/done lines',a
   offer:q.offer.map(()=>'English dialogue'),wait:q.wait.map(()=>'English dialogue'),
   done:q.done.map(()=>'English dialogue')}));
  const converted=localizeQuestData(fake,{},{},translateHighfly);
- assert.ok(converted>100);
+ const expected=Object.values(QUEST_DIALOGUE_ES).reduce((sum,q)=>sum+q.offer.length+q.wait.length+q.done.length,0);
+ assert.equal(converted,expected,'every authored dialogue line must be converted, without inventing a larger count');
+ assert.ok(converted>=85);
  for(const q of fake){
   assert.ok(!q.offer.includes('English dialogue'));
   assert.ok(!q.wait.includes('English dialogue'));
