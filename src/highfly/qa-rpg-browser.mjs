@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
-const url='http://127.0.0.1:5177/?hfrpg=1&hfqa=1&hfchar=kaykit';
+const url='http://127.0.0.1:5177/qa-rpg.html';
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5177','--strictPort'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
 let output='';server.stdout.on('data',b=>output+=String(b));server.stderr.on('data',b=>output+=String(b));
 let browser;
@@ -21,14 +21,14 @@ try{
  const page=await context.newPage();const errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
- await page.waitForFunction('window.__highflyRpg&&window.__game&&window.__highflyHeroStatus?.loaded',null,{timeout:115000});
+ await page.waitForFunction('window.__hfRpgTest?.ready && window.__highflyRpg && window.__game',null,{timeout:15000});
  const opening=await page.evaluate(()=>{
   const g=window.__game;g.input.lockPointer=()=>{};g.start();
   g.player.health=Math.max(1,g.player.healthMax-60);
   const ok=window.__highflyRpg.open();
-  return {ok,game:g.state,heroLoaded:window.__highflyHeroStatus?.loaded,health:g.player.health,maximum:g.player.healthMax};
+  return {ok,game:g.state,harnessReady:window.__hfRpgTest?.ready,health:g.player.health,maximum:g.player.healthMax};
  });
- assert.ok(opening.ok&&opening.game==='menu'&&opening.heroLoaded,'Actual game menu failed '+JSON.stringify(opening));
+ assert.ok(opening.ok&&opening.game==='menu'&&opening.harnessReady,'Premium RPG production menu mount failed '+JSON.stringify(opening));
  await page.waitForSelector('#hf-rpg .hf-rpg-three');
  const viewport=await page.evaluate(()=>{
   const outer=document.querySelector('#hf-rpg .hf-rpg-shell').getBoundingClientRect();
