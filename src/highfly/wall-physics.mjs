@@ -9,7 +9,16 @@ export function terrainGradient(world,x,z,eps=.30){
  const dx=(r-l)/(2*eps),dz=(f-b)/(2*eps);
  return {dx,dz,slope:Math.hypot(dx,dz),normal:{x:-dx,y:1,z:-dz}};
 }
+/** Actual built floor standing above the heightfield (paved plaza, bridge, stairs).
+ * Physics of that surface is still owned by native Unsung collision BVH. */
+export function walkableBuiltFloor(world,p,tolerance=.23){
+ if(typeof world?.floorBelow!=='function'||typeof world?.groundHeight!=='function'||!p)return false;
+ const ground=world.groundHeight(p.x,p.z);
+ const floor=world.floorBelow(p.x,p.y+.55,p.z,.95);
+ return Number.isFinite(ground)&&Number.isFinite(floor)&&floor-ground>.24&&Math.abs(floor-p.y)<tolerance;
+}
 export function allowTerrainTraverse(world,a,b,maximum=1.1){
+ if(walkableBuiltFloor(world,a)&&walkableBuiltFloor(world,b))return {ok:true,builtFloor:true};
  if(typeof world?.groundHeight!=='function')return {ok:true};
  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
  if(len<.00001)return {ok:true};
@@ -53,6 +62,7 @@ export function terrainWallContact(world,pos,dir,reach=1.15,height=.82){
  */
 export function allowCliffCapsule(world,previous,next,radius=.35){
  if(!previous||!next)return {ok:true};
+ if(walkableBuiltFloor(world,previous)&&walkableBuiltFloor(world,next))return {ok:true,builtFloor:true};
  const dx=next.x-previous.x,dz=next.z-previous.z,len=Math.hypot(dx,dz);
  if(len<.001)return {ok:true};
  const direct=allowTerrainTraverse(world,previous,next,1.0);

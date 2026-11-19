@@ -45,3 +45,10 @@ test('All idle and repeat NPC dialogue pages are authored in Spanish with exact 
    'English source line accidentally retained: '+line);
  }
 });
+
+test('F0.13.1 original start/options strings and touch-oriented controls are in Spanish',()=>{
+ for(const term of ['Controls','Challenge','Look sensitivity','Frame rate to hold','Object shadows',
+  'Light shafts and mist','How far grass and flowers reach','Bright flashes','The valley has fallen silent. Wake its spires and let it sing again.']){
+  assert.notEqual(translateHighfly(term),term,term+' missing');
+ }
+});

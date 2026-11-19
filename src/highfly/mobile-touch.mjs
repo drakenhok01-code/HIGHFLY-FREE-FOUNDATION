@@ -145,8 +145,8 @@ export function attachHighflyTouch(input){
  '#hf-touch .sprint[data-active="1"]{border:2px solid #ffdc87;background:linear-gradient(135deg,#755221,#25112f);box-shadow:0 0 16px #e4b85b88}',
  '#hf-touch .full{right:12px;top:8px;width:38px;height:38px}',
  '#hf-touch .actions{right:63px;top:8px;width:62px;height:38px;border-radius:17px}',
- '#hf-touch .hud-edit{right:133px;top:8px;width:47px;height:38px;border-radius:14px;border-color:#79ddd9;background:linear-gradient(135deg,#174956,#251936)}',
- '#hf-touch .hud-edit[data-active="1"]{box-shadow:0 0 16px #73f2eab4;border-width:2px}',
+ '#hf-touch .hud-edit{right:133px;top:8px;width:47px;height:38px;border-radius:50%;border-color:#e2c27d;background:linear-gradient(135deg,#48316c,#100b20)}',
+ '#hf-touch .hud-edit[data-active="1"]{box-shadow:0 0 16px #e5be81a0;border-width:2px}',
  '#hf-touch .lock{right:12px;top:57px;width:48px;height:48px;border:2px solid #8bbbea;font-size:9px}',
  '#hf-touch .lock[data-active="1"]{box-shadow:0 0 13px #83c4f6aa;background:linear-gradient(135deg,#285e7a,#1a1a34)}',
  '#hf-touch button[data-a^="skill"]{width:41px;height:41px;border:1.5px solid #8c8cf0;background:linear-gradient(135deg,#334063,#141226);font-size:9px;border-radius:12px}',
@@ -181,7 +181,10 @@ export function attachHighflyTouch(input){
  const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab,#ui #hud .vitals{display:none!important}';document.head.append(style);
  style.textContent+=`
 /* F0.13.1 Android design: saved per-control inline opacity overrides defaults */
+#ui #hud .compass{transform:scale(var(--hf-compass-scale,1));transform-origin:center top}
 #hf-touch button[data-a]{opacity:.70;border-radius:50%}
+#hf-touch .stick{opacity:.70}
+#hf-touch .hf-settings button,#hf-touch .action-panel button,#hf-touch .hf-talk-next{opacity:.70}
 #hf-touch .actions,#hf-touch .hud-edit{width:44px;height:44px;border-radius:50%;font-size:12px}
 #hf-touch .actions{font-size:24px}
 #hf-touch .full{border-radius:50%}
@@ -237,7 +240,8 @@ export function attachHighflyTouch(input){
  '<label>Opacidad (%) <input type="range" min="20" max="100" data-hud-opacity value="70"/>'+
  '<input type="number" min="20" max="100" data-hud-opacity-number value="70"/></label>'+
  '<label>Posición X (%) <input type="number" min="0" max="100" data-hud-x value="0"/></label>'+
- '<label>Posición Y (%) <input type="number" min="0" max="100" data-hud-y value="0"/></label>'+
+ '<label>Posición Y (%) <input type="number" min="0" max="100" data-hud-y value="0"/></label>'+ 
+ '<label>Brújula (%) <input type="range" min="60" max="160" step="5" value="100" data-hud-compass-size/></label>'+
  '<div class="controls"><button data-hud-op="smaller">−</button><button data-hud-op="larger">+</button>'+
  '<button data-hud-op="reset">RESET</button><button data-hud-op="save">GUARDAR</button></div></div></div>'+
  '<div class="ability-aim" data-active="0"><span class="aim-arrow">➤</span></div>'+

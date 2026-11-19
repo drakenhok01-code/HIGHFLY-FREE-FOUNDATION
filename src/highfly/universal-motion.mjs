@@ -9,7 +9,7 @@ import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
-import {allowTerrainTraverse,wallRunEligible,WALL_RUN,terrainWallContact,allowCliffCapsule} from './wall-physics.mjs';
+import {allowTerrainTraverse,wallRunEligible,WALL_RUN,terrainWallContact,allowCliffCapsule,walkableBuiltFloor} from './wall-physics.mjs';
 import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
@@ -284,7 +284,8 @@ function attackLocomotion(p,original,dt,input,camYaw){
   // upcoming grade BEFORE the native step-up and reject truly steep ascents.
   if(attacking){
     const dx=this.vel.x*step,dz=this.vel.z*step,travel=Math.hypot(dx,dz);
-    if(travel>.002&&typeof this.world?.groundHeight==='function'){
+    if(travel>.002&&typeof this.world?.groundHeight==='function'&&
+       !(walkableBuiltFloor(this.world,this.pos)&&walkableBuiltFloor(this.world,{x:beforeX+dx,y:beforeY,z:beforeZ+dz}))){
       const current=this.world.groundHeight(beforeX,beforeZ);
       const next=this.world.groundHeight(beforeX+dx,beforeZ+dz);
       if(Number.isFinite(current)&&Number.isFinite(next)&&

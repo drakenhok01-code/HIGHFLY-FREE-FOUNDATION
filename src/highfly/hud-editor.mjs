@@ -5,6 +5,16 @@ export const LAYOUT_KEY='highfly-hud-layout-f013';
 const PREVIOUS_KEY='highfly-hud-layout-f0122';
 const query='#hf-touch [data-a],#hf-touch .stick,#hf-touch .hf-vitals,#hf-touch .hf-quests,#hf-touch .hf-fps';
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
+export const COMPASS_SCALE_KEY='highfly-hud-compass-scale-f0131';
+export function savedCompassScale(storage=globalThis.localStorage){
+ try{const value=Number(storage?.getItem(COMPASS_SCALE_KEY));return value>0?clamp(value,.60,1.60):1;}catch{return 1;}
+}
+export function setCompassScale(value,store=true){
+ const scale=clamp(Number(value)||1,.60,1.60);
+ globalThis.document?.documentElement?.style?.setProperty?.('--hf-compass-scale',String(scale));
+ if(store)try{globalThis.localStorage?.setItem(COMPASS_SCALE_KEY,String(scale));}catch{}
+ return scale;
+}
 const vp=()=>({w:Math.max(1,globalThis.innerWidth??915),h:Math.max(1,globalThis.innerHeight??412)});
 export function hudNodeId(n){
  if(!n)return null;
@@ -31,6 +41,7 @@ export function installHudEditor(t){
  const root=t.root,button=root?.querySelector?.('.hud-edit'),panel=root?.querySelector?.('.hf-hud-editor');
  const api={active:false,selected:null,restore:null,toggle:null,reset:null,save:null,restored:false};
  if(!root||!button||!panel)return api;
+ setCompassScale(savedCompassScale(),false);
  const all=()=>[...root.querySelectorAll(query.replaceAll('#hf-touch ',''))].filter(n=>!!hudNodeId(n));
  const read=()=>{
   try{
@@ -83,12 +94,13 @@ export function installHudEditor(t){
   }
   try{globalThis.localStorage?.removeItem(LAYOUT_KEY);
       globalThis.localStorage?.removeItem(PREVIOUS_KEY)}catch{}
+  setCompassScale(1);
   api.selected=null;updateControls();
  };
  const by=s=>panel.querySelector(s),label=by('[data-hud-selected]'),
   percent=by('[data-hud-size]'),alpha=by('[data-hud-opacity]'),
   sizeNum=by('[data-hud-size-number]'),opacityNum=by('[data-hud-opacity-number]'),
-  xNum=by('[data-hud-x]'),yNum=by('[data-hud-y]');
+  xNum=by('[data-hud-x]'),yNum=by('[data-hud-y]'),compassSize=by('[data-hud-compass-size]');
  function updateControls(){
   const n=api.selected,dim=n?.getBoundingClientRect(),{w,h}=vp();
   if(label)label.textContent=n?(n.getAttribute('aria-label')||n.textContent?.trim()?.slice(0,20)||hudNodeId(n)):'Elegí un control';
@@ -98,6 +110,7 @@ export function installHudEditor(t){
   if(alpha)alpha.value=String(op);if(opacityNum)opacityNum.value=String(op);
   if(xNum)xNum.value=String(dim?Math.round(100*dim.left/w):0);
   if(yNum)yNum.value=String(dim?Math.round(100*dim.top/h):0);
+  if(compassSize)compassSize.value=String(Math.round(savedCompassScale()*100));
  }
  function resizeSelected(pct){
   const n=api.selected;if(!n)return;
@@ -173,6 +186,7 @@ export function installHudEditor(t){
   el?.addEventListener?.('input',()=>fn(Number(el.value)));
   el?.addEventListener?.('change',()=>fn(Number(el.value)));
  }
+ compassSize?.addEventListener('input',()=>setCompassScale(Number(compassSize.value)/100));
  // Move the editor itself, without touching the saved HUD layout.
  const panelHandle=panel.querySelector('[data-hud-panel-handle]');
  let pd=null;

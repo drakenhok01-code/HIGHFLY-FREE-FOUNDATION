@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {attackPhase,targetForHand,directionalArms,planDirectionalStroke} from '../src/highfly/directional-rig.mjs';
 import {GRAPHICS,installHighflyGraphics} from '../src/highfly/visual-profile.mjs';
 import {oxygenMax,oxygenRate,oxygenRemainingSeconds} from '../src/highfly/oxygen-progression.mjs';
-import {terrainGradient,allowTerrainTraverse,wallRunEligible,terrainWallContact,allowCliffCapsule} from '../src/highfly/wall-physics.mjs';
+import {terrainGradient,allowTerrainTraverse,wallRunEligible,terrainWallContact,allowCliffCapsule,walkableBuiltFloor} from '../src/highfly/wall-physics.mjs';
 test('True stroke starts on chosen side and ENDS on the opposite, not a reused right-side animation',()=>{
  const right=planDirectionalStroke('onehand','right',0);
  assert.ok(right.at(0).right.x>.45&&right.at(.46).right.x<-.45);
@@ -81,4 +81,26 @@ test('F0.13.1 viewport-safe HUD anchors preserve right/bottom physical placement
  const resized=positionFromAnchor(original,850,362,70,70);
  assert.ok(resized.left>=0&&resized.top>=0);
  assert.ok(resized.left+70<=850&&resized.top+70<=362);
+});
+
+test('F0.13.1 plaza stone has native walkable floor: steep hidden heightfield does not lock 360 degree movement, roll or dash',()=>{
+ const world={
+  groundHeight:(x,z)=>.4+1.8*z,
+  floorBelow:(x,y,z)=>2
+ };
+ const from={x:0,y:2,z:0},to={x:.4,y:2,z:.4};
+ assert.equal(walkableBuiltFloor(world,from),true);
+ assert.equal(walkableBuiltFloor(world,to),true);
+ assert.equal(allowTerrainTraverse(world,from,to).ok,true);
+ assert.equal(allowCliffCapsule(world,from,to).ok,true);
+ const rocks={groundHeight:(x,z)=>1.8*z};
+ assert.equal(allowCliffCapsule(rocks,{x:0,y:0,z:0},{x:0,y:.2,z:.4}).ok,false,
+  'outside constructed surfaces preserve cliff protection');
+});
+test('Compass size saved in 60 to 160 percent range and defaults to 100 percent',async()=>{
+ const {savedCompassScale,COMPASS_SCALE_KEY}=await import('../src/highfly/hud-editor.mjs');
+ assert.equal(savedCompassScale({getItem:()=>null}),1);
+ assert.equal(savedCompassScale({getItem:key=>key===COMPASS_SCALE_KEY?'1.3':null}),1.3);
+ assert.equal(savedCompassScale({getItem:()=>'-3'}),1);
+ assert.equal(savedCompassScale({getItem:()=> '4'}),1.6);
 });
