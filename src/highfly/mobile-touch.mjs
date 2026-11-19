@@ -491,7 +491,7 @@ export function applyHighflyTouch(input){
    t.contextButton.setAttribute('aria-label',context.label);
  }
  const cd=globalThis.__game?.player?._hfDashCd??0;
- if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=cd>.05?'.65':'1';}
+ if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=t.dashButton.dataset.hfOpacity??'.70';t.dashButton.style.filter=cd>.05?'grayscale(.3) brightness(.82)':'';}
  for(const bar of vitalSnapshot(globalThis.__game?.player)){
   const el=t.resources?.[bar.id];if(!el)continue;
   const fill=el.querySelector('.hf-fill'),num=el.querySelector('.hf-number');
