@@ -25,6 +25,23 @@ export const WEAPON_ANIMATIONS=Object.freeze({
  spear:['2H_Melee_Attack_Stab','1H_Melee_Attack_Stab','2H_Melee_Attack_Slice'],
  staff:['Spellcast_Shoot','Spellcast_Raise','Spellcast_Long']
 });
+/** Direction chooses among EXISTING real KayKit attack clips; no invented cuts.
+ * The 76-clip FREE Knight does not contain four unique directional attacks
+ * for every class. Values are curated choices, not reverse-playback hacks.
+ */
+export const DIRECTIONAL_CLIP_INDEX=Object.freeze({
+ onehand:{left:0,right:2,up:2,down:1},
+ twohand:{left:0,right:2,up:0,down:1},
+ dual:{left:0,right:0,up:2,down:1},
+ unarmed:{left:0,right:1,up:2,down:2},
+ spear:{left:2,right:2,up:0,down:1},
+ staff:{left:2,right:0,up:1,down:1}
+});
+export function attackAnimation(style,step=0,direction=null){
+ const arr=WEAPON_ANIMATIONS[style]??WEAPON_ANIMATIONS.onehand;
+ const index=direction&&DIRECTIONAL_CLIP_INDEX[style]?.[direction];
+ return arr[index??Math.max(0,Math.min(arr.length-1,step))];
+}
 export function weaponMode(index){return WEAPON_MODES[((Math.trunc(index)||0)%WEAPON_MODES.length+WEAPON_MODES.length)%WEAPON_MODES.length];}
 export function applyEquipment(hero,index){
  const mode=weaponMode(index);
