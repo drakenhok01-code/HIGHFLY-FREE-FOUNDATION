@@ -181,6 +181,7 @@ copy(path.join(ROOT,'src/highfly/qa-touch.html'),loc('qa-touch.html'));
 copy(path.join(ROOT,'src/highfly/qa-touch-entry.mjs'),loc('src/highfly/qa-touch-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-rpg-browser.mjs'),loc('scripts/qa-rpg-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';",
