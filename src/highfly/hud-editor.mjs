@@ -49,11 +49,14 @@ export function installHudEditor(t){
   node.dataset.hfModified='1';
  };
  const restore=()=>{
+  // Hidden root has zero-size DOMRect: normalize only after HUD is visible.
+  if(root.hidden)return false;
   const layout=read();
   for(const node of all()){
    const id=hudNodeId(node);
    if(layout[id])place(node,layout[id]);
   }
+  return true;
  };
  const reset=()=>{
   for(const node of all()){
@@ -117,7 +120,7 @@ export function installHudEditor(t){
      y:rect.top/Math.max(1,h-rect.height),scale:next});
    save();
   });
- restore();
+ ui.restored=!root.hidden&&restore();
  ui.toggle=toggle;ui.reset=reset;ui.restore=restore;ui.save=save;
  return ui;
 }
