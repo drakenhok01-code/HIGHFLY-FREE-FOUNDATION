@@ -212,7 +212,21 @@ patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import {
 patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
 patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
  '    p._hfCameraPitch=this.rig.pitch;\n    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);');
-patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
+// Camera raymarches actual heightfield so a close cliff cannot show its backface.
+patch('src/game/camera.js',
+ "const free = this.world.raycast(_pivot, _dir, distance + 0.4) - 0.3;",
+ `let terrainFree = distance + 0.4;
+    for(let sample=.45;sample<distance+.4;sample+=.19){
+      const x=_pivot.x+_dir.x*sample,y=_pivot.y+_dir.y*sample,z=_pivot.z+_dir.z*sample;
+      if(this.world.groundHeight(x,z)>y-.18){terrainFree=Math.max(.68,sample-.22);break;}
+    }
+    const free = Math.min(this.world.raycast(_pivot, _dir, distance + 0.4),terrainFree) - 0.3;`);
+ // Some NPC platforms sit higher than the terrain/underlying ground: always
+ // resolve to the exposed surface, never put their body BELOW the terrain.
+patch('src/game/people.js',
+ "const y = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6);",
+ "const rawY = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6); const baseY=W.groundHeight(x,z); const y=Number.isFinite(rawY)?Math.max(rawY,baseY):baseY;");
+patch('src/game/input.js',"  interact: ['KeyE'],""  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
 patch('src/game/input.js','    this._down = new Set();','    this._down = new Set();\n    attachHighflyTouch(this);');
@@ -222,7 +236,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['src/engine/pipeline.js','src/engine/governor.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js']);
+const allowed=new Set(['src/engine/pipeline.js','src/engine/governor.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
