@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
+import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
+import {allowTerrainTraverse,wallRunEligible,WALL_RUN} from './wall-physics.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -149,6 +151,50 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  p.speed=moved>.002?moved/dt:0;p.viewY=p._viewY1=p.pos.y;
 }
 
+/** Wall-run is a deliberate sprint+forward air maneuver alongside real raycast
+ * collision. It cannot run on terrain lacking near-wall samples.
+ */
+function tryWallRun(p,input){
+ if(typeof p.world?.raycast!=='function')return false;
+ const speed=Math.hypot(p.vel.x,p.vel.z);
+ const right=gripContact(p,p.yaw+Math.PI/2,.95);
+ const left=gripContact(p,p.yaw-Math.PI/2,.95);
+ const wall=right&&left?(right.distance<left.distance?right:left):right||left;
+ if(!wallRunEligible({grounded:p.grounded,stamina:p.stamina,
+      held:input.held,move:input.move,contact:wall,speed}))return false;
+ const side=right&&wall===right?'right':'left',f=vec(p.yaw);
+ p._hfWallRun={time:0,side,dir:{x:f.x,z:f.z},yaw:p.yaw};
+ p.setState('hf_wallrun');p.grounded=false;
+ p.emit('highflyWallRunStart',{side});
+ return true;
+}
+function stepWallRun(p,dt,input){
+ const w=p._hfWallRun;
+ if(!w)return p.setState('move');
+ if(input.pressed.has('jump')){
+  p._hfWallRun=null;p.setState('move');p.grounded=false;
+  const kick=vec(w.yaw+(w.side==='right'?-.75:.75));
+  p.vel.set(kick.x*4.4,6.0,kick.z*4.4);
+  p.emit('highflyWallJump');return;
+ }
+ if(!input.held.has('sprint')||!input.move?.y||p.stamina<1||w.time>WALL_RUN.duration){
+  p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd');return;
+ }
+ const contact=gripContact(p,w.yaw+(w.side==='right'?Math.PI/2:-Math.PI/2),WALL_RUN.contactDistance);
+ if(!contact){p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd',{reason:'lost-contact'});return;}
+ const before=p.pos.clone();
+ const speed=4.0;const next=before.clone();
+ next.x+=w.dir.x*speed*dt;next.z+=w.dir.z*speed*dt;
+ next.y+=((WALL_RUN.maxRise-w.time*.95)*dt);
+ const safe=allowTerrainTraverse(p.world,before,next,1.1);
+ if(!safe.ok){p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd',{reason:'cliff-face'});return;}
+ const resolved=next.clone();p.world.resolveCapsule?.(resolved,.36,1.82,0);
+ if(resolved.distanceTo(next)>.22){p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd',{reason:'obstacle'});return;}
+ p.pos.copy(resolved);p.viewY=p._viewY1=p.pos.y;p.vel.set(w.dir.x*speed,0,w.dir.z*speed);
+ p.speed=speed;p.grounded=false;p.stateTime+=dt;w.time+=dt;
+ p.stamina=Math.max(0,p.stamina-WALL_RUN.costPerSecond*dt);
+}
+
 function closestTree(p){
  const caps=p.world?.caps;if(!caps?.length)return null;
  const f=vec(p.yaw);let best=-1,bd=9;
@@ -257,8 +303,17 @@ export function installHighflyUniversalMotion(p){
  const nativeSwim=p._swim.bind(p);
  const nativeStart=p.startAttack.bind(p);
  p._hfFlowCombat=true;p._hfFlowClock=0;p._hfFlowHistory=[];
- p._hfMana=100;p._hfManaMax=100;p._hfOxygen=100;p._hfOxygenMax=100;
+ p._hfMana=100;p._hfManaMax=100;p._hfLevel=1;p._hfTrainingScore=0;
+ p._hfOxygenMax=oxygenMax(1,0);p._hfOxygen=p._hfOxygenMax;
  p._hfDrownTimer=0;p._hfFlowVelocity=null;
+ p.setHighflyProgression=function(level=1,verifiedPoints=0){
+  this._hfLevel=Math.max(1,Math.trunc(level));
+  this._hfTrainingScore=Math.max(0,Math.trunc(verifiedPoints));
+  const old=this._hfOxygenMax;
+  this._hfOxygenMax=oxygenMax(this._hfLevel,this._hfTrainingScore);
+  this._hfOxygen=Math.min(this._hfOxygenMax,this._hfOxygen+Math.max(0,this._hfOxygenMax-old));
+  return this._hfOxygenMax;
+ };
  // True direction/timing bonus belongs to the real Unsung damage descriptor.
  // F0.12.2 normal slashes now have small visible ENERGY costs (3/3/5).
  // Specials/heavy actions retain their original costs; normal chains still flow.
@@ -285,7 +340,7 @@ export function installHighflyUniversalMotion(p){
    }
    return ok;
  };
- p._hfDive=false;p._hfDiveEntering=false;
+ p._hfDive=false;p._hfDiveEntering=false;p._hfWallRun=null;
  // Keep Unsung's real surface swimming/buoyancy and collisions, but allow a
  // separate controlled descent to a floor-clamped underwater target.
  p._swim=function(dt,input,wish,wishLen,surface){
@@ -316,7 +371,7 @@ export function installHighflyUniversalMotion(p){
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
+  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
@@ -341,6 +396,7 @@ export function installHighflyUniversalMotion(p){
   }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
+  if(this.state==='hf_wallrun'){stepWallRun(this,step,input);return;}
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
   if(this.state==='hf_climb'){stepClimb(this,step,input,camYaw,nativeUpdate);return;}
   if(this.state==='hf_action'){
@@ -408,16 +464,29 @@ export function installHighflyUniversalMotion(p){
   // A circle tap ignores the left thumb; dragging keeps independent direction.
   const nativeRollInput=input.pressed.has('dodge')&&(aim||tap)?
    {...input,move:aim||facingWish}:input;
+  const posBefore=this.pos.clone(),groundBefore=this.grounded;
   const result=attackLocomotion(this,nativeUpdate,dt,nativeRollInput,camYaw);
+  // Heightfields are NOT vertical collision meshes. On high-gradient ascent
+  // reject a native snap instead of entering a visual rock face, also outside ATK.
+  if(groundBefore&&this.pos.y>posBefore.y+.025){
+    const crossing=allowTerrainTraverse(this.world,posBefore,this.pos);
+    if(!crossing.ok){
+      this.pos.copy(posBefore);this.vel.x=this.vel.z=this.vel.y=0;
+      this.viewY=this._viewY1=this.pos.y;this.grounded=true;
+      this._hfFlowVelocity=null;this.speed=0;
+      this.emit('highflyCliffBarrier',{slope:crossing.slope});
+    }
+  }
+  if(this.state==='move'&&!this.grounded&&!this._hfWallRun){
+   tryWallRun(this,input);
+  }
   // Oxygen is strictly head-submerged time, not merely standing in water.
   const water=this.world?.waterLevel?.(this.pos.x,this.pos.z)??-Infinity;
   const underwater=this.state==='swim'&&Number.isFinite(water)&&this.pos.y+1.62<water;
   this._hfUnderwater=underwater;
   // 50s of normal submerged breathing from 100 O2; 33s sprint swim.
-  const oxygenRate=underwater?
-     -(input.held.has('sprint')?OXYGEN_TUNE.sprint:OXYGEN_TUNE.normal):
-      OXYGEN_TUNE.regenerate;
-  this._hfOxygen=clamp(this._hfOxygen+oxygenRate*step,0,this._hfOxygenMax);
+  const depletion=oxygenRate(underwater,input.held.has('sprint'));
+  this._hfOxygen=clamp(this._hfOxygen+depletion*step,0,this._hfOxygenMax);
   if(underwater&&this._hfOxygen<=0){
     this._hfDrownTimer=(this._hfDrownTimer??0)+step;
     if(this._hfDrownTimer>=.9){this._hfDrownTimer-=.9;this.damage(8,null);this.emit('highflyDrowning');}

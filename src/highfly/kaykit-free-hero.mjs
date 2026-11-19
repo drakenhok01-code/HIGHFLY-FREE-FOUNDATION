@@ -9,6 +9,7 @@ import {createUniversalMaterial} from './kaykit-material.mjs';
 import {ACTIONS} from './universal-motion.mjs';
 import {applyUALPose} from './ual-retarget.mjs';
 import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,attackAnimation,applyEquipment} from './universal-gear.mjs';
+import {planDirectionalStroke,driveHandCCD} from './directional-rig.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
@@ -250,6 +251,7 @@ export class KayKitFreeHero {
    }
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
+   else if(p.state==='hf_wallrun'){key='run';} 
    else if(p.state==='hf_climb'){key='idle';} // anchored hands procedurally, not an endless Interact flap
    else if(p.state==='hf_action'&&p._hfAction){
       const cfg=ACTIONS[p._hfAction.name];
@@ -267,7 +269,11 @@ export class KayKitFreeHero {
       const anim=attackAnimation(profile,step,p._hfFlowDirection);
       key='raw:'+(this.clips.has(anim)?anim:WEAPON_ANIMATIONS.onehand[step]);
       duration=p.attack?.t??.46;
-   }else if(p.state==='swim')key='swim';
+   }else if(p.state==='swim'){
+     // Surface idle is VERTICAL, not a face-down corpse; dive or forward
+     // movement switches to crawl, the transition blends through rollPivot.
+     key=p._hfDive||(p.speed??0)>.35?'swim':'idle';
+   }
    else if(!p.grounded&&p._hfJumpFx>0)key='raw:Jump_Full_Short';
    else if(!p.grounded)key='jump';
    else if(speed>5.8)key='sprint';
@@ -290,7 +296,7 @@ export class KayKitFreeHero {
    }
    this.mixer.update(dt);
    this._poseProcedural(Math.max(0,dt),p);
-   if(p.state==='swim'&&this.ualData){
+   if(p.state==='swim'&&this.ualData&&(p._hfDive||(p.speed??0)>.35)){
      // ONLY KayKit bones are animated; UAL source mannequin is never created.
      applyUALPose(this,speed>.35?'Swim_Fwd_Loop':'Swim_Idle_Loop',this._hfPhase/3.5,.85);
    }else if(p.state==='hf_mantle'&&this.ualData){
@@ -306,7 +312,8 @@ export class KayKitFreeHero {
    // 0.91 m high pivot rotated a standing avatar like an aerial flic-flac.
    const tuck=p.state==='roll'?Math.pow(Math.max(0,Math.sin(Math.PI*k)),.72):0;
    const direction=p._hfRollVisual??'forward';
-   this._swimBlend=THREE.MathUtils.clamp(this._swimBlend+(p.state==='swim'?1:-1)*dt*4,0,1);
+   const swimHorizontal=p.state==='swim'&&(p._hfDive||(p.speed??0)>.35);
+   this._swimBlend=THREE.MathUtils.clamp(this._swimBlend+(swimHorizontal?1:-1)*dt*4,0,1);
    this.rollPivot.rotation.x=p.state==='roll'?
      (direction==='backward'?-1:direction==='forward'?1:0)*Math.PI*2*eased:
      // Shoulder and head no longer inherit the 66-degree unstable body flip.
@@ -319,6 +326,7 @@ export class KayKitFreeHero {
    // No head correction quaternion: KayKit's stylized mirrored rig turned
    // previous compensators into 180-degree flips. UAL1 controls the strokes.
    this.actor.updateMatrixWorld(true);
+   this._applyDirectedAttack(p);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const rightBlade=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
    const {base,next}=this._swordEndpoints(rightBlade,this.socket);
@@ -346,23 +354,6 @@ export class KayKitFreeHero {
   bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(basis,angle));
  }
  _poseProcedural(dt,p){
-  // Small procedural steering cue makes direction readable when four gestures
-  // must share a 3-clip KayKit weapon catalog. No new unlicensed VFX/models.
-  if(p.state==='attack'&&p._hfFlowDirection&&p.attack){
-   const phase=THREE.MathUtils.clamp((p.stateTime??0)/Math.max(.1,p.attack.t),0,1);
-   const blend=Math.sin(Math.PI*phase);
-   const dir=p._hfFlowDirection;
-   if(dir==='left'||dir==='right'){
-    this._addPose('chest','y',(dir==='left'?-1:1)*.12*blend);
-    this._addPose('upperarm.r','z',(dir==='left'?.14:-.14)*blend);
-   }else if(dir==='up'){
-    this._addPose('upperarm.r','x',-.18*blend);
-    this._addPose('lowerarm.r','x',-.09*blend);
-   }else if(dir==='down'){
-    this._addPose('upperarm.r','x',.16*blend);
-    this._addPose('lowerarm.r','x',.08*blend);
-   }
-  }
   this._hfPhase+=dt*(p.state==='swim'?Math.max(2.2,3.5+(p.speed??0)*1.1):1.0);
   if(p.state==='roll'){
    const k=Math.min(1,Math.max(0,(p.stateTime??0)/.62));
@@ -374,7 +365,7 @@ export class KayKitFreeHero {
    this._addPose('upperarm.l','x',.62*t);
    this._addPose('upperarm.r','x',.62*t);
    this._addPose('head','x',-.12*t);
-  }else if(p.state==='swim'&&!this.ualData){
+  }else if(p.state==='swim'&&!this.ualData&&(p._hfDive||(p.speed??0)>.35)){
    // Original Unsung _swim controls buoyancy, direction, speed and ripples.
    // The 76-clip Knight has no swim clip, so apply a small alternating
    // stroke to the SAME 41-bone skinned character. No duplicate skeleton.
@@ -390,7 +381,10 @@ export class KayKitFreeHero {
     this._addPose('lowerleg.l','x',(.24+.3*Math.max(0,left))*amount);
     this._addPose('lowerleg.r','x',(.24+.3*Math.max(0,right))*amount);
     // Keep the head fixed relative to upper torso; no Power Ranger neck twist.
-   }else if(p.state==='hf_climb'||(p.state==='hf_mantle'&&!this.ualData)){
+   }else if(p.state==='hf_wallrun'){
+   this._addPose('chest','z',p._hfWallRun?.side==='left'?-.11:.11);
+   this._addPose('upperarm.r','x',-.24);this._addPose('upperarm.l','x',-.24);
+  }else if(p.state==='hf_climb'||(p.state==='hf_mantle'&&!this.ualData)){
    const move=p._hfClimbInput??{x:0,y:p.state==='hf_mantle'?1:0};
    const strength=Math.min(1,Math.hypot(move.x,move.y));
    const phase=this._hfPhase*3.7;
@@ -402,6 +396,26 @@ export class KayKitFreeHero {
    this._addPose('upperleg.l','x',strength*.28*Math.sin(phase));
    this._addPose('upperleg.r','x',-strength*.28*Math.sin(phase));
   }
+ }
+ _applyDirectedAttack(p){
+   if(p.state!=='attack'||!p._hfFlowDirection||!p.attack)return;
+   const style=this.weaponMode?.style??'onehand';
+   const step=Math.min(2,p.comboStep??0);
+   const plan=planDirectionalStroke(style,p._hfFlowDirection,step,p.attack.t??.46);
+   if(!plan.arms.length)return;
+   const target=plan.at(p.stateTime??0);
+   let err=0,valid=0;
+   for(const side of plan.arms){
+     const suf=side==='left'?'.l':'.r';
+     const result=driveHandCCD(THREE,this.actor,{
+        shoulder:this._bone('upperarm'+suf),
+        elbow:this._bone('lowerarm'+suf),
+        hand:this._bone('hand'+suf)},target[side],5);
+     if(result.ok){err+=result.error;valid++;}
+   }
+   this._hfStrokeGeometry={side:p._hfFlowDirection,step,arms:[...plan.arms],
+      source:plan.at(0),destination:plan.at(plan.duration),phase:Math.min(1,(p.stateTime??0)/Math.max(.05,p.attack.t))};
+   this.diagnostics&&(this.diagnostics.strokeError=valid?err/valid:null);
  }
  _swordEndpoints(item=this.sword,grip=this.socket){
    if(!item){
@@ -458,8 +472,9 @@ export class KayKitFreeHero {
    const dual=this.weaponMode?.style==='dual';
    // Dual 1=>left, 0=>right, 2=>both; no fake duplicate of the same tip.
    const dir=p._hfFlowDirection;
-   const rightActive=!dual||(dir==='right'||dir==='down'||!dir&&p.comboStep!==1);
-   const leftActive=dual&&(dir==='left'||dir==='up'||!dir&&(p.comboStep===1||p.comboStep===2));
+   const cross=dual&&p.comboStep===2;
+   const rightActive=!dual||cross||(dir==='right'||dir==='down'||!dir&&p.comboStep!==1);
+   const leftActive=dual&&(cross||dir==='left'||dir==='up'||!dir&&p.comboStep===1);
    const right=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
    this._renderWeaponTrail(dt,p,right,this.trail,this.trailHistory,
      {base:this.bladeBase,next:this.lastTip},rightActive);
