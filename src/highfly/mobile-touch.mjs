@@ -96,7 +96,7 @@ export function vitalSnapshot(p){
 const hfHud=()=>'<div class="hf-vitals"><div class="hf-profile"><span class="hf-avatar">✦</span><div><b>CAZADOR UNIVERSAL</b><small>HIGHFLY · NIVEL 01</small></div></div>'+
  ['hp','en','mp','o2'].map((id,i)=>'<div class="hf-vital hf-'+id+'"><b>'+['HP','ENERGÍA','MANÁ','O₂'][i]+'</b><span class="hf-track"><i class="hf-fill"></i></span><span class="hf-number">100/100</span></div>').join('')+
  '<small class="hf-motto">EL PODER SE CONSTRUYE</small></div>'+
- '<div class="hf-quests"><div class="hf-quest-head"><b>◈ MISIONES ACTIVAS</b><span>⌄</span></div><div class="hf-quest-body">'+
+ '<div class="hf-quests" data-collapsed="0"><div class="hf-quest-head"><b>◈ MISIONES <span class="hf-quest-count">0</span></b><button type="button" class="hf-quest-all" data-hf-quest-open aria-label="Abrir diario completo">TODAS ↗</button><button type="button" class="hf-quest-toggle" data-hf-quest-toggle aria-expanded="true" aria-label="Contraer misiones">⌃</button></div><div class="hf-quest-body">'+
  '<div class="hf-primary-quest"></div><div class="hf-side-quests"></div></div></div>';
 export function attachHighflyTouch(input){
  if(typeof document==='undefined'||!isTouchDevice())return;
@@ -104,13 +104,13 @@ export function attachHighflyTouch(input){
  `
  #ui #hud .goal{display:none!important}
  #ui #hud .fps{display:none!important}
- #hf-touch .hf-quests{position:absolute;left:10px;top:111px;width:330px;box-sizing:border-box;padding:6px 9px;border:1px solid #8b70b35f;border-radius:10px;background:linear-gradient(110deg,#10142dde,#100f25de);pointer-events:auto;max-height:118px;overflow:hidden}
- #hf-touch .hf-quest-head{display:flex;justify-content:space-between;align-items:center;color:#dccba7;font:700 10px system-ui;letter-spacing:.6px;pointer-events:auto}
- #hf-touch .hf-quest-body{font:10px system-ui;color:#c8c4df;margin-top:5px;line-height:1.25}
- #hf-touch .hf-primary-quest{color:#c9dcff;font:10px system-ui}
+ #hf-touch .hf-quests{position:absolute;left:10px;top:111px;width:330px;box-sizing:border-box;padding:6px 9px;border:1px solid #8b70b35f;border-radius:10px;background:linear-gradient(110deg,#10142df2,#100f25ef);pointer-events:auto;max-height:179px;overflow:hidden;box-shadow:0 4px 14px #0705157a}
+ #hf-touch .hf-quest-head{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:25px;color:#dccba7;font:700 10px system-ui;letter-spacing:.3px;pointer-events:auto;border-bottom:1px solid #9478af5c;padding-bottom:4px}
+ #hf-touch .hf-quest-body{font:10px system-ui;color:#c8c4df;margin-top:4px;line-height:1.25;max-height:129px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#a788d3 #17142b}
+ #hf-touch .hf-primary-quest{color:#c9dcff;font:700 10px system-ui;padding:5px 3px 7px;margin-bottom:3px;border-bottom:1px solid #9981b84d}
  #hf-touch .hf-side-quests{font:9px system-ui;color:#a9a7cd}
- #hf-touch .hf-side-quests div{display:flex;justify-content:space-between;gap:4px}
- #hf-touch .hf-quests[data-collapsed="1"] .hf-quest-body{display:none}
+ #hf-touch .hf-side-quests .hf-quest-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 3px;border-bottom:1px solid #9382b341;min-height:24px}#hf-touch .hf-quest-row b{display:block;color:#e7ddfc;font-weight:650;font-size:10px}#hf-touch .hf-quest-row small{display:block;color:#9da9c5;font:9px system-ui;margin-top:2px}#hf-touch .hf-quest-row em{color:#e5cd93;font:700 9px system-ui;white-space:nowrap}#hf-touch .hf-quest-head button{position:static;width:auto;height:24px;min-width:27px;border:1px solid #ae92c177;border-radius:8px;padding:0 6px;background:#483067aa;color:#f4e0ac;font:700 9px system-ui;opacity:.85;touch-action:manipulation}#hf-touch .hf-quest-head b{flex:1;white-space:nowrap}#hf-touch .hf-quest-count{font-weight:500;color:#d1c5ea}
+ #hf-touch .hf-quests[data-collapsed="1"] .hf-quest-body{display:none}#hf-touch .hf-quests[data-collapsed="1"]{max-height:40px}#hf-touch .hf-quest-body::-webkit-scrollbar{width:4px}#hf-touch .hf-quest-body::-webkit-scrollbar-thumb{background:#a788d3;border-radius:5px}
  #hf-touch .hf-fps{position:absolute;right:6px;bottom:2px;font:9px monospace;color:#b4c6df;background:#0a0c1b9e;padding:2px 5px;border-radius:5px;pointer-events:auto;white-space:nowrap}
  #hf-touch .hf-fps[hidden]{display:none!important}
  #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:330px;box-sizing:border-box;padding:6px 9px 5px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:9px;row-gap:1px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
@@ -226,7 +226,7 @@ export function attachHighflyTouch(input){
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
- '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="rpg-menu" data-a="rpg-menu" hidden aria-label="Abrir menú RPG">✧ MENÚ</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
+ '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="rpg-menu" data-a="rpg-menu" aria-label="Abrir menú RPG HIGHFLY">✧ MENÚ</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
  '<button class="lock" data-a="lock" aria-label="Fijar enemigo">⊕<small>FIJAR</small></button>'+
  '<button class="skill1" data-a="skill1" aria-label="Resonancia" data-locked="1">🔒</button>'+
  '<button class="skill2" data-a="skill2" aria-label="Ataque pesado">S2</button>'+
@@ -271,9 +271,16 @@ export function attachHighflyTouch(input){
   if(globalThis.__highflySetGraphics?.(btn.dataset.graphics))t.settingsPanel.hidden=true;
  }));
  for(let i=1;i<=6;i++)t.skillButtons[i]=root.querySelector('.skill'+i);
- t.questPanel?.addEventListener('pointerdown',e=>{
+ t.questPanel?.querySelector('[data-hf-quest-toggle]')?.addEventListener('pointerdown',e=>{
   if(t.editing)return;
   t.questExpanded=!t.questExpanded;t.questPanel.dataset.collapsed=t.questExpanded?'0':'1';
+  e.currentTarget?.setAttribute('aria-expanded',String(t.questExpanded));
+  e.currentTarget.textContent=t.questExpanded?'⌃':'⌄';
+  e.stopPropagation();e.preventDefault();
+ });
+ t.questPanel?.querySelector('[data-hf-quest-open]')?.addEventListener('pointerdown',e=>{
+  if(t.editing)return;
+  globalThis.__highflyRpg?.open('misiones');
   e.stopPropagation();e.preventDefault();
  });
  const dbg=globalThis.location?.search&&new URLSearchParams(globalThis.location.search).get('hfinputdebug')==='1';
@@ -423,7 +430,7 @@ export function attachHighflyTouch(input){
 function rootLock(t){return t?.root?.querySelector?.('.lock')}
 export function activeQuestSummary(game){
  const tasks=game?.quests?.active??[];
- const side=tasks.slice(0,3).map(q=>{
+ const side=tasks.map(q=>{
   const st=game.quests.state[q.id],value=game.quests.progress(q);
   const text=st?.s==='ready'?'Volvé con '+(game.people?.get(q.giver)?.def?.name??'el encargado'):
     translateHighfly(q.verb);
@@ -438,9 +445,10 @@ export function refreshHighflyQuests(t,game){
   secondary=root.querySelector('.hf-side-quests');
  if(main&&main.textContent!==summary.primary)main.textContent=summary.primary||'Explorá el mundo';
  if(secondary){
-  const html=summary.side.map(q=>'<div><span>'+escapeQuestText(q.title)+'</span>'+
-    '<span>'+(q.count??'✓')+'</span></div>').join('')+
-    (summary.total>3?'<div>+'+(summary.total-3)+' misiones más</div>':'');
+  const count=root.querySelector('.hf-quest-count');
+  if(count)count.textContent=String(summary.total);
+  const html=summary.side.map(q=>'<div class="hf-quest-row"><span><b>'+escapeQuestText(q.title)+'</b><small>'+escapeQuestText(q.text)+'</small></span>'+
+    '<em>'+escapeQuestText(q.count??'✓')+'</em></div>').join('');
   if(secondary.innerHTML!==html)secondary.innerHTML=html;
  }
 }

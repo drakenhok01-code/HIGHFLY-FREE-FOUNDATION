@@ -60,7 +60,7 @@ function blank(text){return '<div class="hf-rpg-muted">'+safe(text)+'</div>';}
 function itemCount(id,prof,bag){return ITEM_DEFS[id] ? id in bag.items?(bag.items[id]??0):(prof.inventory?.[id]??0):0;}
 
 export function installPremiumRpgUI(game,{search=globalThis.location?.search??''}={}){
- if(typeof document==='undefined'||!new URLSearchParams(search).has('hfrpg'))return null;
+ if(typeof document==='undefined'||new URLSearchParams(search).get('hfrpg')==='0')return null;
  const root=document.createElement('div');
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
@@ -194,7 +194,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(!local.opened)return;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
-   '<header class="hf-rpg-top"><div class="hf-rpg-logo">✧ HIGHFLY <small>LA LLAMA SIN NOMBRE</small></div>'+
+   '<header class="hf-rpg-top"><div class="hf-rpg-logo">✧ HIGHFLY <small>ASCENSIÓN · MMORPG FITNESS</small></div>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
@@ -250,7 +250,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  });
  // Android button remains inside the existing editable and opacity-controlled HUD.
  const touchButton=game.input?.highflyTouch?.root?.querySelector?.('[data-a="rpg-menu"]');
- if(touchButton)touchButton.setAttribute('aria-label','Abrir menú RPG HIGHFLY');
+ if(touchButton){touchButton.hidden=false;touchButton.setAttribute('aria-label','Abrir menú RPG HIGHFLY');}
  else{
   const launcher=document.createElement('button');launcher.id='hf-rpg-launch';launcher.textContent='✧ MENÚ';
   launcher.addEventListener('click',()=>api.toggle());document.body.appendChild(launcher);
