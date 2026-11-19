@@ -2,7 +2,7 @@
 // Browser APIs are mocked. This does NOT assert hardware multitouch on Samsung.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {attachHighflyTouch,applyHighflyTouch} from '../src/highfly/mobile-touch.mjs';
+import {attachHighflyTouch,applyHighflyTouch,activeQuestSummary} from '../src/highfly/mobile-touch.mjs';
 class El {
  constructor(type){this.type=type;this.handlers={};this.style={};this.dataset={};this.hidden=false;this.children=[];this.className=type;}
  addEventListener(name,cb){(this.handlers[name]??=[]).push(cb);}
@@ -140,4 +140,16 @@ test('F0.13.1 ATK swipe never selects directional IK; classic combo and left joy
   assert.equal(input.highflyAbilityAim.attack,undefined,'no directional command after release');
   assert.equal(input.held.has('attack'),false,'short swipe does not become a permanent hold');
  }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+test('F0.14.1 quest tracker preserves all quest data, progress and localization',()=>{
+ const active=Array.from({length:6},(_,i)=>({id:'q'+i,title:'Encargo '+i,verb:'Encontrá materiales'}));
+ const state={q3:{s:'ready'}};
+ const game={objective:'Hablá con la guardiana',quests:{active,state,progress:()=>[1,4]},people:{get:()=>({def:{name:'Maren'}})}};
+ const summary=activeQuestSummary(game);
+ assert.equal(summary.total,6);
+ assert.equal(summary.side.length,6,'never truncate quests at 3');
+ assert.equal(summary.side[5].title,'Encargo 5');
+ assert.equal(summary.side[3].count,null,'ready-to-turn-in is completed');
+ assert.equal(summary.side[3].text,'Volvé con Maren');
+ assert.equal(summary.side[4].count,'1 / 4');
 });

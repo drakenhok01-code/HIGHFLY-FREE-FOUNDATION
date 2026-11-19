@@ -52,3 +52,16 @@ test('F0.13.1 original start/options strings and touch-oriented controls are in 
   assert.notEqual(translateHighfly(term),term,term+' missing');
  }
 });
+
+test('F0.14.1 all initial boot stages and plaza NPC barks are translated to Spanish',()=>{
+ for(const line of [
+  'Raising the mesas','Building the cities','Laying the paths','Letting the water fall',
+  'Growing the forest','Casting the evening light','Waking the valley',
+  'Fine evening for mending a valley.','Good light for it.','Mind the edge.'
+ ]){
+  const translated=translateHighfly(line);
+  assert.notEqual(translated,line,'Untranslated visible line: '+line);
+  assert.ok(!/^The |^Casting |^Raising |^Building /i.test(translated));
+ }
+ assert.equal(translateHighfly('Unsung Vale'),'HIGHFLY: ASCENSIÓN');
+});

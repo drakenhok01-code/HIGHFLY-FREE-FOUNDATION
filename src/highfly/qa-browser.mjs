@@ -71,6 +71,31 @@ try{
  await mobile.waitForFunction('window.__hfTouchTest?.dash !== null',null,{timeout:6000});
  const drag=await mobile.evaluate(()=>window.__hfTouchTest.dash);
  assert.ok(drag.direction?.x>.9 && Math.abs(drag.move.x)<.001,'Independent rightward DASH circle aim '+JSON.stringify(drag));
+ // F0.14.1 visible RPG launcher plus scrollable quest tracker: same production touch HUD.
+ assert.ok(await mobile.locator('#hf-touch .rpg-menu').isVisible(),'HIGHFLY RPG menu is hidden on Android');
+ const missionInfo=await mobile.evaluate(()=>{
+  const box=document.querySelector('#hf-touch .hf-quest-body');
+  return {total:document.querySelectorAll('#hf-touch .hf-quest-row').length,
+   count:document.querySelector('#hf-touch .hf-quest-count')?.textContent,
+   scrollHeight:box?.scrollHeight,clientHeight:box?.clientHeight,
+   collapsed:document.querySelector('#hf-touch .hf-quests')?.dataset.collapsed};
+ });
+ assert.equal(missionInfo.total,5,'Quest tracker must display ALL 5 missions, not slice(0,3)');
+ assert.equal(missionInfo.count,'5');
+ assert.ok(missionInfo.scrollHeight>missionInfo.clientHeight,'Quest list must be vertically scrollable '+JSON.stringify(missionInfo));
+ await mobile.locator('#hf-touch .hf-quest-row').first().click({force:true});
+ assert.equal(await mobile.locator('#hf-touch .hf-quests').getAttribute('data-collapsed'),'0','Touching a quest must not collapse whole tracker');
+ await mobile.evaluate(()=>{window.__hfQuestOpened=null;window.__hfRpgTapped=false;
+  window.__highflyRpg={open(tab){window.__hfQuestOpened=tab;},toggle(){window.__hfRpgTapped=true;}};});
+ await mobile.locator('#hf-touch [data-hf-quest-open]').click({force:true});
+ assert.equal(await mobile.evaluate(()=>window.__hfQuestOpened),'misiones','Full quest journal must open from HUD');
+ await mobile.locator('#hf-touch [data-hf-quest-toggle]').click({force:true});
+ assert.equal(await mobile.locator('#hf-touch .hf-quests').getAttribute('data-collapsed'),'1','Arrow collapses tracker');
+ await mobile.locator('#hf-touch [data-hf-quest-toggle]').click({force:true});
+ assert.equal(await mobile.locator('#hf-touch .hf-quests').getAttribute('data-collapsed'),'0','Arrow expands tracker');
+ await mobile.locator('#hf-touch .rpg-menu').click({force:true});
+ assert.equal(await mobile.evaluate(()=>window.__hfRpgTapped),true,'Android tap on MENU must call RPG API');
+ console.log('PASS F0.14.1 touch MENU + five scrollable quests + diary shortcut',JSON.stringify(missionInfo));
  // F0.13.1: classic native per-weapon attack. Swiping no longer adds
  // a directional arm-IK command and must never trap ATK in permanent hold.
  const slash=await mobile.locator('#hf-touch .atk').boundingBox();

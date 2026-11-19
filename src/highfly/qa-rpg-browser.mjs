@@ -22,12 +22,10 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction('window.__hfRpgTest?.ready && window.__highflyRpg && window.__game',null,{timeout:15000});
- const opening=await page.evaluate(()=>{
-  const g=window.__game;g.input.lockPointer=()=>{};g.start();
-  g.player.health=Math.max(1,g.player.healthMax-60);
-  const ok=window.__highflyRpg.open();
-  return {ok,game:g.state,harnessReady:window.__hfRpgTest?.ready,health:g.player.health,maximum:g.player.healthMax};
- });
+ await page.waitForSelector('#hf-rpg-launch',{state:'visible'});
+ await page.evaluate(()=>{const g=window.__game;g.input.lockPointer=()=>{};g.start();g.player.health=Math.max(1,g.player.healthMax-60);});
+ await page.locator('#hf-rpg-launch').click();
+ const opening=await page.evaluate(()=>({ok:window.__highflyRpg.opened,game:window.__game.state,harnessReady:window.__hfRpgTest?.ready,health:window.__game.player.health,maximum:window.__game.player.healthMax}));
  assert.ok(opening.ok&&opening.game==='menu'&&opening.harnessReady,'Premium RPG production menu mount failed '+JSON.stringify(opening));
  await page.waitForSelector('#hf-rpg .hf-rpg-three');
  const viewport=await page.evaluate(()=>{
@@ -56,6 +54,8 @@ try{
  const crafted=await page.evaluate(()=>({qty:window.__highflyRpg.state.items.hp_potion,herb:window.__game.player._hfProfession.inventory.herb}));
  assert.equal(crafted.qty,before+1,'crafted result not returned to bag');
  assert.equal(crafted.herb,0,'materials were not consumed');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),5,'Full RPG mission journal must contain ALL active quests');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
  await page.locator('#hf-rpg [data-hf-action="close"]').first().click();
