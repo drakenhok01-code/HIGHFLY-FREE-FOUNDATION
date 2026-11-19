@@ -238,7 +238,7 @@ export function installHighflyUniversalMotion(p){
      WEAPON_MODES[this._hfGearCycle]?.id??'sword');
    const charged=(index===3||index===2&&desc===TUNE.dash);
    const basic=!charged&&index>=0&&index<3;
-   const bonus=basic&&dir?(flow.secret?1.22:1.08):1;
+   const bonus=basic&&flow.accepted?(flow.secret?1.22:1.08):1;
    const modified=basic?{...desc,cost:0,dmg:desc.dmg*bonus}:desc;
    const prior={x:this.vel.x,z:this.vel.z,yaw:this.yaw};
    const ok=nativeStart(modified,index);
