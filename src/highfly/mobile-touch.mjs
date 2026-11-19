@@ -64,6 +64,13 @@ export function resolveHighflyContext(p){
    {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
  if((wall>.04&&wall<.91)||terrainWallContact(w,p.pos,{x:fx,z:fz},1.08,.7))
   return {action:'climb',label:'TREPAR'};
+ const caps=w.caps;
+ if(caps?.length)for(let i=0;i<caps.length;i+=7){
+   const x=(caps[i]+caps[i+3])/2-p.pos.x,z=(caps[i+2]+caps[i+5])/2-p.pos.z;
+   if(x*x+z*z<1.2&&x*fx+z*fz>.08)return {action:'climb',label:'TREPAR'};
+ }
+ const interaction=resolveHighflyUse(p);
+ if(interaction.action==='pickup')return interaction;
  return fallback;
 }
 export function resolveHighflyUse(p){
