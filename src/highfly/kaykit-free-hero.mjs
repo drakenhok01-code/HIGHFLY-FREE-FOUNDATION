@@ -137,6 +137,14 @@ export class KayKitFreeHero {
    this.trail.frustumCulled=false;this.trail.visible=false;
    this.trail.name='HIGHFLY_ACTUAL_SWORD_TIP_TRAIL';
    pipe.scene.add(this.trail);
+   // A second real blade gets its OWN actual world-space geometry trail.
+   this.offTrail=this.trail.clone();
+   this.offTrail.geometry=this.trail.geometry.clone();
+   this.offTrail.material=this.trail.material.clone();
+   this.offTrail.name='HIGHFLY_ACTUAL_LEFT_SWORD_TIP_TRAIL';
+   this.offTrail.visible=false;
+   this.offTrailHistory=[];
+   pipe.scene.add(this.offTrail);
    this.bladeBase=new THREE.Vector3();
    this.play('idle');
    this.availableActions=[...this.clips.keys()];
@@ -301,7 +309,8 @@ export class KayKitFreeHero {
    this.rollPivot.rotation.x=p.state==='roll'?
      (direction==='backward'?-1:direction==='forward'?1:0)*Math.PI*2*eased:
      // Shoulder and head no longer inherit the 66-degree unstable body flip.
-     this._swimBlend*.18; // first isolate world-space head reversal
+     this._swimBlend*THREE.MathUtils.clamp(
+       p._hfDive?1.04-(p._hfCameraPitch??0)*.35:1.07,.55,1.40);
    this.rollPivot.rotation.z=p.state==='roll'?
      (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
@@ -310,11 +319,16 @@ export class KayKitFreeHero {
    // previous compensators into 180-degree flips. UAL1 controls the strokes.
    this.actor.updateMatrixWorld(true);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
-   const {base,next}=this._swordEndpoints();
+   const rightBlade=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
+   const {base,next}=this._swordEndpoints(rightBlade,this.socket);
+   const off=this.offSword?.visible?
+    this._swordEndpoints(this.offSword,this._bone('hand.l')??this.offSword.parent):null;
+   this.offBlade=off;
    this.bladeBase.copy(base);
    if(this.updated&&dt>0)this.tipVel.copy(next).sub(this.lastTip).divideScalar(dt);
    else this.tipVel.set(0,0,0);
-   this.tip.copy(next);this.lastTip.copy(next);this.updated=true;
+   this.tip.copy(this.weaponMode?.style==='dual'&&p.comboStep===1&&off?off.next:next);
+   this.lastTip.copy(next);this.updated=true;
    this._drawBladeTrail(Math.max(0,dt),p);
  }
 
@@ -371,41 +385,66 @@ export class KayKitFreeHero {
    this._addPose('upperleg.r','x',-strength*.28*Math.sin(phase));
   }
  }
- _swordEndpoints(){
-   // Longest actual local weapon-geometry axis, rather than the hand socket.
-   if(!this.sword){const hand=this.socket.getWorldPosition(new THREE.Vector3());return {base:hand.clone(),next:hand};}
-   const g=this.sword.geometry;
+ _swordEndpoints(item=this.sword,grip=this.socket){
+   if(!item){
+     const hand=(grip??this.socket)?.getWorldPosition(new THREE.Vector3())??new THREE.Vector3();
+     return {base:hand.clone(),next:hand};
+   }
+   let weapon=item;
+   if(!weapon.geometry){
+     const meshes=[];weapon.traverse(o=>{if(o.isMesh&&o.geometry)meshes.push(o);});
+     if(meshes.length){
+       weapon=meshes.sort((a,b)=>{
+         a.geometry.computeBoundingBox();b.geometry.computeBoundingBox();
+         return b.geometry.boundingBox.getSize(new THREE.Vector3()).length()-
+           a.geometry.boundingBox.getSize(new THREE.Vector3()).length();
+       })[0];
+     }
+   }
+   if(!weapon.geometry){
+     const h=item.getWorldPosition(new THREE.Vector3());return {base:h.clone(),next:h};
+   }
+   const g=weapon.geometry;
    if(!g.boundingBox)g.computeBoundingBox();
    const bb=g.boundingBox,span=bb.getSize(new THREE.Vector3());
    const axis=span.y>=span.x&&span.y>=span.z?'y':span.x>=span.z?'x':'z';
    const a=bb.getCenter(new THREE.Vector3()),b=a.clone();
    a[axis]=bb.min[axis];b[axis]=bb.max[axis];
-   this.sword.updateWorldMatrix(true,false);
-   this.sword.localToWorld(a);this.sword.localToWorld(b);
-   const hand=this.socket.getWorldPosition(new THREE.Vector3());
+   weapon.updateWorldMatrix(true,false);weapon.localToWorld(a);weapon.localToWorld(b);
+   const hand=(grip??weapon.parent??this.socket).getWorldPosition(new THREE.Vector3());
    return a.distanceToSquared(hand)<b.distanceToSquared(hand)?{base:a,next:b}:{base:b,next:a};
  }
+ _renderWeaponTrail(dt,p,item,trail,history,ends,enabled){
+   for(const h of history)h.age+=dt;
+   for(let i=history.length-1;i>=0;i--)if(history[i].age>=.18)history.splice(i,1);
+   const attacking=p.state==='attack'&&Array.isArray(p.attack?.hit)&&
+    p.stateTime>=p.attack.hit[0]-.035&&p.stateTime<=p.attack.hit[1]+.04;
+   const slash=attacking&&enabled&&item?.visible;
+   if(slash&&ends){
+     history.push({a:ends.base.clone(),b:ends.next.clone(),age:0});
+     if(history.length>this.trailMax)history.shift();
+   }
+   if(!item?.visible||history.length<2){trail.visible=false;trail.geometry.setDrawRange(0,0);return;}
+   const attr=trail.geometry.attributes.position;
+   for(let i=0;i<history.length;i++){
+     const h=history[i],start=h.a.clone().lerp(h.b,.15+.65*h.age/.18);
+     attr.setXYZ(i*2,start.x,start.y,start.z);
+     attr.setXYZ(i*2+1,h.b.x,h.b.y,h.b.z);
+   }
+   attr.needsUpdate=true;
+   trail.geometry.setDrawRange(0,(history.length-1)*6);
+   trail.visible=true;trail.material.opacity=slash?.8:.46;
+ }
  _drawBladeTrail(dt,p){
-   for(const h of this.trailHistory)h.age+=dt;
-   this.trailHistory=this.trailHistory.filter(h=>h.age<.18);
-   const attack=p.state==='attack'&&Array.isArray(p.attack?.hit)&&
-     p.stateTime>=p.attack.hit[0]-.035&&p.stateTime<=p.attack.hit[1]+.04;
-   if(attack&&this.sword?.visible){
-     this.trailHistory.push({a:this.bladeBase.clone(),b:this.tip.clone(),age:0});
-     if(this.trailHistory.length>this.trailMax)this.trailHistory.shift();
-   }
-   if(!this.sword){this.trailHistory.length=0;this.trail.visible=false;this.trail.geometry.setDrawRange(0,0);return;}
-   const n=this.trailHistory.length;
-   if(n<2){this.trail.visible=false;this.trail.geometry.setDrawRange(0,0);return;}
-   const pos=this.trail.geometry.attributes.position;
-   for(let i=0;i<n;i++){
-     const h=this.trailHistory[i];
-     const start=h.a.clone().lerp(h.b,.15+.65*h.age/.18);
-     pos.setXYZ(i*2,start.x,start.y,start.z);
-     pos.setXYZ(i*2+1,h.b.x,h.b.y,h.b.z);
-   }
-   pos.needsUpdate=true;this.trail.geometry.setDrawRange(0,(n-1)*6);
-   this.trail.visible=true;this.trail.material.opacity=attack?.8:.46;
+   const dual=this.weaponMode?.style==='dual';
+   // Dual 1=>left, 0=>right, 2=>both; no fake duplicate of the same tip.
+   const rightActive=!dual||p.comboStep!==1;
+   const leftActive=dual&&(p.comboStep===1||p.comboStep===2);
+   const right=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
+   this._renderWeaponTrail(dt,p,right,this.trail,this.trailHistory,
+     {base:this.bladeBase,next:this.lastTip},rightActive);
+   this._renderWeaponTrail(dt,p,this.offSword,this.offTrail,this.offTrailHistory,
+     this.offBlade,leftActive);
  }
  // All original 76 CC0 clips can be selected for future abilities.
  playRawClip(name){if(!this.clips.has(name))return false;this.play('raw:'+name);return true;}
