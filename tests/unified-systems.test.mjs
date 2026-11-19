@@ -33,6 +33,7 @@ test('Renderer keeps disabled SSAO and three query-selectable resolution profile
  const settings={values:{renderScale:.63,targetFps:50}};
  const r=installHighflyGraphics(pipe,settings,'?hfquality=quality',{getItem:()=>null,setItem(){}});
  assert.equal(r.selected,'quality');assert.equal(settings.values.renderScale,1);
+ assert.equal(settings.values.targetFps,0,'NÍTIDO forces true 100% resolution without adaptive downscaling');
  assert.equal(pipe.ao.enabled,false);assert.equal(r.set('performance'),true);
  assert.equal(settings.values.renderScale,.7);assert.equal(r.set('bogus'),false);
  assert.equal(Object.keys(GRAPHICS).length,3);

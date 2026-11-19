@@ -4,7 +4,7 @@
 export const GRAPHICS=Object.freeze({
  performance:{renderScale:.70,targetFps:50,sharpen:.50},
  balanced:{renderScale:.85,targetFps:50,sharpen:.58},
- quality:{renderScale:1,targetFps:45,sharpen:.45}
+ quality:{renderScale:1,targetFps:0,sharpen:.45}
 });
 export function installHighflyGraphics(pipe,settings,search='',storage=globalThis.localStorage){
  const query=new URLSearchParams(search);
