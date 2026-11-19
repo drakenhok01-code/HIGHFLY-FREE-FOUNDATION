@@ -38,7 +38,8 @@ export function applyEquipment(hero,index){
  if(mode.main)all.get(mode.main).visible=true;
  if(mode.off)all.get(mode.off).visible=true;
  hero.sword=mode.main?all.get(mode.main):null;
- hero.swordMeshes=mode.main?1:0;
+ hero.offSword=mode.off==='1H_Sword_Offhand'?all.get(mode.off):null;
+ hero.swordMeshes=(hero.sword?1:0)+(hero.offSword?1:0);
  hero.weaponMode=mode;
  return mode;
 }
