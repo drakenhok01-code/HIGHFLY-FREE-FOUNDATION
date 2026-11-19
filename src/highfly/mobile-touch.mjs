@@ -1,7 +1,7 @@
 /** HIGHFLY F0.1: Android-native analog 360° with original Unsung Input/Player. */
 export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
-import {findProfessionTarget,professionActionFor} from './professions.mjs';
+import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
