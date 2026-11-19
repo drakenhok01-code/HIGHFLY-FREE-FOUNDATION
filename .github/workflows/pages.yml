@@ -26,7 +26,7 @@ jobs:
         run: npm run build
       - name: Simular movimiento real sobre el Player original
         run: |
-          node --test tests/integrated.test.mjs tests/universal-motion.test.mjs tests/context-actions.test.mjs tests/professions.test.mjs
+          node --test tests/integrated.test.mjs tests/universal-motion.test.mjs tests/context-actions.test.mjs tests/professions.test.mjs tests/professions-integration.test.mjs
       - name: Auditar familia completa KayKit FREE (5 GLB reales)
         run: node scripts/qa-free-rigs.mjs
       - name: Renderizar KayKit real en Chromium / WebGL
