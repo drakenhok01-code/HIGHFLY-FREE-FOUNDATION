@@ -119,6 +119,7 @@ export function attachHighflyTouch(input){
  '#hf-touch .hf-hud-editor .controls{display:flex;gap:5px;margin-top:8px}',
  '#hf-touch .hf-hud-editor button{position:static;flex:1;width:auto;height:33px;border-radius:8px;font-size:10px}',
  '#hf-touch[data-editing="1"] .stick,#hf-touch[data-editing="1"] button[data-a]:not(.hud-edit),#hf-touch[data-editing="1"] .hf-vitals{outline:2px dashed #80ffec;outline-offset:2px;cursor:grab}',
+ '#hf-touch[data-editing="1"] .hf-vitals{pointer-events:auto!important}',
  '#hf-touch .hf-attack-cue{position:absolute;right:110px;bottom:112px;color:#6deffa;pointer-events:none;padding:3px 8px;background:#121d32dd;border:1px solid #55ceef;border-radius:8px;font:700 11px system-ui}',
  '#hf-touch .hf-attack-cue[hidden]{display:none!important}',
  '#hf-touch .action-panel{position:absolute;right:8px;top:51px;width:260px;padding:6px;border:1px solid #e0c37e;border-radius:9px;background:#141026eb;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;pointer-events:auto}',
