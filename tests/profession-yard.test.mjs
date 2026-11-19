@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {YARD_STATIONS} from '../src/highfly/profession-yard.mjs';
+import {YARD_STATIONS} from '../src/highfly/worksite-data.mjs';
 test('Training yard has all six real resource stations for eight interactions',()=>{
  assert.equal(YARD_STATIONS.length,6);
  const kinds=YARD_STATIONS.map(x=>x.kind);

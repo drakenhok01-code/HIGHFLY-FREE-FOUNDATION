@@ -159,7 +159,7 @@ copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-m
 copy(path.join(ROOT,'src/highfly/universal-gear.mjs'),loc('src/highfly/universal-gear.mjs'));
 copy(path.join(ROOT,'src/highfly/universal-motion.mjs'),loc('src/highfly/universal-motion.mjs'));
 copy(path.join(ROOT,'src/highfly/flow-combat.mjs'),loc('src/highfly/flow-combat.mjs'));
-for(const name of ['directional-rig','wall-physics','oxygen-progression','visual-profile','es-localization','es-quest-data','professions','profession-yard'])
+for(const name of ['directional-rig','wall-physics','oxygen-progression','visual-profile','es-localization','es-quest-data','professions','profession-yard','worksite-data'])
   copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 copy(path.join(ROOT,'src/highfly/ual-retarget.mjs'),loc('src/highfly/ual-retarget.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-kaykit-entry.mjs'),loc('src/highfly/qa-kaykit-entry.mjs'));
