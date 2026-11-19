@@ -1,0 +1,259 @@
+/** HIGHFLY F0.14 premium RPG windows.
+ * DOM/CSS and original SVG art: NOT a screenshot pasted onto Unsung.
+ * Read ONE real Player; render over existing Three.js canvas (no second renderer).
+ * Preview gated by ?hfrpg=1. Approved F0.13.1 remains untouched by default.
+ */
+import './premium-rpg.css';
+import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
+import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
+import {translateHighfly} from './es-localization.mjs';
+
+const NAV=[
+ ['personaje','♙','Personaje'],['atributos','▥','Atributos'],
+ ['bolsa','▣','Bolsa'],['habilidades','✦','Habilidades'],
+ ['oficios','⚒','Oficios'],['forja','⚗','Forja'],
+ ['misiones','☷','Misiones'],['mapa','◇','Mapa'],['opciones','⚙','Opciones']
+];
+const safe=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+const numeric=n=>Number.isFinite(Number(n))?Math.floor(Number(n)).toLocaleString('es-AR'):'0';
+const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
+const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'')+'"><span class="hf-rpg-slot-art">'+art(icon)+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
+const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
+
+function art(id='stone',large=false){
+ // Tiny HIGHFLY-original vector library: no external bitmap/art license.
+ let interior='';
+ if(id==='health'||id==='mana'){
+  const red=id==='health';
+  const hue=red?'#ff416d':'#3d9cff',lite=red?'#ffc0c6':'#c2f8ff',deep=red?'#6d0835':'#10306c';
+  interior='<path d="M37 7h26v12H37z" fill="#b98a4e" stroke="#ffe5a9" stroke-width="3"/><path d="M33 18h34v8l-8 9 18 30c10 19-1 31-27 31S13 84 23 65l18-30-8-9z" fill="#16142c" stroke="#f3c980" stroke-width="4"/><path d="M29 66l14-25h14l14 25q13 24-21 24T29 66z" fill="'+hue+'" stroke="'+lite+'" stroke-width="2"/><path d="M33 72q9-20 17-22" stroke="'+lite+'" stroke-width="6" stroke-linecap="round" opacity=".85"/><path d="M25 69q1 18 25 18" fill="none" stroke="'+deep+'" stroke-width="6"/><path d="M50 47l5 8-5 8-5-8z" fill="'+lite+'"/>';
+ }else if(id==='weapon'||id==='blade'){
+  interior='<path d="M70 11L48 67l-13 6 6-14 22-51z" fill="#59bafb" stroke="#d3f9ff" stroke-width="3"/><path d="M51 66L26 77" stroke="#e3b86d" stroke-width="8" stroke-linecap="round"/><path d="M32 68l17 17M23 77l14 14" stroke="#ffd997" stroke-width="5"/><path d="M19 93l12-10" stroke="#eed2ab" stroke-width="5"/>';
+ }else if(id==='herb'){
+  interior='<path d="M50 90V28" stroke="#e4c07b" stroke-width="5"/><path d="M50 65Q7 70 18 32q32-1 32 33M51 57q46-4 30-44Q47 19 51 57M50 82q-32 4-31-19 27-9 31 19" fill="#3abb80" stroke="#b5ffd6" stroke-width="3"/>';
+ }else if(id==='ore'||id==='ingot'){
+  interior='<path d="M18 72l14-36 29-15 22 22-9 41-38 6z" fill="#4473c9" stroke="#acf3ff" stroke-width="4"/><path d="M32 36l26 14-22 40M58 50l25-7M58 50l16 34" fill="none" stroke="#e7fbff" stroke-width="3"/>';
+ }else if(id==='wood'){
+  interior='<path d="M16 45q35-23 68 0v25q-34 22-68 0z" fill="#76442a" stroke="#d5a36a" stroke-width="4"/><ellipse cx="16" cy="58" rx="12" ry="22" fill="#b8834d" stroke="#e7c188" stroke-width="3"/><ellipse cx="16" cy="58" rx="5" ry="11" fill="none" stroke="#724125" stroke-width="2"/>';
+ }else if(id==='fish'){
+  interior='<path d="M20 52q34-38 58 0-24 38-58 0l-13-16v32z" fill="#4bb7d0" stroke="#ddfcff" stroke-width="4"/><circle cx="65" cy="47" r="4" fill="#12375b"/>';
+ }else if(id==='shield'){
+  interior='<path d="M50 8l31 14-6 42-25 28-25-28-6-42z" fill="#344876" stroke="#e7c780" stroke-width="5"/><path d="M50 17v62M27 39h46" stroke="#82d8ff" stroke-width="6"/>';
+ }else if(id==='ring'){
+  interior='<circle cx="50" cy="56" r="25" fill="none" stroke="#f5c47d" stroke-width="12"/><path d="M50 10L70 33 50 55 30 33z" fill="#b471ff" stroke="#f7d0ff" stroke-width="4"/>';
+ }else{
+  interior='<path d="M50 7L83 39 67 88 28 88 15 41z" fill="#7f52cc" stroke="#d6b7ff" stroke-width="4"/><path d="M50 7v81M15 41h68" stroke="#eff0ff" stroke-width="3"/>';
+ }
+ return '<svg class="hf-rpg-art'+(large?' is-large':'')+'" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="hfrpgGlow"><stop stop-color="#e8e2ff" stop-opacity=".3"/><stop offset="1" stop-color="#3d176c" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="52" r="46" fill="url(#hfrpgGlow)"/>'+interior+'</svg>';
+}
+function tile(id,count,selected){
+ const def=ITEM_DEFS[id],icon=def?.icon||'stone';
+ return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
+}
+function resourceRow(key,label,pCurrent,pMax){
+ return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
+}
+function title(s,sub=''){return '<div class="hf-rpg-heading"><span class="hf-rpg-sigil">✧</span><div><h2>'+safe(s)+'</h2>'+(sub?'<small>'+safe(sub)+'</small>':'')+'</div><i></i></div>';}
+function panel(inner,cls=''){return '<section class="hf-rpg-panel '+cls+'">'+inner+'</section>';}
+function button(label,attrs='',cls=''){return '<button type="button" class="hf-rpg-button '+cls+'" '+attrs+'>'+label+'</button>';}
+function blank(text){return '<div class="hf-rpg-muted">'+safe(text)+'</div>';}
+function itemCount(id,prof,bag){return ITEM_DEFS[id] ? id in bag.items?(bag.items[id]??0):(prof.inventory?.[id]??0):0;}
+
+export function installPremiumRpgUI(game,{search=globalThis.location?.search??''}={}){
+ if(typeof document==='undefined'||!new URLSearchParams(search).has('hfrpg'))return null;
+ const root=document.createElement('div');
+ root.id='hf-rpg';root.hidden=true;
+ document.body.appendChild(root);
+ const bag=loadRpgState();
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',toast:'',opened:false};
+ const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
+ const allItems=()=>inventoryRows(bag,prof().inventory);
+ const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
+ const health=()=>({value:p()?.health??0,max:p()?.healthMax??100});
+ const mana=()=>({value:p()?._hfMana??0,max:p()?._hfManaMax??100});
+ const weapon=()=>weaponMode(p()?._hfGearCycle??0);
+ const message=(s)=>{local.toast=String(s);render();};
+ const save=()=>saveRpgState(bag);
+ const preview=()=>{
+  const equip=weapon();
+  return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>Nv. '+numeric(attrs().level)+'</small></div>'+
+   '<div class="hf-rpg-hero-stage" aria-label="Personaje 3D renderizado en el mundo original">'+
+   '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-note">TU PERSONAJE 3D · HIGHFLY</div></div>'+
+   '<div class="hf-rpg-weapon-tag">⚔ '+safe(equip.label)+' <small>Arma visible en el mundo</small></div>','hf-rpg-hero-panel');
+ };
+ function character(){
+  const equip=weapon();
+  return '<div class="hf-rpg-three">'+panel(
+    title('Equipo','Ranuras conectadas al personaje')+
+    '<div class="hf-rpg-slot-list">'+slot('Arma',equip.id==='unarmed'?'shield':'weapon',equip.label,true)+
+    slot('Armadura','shield')+slot('Casco','shield')+slot('Guantes','shield')+
+    slot('Botas','shield')+slot('Accesorio','ring')+'</div>'+
+    button('CAMBIAR ARMA','data-hf-action="weapon"','is-primary')
+    ,'hf-rpg-left-panel')+
+    preview()+
+    panel(title('Estado del cazador','Datos reales del Player')+
+      resourceRow('health','VIDA',health().value,health().max)+
+      resourceRow('mana','MANÁ',mana().value,mana().max)+
+      resourceRow('energy','ENERGÍA',p()?.stamina??0,p()?.staminaMax??100)+
+      '<div class="hf-rpg-rule"></div>'+
+      '<p class="hf-rpg-info">Arma actual: <b>'+safe(equip.label)+'</b>. Los demás slots se habilitarán al integrar equipamiento real.</p>'+
+      '<div class="hf-rpg-mini-actions">'+button('VER ATRIBUTOS','data-hf-tab="atributos"','is-primary')+
+      button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+
+   '</div>';
+ }
+ function attributes(){
+  const a=attrs(),rows=a.rows.map(r=>'<div class="hf-rpg-stat-row"><span><b>'+r.id+'</b> <small>'+r.name+'</small></span>'+
+    '<span>'+r.level+'</span><span>'+r.training+'</span><span class="is-green">+'+r.equipment+'</span><strong>'+r.total+'</strong></div>').join('');
+  return '<div class="hf-rpg-two">'+panel(title('Atributos','La esencia del cazador universal')+
+   '<div class="hf-rpg-stat-head"><span>ATRIBUTO</span><span>NIVEL 80%</span><span>ENTRENAMIENTO 20%</span><span>EQUIPO</span><span>TOTAL</span></div>'+rows+
+   '<div class="hf-rpg-rule"></div><p class="hf-rpg-info">Los puntos base nuevos se distribuyen hasta un <b>80% por nivel</b> y hasta un <b>20% por entrenamiento real verificado</b>. Las bonificaciones de equipo se suman por separado.</p>'+
+   '<div class="hf-rpg-split">'+panel('<b>PROGRESIÓN</b><p>Nivel real registrado: '+a.level+'</p><small>Puntos por nivel: '+a.levelPoints+'</small>')+
+   panel('<b>ENTRENAMIENTO REAL</b><p>'+a.trainingPoints+' / '+a.trainingCap+' puntos</p><small>No se otorgan puntos simulados.</small>')+'</div>')+
+   panel(title('Estadísticas derivadas','Valores actuales, sin atributos ficticios')+
+   '<div class="hf-rpg-stats-aside">'+[['Vida Máx.',health().max],['Maná Máx.',mana().max],['Energía Máx.',p()?.staminaMax],['Vida actual',health().value],['Maná actual',mana().value],['Esquiva','ROLL'],['Arma',weapon().label]].map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>'+
+   blank('Ataque, Defensa y Crítico esperan fórmulas de RPG propias; no se inventan cifras.'),'hf-rpg-right-panel')+'</div>';
+ }
+ function bagView(){
+  const rows=allItems().filter(o=>local.category==='Todo'||o.kind===local.category);
+  const chosen=ITEM_DEFS[local.selected]&&allItems().some(x=>x.id===local.selected)?ITEM_DEFS[local.selected]:rows[0]||null;
+  const count=chosen?itemCount(chosen.id,prof(),bag):0;
+  return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
+    ['Todo','Consumibles','Materiales'].map(cat=>menuLink('bag:'+cat,cat==='Todo'?'◈':cat==='Consumibles'?'⚗':'❖',cat)).join('')+
+    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>','hf-rpg-left-panel')+
+    panel(title('Inventario','Objetos reales y consumibles utilizables')+
+    '<div class="hf-rpg-grid">'+(rows.length?rows.map(o=>tile(o.id,o.count,chosen?.id)).join(''):blank('Esta categoría todavía está vacía.'))+'</div>'+
+    '<div class="hf-rpg-bottom-note">Las pociones se guardan por separado de los materiales obtenidos en profesiones.</div>')+
+    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
+    (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.icon,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
+    '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
+    '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
+    (chosen.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):blank('Material obtenido en el mundo; no se consume directamente.')):
+    blank('Sin objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
+ }
+ function skills(){
+  const list=liveSkillRows(p()),available=list.filter(s=>s.available).length;
+  return '<div class="hf-rpg-two">'+panel(title('Habilidades','Arsenal de un solo personaje')+
+   resourceRow('mana','MANÁ',mana().value,mana().max)+resourceRow('energy','ENERGÍA',p()?.stamina??0,p()?.staminaMax??100)+
+   '<div class="hf-rpg-subtitle">CATÁLOGO INTEGRADO · '+available+' disponibles</div>'+
+   '<div class="hf-rpg-skill-list">'+list.map((s,i)=>'<div class="hf-rpg-skill '+(s.available?'':'is-locked')+'"><span class="hf-rpg-skill-glyph">'+['⚔','➤','◈','✦','✺','✚'][i]+'</span><div><b>'+safe(s.label)+'</b><small>'+safe(s.desc)+'</small></div><span class="hf-rpg-tag">'+safe(s.cost)+'</span><em>'+(s.available?'DISPONIBLE':'BLOQUEADA')+'</em></div>').join('')+'</div>')+
+   panel(title('Recursos y progresión','Conectados al combate real')+
+    '<div class="hf-rpg-explain"><span class="hf-rpg-orb is-blue">◈</span><b>MAGIA = MANÁ</b><p>Las habilidades mágicas usan el recurso azul real.</p></div>'+
+    '<div class="hf-rpg-explain"><span class="hf-rpg-orb is-gold">ϟ</span><b>FÍSICA = ENERGÍA</b><p>Golpes y movimiento comparten Energía.</p></div>'+
+    '<div class="hf-rpg-rule"></div>'+blank('Los seis botones de skills actuales siguen en el HUD. La biblioteca masiva de habilidades se integrará por lotes con revisión de licencias.')+
+    '<div class="hf-rpg-mini-actions">'+button('VER PERSONAJE','data-hf-tab="personaje"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
+ }
+ function professions(){
+  const profession=prof(),jobs=[['Recolección','herb','Recolectar plantas reales'],['Minería','ore','Extraer minerales de vetas'],['Tala','wood','Talar árboles válidos'],['Pesca','fish','Pescar en lugares habilitados'],['Fundición','ingot','Fundir minerales'],['Forja','blade_blank','Fabricar hojas de prueba']];
+  return '<div class="hf-rpg-two">'+panel(title('Oficios','Profesiones conectadas al inventario')+
+   '<div class="hf-rpg-prof-grid">'+jobs.map(([name,id,descr])=>'<article class="hf-rpg-prof-card">'+art(ITEM_DEFS[id]?.icon)+'<div><b>'+name+'</b><small>'+descr+'</small><p>En bolsa: <strong>'+numeric(profession.inventory?.[id]??0)+'</strong></p></div></article>').join('')+'</div>')+
+   panel(title('Registro de actividades','Sin progreso inventado')+
+    '<div class="hf-rpg-stat-panel"><b>Acciones completadas</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Herramientas disponibles</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
+    '<p class="hf-rpg-info">Estos materiales son los mismos que aparecen en Bolsa y que consumirá Fabricación. Las estaciones funcionales se prueban en el taller original de HIGHFLY.</p>'+
+    '<div class="hf-rpg-mini-actions">'+button('IR A FABRICACIÓN','data-hf-tab="forja"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
+ }
+ function forge(){
+  const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
+  return '<div class="hf-rpg-three">'+panel(title('Fabricación','Recetas disponibles')+
+  Object.values(RECIPES).map(r=>'<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('')+
+  '<div class="hf-rpg-space">ESTACIÓN <strong>Alquimia</strong></div>','hf-rpg-left-panel')+
+  panel(title(recipe.name,'Alquimia · Elaboración real')+'<div class="hf-rpg-craft-focus">'+art(ITEM_DEFS[recipe.item].icon,true)+
+   '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p></div></div>'+
+   '<div class="hf-rpg-subtitle">MATERIALES NECESARIOS</div>'+
+   '<div class="hf-rpg-ingredients">'+Object.entries(recipe.ingredients).map(([id,n])=>'<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+'<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('')+'</div>'+
+   '<div class="hf-rpg-rule"></div>'+button(ok.ok?'✧ FABRICAR 1':'FALTAN MATERIALES','data-hf-action="craft:'+recipe.item+'" '+(ok.ok?'':'disabled'),'is-primary')+
+   '<div class="hf-rpg-bottom-note">No se crean materiales ni se entregan recetas sin insumos.</div>')+
+  panel(title('Materiales en bolsa','Cantidades actuales')+
+   Object.keys(ITEM_DEFS).filter(k=>ITEM_DEFS[k].kind==='Materiales').map(id=>'<div class="hf-rpg-material-row">'+art(ITEM_DEFS[id].icon)+'<span>'+safe(ITEM_DEFS[id].name)+'</span><b>x'+numeric(prof().inventory[id]??0)+'</b></div>').join('')+
+   '<div class="hf-rpg-mini-actions">'+button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
+ }
+ function quests(){
+  const quests=game.quests?.active??[];
+  const objective=translateHighfly(game.objective||'Explorá el mundo');
+  return '<div class="hf-rpg-two">'+panel(title('Registro de aventuras','Misiones reales del Valle')+
+   '<div class="hf-rpg-quest-main"><small>HISTORIA PRINCIPAL</small><b>'+safe(objective)+'</b></div>'+
+   '<div class="hf-rpg-subtitle">MISIONES ACTIVAS · '+quests.length+'</div>'+
+   '<div class="hf-rpg-quest-list">'+(quests.length?quests.map(q=>{const state=game.quests.state[q.id],progress=game.quests.progress(q);return '<div class="hf-rpg-quest-row"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(state?.s==='ready'?'LISTA PARA ENTREGAR':progress[0]+' / '+progress[1])+'</span></div>';}).join(''):blank('Todavía no hay misiones secundarias activas.'))+'</div>')+
+   panel(title('Registro de misiones','Seguidor del HUD')+
+    '<p class="hf-rpg-info">El objetivo principal proviene del sistema original de misiones. Las categorías de historia, secundarias y profesiones se expandirán sin duplicar registros.</p>'+
+    '<div class="hf-rpg-mini-actions">'+button('PERSONAJE','data-hf-tab="personaje"')+'</div>','hf-rpg-right-panel')+'</div>';
+ }
+ function map(){
+  return panel(title('Mapa del Valle','Mundo original de Unsung preservado')+
+   '<div class="hf-rpg-map-placeholder"><div class="hf-rpg-map-grid">◈</div><b>Mapa y radar HIGHFLY</b><p>'+(game.hasMap?'El mapa original está desbloqueado en tu partida.':'Explorá el Valle para desbloquear el mapa original.')+'</p><small>La capa premium de mapa completo y radar se integrará en F0.14.3.</small></div>');
+ }
+ function options(){
+  return panel(title('Opciones','Ajustes vinculados al renderizador')+
+    '<div class="hf-rpg-options"><div><b>Calidad gráfica</b><small>Los ajustes usan el sistema real HIGHFLY.</small></div>'+
+    '<div class="hf-rpg-mini-actions">'+button('FLUIDO','data-hf-graphics="performance"')+button('BALANCE','data-hf-graphics="balanced"')+button('NÍTIDO','data-hf-graphics="quality"')+'</div></div>'+
+    '<div class="hf-rpg-rule"></div>'+blank('El editor HUD 3.1 se mantiene disponible desde el juego, con su guardado independiente.')+
+    '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
+ }
+ const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
+ function render(){
+  if(!local.opened)return;
+  const body=bodies[local.tab]||character;
+  root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
+   '<header class="hf-rpg-top"><div class="hf-rpg-logo">✧ HIGHFLY <small>LA LLAMA SIN NOMBRE</small></div>'+
+   '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
+   '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
+   '<div class="hf-rpg-content">'+body()+'</div>'+
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14 · Vista interactiva de la app · Android horizontal')+'</span></footer></div>';
+ }
+ function open(tab='personaje'){
+  if(local.opened){local.tab=tab;render();return true;}
+  if(game.state!=='playing'||game.people?.talk||game.cine)return false;
+  game.openMenu('hero');
+  if(game.state!=='menu')return false;
+  local.opened=true;local.tab=tab;root.hidden=false;
+  document.body.classList.add('hf-rpg-is-open');
+  render();return true;
+ }
+ function close(){
+  if(!local.opened)return;
+  local.opened=false;root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
+  local.toast='';
+  if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
+ }
+ const api={open,close,toggle:()=>local.opened?close():open(),render,get opened(){return local.opened},get state(){return bag}};
+ root.addEventListener('click',e=>{
+  const b=e.target?.closest?.('button');if(!b)return;
+  const tab=b.dataset.hfTab;
+  if(tab){if(tab.startsWith('bag:')){local.tab='bolsa';local.category=tab.slice(4);}
+   else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}
+  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;render();return;}
+  if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
+  if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
+  const action=b.dataset.hfAction??'';
+  if(action==='close'){close();return;}
+  if(action==='weapon'){
+   if(!p())return;
+   p()._hfGearCycle=((p()._hfGearCycle??0)+1)%WEAPON_MODES.length;
+   game.hero?.equip?.(p()._hfGearCycle);
+   message('Arma visible actualizada: '+weapon().label);return;
+  }
+  if(action.startsWith('use:')){
+   const result=spendPotion(bag,p(),action.slice(4));if(result.ok)save();
+   message(result.ok?'Recuperaste '+numeric(result.restored)+' de '+result.resource:result.reason);return;
+  }
+  if(action.startsWith('craft:')){
+   const result=craftPotion(action.slice(6),prof(),bag);if(result.ok){save();p()?._hfProfessionSave?.();}
+   message(result.ok?'¡Fabricaste '+ITEM_DEFS[result.id].name+'!':result.reason);return;
+  }
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.repeat||e.target?.matches?.('input,textarea,select,[contenteditable]'))return;
+  if(local.opened&&e.code==='Escape'){e.preventDefault();close();return;}
+  if(e.code==='KeyI'||e.code==='KeyB'){
+   if(game.state==='playing'||local.opened){e.preventDefault();if(local.opened)close();else open(e.code==='KeyB'?'bolsa':'personaje');}
+  }
+ });
+ // Android button remains inside the existing editable and opacity-controlled HUD.
+ const touchButton=game.input?.highflyTouch?.root?.querySelector?.('[data-a="rpg-menu"]');
+ if(touchButton)touchButton.setAttribute('aria-label','Abrir menú RPG HIGHFLY');
+ else{
+  const launcher=document.createElement('button');launcher.id='hf-rpg-launch';launcher.textContent='✧ MENÚ';
+  launcher.addEventListener('click',()=>api.toggle());document.body.appendChild(launcher);
+ }
+ return api;
+}
