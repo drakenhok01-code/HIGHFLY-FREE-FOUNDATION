@@ -167,12 +167,49 @@ export function attachHighflyTouch(input){
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
  ].join('');
  const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab,#ui #hud .vitals{display:none!important}';document.head.append(style);
+ style.textContent+=`
+/* F0.13.1 Android design: saved per-control inline opacity overrides defaults */
+#hf-touch button[data-a]{opacity:.70;border-radius:50%}
+#hf-touch .actions,#hf-touch .hud-edit{width:44px;height:44px;border-radius:50%;font-size:12px}
+#hf-touch .actions{font-size:24px}
+#hf-touch .full{border-radius:50%}
+#hf-touch .use{display:none!important}
+#hf-touch button[data-a^="skill"]{border-radius:50%;opacity:.7}
+#hf-touch button[data-locked="1"]{opacity:.7;filter:grayscale(.35);color:#b9afc7}
+#hf-touch .settings{right:190px;top:8px;width:40px;height:40px;font-size:17px;border-radius:50%}
+#hf-touch .hf-hud-editor{left:50%;top:50%;right:auto;transform:translate(-50%,-50%);width:min(282px,70vw);max-height:75vh;overflow-y:auto;z-index:60;border-radius:14px}
+#hf-touch .hf-panel-handle{display:flex;justify-content:space-between;align-items:center;cursor:grab;touch-action:none;border-radius:9px;padding:3px 8px;background:#182642;min-height:32px;margin-bottom:5px}
+#hf-touch .hf-panel-handle button{position:static!important;width:30px;height:30px;border-radius:50%!important}
+#hf-touch .hf-hud-editor[data-minimized="1"]{width:174px;max-height:48px;overflow:hidden;padding:4px}
+#hf-touch .hf-hud-editor[data-minimized="1"] .hf-editor-body{display:none!important}
+#hf-touch .hf-fps{min-width:100px;min-height:30px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;cursor:grab;touch-action:none;opacity:.7;padding:5px 8px;border-radius:15px}
+#hf-touch .hf-fps[hidden]{display:none!important}
+#hf-touch .hf-settings{position:absolute;right:10px;top:58px;width:250px;z-index:65;background:#141b36f6;border:1px solid #8f82c1;border-radius:12px;padding:10px;pointer-events:auto;box-sizing:border-box}
+#hf-touch .hf-settings[hidden]{display:none!important}
+#hf-touch .hf-setting-buttons{display:flex;gap:6px;margin:9px 0 5px}
+#hf-touch .hf-settings button{position:static;border-radius:50%;width:71px;height:61px;opacity:.82;font:10px system-ui}
+#hf-touch .action-panel{right:10px;top:56px;width:193px;z-index:52;grid-template-columns:repeat(3,minmax(0,1fr));padding:7px;border-radius:14px}
+#hf-touch .action-panel button{border-radius:50%;width:54px;height:54px;position:static;font-size:9px;opacity:.7}
+#hf-touch .action-panel button span{display:block;font-size:19px}
+#hf-touch .action-panel[hidden]{display:none!important}
+#hf-touch .roll,#hf-touch .dash{z-index:3}
+#hf-touch .hf-talk-next{position:absolute;right:12px;top:23%;width:65px;height:65px;border-radius:50%;z-index:80}
+#hf-touch .hf-talk-next[hidden]{display:none!important}
+#hf-touch[data-talking="1"] .cam,#hf-touch[data-talking="1"] .stick,#hf-touch[data-talking="1"] button[data-a]:not(.hf-talk-next){pointer-events:none!important;opacity:0!important}
+#ui:has(#talk.on){z-index:9050!important;pointer-events:none!important}
+#ui #talk.on{top:7%!important;bottom:auto!important;width:min(560px,73vw)!important;max-height:35vh;overflow:auto;background:#101729ee;padding:7px 13px!important;border:1px solid #ccaf75aa;border-radius:13px;box-shadow:0 9px 24px #000a}
+#ui #talk p{font-size:clamp(11px,1.7vw,15px)!important;line-height:1.25!important;min-height:0!important;margin:6px 0!important}
+#ui #talk .who b{font-size:clamp(12px,2vw,17px)!important}
+#ui #talk .who span{font-size:clamp(9px,1.4vw,12px)!important}
+#ui #hud .hints,#ui #hud .grab,#ui #hud .prompt{display:none!important}
+#hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
+`;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
  root.innerHTML=hfHud()+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
- '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-expanded="false">ACCIONES</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button>'+
+ '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
  '<button class="lock" data-a="lock" aria-label="Fijar enemigo">⊕<small>FIJAR</small></button>'+
  '<button class="skill1" data-a="skill1" aria-label="Resonancia" data-locked="1">🔒</button>'+
  '<button class="skill2" data-a="skill2" aria-label="Ataque pesado">S2</button>'+
@@ -182,23 +219,24 @@ export function attachHighflyTouch(input){
  '<button class="skill6" data-a="skill6" aria-label="Habilidad seis" data-locked="1">🔒</button>'+
  '<div class="hf-fps" hidden data-hf-no-translate>FPS · resolución</div>'+
  '<div class="hf-attack-cue" hidden></div>'+
- '<div class="hf-hud-editor" hidden><b>EDITOR HUD 3.0</b><div>Seleccionado: <b data-hud-selected>ATK</b></div>'+
+ '<div class="hf-hud-editor" hidden><div class="hf-panel-handle" data-hud-panel-handle><b>HUD 3.1 ↔</b><button type="button" data-hud-op="collapse">−</button></div><div class="hf-editor-body"><div>Seleccionado: <b data-hud-selected>ATK</b></div>'+
  '<label>Tamaño (%) <input type="range" min="60" max="170" data-hud-size value="100"/>'+
  '<input type="number" min="60" max="170" data-hud-size-number value="100"/></label>'+
- '<label>Opacidad (%) <input type="range" min="20" max="100" data-hud-opacity value="100"/>'+
- '<input type="number" min="20" max="100" data-hud-opacity-number value="100"/></label>'+
+ '<label>Opacidad (%) <input type="range" min="20" max="100" data-hud-opacity value="70"/>'+
+ '<input type="number" min="20" max="100" data-hud-opacity-number value="70"/></label>'+
  '<label>Posición X (%) <input type="number" min="0" max="100" data-hud-x value="0"/></label>'+
  '<label>Posición Y (%) <input type="number" min="0" max="100" data-hud-y value="0"/></label>'+
  '<div class="controls"><button data-hud-op="smaller">−</button><button data-hud-op="larger">+</button>'+
- '<button data-hud-op="reset">RESET</button><button data-hud-op="save">GUARDAR</button></div></div>'+
+ '<button data-hud-op="reset">RESET</button><button data-hud-op="save">GUARDAR</button></div></div></div>'+
  '<div class="ability-aim" data-active="0"><span class="aim-arrow">➤</span></div>'+
- '<div class="action-panel" hidden>'+
- '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
- '<button data-a="sit">SENTAR</button><button data-a="lie">ACOSTAR</button><button data-a="chop">TALAR</button><button data-a="mine">MINAR</button>'+
- '<button data-a="fishing">PESCAR</button><button data-a="plant">SEMBRAR</button>'+
- '<button data-a="water">REGAR</button><button data-a="harvest">COSECHAR</button>'+
- '<button data-a="smelt">FUNDIR</button><button data-a="forge">FORJAR</button>'+
- '<button data-a="use">UTILIZAR</button></div>';
+ '<div class="action-panel" hidden><button data-a="sit" aria-label="Sentarse"><span>🪑</span>SENTAR</button>'+
+ '<button data-a="lie" aria-label="Acostarse"><span>🛌</span>ACOSTAR</button>'+
+ '<button data-a="cheer" aria-label="Festejar"><span>🙌</span>FESTEJAR</button></div>'+
+ '<div class="hf-settings" hidden><b>CALIDAD GRÁFICA</b><div class="hf-setting-buttons">'+
+ '<button data-graphics="performance">FLUIDO</button><button data-graphics="balanced">BALANCE</button>'+
+ '<button data-graphics="quality">NÍTIDO</button></div>'+
+ '<div data-hf-settings-metrics>Resolución y FPS</div></div>'+
+ '<button class="hf-talk-next" data-a="dialogue-next" hidden>SEGUIR</button>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
  const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},
