@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
-import {professionState,findProfessionTarget,prepareProfession,commitProfession,PROFESSION_RULES} from './professions.mjs';
+import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -312,6 +312,7 @@ export function installHighflyUniversalMotion(p){
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
   this._hfFlowClock+=step;
+  advanceCrops(this.world,step); // life-cycle for tagged lab farm plots
   this._hfCameraPitch=Number.isFinite(this._hfCameraPitch)?this._hfCameraPitch:0;
   if(input.highflyAbilityAim&&Object.prototype.hasOwnProperty.call(input.highflyAbilityAim,'attack')){
     this._hfFlowQueuedDirection=input.highflyAbilityAim.attack;
