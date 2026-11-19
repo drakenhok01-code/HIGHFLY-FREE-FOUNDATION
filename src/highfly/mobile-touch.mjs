@@ -300,7 +300,7 @@ export function applyHighflyTouch(input){
  const cd=globalThis.__game?.player?._hfDashCd??0;
  if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=cd>.05?'.65':'1';}
  for(const bar of vitalSnapshot(globalThis.__game?.player)){
-  const el=t.resources[bar.id];if(!el)continue;
+  const el=t.resources?.[bar.id];if(!el)continue;
   const fill=el.querySelector('.hf-fill'),num=el.querySelector('.hf-number');
   if(fill)fill.style.transform='scaleX('+(bar.value/bar.max)+')';
   if(num)num.textContent=Math.ceil(bar.value)+'/'+Math.ceil(bar.max);
