@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {attackPhase,targetForHand,directionalArms,planDirectionalStroke} from '../src/highfly/directional-rig.mjs';
 import {GRAPHICS,installHighflyGraphics} from '../src/highfly/visual-profile.mjs';
 import {oxygenMax,oxygenRate,oxygenRemainingSeconds} from '../src/highfly/oxygen-progression.mjs';
-import {terrainGradient,allowTerrainTraverse,wallRunEligible} from '../src/highfly/wall-physics.mjs';
+import {terrainGradient,allowTerrainTraverse,wallRunEligible,terrainWallContact,allowCliffCapsule} from '../src/highfly/wall-physics.mjs';
 test('True stroke starts on chosen side and ENDS on the opposite, not a reused right-side animation',()=>{
  const right=planDirectionalStroke('onehand','right',0);
  assert.ok(right.at(0).right.x>.45&&right.at(.46).right.x<-.45);
@@ -57,4 +57,15 @@ test('Wall run only intentional sprint+forward airborne alongside solid wall',()
  assert.equal(wallRunEligible({grounded:true,stamina:20,held,move,contact,speed:3}),false);
  assert.equal(wallRunEligible({grounded:false,stamina:5,held,move,contact,speed:3}),false);
  assert.equal(wallRunEligible({grounded:false,stamina:20,held,move,contact:null,speed:3}),false);
+});
+
+test('F0.13.1: a physical cliff face is detectable by the same grip/wallrun camera proxy',()=>{
+ const cliff={groundHeight:(x,z)=>Math.max(0,z)*1.8},flat={groundHeight:()=>0};
+ const p={x:0,y:0,z:0},dir={x:0,z:1};
+ const hit=terrainWallContact(cliff,p,dir,1.1,.72);
+ assert.ok(hit,'wallrun and grip must detect a high-gradient rock face even without a BVH hit');
+ assert.ok(hit.distance>=.1&&hit.distance<=1.1);
+ assert.equal(terrainWallContact(flat,p,dir,1.1,.72),null);
+ assert.equal(allowCliffCapsule(cliff,p,{x:0,y:.1,z:.6}).ok,false);
+ assert.equal(allowCliffCapsule(flat,p,{x:0,y:.1,z:.6}).ok,true);
 });

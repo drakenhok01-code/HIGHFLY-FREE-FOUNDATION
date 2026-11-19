@@ -71,18 +71,17 @@ try{
  await mobile.waitForFunction('window.__hfTouchTest?.dash !== null',null,{timeout:6000});
  const drag=await mobile.evaluate(()=>window.__hfTouchTest.dash);
  assert.ok(drag.direction?.x>.9 && Math.abs(drag.move.x)<.001,'Independent rightward DASH circle aim '+JSON.stringify(drag));
- // An ACTUAL Android-like DOM pointermove must emit the desired cut while
- // still held down; F0.12 only emitted after pointerup, often too late.
+ // F0.13.1: classic native per-weapon attack. Swiping no longer adds
+ // a directional arm-IK command and must never trap ATK in permanent hold.
  const slash=await mobile.locator('#hf-touch .atk').boundingBox();
  await mobile.mouse.move(slash.x+slash.width/2,slash.y+slash.height/2);
  await mobile.mouse.down();
- await mobile.mouse.move(slash.x+slash.width/2-40,slash.y+slash.height/2,{steps:7});
- await mobile.waitForFunction('window.__hfTouchTest?.attack?.direction?.x < -0.9',null,{timeout:6000});
- const swipe=await mobile.evaluate(()=>window.__hfTouchTest.attack);
- assert.equal(swipe.direction.x,-1,'left slash must be selected before release');
- assert.ok(!swipe.held,'directional slash must not turn into permanent ATK hold');
+ await mobile.mouse.move(slash.x+slash.width/2-31,slash.y+slash.height/2,{steps:5});
+ await mobile.waitForFunction('window.__hfTouchTest?.attack!==null',null,{timeout:6000});
+ const tapped=await mobile.evaluate(()=>window.__hfTouchTest.attack);
+ assert.equal(tapped.direction,null,'classic attack cannot set old directional IK');
  await mobile.mouse.up();
- console.log('PASS HIGHFLY DIRECTIONAL ATTACK live pointermove',JSON.stringify(swipe));
+ console.log('PASS HIGHFLY CLASSIC ATK no directional swipe',JSON.stringify(tapped));
   // F0.12.2 HUD editing: drag ATK without launching a strike, save, restore.
  const editor=mobile.locator('#hf-touch .hud-edit');
  await editor.click({force:true});
