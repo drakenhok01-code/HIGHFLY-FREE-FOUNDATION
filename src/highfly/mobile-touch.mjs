@@ -312,6 +312,8 @@ export function attachHighflyTouch(input){
 export function applyHighflyTouch(input){
  const t=input.highflyTouch;if(!t)return;
  t.root.hidden=!input.enabled;
+ if(!t.root.hidden&&t.hudEditor?.restore&&!t.hudEditor.restored)
+  t.hudEditor.restored=!!t.hudEditor.restore();
  if(!input.enabled){
   t.pressed.clear();t.held.clear();t.sprintOn=false;t.x=t.y=0;t.active=false;
   return;
