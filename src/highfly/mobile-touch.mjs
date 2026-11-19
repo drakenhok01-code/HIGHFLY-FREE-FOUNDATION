@@ -1,6 +1,7 @@
 /** HIGHFLY F0.1: Android-native analog 360° with original Unsung Input/Player. */
 export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
+import {findProfessionTarget,professionActionFor} from './professions.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
@@ -33,8 +34,15 @@ export function resolveHighflyContext(p){
   if(d>.06&&d<.96)return {action:'climb',label:'TREPAR'};
   return {action:'dive',label:p._hfDive?'SUPERFICIE':'BUCEAR'};
  }
- // Harvest targets must have explicit resource tags, never generic rock collisions.
- const actions={tree:['chop','TALAR'],ore:['mine','PICAR']}; // loot always uses USAR
+ // Resource nodes must be explicitly tagged. Generic rocks are never ore.
+ const professionLabels={chop:'TALAR',mine:'PICAR',fishing:'PESCAR',
+  plant:'SEMBRAR',water:'REGAR',harvest:'COSECHAR',smelt:'FUNDIR',forge:'FORJAR'};
+ const target=findProfessionTarget(w,p.pos,p.yaw);
+ if(target){
+  const kind=professionActionFor(target);
+  if(kind)return {action:kind,label:professionLabels[kind]};
+ }
+ const actions={tree:['chop','TALAR'],ore:['mine','PICAR']}; // backwards-compatible tags; loot uses USAR
  const candidates=Array.isArray(w.highflyInteractables)?w.highflyInteractables:[];
  let best=null,dist=4;
  for(const n of candidates){
@@ -135,7 +143,8 @@ export function attachHighflyTouch(input){
  '<div class="action-panel" hidden>'+
  '<button data-a="climb">TREPAR</button><button data-a="equip">ARMA</button><button data-a="pickup">RECOGER</button><button data-a="cheer">GESTO</button>'+
  '<button data-a="sit">SENTAR</button><button data-a="lie">ACOSTAR</button><button data-a="chop">TALAR</button><button data-a="mine">MINAR</button>'+
- '<button data-a="fishing">PESCAR</button><button data-a="use">UTILIZAR</button></div>';
+ '<button data-a="fishing">PESCAR</button><button data-a="plant">SEMBRAR</button><button data-a="water">REGAR</button><button data-a="harvest">COSECHAR</button>'+
+ '<button data-a="smelt">FUNDIR</button><button data-a="forge">FORJAR</button><button data-a="use">UTILIZAR</button></div>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
  const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{}};

@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
+import {professionState,findProfessionTarget,prepareProfession,commitProfession,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -26,7 +27,12 @@ export const ACTIONS=Object.freeze({
  use:{clip:'Use_Item',duration:.8,kind:'interaction'},
  chop:{clip:'1H_Melee_Attack_Chop',duration:.8,kind:'work'},
  mine:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
- fishing:{clip:'1H_Ranged_Shooting',duration:1.6,kind:'preview'},
+ fishing:{clip:'Use_Item',duration:1.6,kind:'work'}, // standing cast preview, until a real rod clip is integrated
+ plant:{clip:'PickUp',duration:.85,kind:'work'},
+ water:{clip:'Use_Item',duration:.8,kind:'work'},
+ harvest:{clip:'PickUp',duration:.9,kind:'work'},
+ smelt:{clip:'Use_Item',duration:1.5,kind:'work'},
+ forge:{clip:'1H_Melee_Attack_Chop',duration:1.7,kind:'work'}, // anvil swing PLACEHOLDER, not real hammer IK
 });
 const isMove=p=>p.state==='move';
 function otherInput(input,ignored){
@@ -158,6 +164,9 @@ function closestTree(p){
  return best<0?null:{kind:'tree',index:best,distance:Math.sqrt(bd)};
 }
 export function workTarget(p,kind){
+ // A tagged resource is the ONLY authority for granting items.
+ const tagged=findProfessionTarget(p.world,p.pos,p.yaw,kind);
+ if(tagged)return {kind:tagged.kind,id:tagged.id,distance:Math.hypot(tagged.x-p.pos.x,tagged.z-p.pos.z)};
  if(kind==='chop')return closestTree(p);
  if(kind==='mine'&&typeof p.world?.raycast==='function'){
   const f=vec(p.yaw);
@@ -169,9 +178,18 @@ export function workTarget(p,kind){
 }
 function startAction(p,name){
  const cfg=ACTIONS[name];if(!cfg)return;
- p._hfAction={name,time:0,done:false,target:cfg.kind==='work'?workTarget(p,name):null};
+ const target=cfg.kind==='work'?workTarget(p,name):null;
+ let job=null;
+ if(PROFESSION_RULES[name]&&target?.id){
+   const prep=prepareProfession(p._hfProfession,p.world,name,p.pos,p.yaw);
+   if(!prep.ok){p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
+   job=prep.job;
+ }else if(PROFESSION_RULES[name]&&!['chop','mine','fishing'].includes(name)){
+   p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
+ }
+ p._hfAction={name,time:0,done:false,target,job};
  p.setState('hf_action');p.vel.x=p.vel.z=0;p.speed=0;
- p.emit('highflyActionStart',{name,target:p._hfAction.target?.kind??'none'});
+ p.emit('highflyActionStart',{name,target:p._hfAction.target?.kind??'none',simulated:!job});
 }
 
 /** F0.12: independent physical steering while an Unsung combo is active.
@@ -227,6 +245,7 @@ export function installHighflyUniversalMotion(p){
  const nativeSwim=p._swim.bind(p);
  const nativeStart=p.startAttack.bind(p);
  p._hfFlowCombat=true;p._hfFlowClock=0;p._hfFlowHistory=[];
+ p._hfProfession=professionState(); // no tools or loot granted by default
  p._hfMana=100;p._hfManaMax=100;p._hfOxygen=100;p._hfOxygenMax=100;
  p._hfDrownTimer=0;p._hfFlowVelocity=null;
  // True direction/timing bonus belongs to the real Unsung damage descriptor.
@@ -323,7 +342,13 @@ export function installHighflyUniversalMotion(p){
    }else{
     this.stateTime+=step;action.time+=step;this.speed=0;
     if(action.time>=ACTIONS[action.name].duration&&!ACTIONS[action.name].idle){
-     this._hfAction=null;this.setState('move');this.emit('highflyActionEnd',{name:action.name});
+     if(action.job){
+       const done=commitProfession(this._hfProfession,this.world,action.job);
+       this.emit(done.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{
+         name:action.name,...done});
+     }
+     this._hfAction=null;this.setState('move');
+     this.emit('highflyActionEnd',{name:action.name,completed:!!action.job});
     }
     // Sit/lie idle cancels on the joystick deadzone or other movement/attack action.
     return;
