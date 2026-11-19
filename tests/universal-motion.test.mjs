@@ -353,7 +353,8 @@ test('F0.12 native attack locomotion has real speed under repeated combos, not 4
  for(let i=0;i<120;i++)p.update(1/60,input([],['attack'],0,1),0);
  assert.ok(p.pos.z>7.0,'two seconds of moving+ATK must cover meaningful distance');
  assert.ok(p._hfAttackTravelSpeed>4,'attack controller follows real run movement');
- assert.ok(p.stamina>90,'normal attack does not drain ENERGY simply from its slashes');
+ assert.ok(p.stamina<99,'F0.12.2 visible ENERGY expense for real attacks');
+ assert.ok(p.stamina>70,'2 seconds of flowing attack should not instantly deplete ENERGY');
 });
 test('F0.12 directional attack uses real damage descriptor, secret only on exact order',()=>{
  const p=player();
@@ -402,4 +403,42 @@ test('F0.12 underwater pitch makes directional depth changes and never penetrate
  for(let i=0;i<40;i++)p.update(1/60,input([],[],0,1),0);
  assert.ok(p.pos.y>low+.3,'forward stick plus up camera ascends');
  assert.ok(p.pos.y>=.7-1e-5,'seabed clamp');
+});
+
+test('F0.12.2 attacking NEVER turns a 60-degree wall into a free mountain climb',()=>{
+ const slope=Math.tan(Math.PI/3);
+ const w={...ground,
+  groundHeight:(x,z)=>Math.max(0,z)*slope,
+  floorBelow:(x,y,z)=>Math.max(0,z)*slope,
+  resolveCapsule(p){const h=Math.max(0,p.z)*slope;
+   if(p.y<h){p.y=h;return true;}return Math.abs(p.y-h)<.0001}
+ };
+ const p=player(w);
+ for(let k=0;k<180;k++)p.update(1/60,input([],['attack'],0,1),0);
+ assert.ok(p.pos.y<.20,'attacking at steep slope must not elevate player');
+ assert.ok(p.pos.z<.25,'no stair stepping into a high rock wall');
+ assert.ok(p.events.some(e=>e.type==='highflySteepAttackBlocked'));
+});
+test('F0.12.2 normal attacks use ENERGY in small per-hit amounts, not zero or drain-all',()=>{
+ const p=player();
+ const start=p.stamina;
+ p.update(1/60,input(['attack']),0);
+ assert.equal(p.state,'attack');assert.equal(start-p.stamina,3,'first normal attack costs 3 energy');
+ p.update(1/60,input([],['attack']),0);
+ assert.ok(p.stamina<start,'holding continues to use small costs');
+});
+test('F0.12.2 oxygen lasts about 50 seconds submerged and regenerates over 6.25 seconds',()=>{
+ const p=player({...ground,waterLevel:()=>6,floorBelow:()=>0});
+ p.pos.y=4;p._hfDive=true;
+ // Force submerged swim at a fixed depth; avoid synthetic floor buoyancy drift.
+ let seconds=0;
+ while(seconds<10){p._hfDive=true;p._hfDiveEntering=false;
+   p.pos.y=3.5;p.setState('swim');p.update(1/60,input(),0);
+   seconds+=1/60;
+ }
+ assert.ok(p._hfOxygen>75,'10 s submerged must leave most O2 intact: '+p._hfOxygen);
+ p._hfDive=false;
+ for(let i=0;i<420;i++){p._hfDive=false;p.pos.y=5;
+   p.setState('swim');p.update(1/60,input(),0);}
+ assert.ok(p._hfOxygen>99,'surface recovery should fill oxygen in seconds');
 });

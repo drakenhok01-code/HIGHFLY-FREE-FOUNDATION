@@ -32,7 +32,7 @@ export const WEAPON_ANIMATIONS=Object.freeze({
 export const DIRECTIONAL_CLIP_INDEX=Object.freeze({
  onehand:{left:0,right:2,up:2,down:1},
  twohand:{left:0,right:2,up:0,down:1},
- dual:{left:0,right:0,up:2,down:1},
+ dual:{left:1,right:0,up:2,down:1},
  unarmed:{left:0,right:1,up:2,down:2},
  spear:{left:2,right:2,up:0,down:1},
  staff:{left:2,right:0,up:1,down:1}

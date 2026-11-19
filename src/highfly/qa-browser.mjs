@@ -50,7 +50,7 @@ try{
   const hud=document.querySelector('#hf-touch .hf-vitals'),rectHud=rect(hud);
   const labels=[...document.querySelectorAll('#hf-touch .hf-vital b')].map(e=>e.textContent);
   return {width:innerWidth,height:innerHeight,
-   premiumHud:{visible:!!rectHud&&rectHud.width>220&&rectHud.x>=0&&rectHud.right<innerWidth&&
+   premiumHud:{visible:!!rectHud&&rectHud.width>315&&rectHud.x>=0&&rectHud.right<innerWidth&&
        rectHud.top>=0,labels,rect:{x:rectHud?.x,y:rectHud?.y,width:rectHud?.width,height:rectHud?.height}},
    visible:!!c&&
    getComputedStyle(context).display!=='none'&&
@@ -71,6 +71,29 @@ try{
  await mobile.waitForFunction('window.__hfTouchTest?.dash !== null',null,{timeout:6000});
  const drag=await mobile.evaluate(()=>window.__hfTouchTest.dash);
  assert.ok(drag.direction?.x>.9 && Math.abs(drag.move.x)<.001,'Independent rightward DASH circle aim '+JSON.stringify(drag));
+ // F0.12.2 HUD editing: drag ATK without launching a strike, save, restore.
+ const editor=mobile.locator('#hf-touch .hud-edit');
+ await editor.click({force:true});
+ await mobile.waitForFunction('document.querySelector("#hf-touch")?.dataset.editing==="1"');
+ const original=await mobile.locator('#hf-touch .atk').boundingBox();
+ await mobile.mouse.move(original.x+original.width/2,original.y+original.height/2);
+ await mobile.mouse.down();
+ await mobile.mouse.move(original.x+original.width/2-24,original.y+original.height/2-31,{steps:5});
+ await mobile.mouse.up();
+ const shifted=await mobile.locator('#hf-touch .atk').boundingBox();
+ assert.ok(original.x-shifted.x>12&&original.y-shifted.y>12,
+   'HUD editor must drag ATK without firing native combat');
+ const saved=await mobile.evaluate(()=>!!localStorage.getItem('highfly-hud-layout-f0122'));
+ assert.ok(saved,'HUD layout must persist to browser storage');
+ await mobile.locator('[data-hud-op="save"]').click({force:true});
+ await mobile.reload({waitUntil:'domcontentloaded'});
+ await mobile.waitForFunction('window.__hfTouchTest?.ready && !document.querySelector("#hf-touch")?.hidden');
+ const restored=await mobile.locator('#hf-touch .atk').boundingBox();
+ assert.ok(Math.abs(restored.x-shifted.x)<5&&Math.abs(restored.y-shifted.y)<5,
+   'HUD custom position must restore after page reload');
+ await mobile.locator('#hf-touch .hud-edit').click({force:true});
+ await mobile.locator('[data-hud-op="reset"]').click({force:true});
+ await mobile.locator('[data-hud-op="save"]').click({force:true});
  await mobile.screenshot({path:'qa-touch-mobile.png'});
  fs.writeFileSync('qa-touch-report.json',JSON.stringify({buttons,drag},null,2));
  console.log('PASS F0.11 S23 LANDSCAPE HUD / CONTEXT CIRCLE / RADIAL AIM',JSON.stringify({buttons,drag}));

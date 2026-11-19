@@ -39,8 +39,8 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
   stick.dispatch('pointerup',1,124,64);applyHighflyTouch(input);
   assert.deepEqual(input.move,{x:0,y:0},'stick resets when finger lifts');
   btns[0].dispatch('pointerdown',4,10,10);
-  for(let i=0;i<6;i++){input.pressed.clear();input.held.clear();applyHighflyTouch(input);}
-  assert.ok(input.pressed.has('attack'),'ATK begins a held attack after 6 input frames');
+  for(let i=0;i<9;i++){input.pressed.clear();input.held.clear();applyHighflyTouch(input);}
+  assert.ok(input.pressed.has('attack'),'ATK begins a held attack after 9 input frames');
   assert.ok(input.held.has('attack'),'ATK is held to continue the native combo');
   input.pressed.clear();input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.pressed.has('attack'),'one initial press per finger');
@@ -128,11 +128,14 @@ test('F0.12 directional ATK swipe uses its own touch pointer, independent of mov
   stick.dispatch('pointerdown',1,64,64);stick.dispatch('pointermove',1,124,64);
   atk.dispatch('pointerdown',2,20,20);
   atk.dispatch('pointermove',2,20,-26);
+  input.pressed.clear();applyHighflyTouch(input);
+  assert.ok(input.pressed.has('attack'),'F0.12.2 swipe must be fired on POINTERMOVE before finger release');
+  assert.deepEqual(input.highflyAbilityAim.attack,{x:0,y:1},'first-frame slash receives direction');
   atk.dispatch('pointerup',2,20,-26);
   input.pressed.clear();applyHighflyTouch(input);
   assert.ok(input.move.x>.9,'left stick remains free for locomotion');
-  assert.ok(input.pressed.has('attack'));
-  assert.deepEqual(input.highflyAbilityAim.attack,{x:0,y:1},'upward swipe selects rising slash');
+  assert.ok(!input.pressed.has('attack'),'pointerup never produces a duplicate attack after a swipe');
+  assert.equal(input.highflyAbilityAim.attack,undefined,'no repeated direction after one swipe');
   assert.equal(input.held.has('attack'),false,'short swipe is not interpreted as a spam hold');
  }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });

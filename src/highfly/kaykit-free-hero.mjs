@@ -346,6 +346,23 @@ export class KayKitFreeHero {
   bone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(basis,angle));
  }
  _poseProcedural(dt,p){
+  // Small procedural steering cue makes direction readable when four gestures
+  // must share a 3-clip KayKit weapon catalog. No new unlicensed VFX/models.
+  if(p.state==='attack'&&p._hfFlowDirection&&p.attack){
+   const phase=THREE.MathUtils.clamp((p.stateTime??0)/Math.max(.1,p.attack.t),0,1);
+   const blend=Math.sin(Math.PI*phase);
+   const dir=p._hfFlowDirection;
+   if(dir==='left'||dir==='right'){
+    this._addPose('chest','y',(dir==='left'?-1:1)*.12*blend);
+    this._addPose('upperarm.r','z',(dir==='left'?.14:-.14)*blend);
+   }else if(dir==='up'){
+    this._addPose('upperarm.r','x',-.18*blend);
+    this._addPose('lowerarm.r','x',-.09*blend);
+   }else if(dir==='down'){
+    this._addPose('upperarm.r','x',.16*blend);
+    this._addPose('lowerarm.r','x',.08*blend);
+   }
+  }
   this._hfPhase+=dt*(p.state==='swim'?Math.max(2.2,3.5+(p.speed??0)*1.1):1.0);
   if(p.state==='roll'){
    const k=Math.min(1,Math.max(0,(p.stateTime??0)/.62));
