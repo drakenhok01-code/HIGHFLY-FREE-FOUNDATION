@@ -2,13 +2,13 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen, f013-unified-highfly-upgrade, f0131-android-visual-foundation]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen, f013-unified-highfly-upgrade, f0131-android-visual-foundation, f014-premium-rpg-ui-lab]
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: highfly-f0131-android-qa
+  group: highfly-f014-premium-qa
   cancel-in-progress: false
 jobs:
   build:
@@ -22,6 +22,7 @@ jobs:
         run: |
           npm run qa:static
           npm run qa:gameplay
+          node --test tests/rpg-core.test.mjs
       - name: Compilar Unsung original congelado
         run: npm run build
       - name: Simular movimiento real sobre el Player original
@@ -58,7 +59,7 @@ jobs:
         with:
           path: dist
   deploy:
-    if: github.ref == 'refs/heads/f0131-android-visual-foundation'
+    if: github.ref == 'refs/heads/f014-premium-rpg-ui-lab'
     environment:
       name: highfly-free-preview
     runs-on: ubuntu-latest
