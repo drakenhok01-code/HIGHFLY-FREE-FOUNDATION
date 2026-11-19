@@ -39,8 +39,8 @@ test('Pointer multitouch: stick steering + independent camera + isolated ATK',()
   stick.dispatch('pointerup',1,124,64);applyHighflyTouch(input);
   assert.deepEqual(input.move,{x:0,y:0},'stick resets when finger lifts');
   btns[0].dispatch('pointerdown',4,10,10);
-  for(let i=0;i<9;i++){input.pressed.clear();input.held.clear();applyHighflyTouch(input);}
-  assert.ok(input.pressed.has('attack'),'ATK begins a held attack after 9 input frames');
+  input.pressed.clear();input.held.clear();applyHighflyTouch(input);
+  assert.ok(input.pressed.has('attack'),'Classic ATK begins on pointerdown without nine-frame delay');
   assert.ok(input.held.has('attack'),'ATK is held to continue the native combo');
   input.pressed.clear();input.held.clear();applyHighflyTouch(input);
   assert.ok(!input.pressed.has('attack'),'one initial press per finger');
@@ -114,7 +114,7 @@ test('Android action drawer opens and climb is held; equip/mine/sit are isolated
  }finally{for(const [k,v] of Object.entries(prior))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
 
-test('F0.12 directional ATK swipe uses its own touch pointer, independent of movement joystick',()=>{
+test('F0.13.1 ATK swipe never selects directional IK; classic combo and left joystick remain independent',()=>{
  const saved={document:globalThis.document,matchMedia:globalThis.matchMedia,addEventListener:globalThis.addEventListener,location:globalThis.location};
  try{
   const root=new El('root'),stick=new El('stick'),knob=new El('knob'),cam=new El('cam'),
@@ -129,13 +129,13 @@ test('F0.12 directional ATK swipe uses its own touch pointer, independent of mov
   atk.dispatch('pointerdown',2,20,20);
   atk.dispatch('pointermove',2,20,-26);
   input.pressed.clear();applyHighflyTouch(input);
-  assert.ok(input.pressed.has('attack'),'F0.12.2 swipe must be fired on POINTERMOVE before finger release');
-  assert.deepEqual(input.highflyAbilityAim.attack,{x:0,y:1},'first-frame slash receives direction');
+  assert.ok(input.pressed.has('attack'),'classic ATK begins immediately on press');
+  assert.equal(input.highflyAbilityAim.attack,null,'no directional IK command from swipe');
   atk.dispatch('pointerup',2,20,-26);
   input.pressed.clear();applyHighflyTouch(input);
   assert.ok(input.move.x>.9,'left stick remains free for locomotion');
-  assert.ok(!input.pressed.has('attack'),'pointerup never produces a duplicate attack after a swipe');
-  assert.equal(input.highflyAbilityAim.attack,undefined,'no repeated direction after one swipe');
-  assert.equal(input.held.has('attack'),false,'short swipe is not interpreted as a spam hold');
+  assert.ok(!input.pressed.has('attack'),'release never produces a duplicate attack');
+  assert.equal(input.highflyAbilityAim.attack,undefined,'no directional command after release');
+  assert.equal(input.held.has('attack'),false,'short swipe does not become a permanent hold');
  }finally{for(const [k,v] of Object.entries(saved))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
