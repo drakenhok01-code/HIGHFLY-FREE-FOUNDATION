@@ -9,7 +9,7 @@ import {TUNE} from '../game/player.js';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
-import {allowTerrainTraverse,wallRunEligible,WALL_RUN} from './wall-physics.mjs';
+import {allowTerrainTraverse,wallRunEligible,WALL_RUN,terrainWallContact,allowCliffCapsule} from './wall-physics.mjs';
 import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.05,secondJumpCost:9,
@@ -49,7 +49,13 @@ export function probeHighflyWall(p,yaw=p.yaw){
  const direction=vec(yaw),dir=new THREE.Vector3(direction.x,0,direction.z);
  const origin=new THREE.Vector3(p.pos.x,p.pos.y+.85,p.pos.z);
  const hit=world.raycast(origin,dir,.85);
- if(!(hit>.04&&hit<.83))return null;
+ if(!(hit>.04&&hit<.83)){
+   const cliff=terrainWallContact(world,p.pos,direction,.85,.75);
+   if(!cliff)return null;
+   const d=cliff.distance+.55,tx=p.pos.x+direction.x*d,tz=p.pos.z+direction.z*d;
+   return {distance:cliff.distance,headBlocked:true,ledge:false,rise:0,tx,tz,
+     targetY:p.pos.y+.6,dir,heightfield:true};
+ }
  const high=world.raycast(new THREE.Vector3(p.pos.x,p.pos.y+1.62,p.pos.z),dir,1);
  const fwd=hit+.72,tx=p.pos.x+direction.x*fwd,tz=p.pos.z+direction.z*fwd;
  const floor=world.floorBelow(tx,p.pos.y+2.2,tz,2.6),rise=floor-p.pos.y;
@@ -90,6 +96,9 @@ function gripContact(p,yaw,reach=1.25){
   }
   if(best&&best.distance<.65)break;
  }
+ const v=terrainWallContact(p.world,p.pos,{x:Math.sin(yaw),z:Math.cos(yaw)},reach,.75);
+ if(v&&(!best||v.distance<best.distance))
+  best={distance:v.distance,kind:'heightfield',dir:{x:Math.sin(yaw),z:Math.cos(yaw)},ang:yaw};
  return best;
 }
 function gripLedge(p,grip){
@@ -192,7 +201,7 @@ function stepWallRun(p,dt,input){
  const speed=4.0;const next=before.clone();
  next.x+=w.dir.x*speed*dt;next.z+=w.dir.z*speed*dt;
  next.y+=((WALL_RUN.maxRise-w.time*.95)*dt);
- const safe=allowTerrainTraverse(p.world,before,next,1.1);
+ const safe=allowCliffCapsule(p.world,before,next);
  if(!safe.ok){p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd',{reason:'cliff-face'});return;}
  const resolved=next.clone();p.world.resolveCapsule?.(resolved,.36,1.82,0);
  if(resolved.distanceTo(next)>.22){p._hfWallRun=null;p.setState('move');p.emit('highflyWallRunEnd',{reason:'obstacle'});return;}
@@ -511,6 +520,15 @@ export function installHighflyUniversalMotion(p){
   }
   this._hfMana=clamp(this._hfMana+step*4.5,0,this._hfManaMax);
   const result=attackLocomotion(this,nativeUpdate,dt,nativeRollInput,camYaw);
+  // Extra heightfield side-wall barrier for airborne collision as well:
+  // native BVH ignores steep terrain until its vertical terrain snap.
+  const cliffSafety=allowCliffCapsule(this.world,posBefore,this.pos);
+  if(!cliffSafety.ok){
+    this.pos.x=posBefore.x;this.pos.z=posBefore.z;
+    this.vel.x=0;this.vel.z=0;this._hfFlowVelocity=null;this.speed=0;
+    this.viewY=this._viewY1=this.pos.y;
+    this.emit('highflyCliffBarrier',{slope:cliffSafety.slope,reason:cliffSafety.reason});
+  }
   // Heightfields are NOT vertical collision meshes. On high-gradient ascent
   // reject a native snap instead of entering a visual rock face, also outside ATK.
   if(groundBefore&&this.pos.y>posBefore.y+.025){
