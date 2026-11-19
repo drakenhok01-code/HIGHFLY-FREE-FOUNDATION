@@ -58,7 +58,7 @@ jobs:
         with:
           path: dist
   deploy:
-    if: github.ref == 'refs/heads/f0116-emberfall-combat-dive-lab'
+    if: github.ref == 'refs/heads/f012-flow-combat-hud-dive-lab'
     environment:
       name: highfly-free-preview
     runs-on: ubuntu-latest
