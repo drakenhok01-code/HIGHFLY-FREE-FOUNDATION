@@ -17,7 +17,7 @@ export const MOTION={
   combatWalk:3.25,combatRun:4.6,combatResponse:12,
   workTime:.74,
 };
-export const OXYGEN_TUNE=Object.freeze({normal:2,sprint:3,regenerate:16});
+export const OXYGEN_TUNE=Object.freeze({normal:100/32,sprint:4.65,regenerate:17});
 export const MAX_ATTACK_WALK_SLOPE=1.0; // 45deg. No wall-walking via attack impulse.
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const vec=(yaw)=>({x:Math.sin(yaw),z:Math.cos(yaw)});
@@ -465,6 +465,15 @@ export function installHighflyUniversalMotion(p){
   const nativeRollInput=input.pressed.has('dodge')&&(aim||tap)?
    {...input,move:aim||facingWish}:input;
   const posBefore=this.pos.clone(),groundBefore=this.grounded;
+  // Magic consumes blue MANA; physical strikes and mobility consume ENERGÍA.
+  if(input.pressed.has('pulse')&&this.skills?.has('pulse')&&this.grounded&&
+     this.pulseTimer<=0){
+    if(this._hfMana<18){
+      input={...input,pressed:new Set(input.pressed)};input.pressed.delete('pulse');
+      this.emit('highflyManaBlocked',{cost:18});
+    }else this._hfMana-=18;
+  }
+  this._hfMana=clamp(this._hfMana+step*4.5,0,this._hfManaMax);
   const result=attackLocomotion(this,nativeUpdate,dt,nativeRollInput,camYaw);
   // Heightfields are NOT vertical collision meshes. On high-gradient ascent
   // reject a native snap instead of entering a visual rock face, also outside ATK.

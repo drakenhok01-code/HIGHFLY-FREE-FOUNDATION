@@ -175,7 +175,7 @@ export function installHudEditor(t){
  }
  const reflow=()=>{
   if(root.hidden)return;
-  const layout=api.active?save():read();
+  const layout=read();
   for(const n of all())if(layout[hudNodeId(n)])show(n,layout[hudNodeId(n)]);
   updateControls();
  };
