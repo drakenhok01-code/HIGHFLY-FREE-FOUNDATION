@@ -42,9 +42,23 @@ try{
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano izquierda'}).count()>0);
  await page.locator('#hf-rpg [data-hf-action="turn:right"]').click();
  await page.locator('#hf-rpg [data-hf-action="turn:left"]').click();
+ // True game equipment: remove the actual sword, return it to Bag, then equip it again.
+ await page.locator('#hf-rpg [data-hf-equip-slot="right_hand"]').click();
+ await page.locator('#hf-rpg [data-hf-action="ask-unequip:right_hand"]').click();
+ await page.locator('#hf-rpg [data-hf-action="unequip:right_hand"]').click();
+ let gear=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,
+ qty:window.__highflyRpg.state.items.training_sword,mode:window.__game.player._hfGearCycle}));
+ assert.deepEqual(gear,{eq:null,qty:1,mode:4},'Unequip must remove sword from real actor and return it to Bag');
  await page.screenshot({path:'qa-rpg-character.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="atributos"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),5,'STR AGI VIT PER INT must be visible');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
+ await page.locator('#hf-rpg [data-hf-item="training_sword"]').click();
+ await page.locator('#hf-rpg [data-hf-action="pick-equip:training_sword"]').click();
+ await page.locator('#hf-rpg [data-hf-action="equip:right_hand:training_sword"]').click();
+ const restoredSword=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,
+ qty:window.__highflyRpg.state.items.training_sword,mode:window.__game.player._hfGearCycle}));
+ assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
@@ -66,7 +80,11 @@ try{
  assert.equal(crafted.herb,0,'materials were not consumed');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),6,'Five active quests plus main objective, none hidden');
+ await page.evaluate(()=>{const el=document.querySelector('#hf-rpg .hf-rpg-quest-list');el.scrollTop=64;});
+ const questScrollBefore=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
  await page.locator('#hf-rpg [data-hf-quest="q3"]').click();
+ const questScrollAfter=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
+ assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One fantasy quest illustration exists');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
@@ -79,6 +97,13 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
+ await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-skill-equip-slot').count(),6,'Six RPG skill slots required');
+ await page.locator('#hf-rpg [data-hf-skill="dash"]').click();
+ await page.locator('#hf-rpg [data-hf-action="choose-skill"]').click();
+ await page.locator('#hf-rpg [data-hf-skill-slot="4"]').click();
+ const assigned=await page.evaluate(()=>window.__highflyRpg.state.skillSlots[4]);
+ assert.equal(assigned,'dash','Tap a slot to bind a real ability');
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
  assert.match(await page.locator('#hf-rpg .hf-rpg-right-panel').innerText(),/Pulso/,'Skills selection renders detail');
 
