@@ -5,6 +5,8 @@
 export const SAVE_KEY='highfly-rpg-f014-v1';
 /** All 36 grid slots exist even before any item is collected. */
 export const MAX_BAG_SLOTS=36;
+export const MAX_EXPANDED_BAG_SLOTS=72;
+export const BAG_EXPANSION_INCREMENT=12;
 export function bagSlots(items=[],capacity=MAX_BAG_SLOTS){
  return Array.from({length:Math.max(1,Math.floor(capacity))},(_,i)=>items[i]??null);
 }
@@ -17,25 +19,35 @@ export const ITEM_DEFS=Object.freeze({
  fish:{id:'fish',name:'Pescado',kind:'Materiales',icon:'fish',rarity:'Común',description:'Captura obtenida con caña.',max:999},
  ingot:{id:'ingot',name:'Lingote',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Lingote fundido con minerales reales.',max:999},
  blade_blank:{id:'blade_blank',name:'Hoja sin terminar',kind:'Materiales',icon:'blade',rarity:'Común',description:'Pieza forjada, todavía no equipable.',max:999},
- seed:{id:'seed',name:'Semillas',kind:'Materiales',icon:'herb',rarity:'Común',description:'Semillas para plantar.',max:999}
+ seed:{id:'seed',name:'Semillas',kind:'Materiales',icon:'herb',rarity:'Común',description:'Semillas para plantar.',max:999},
+ bag_upgrade:{id:'bag_upgrade',name:'Sello de Expansión',kind:'Especial',icon:'expansion',rarity:'Raro',description:'Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.',max:3}
 });
 export const RECIPES=Object.freeze({
  hp_potion:{item:'hp_potion',name:'Poción de Vida',ingredients:{herb:2},count:1,profession:'Alquimia'},
- mp_potion:{item:'mp_potion',name:'Poción de Maná',ingredients:{herb:1,ore:1},count:1,profession:'Alquimia'}
+ mp_potion:{item:'mp_potion',name:'Poción de Maná',ingredients:{herb:1,ore:1},count:1,profession:'Alquimia'},
+ bag_upgrade:{item:'bag_upgrade',name:'Sello de Expansión',ingredients:{wood:8,ore:8},count:1,profession:'Marroquinería'}
 });
 const bounded=(n,max=999)=>Number.isInteger(n)?Math.max(0,Math.min(max,n)):0;
 export function normalizeRpgState(raw){
- const counts=raw&&typeof raw==='object'?raw.items:null;
- return {schema:1,items:{
-  hp_potion:bounded(counts?.hp_potion??2,99),
-  mp_potion:bounded(counts?.mp_potion??2,99)
- }};
+ const counts=raw&&typeof raw==='object'&&raw.items&&typeof raw.items==='object'?raw.items:{};
+ const items={hp_potion:bounded(counts.hp_potion??2,99),mp_potion:bounded(counts.mp_potion??2,99)};
+ for(const [id,def] of Object.entries(ITEM_DEFS))if(id!=='hp_potion'&&id!=='mp_potion'&&id in counts)
+  items[id]=bounded(counts[id],def.max);
+ const slots=Number.isInteger(raw?.slots)?Math.min(MAX_EXPANDED_BAG_SLOTS,Math.max(MAX_BAG_SLOTS,raw.slots)):MAX_BAG_SLOTS;
+ return {schema:2,items,slots};
 }
 export function loadRpgState(store=globalThis.localStorage){
  try{return normalizeRpgState(JSON.parse(store?.getItem(SAVE_KEY)||'null'));}catch{return normalizeRpgState(null);}
 }
 export function saveRpgState(state,store=globalThis.localStorage){
  try{store?.setItem(SAVE_KEY,JSON.stringify(normalizeRpgState(state)));return true;}catch{return false;}
+}
+export function consumeBagUpgrade(state){
+ if(!state||!(state.items?.bag_upgrade>0))return {ok:false,reason:'Necesitás un Sello de Expansión'};
+ const current=Number(state.slots)||MAX_BAG_SLOTS;
+ if(current>=MAX_EXPANDED_BAG_SLOTS)return {ok:false,reason:'Bolsa ya ampliada al máximo'};
+ state.items.bag_upgrade--;state.slots=Math.min(MAX_EXPANDED_BAG_SLOTS,current+BAG_EXPANSION_INCREMENT);
+ return {ok:true,slots:state.slots,remaining:state.items.bag_upgrade};
 }
 export function inventoryRows(state,professionInventory={}){
  const owned={...state?.items,...professionInventory};
@@ -96,6 +108,6 @@ export function liveSkillRows(player){
   {id:'roll',label:'ROLL',kind:'Movilidad',cost:'Energía',available:true,desc:'Esquiva y reposicionamiento.'},
   {id:'heavy',label:'Ataque pesado',kind:'Física',cost:'Energía',available:true,desc:'Golpe pesado del sistema original.'},
   {id:'pulse',label:'Pulso de resonancia',kind:'Mágica',cost:'Maná',available:!!player?.skills?.has?.('pulse'),desc:'Onda de resonancia desbloqueable en Unsung.'},
-  {id:'heal',label:'Refrán curativo',kind:'Curación',cost:'Refranes',available:(player?.refrains??0)>0,desc:'Curación original ligada a las cargas disponibles.'}
+  {id:'heal',label:'Curación de emergencia',kind:'Curación',cost:'Carga curativa',available:(player?.refrains??0)>0,desc:'La curación nativa se activa con el botón curativo disponible en el HUD.'}
  ];
 }
