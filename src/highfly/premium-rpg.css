@@ -846,7 +846,7 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 }
 #hf-rpg .hf-rpg-quest-emblem,#hf-rpg .hf-rpg-quest-scene-glow{display:none!important}
 #hf-rpg .hf-rpg-quest-scene-filigree{font-size:16px;opacity:.45}
-#hf-rpg .hf-rpg-quest-scenery{object-position:center!important;filter:saturate(1.10) contrast(1.04);transform:none}
+#hf-rpg .hf-rpg-quest-scenery{object-position:center;filter:saturate(1.10) contrast(1.04);transform:none}
 #hf-rpg .hf-rpg-quest-scene:after{background:linear-gradient(0deg,#0805183d,transparent 36%)}
 #hf-rpg .hf-rpg-stat-head{color:#ffe2a6;font-weight:800}
 #hf-rpg .hf-rpg-stat-head,#hf-rpg .hf-rpg-stat-row{grid-template-columns:2fr 1fr 1.35fr .8fr .72fr}
@@ -857,4 +857,170 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
  #hf-rpg .hf-rpg-prof-feature .hf-rpg-premium-icon{width:70px!important;height:70px!important}
  #hf-rpg .hf-rpg-skill-feature .hf-rpg-premium-icon{width:80px!important;height:80px!important}
  #hf-rpg .hf-rpg-forge-result-art .hf-rpg-premium-icon{width:62px!important;height:62px!important}
+}
+
+
+/* F0.14.11 — one icon, one image, one frame.
+ * Existing 5x4 atlas is split to isolated 256px WebP cells in memory.
+ * Decoded individual icons receive data-hf-isolated=1: never stack them with
+ * the original atlas, old potion backgrounds, or a second decorative frame. */
+#hf-rpg .hf-rpg-art.hf-rpg-premium-icon[data-hf-isolated="1"],
+#hf-rpg .hf-rpg-art.hf-rpg-premium-icon.hf-rpg-potion-approved[data-hf-isolated="1"]{
+ background-image:var(--hf-isolated-art)!important;
+ background-size:contain!important;
+ background-position:center center!important;
+ background-repeat:no-repeat!important;
+ background-color:transparent!important;
+ transform:none!important;
+ filter:drop-shadow(0 0 3px #b884fa70);
+ padding:0!important;border:0!important;
+ width:auto;height:auto;aspect-ratio:1;
+ object-fit:contain;image-rendering:auto!important
+}
+/* Original paintings contain their own gold frame: DO NOT frame the frame. */
+#hf-rpg .hf-rpg-item:has(>.hf-rpg-premium-icon){
+ padding:0!important;border:1px solid transparent!important;
+ background:transparent!important;box-shadow:none!important;
+ border-radius:5px
+}
+#hf-rpg .hf-rpg-item:has(>.hf-rpg-premium-icon).is-selected{
+ outline:2px solid #f6c988;outline-offset:1px;box-shadow:0 0 12px #b974f0aa!important
+}
+#hf-rpg .hf-rpg-item>.hf-rpg-premium-icon{width:100%!important;height:100%!important}
+#hf-rpg .hf-rpg-prof-icon:has(>.hf-rpg-premium-icon),
+#hf-rpg .hf-rpg-skill-glyph:has(>.hf-rpg-premium-icon),
+#hf-rpg .hf-rpg-slot-art:has(>.hf-rpg-premium-icon){
+ border:0!important;box-shadow:none!important;background:transparent!important;
+ padding:0!important;overflow:hidden
+}
+#hf-rpg .hf-rpg-prof-icon .hf-rpg-premium-icon,
+#hf-rpg .hf-rpg-skill-glyph .hf-rpg-premium-icon,
+#hf-rpg .hf-rpg-slot-art .hf-rpg-premium-icon{
+ width:100%!important;height:100%!important
+}
+#hf-rpg .hf-rpg-prof-feature>.hf-rpg-premium-icon{
+ border:0;box-shadow:none;width:min(90px,30%)!important;height:auto!important;
+ align-self:center;flex:none
+}
+#hf-rpg .hf-rpg-skill-feature .hf-rpg-premium-icon{max-width:100%;max-height:100%}
+#hf-rpg .hf-rpg-detail-art:has(.hf-rpg-premium-icon){
+ display:grid;place-items:center;overflow:hidden
+}
+#hf-rpg .hf-rpg-detail-art .hf-rpg-premium-icon{
+ width:min(100%,148px)!important;height:auto!important;aspect-ratio:1!important
+}
+#hf-rpg .hf-rpg-recipe:has(.hf-rpg-premium-icon)>.hf-rpg-premium-icon{
+ width:42px!important;height:42px!important;
+ background-color:transparent!important;flex:none
+}
+#hf-rpg .hf-rpg-forge-result-art:has(>.hf-rpg-premium-icon){
+ border:0!important;background:transparent!important;box-shadow:none!important
+}
+#hf-rpg .hf-rpg-forge-result-art .hf-rpg-premium-icon{
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important
+}
+#hf-rpg .hf-rpg-ingredient:has(.hf-rpg-premium-icon)>.hf-rpg-premium-icon{
+ flex:0 0 40px;width:40px!important;height:40px!important
+}
+#hf-rpg .hf-rpg-skill-equip-slot:has(.hf-rpg-premium-icon)>.hf-rpg-premium-icon{
+ width:100%!important;height:100%!important
+}
+/* Remove the large fake-purple "portal" oval and make KayKit feet touch
+ * a SMALL natural shadow on the clean-painted sanctuary stone floor. */
+#hf-rpg .hf-rpg-character-layout .hf-rpg-hero-panel{
+ background:linear-gradient(90deg,#09051880,#1c0b2524 28%,#10071d26 72%,#09051886),var(--hf-hero-art)!important;
+ background-size:cover!important;background-position:center 60%!important
+}
+#hf-rpg .hf-rpg-hero-stage,#hf-rpg .hf-rpg-stage-halo,#hf-rpg .hf-rpg-stage-ring{
+ background:none!important;box-shadow:none!important
+}
+#hf-rpg .hf-rpg-stage-halo,#hf-rpg .hf-rpg-stage-ring{display:none!important}
+#hf-rpg .hf-rpg-hero-stage:after{
+ content:'';pointer-events:none;position:absolute;z-index:1;
+ left:50%;bottom:3%;transform:translateX(-50%);
+ width:85px;height:12px;border-radius:50%;
+ background:radial-gradient(ellipse,#11091b8b 9%,transparent 76%)
+}
+#hf-rpg .hf-rpg-hero-canvas{z-index:4;filter:none!important}
+/* The forge is an illustrated space with a functional compact recipe on the left.
+ * 34% of its right-hand illustration remains visible, rather than being buried
+ * behind giant translucent ingredient cards. */
+#hf-rpg .hf-rpg-forge-workshop:before{
+ background-image:linear-gradient(90deg,#12091fec 0%,#170b25db 36%,#160a2380 62%,#10071a17 100%),
+ var(--hf-premium-forge)!important;
+ background-size:cover!important;background-position:center center!important;
+ filter:saturate(1.18) contrast(1.05)!important;
+ opacity:1!important
+}
+#hf-rpg .hf-rpg-forge-workshop>.hf-rpg-heading{background:linear-gradient(90deg,#211133ea,#1d0b2a71 70%,transparent)!important}
+#hf-rpg .hf-rpg-forge-preview{
+ width:68%!important;min-width:0;
+ background:#180b29d1!important;
+ border:1px solid #be92dca3;border-radius:8px;
+ padding:6px 8px!important;flex:none!important;max-height:none!important;min-height:75px
+}
+#hf-rpg .hf-rpg-forge-preview>div:last-child{min-width:0;max-width:100%;overflow:hidden}
+#hf-rpg .hf-rpg-forge-preview h3{font-size:clamp(12px,1.55vw,16px);line-height:1.1}
+#hf-rpg .hf-rpg-forge-preview p{
+ font-size:clamp(10px,1.08vw,12px);line-height:1.26;
+ overflow-wrap:break-word;hyphens:auto
+}
+#hf-rpg .hf-rpg-forge-materials{
+ width:73%!important;min-width:0;max-width:100%;
+ background:#180b29d9!important;
+ border:1px solid #be92dc95;border-radius:8px;
+ padding:5px 8px!important;flex:1;min-height:0
+}
+#hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredients{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px
+}
+#hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient{
+ display:flex!important;align-items:center!important;gap:7px;
+ min-height:51px;min-width:0;max-width:100%;overflow:hidden;
+ background:#190d2ee5!important;padding:4px 6px!important
+}
+#hf-rpg .hf-rpg-ingredient-contents{display:flex;flex-direction:column;gap:2px;
+ flex:1;min-width:0;max-width:100%;overflow:hidden
+}
+#hf-rpg .hf-rpg-ingredient-contents>b{
+ display:block;max-width:100%;
+ font-size:clamp(10px,1.03vw,12px)!important;
+ line-height:1.15;white-space:normal;overflow-wrap:break-word;
+ word-break:normal;hyphens:auto;color:#f8e9ff
+}
+#hf-rpg .hf-rpg-ingredient-contents>span{
+ display:block;white-space:nowrap;align-self:flex-start;
+ font-size:clamp(11px,1.1vw,13px)!important;font-weight:800;
+ font-variant-numeric:tabular-nums
+}
+#hf-rpg .hf-rpg-forge-actions{
+ background:linear-gradient(90deg,#1b092de3,#1c0e2e91,transparent);
+ padding:4px 4px 2px;min-width:0
+}
+#hf-rpg .hf-rpg-forge-actions .hf-rpg-button{overflow:hidden;text-overflow:ellipsis}
+/* Honour mission-specific object positions. The previous !important centered
+ * every mission and accidentally defeated the selected scene's focus. */
+#hf-rpg .hf-rpg-quest-scenery{
+ object-fit:cover;filter:saturate(1.12) contrast(1.08);
+ image-rendering:auto;transform:none!important
+}
+#hf-rpg .hf-rpg-quest-art{background:#0e0a22;isolation:isolate}
+#hf-rpg .hf-rpg-quest-art .hf-rpg-quest-scene:after{
+ background:linear-gradient(0deg,#0a061f77,transparent 30%)!important
+}
+@media(max-width:980px){
+ #hf-rpg .hf-rpg-forge-preview{width:72%!important;gap:7px;padding:5px!important}
+ #hf-rpg .hf-rpg-forge-materials{width:78%!important}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient{min-height:48px;gap:5px}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient>.hf-rpg-premium-icon{width:35px!important;height:35px!important;flex-basis:35px}
+ #hf-rpg .hf-rpg-forge-preview p{font-size:10px}
+ #hf-rpg .hf-rpg-ingredient-contents>b{font-size:10px!important}
+}
+@media(max-height:430px){
+ #hf-rpg .hf-rpg-forge-preview{min-height:68px;max-height:85px!important}
+ #hf-rpg .hf-rpg-forge-materials{padding:4px!important}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient{min-height:43px}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient>.hf-rpg-premium-icon{width:31px!important;height:31px!important;flex-basis:31px}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-subtitle{margin:2px 0 5px}
 }
