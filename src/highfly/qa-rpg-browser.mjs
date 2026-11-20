@@ -50,7 +50,16 @@ try{
  // True game equipment: remove the actual sword, return it to Bag, then equip it again.
  await page.locator('#hf-rpg [data-hf-equip-slot="right_hand"]').click();
  await page.locator('#hf-rpg [data-hf-action="ask-unequip:right_hand"]').click();
- await page.locator('#hf-rpg [data-hf-action="unequip:right_hand"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Un-equip must open System modal');
+ await page.screenshot({path:'qa-rpg-system-unequip.png'});
+ const swordBefore=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,qty:window.__highflyRpg.state.items.training_sword??0}));
+ await page.locator('#hf-rpg [data-hf-system="cancel"]').click();
+ const swordAfterCancel=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,qty:window.__highflyRpg.state.items.training_sword??0}));
+ assert.deepEqual(swordAfterCancel,swordBefore,'Cancelling System unequip must not modify inventory');
+ await page.locator('#hf-rpg [data-hf-action="ask-unequip:right_hand"]').click();
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="result"]').count(),1);
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  let gear=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,
  qty:window.__highflyRpg.state.items.training_sword,mode:window.__game.player._hfGearCycle}));
  assert.deepEqual(gear,{eq:null,qty:1,mode:4},'Unequip must remove sword from real actor and return it to Bag');
@@ -60,7 +69,11 @@ try{
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  await page.locator('#hf-rpg [data-hf-item="training_sword"]').click();
  await page.locator('#hf-rpg [data-hf-action="pick-equip:training_sword"]').click();
- await page.locator('#hf-rpg [data-hf-action="equip:right_hand:training_sword"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="choose"]').count(),1,'Equipment slot selector must be a system dialog');
+ await page.locator('#hf-rpg [data-hf-system-slot="right_hand"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1);
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  const restoredSword=await page.evaluate(()=>({eq:window.__highflyRpg.state.equipped.right_hand,
  qty:window.__highflyRpg.state.items.training_sword,mode:window.__game.player._hfGearCycle}));
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
@@ -78,11 +91,25 @@ try{
  assert.equal(result.qty,previous.qty-1);assert.equal(result.stored,result.qty);
  await page.screenshot({path:'qa-rpg-bag.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="forja"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-material-row').count(),0,'No redundant bag material list in Forge');
  await page.evaluate(()=>{window.__game.player._hfProfession.inventory.herb=2;window.__highflyRpg.render();});
  assert.equal(await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').isEnabled(),true);
  const before=await page.evaluate(()=>window.__highflyRpg.state.items.hp_potion);
  await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Craft must request System confirmation');
+ const beforeCancel=await page.evaluate(()=>({qty:window.__highflyRpg.state.items.hp_potion,herb:window.__game.player._hfProfession.inventory.herb}));
+ await page.locator('#hf-rpg [data-hf-system="cancel"]').click();
+ const afterCancel=await page.evaluate(()=>({qty:window.__highflyRpg.state.items.hp_potion,herb:window.__game.player._hfProfession.inventory.herb}));
+ assert.deepEqual(afterCancel,beforeCancel,'Cancelling crafting must consume zero materials');
+ await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').click();
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="working"]').count(),1,'Craft progress must appear in the System UI');
+ await page.screenshot({path:'qa-rpg-system-crafting.png'});
+ await page.waitForSelector('#hf-rpg .hf-system-shade[data-stage="result"]',{timeout:5000});
+ await page.screenshot({path:'qa-rpg-system-crafted.png'});
  const crafted=await page.evaluate(()=>({qty:window.__highflyRpg.state.items.hp_potion,herb:window.__game.player._hfProfession.inventory.herb}));
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  assert.equal(crafted.qty,before+1,'crafted result not returned to bag');
  assert.equal(crafted.herb,0,'materials were not consumed');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
@@ -99,6 +126,9 @@ try{
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  await page.evaluate(()=>{window.__highflyRpg.state.items.bag_upgrade=1;window.__highflyRpg.render();});
  await page.locator('#hf-rpg [data-hf-action="expand"]').first().click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Bag expansion must ask for a System decision');
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Expansion must reveal twelve persistent slots');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
@@ -109,6 +139,9 @@ try{
  await page.locator('#hf-rpg [data-hf-skill="dash"]').click();
  await page.locator('#hf-rpg [data-hf-action="choose-skill"]').click();
  await page.locator('#hf-rpg [data-hf-skill-slot="4"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Skill assignment asks the System');
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  const assigned=await page.evaluate(()=>window.__highflyRpg.state.skillSlots[4]);
  assert.equal(assigned,'dash','Tap a slot to bind a real ability');
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
