@@ -1,13 +1,15 @@
 /** HIGHFLY F0.14 premium RPG windows.
  * DOM/CSS and original SVG art: NOT a screenshot pasted onto Unsung.
  * Read ONE real Player; render over existing Three.js canvas (no second renderer).
- * Preview gated by ?hfrpg=1. Approved F0.13.1 remains untouched by default.
+ * Premium Android menu enabled by default. Approved backups remain untouched.
  */
 import './premium-rpg.css';
 import {paintLiveHero} from './hero-portrait.mjs';
+import {skillIcon} from './premium-skill-art.mjs';
+import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
 import {premiumArt,assetUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
-import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
+import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {translateHighfly} from './es-localization.mjs';
 
@@ -21,7 +23,12 @@ const NAV=[
 const safe=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 const numeric=n=>Number.isFinite(Number(n))?Math.floor(Number(n)).toLocaleString('es-AR'):'0';
 const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
-const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'is-empty')+'"><span class="hf-rpg-slot-art">'+art(icon)+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
+const slot=(meta,equipped,selected=false)=>{
+ const id=equipped?.[meta.id],item=id?ITEM_DEFS[id]:null;
+ return '<button type="button" data-hf-equip-slot="'+meta.id+'" class="hf-rpg-equip-slot '+(id?'is-active':'is-empty')+(selected?' is-selected':'')+'" aria-label="'+safe(meta.label)+' '+safe(item?.name??'vacío')+'">'+
+ '<span class="hf-rpg-slot-art">'+art(item?.icon??meta.icon)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?.name??'Vacío')+'</b></span>'+
+ '<span class="hf-rpg-equip-more">›</span></button>';
+};
 const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
 function art(id='stone',large=false){
@@ -89,16 +96,23 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',toast:'',opened:false,heroTurn:0};
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
+ const bonuses=()=>equipmentBonuses(bag.equipped);
+ const syncEquipment=()=>{
+  if(!p())return;
+  const index=equippedMode(bag.equipped);p()._hfGearCycle=index;p()._hfEquipmentLocked=true;
+  try{game.hero?.equip?.(index)}catch(err){console.warn('[HIGHFLY EQUIPO] Hero pending',err)}
+ };
+ const syncSkills=()=>game.input?.highflyTouch?.setSkillBindings?.(bag.skillSlots);
  const health=()=>({value:p()?.health??0,max:p()?.healthMax??100});
  const mana=()=>({value:p()?._hfMana??0,max:p()?._hfManaMax??100});
- const weapon=()=>weaponMode(p()?._hfGearCycle??0);
+ const weapon=()=>weaponMode(equippedMode(bag.equipped));
  const message=(s)=>{local.toast=String(s);render();};
  const save=()=>saveRpgState(bag);
  const preview=()=>{
@@ -114,25 +128,25 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    'hf-rpg-hero-panel');
  };
  function character(){
-  const mode=weapon();
-  const main=mode.main?mode.label:mode.external?mode.label:'Sin arma';
-  const off=mode.off==='1H_Sword_Offhand'?'Espada secundaria':mode.off==='Round_Shield'?'Escudo redondo':
-   mode.style==='twohand'||mode.style==='spear'||mode.style==='staff'?'Agarre a dos manos':'Vacío';
+  const eq=bag.equipped;
+  const selected=EQUIP_SLOTS.find(v=>v.id===local.selectedEquipSlot);
+  const chosen=selected&&ITEM_DEFS[eq?.[selected.id]];
+  const detail=selected?
+   '<div class="hf-rpg-equip-selected"><b>'+safe(selected.label)+': '+safe(chosen?.name??'Vacío')+'</b>'+
+    (chosen?local.confirmUnequip===selected.id?
+      '<span>¿Devolver a Bolsa?</span>'+button('CONFIRMAR','data-hf-action="unequip:'+selected.id+'"','is-primary')+
+      button('CANCELAR','data-hf-action="cancel-unequip"'):
+      button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
+     '<span>Slot libre. Conseguí equipo compatible en el mundo o en Forja.</span>')+'</div>':
+   '<div class="hf-rpg-equip-selected"><b>Equipo real · '+safe(weapon().label)+'</b><span>Tocá una ranura para ver su contenido.</span></div>';
   return '<div class="hf-rpg-character-layout">'+
    panel(title('Equipo','Mano derecha · equipo')+
-    '<div class="hf-rpg-slot-list">'+
-    slot('Casco','shield')+slot('Pechera','shield')+slot('Guantes','shield')+
-    slot('Mano derecha','weapon',main,!!mode.main||!!mode.external)+slot('Collar','ring')+
-    '</div>','hf-rpg-left-panel')+
+    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-left-panel')+
    preview()+
    panel(title('Equipamiento','Mano izquierda · accesorios')+
-    '<div class="hf-rpg-slot-list">'+
-    slot('Hombros','shield')+slot('Pantalón','shield')+slot('Botas','shield')+
-    slot('Mano izquierda',mode.off==='Round_Shield'?'shield':'weapon',off,!!mode.off||mode.style==='twohand'||!!mode.external)+
-    slot('Anillo','ring')+'</div>','hf-rpg-right-panel')+
-   '<div class="hf-rpg-equip-footer">'+button('⚔ CAMBIAR ARMA ACTUAL','data-hf-action="weapon"','is-primary')+
-   '<span>Los slots vacíos se habilitarán con equipo real, sin inventar objetos.</span>'+
-   button('ATRIBUTOS →','data-hf-tab="atributos"')+'</div></div>';
+    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-right-panel')+
+   '<div class="hf-rpg-equip-footer">'+button('◈ ABRIR BOLSA','data-hf-tab="bolsa"','is-primary')+
+   detail+button('ATRIBUTOS →','data-hf-tab="atributos"')+'</div></div>';
  }
  function refreshPortrait(){
   if(local.tab!=='personaje'||!local.opened)return;
