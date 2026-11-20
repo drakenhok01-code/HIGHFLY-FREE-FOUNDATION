@@ -105,6 +105,7 @@ try{
  assert.equal(result.qty,previous.qty-1);assert.equal(result.stored,result.qty);
  await page.screenshot({path:'qa-rpg-bag.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="forja"]').click();
+ await page.locator('#hf-rpg .hf-rpg-recipe .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
  await page.screenshot({path:'qa-rpg-forge.png'});
  const forgeSizes=await page.evaluate(()=>({recipe:document.querySelector('#hf-rpg .hf-rpg-recipe .hf-premium-icon')?.getBoundingClientRect().width,ingredient:document.querySelector('#hf-rpg .hf-rpg-ingredient .hf-premium-icon')?.getBoundingClientRect().width}));
  assert.ok(forgeSizes.recipe>=43&&forgeSizes.ingredient>=39,'Recipe/material icons remain too small: '+JSON.stringify(forgeSizes));
@@ -167,6 +168,9 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
+ await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
+ const alphaReframing=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').first().evaluate(el=>getComputedStyle(el).transform);
+ assert.match(alphaReframing,/matrix\(3\.45, 0, 0, 3\.45/,'Skill source artwork must be reframed, not only container resized');
  await page.screenshot({path:'qa-rpg-skills.png'});
  const skillSize=await page.locator('#hf-rpg .hf-rpg-skill-glyph').first().evaluate(el=>el.getBoundingClientRect().width);
  assert.ok(skillSize>=43&&skillSize<=48,'Skill glyph must be moderately enlarged, not oversized: '+skillSize);

@@ -319,7 +319,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<small>'+safe(job.desc)+'</small><span class="hf-rpg-prof-chip">'+(job.ready?'DISPONIBLE':'EN DESARROLLO')+'</span></div>'+
     '<span class="hf-rpg-prof-chevron">›</span></button>').join('')+'</div>')+
    panel(title(selected.id,'Ficha de oficio · progreso auténtico')+
-    '<div class="hf-rpg-prof-feature">'+art(professionIcon(selected.id),true)+
+    '<div class="hf-rpg-prof-feature"><span class="hf-rpg-prof-feature-art">'+art(professionIcon(selected.id),true)+'</span>'+
     '<div><b>'+safe(selected.id)+'</b><small>'+safe(selected.desc)+'</small></div></div>'+
     '<div class="hf-rpg-stat-panel"><b>Nivel del oficio</b><span>Sin nivel registrado</span></div>'+
     '<div class="hf-rpg-stat-panel"><b>Materiales disponibles</b><strong>'+numeric(owned)+'</strong></div>'+
