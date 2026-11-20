@@ -96,7 +96,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,toast:'',opened:false,heroTurn:0};
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
@@ -237,14 +237,36 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '</div>','hf-rpg-right-panel')+'</div>';
  }
  function professions(){
-  const profession=prof(),jobs=[['Recolección','herb','Recolectar plantas reales'],['Minería','ore','Extraer minerales de vetas'],['Tala','wood','Talar árboles válidos'],['Pesca','fish','Pescar en lugares habilitados'],['Fundición','ingot','Fundir minerales'],['Forja','blade_blank','Fabricar hojas de prueba']];
-  return '<div class="hf-rpg-two">'+panel(title('Oficios','Profesiones conectadas al inventario')+
-   '<div class="hf-rpg-prof-grid">'+jobs.map(([name,id,descr])=>'<article class="hf-rpg-prof-card">'+art(ITEM_DEFS[id]?.icon)+'<div><b>'+name+'</b><small>'+descr+'</small><p>En bolsa: <strong>'+numeric(profession.inventory?.[id]??0)+'</strong></p></div></article>').join('')+'</div>')+
-   panel(title('Registro de actividades','Sin progreso inventado')+
-    '<div class="hf-rpg-stat-panel"><b>Acciones completadas</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
+  const jobs=[
+   {id:'Recolección',icon:'herb',desc:'Plantas, raíces y semillas',resource:'herb',ready:true},
+   {id:'Minería',icon:'ore',desc:'Minerales en vetas verificadas',resource:'ore',ready:true},
+   {id:'Tala',icon:'wood',desc:'Madera obtenida de árboles',resource:'wood',ready:true},
+   {id:'Pesca',icon:'fish',desc:'Capturas en zonas habilitadas',resource:'fish',ready:true},
+   {id:'Cocina',icon:'food',desc:'Comidas y recetas',resource:'fish',ready:false},
+   {id:'Alquimia',icon:'mana',desc:'Pociones y elixires',resource:'herb',ready:true},
+   {id:'Fundición',icon:'ingot',desc:'Lingotes refinados en horno',resource:'ingot',ready:true},
+   {id:'Forja',icon:'forge',desc:'Armas y equipo del Cazador',resource:'blade_blank',ready:true}
+  ];
+  const profession=prof(),selected=jobs.find(j=>j.id===local.selectedProfession)??jobs[0];
+  const owned=profession.inventory?.[selected.resource]??0;
+  return '<div class="hf-rpg-two">'+panel(title('Oficios','Ocho profesiones · materiales compartidos con Bolsa')+
+   '<div class="hf-rpg-prof-grid">'+jobs.map(job=>
+    '<button type="button" class="hf-rpg-prof-card '+(job.id===selected.id?'is-selected':'')+'" data-hf-prof="'+safe(job.id)+'">'+
+    '<span class="hf-rpg-prof-icon">'+art(job.icon)+'</span><div><b>'+job.id+'</b>'+
+    '<small>'+safe(job.desc)+'</small><span class="hf-rpg-prof-chip">'+(job.ready?'DISPONIBLE':'EN DESARROLLO')+'</span></div>'+
+    '<span class="hf-rpg-prof-chevron">›</span></button>').join('')+'</div>')+
+   panel(title(selected.id,'Ficha de oficio · progreso auténtico')+
+    '<div class="hf-rpg-prof-feature">'+art(selected.icon,true)+
+    '<div><b>'+safe(selected.id)+'</b><small>'+safe(selected.desc)+'</small></div></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Nivel del oficio</b><span>Sin nivel registrado</span></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Materiales disponibles</b><strong>'+numeric(owned)+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Acciones completadas en total</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
     '<div class="hf-rpg-stat-panel"><b>Herramientas disponibles</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
-    '<p class="hf-rpg-info">Estos materiales son los mismos que aparecen en Bolsa y que consumirá Fabricación. Las estaciones funcionales se prueban en el taller original de HIGHFLY.</p>'+
-    '<div class="hf-rpg-mini-actions">'+button('IR A FABRICACIÓN','data-hf-tab="forja"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
+    '<p class="hf-rpg-info">'+(selected.ready?
+     'Los recursos se obtienen del mundo real. Las recetas los consumen y muestran el resultado en Bolsa.':
+     'Este oficio tendrá sus recetas y progresión propias cuando implementemos la mecánica.')+'</p>'+
+    '<div class="hf-rpg-mini-actions">'+button('IR A FABRICACIÓN','data-hf-tab="forja"','is-primary')+
+    button('VER BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
@@ -288,7 +310,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const visual=native?'<img class="hf-rpg-map-native" alt="Mapa nativo real con terreno, posición y objetivos" src="'+native+'"/>':
    '<div class="hf-rpg-map-art" role="img" aria-label="Ilustración de la región de Aetheria"></div>';
   return '<div class="hf-rpg-map-layout">'+panel(title('Mapa del Mundo',native?'Terreno y marcadores reales':'Atlas de Aetheria · Vista ilustrativa')+
-   '<div class="hf-rpg-map-display">'+visual+'</div>'+
+   '<div class="hf-rpg-map-display"><div class="hf-rpg-map-zoom" style="transform:scale('+local.mapZoom.toFixed(2)+')">'+visual+'</div><div class="hf-rpg-map-controls">'+button('+','data-hf-action="zoom:in" aria-label="Ampliar mapa"')+button('−','data-hf-action="zoom:out" aria-label="Alejar mapa"')+button('⌖','data-hf-action="zoom:reset" aria-label="Restablecer mapa"')+'</div></div>'+
    '<small class="hf-rpg-map-caveat">'+(native?'Mapa original del juego · Tu posición y objetivos están marcados.':'Vista ilustrativa. Conseguí el mapa en la misión del Cartógrafo para acceder a los datos del mundo.')+'</small>','hf-rpg-map-main')+
    panel(title('Leyenda','Ubicaciones descubiertas')+
     '<div class="hf-rpg-legend"><div>◈ Tu posición</div><div>✧ Objetivo principal</div><div>✦ Misiones activas</div><div>◇ Lugares descubiertos</div></div>'+
@@ -307,11 +329,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.tab==='misiones')local.questScroll=root.querySelector('.hf-rpg-quest-list')?.scrollTop??local.questScroll;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
-   '<header class="hf-rpg-top"><div class="hf-rpg-logo">'+PHOENIX+'<span class="hf-rpg-brand-name">HIGHFLY<small>PHOENIX ASCENSIÓN</small></span></div>'+
+   '<header class="hf-rpg-top"><div class="hf-rpg-logo">'+PHOENIX+'<span class="hf-rpg-brand-name">HIGHFLY<small>PHOENIX ASCENSION</small></span></div>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.5 · HIGHFLY PHOENIX ASCENSIÓN · ANDROID HORIZONTAL')+'</span></footer></div>';
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.5 · HIGHFLY PHOENIX ASCENSION · ANDROID HORIZONTAL')+'</span></footer></div>';
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
  }
@@ -354,10 +376,15 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.pickEquipItem=null;render();return;}
   if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
+  if(b.dataset.hfProf){local.selectedProfession=b.dataset.hfProf;render();return;}
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
   if(action==='close'){close();return;}
+  if(action.startsWith('zoom:')){
+   const change=action.slice(5);local.mapZoom=change==='reset'?1:Math.max(.75,Math.min(2.8,local.mapZoom*(change==='in'?1.25:.8)));
+   render();return;
+  }
   if(action==='cancel-unequip'||action==='cancel-equip'){
    local.confirmUnequip=null;local.pickEquipItem=null;render();return;
   }
