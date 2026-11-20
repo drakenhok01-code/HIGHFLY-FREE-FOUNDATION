@@ -66,6 +66,7 @@ try{
  await page.screenshot({path:'qa-rpg-character.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="atributos"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),5,'STR AGI VIT PER INT must be visible');
+ await page.screenshot({path:'qa-rpg-attributes.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  await page.locator('#hf-rpg [data-hf-item="training_sword"]').click();
  await page.locator('#hf-rpg [data-hf-action="pick-equip:training_sword"]').click();
