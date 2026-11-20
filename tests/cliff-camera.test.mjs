@@ -16,11 +16,10 @@ test('Cliff camera does not penetrate giant terrain face, even when native colli
 test('Cliff camera uses lateral probes to detect cliff surface missed by central ray',()=>{
  const world=stub(()=>0,(origin,d,max)=>origin.z<-.1?1.7:max);
  const result=safeCliffCameraDistance(world,pivot,dir,5.4,5.4);
- // Flat world bypasses lateral probes unless camera is already close to terrain.
- assert.equal(result,5.4);
- const lowPivot={x:0,y:.7,z:0};
- const corrected=safeCliffCameraDistance(world,lowPivot,dir,5.4,5.4);
- assert.ok(corrected<2,'Lateral wall should protect near-geometry camera: '+corrected);
+ assert.equal(result,5.4,'Scattered small rocks remain controlled by original native collision');
+ const cliff=stub((x,z)=>x>=1.6&&z<-.1?23:0,(origin,d,max)=>origin.z<-.1?1.7:max);
+ const corrected=safeCliffCameraDistance(cliff,pivot,dir,5.4,5.4);
+ assert.ok(corrected<2,'Lateral cliff should protect near-geometry camera: '+corrected);
 });
 test('Cliff camera bounds invalid collider and maintains safe minimum clearance',()=>{
  assert.equal(safeCliffCameraDistance(null,pivot,dir,5,4.6),4.6);
