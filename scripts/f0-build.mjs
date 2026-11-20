@@ -169,8 +169,8 @@ copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.
 copy(path.join(ROOT,'src/highfly/hud-editor.mjs'),loc('src/highfly/hud-editor.mjs'));
 copy(path.join(ROOT,'src/highfly/hero-portrait.mjs'),loc('src/highfly/hero-portrait.mjs'));
 copy(path.join(ROOT,'src/highfly/cliff-camera.mjs'),loc('src/highfly/cliff-camera.mjs'));
-for(const name of ['rpg-equipment','premium-skill-art'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
-for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal'])
+for(const name of ['rpg-equipment','premium-skill-art','system-dialog'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
+for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal','forge-chamber'])
  copy(path.join(ROOT,'assets/highfly/'+name+'.svg'),loc('public/highfly/'+name+'.svg'));
 for(const name of ['approved-logo','approved-potions','approved-hero'])
  copy(path.join(ROOT,'assets/highfly/'+name+'.webp'),loc('public/highfly/'+name+'.webp'));
