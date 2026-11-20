@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="600" viewBox="0 0 1080 600" aria-label="Cámara de la Forja HIGHFLY — fondo fantástico">
+<defs>
+<linearGradient id="bg" x2=".7" y2="1"><stop stop-color="#1b0d2e"/><stop offset=".45" stop-color="#32204c"/><stop offset="1" stop-color="#080c1b"/></linearGradient>
+<radialGradient id="fire"><stop stop-color="#fff5c2"/><stop offset=".25" stop-color="#faca65"/><stop offset=".55" stop-color="#ee7347"/><stop offset="1" stop-color="#9f2747" stop-opacity="0"/></radialGradient>
+<radialGradient id="magic"><stop stop-color="#ebb7ff" stop-opacity=".75"/><stop offset="1" stop-color="#8b54fe" stop-opacity="0"/></radialGradient>
+<linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#685573"/><stop offset=".52" stop-color="#24233d"/><stop offset="1" stop-color="#0d1727"/></linearGradient>
+<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#cbb8d4"/><stop offset=".38" stop-color="#73739e"/><stop offset=".71" stop-color="#262641"/><stop offset="1" stop-color="#a78db2"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffedc7"/><stop offset=".48" stop-color="#ad7149"/><stop offset="1" stop-color="#f5bd69"/></linearGradient>
+<filter id="bloom"><feGaussianBlur stdDeviation="14"/></filter>
+</defs>
+<rect width="1080" height="600" fill="url(#bg)"/>
+<path d="M0 0h1080v570H0z" fill="#09071b" opacity=".27"/>
+<g fill="#181226" stroke="#614269" stroke-width="10">
+<path d="M0 0h104v600H0zM976 0h104v600H976z"/>
+<path d="M80 0h70v550H80zM930 0h70v550h-70z"/>
+<path d="M0 90h1080v34H0z"/>
+<path d="M0 485h1080v115H0z"/>
+</g>
+<g stroke="#dfaa70" stroke-opacity=".4" stroke-width="4" fill="none"><path d="M95 0v525M960 0v525M0 105h1080M0 515h1080"/></g>
+<g fill="#111329" stroke="#a47a94" stroke-width="8">
+<path d="M651 485V219Q651 88 830 87q178 0 178 132v266h-63V233Q945 147 830 147q-116 0-116 86v252z"/>
+<path d="M712 475V245q0-115 118-115 118 0 118 115v230" fill="#181226"/>
+</g>
+<ellipse cx="832" cy="330" rx="175" ry="215" fill="url(#fire)" opacity=".8"/>
+<path d="M742 500Q707 409 762 333q-23 75 10 90Q759 309 822 251q-23 97 11 117Q817 298 878 256q-14 82 17 125 35 52-1 119z" fill="#f7aa5d" opacity=".7"/>
+<path d="M788 500q-45-84 12-148-11 67 26 72-1-83 37-121-4 84 29 112 17 56-4 85z" fill="#fff5bc" opacity=".6"/>
+<g fill="#261c39" stroke="url(#gold)" stroke-width="7">
+<path d="M680 478l37-24h238l40 24-25 48H704z"/>
+<path d="M728 499l20-19h176l23 19-21 20H750z" fill="#ad573d"/>
+</g>
+<g opacity=".6" stroke="#b78ff3" fill="none" stroke-width="5">
+<path d="M142 151l34 79-34 79-34-79zM224 105l27 52-27 52-27-52zM494 80l22 50-22 50-22-50z"/>
+<path d="M154 192h68M176 127v114"/>
+</g>
+<g fill="#8b5be4" stroke="#edc4ff" stroke-width="3">
+<path d="M110 385l24-85 32 85-32 65zM232 448l22-65 25 65-25 47zM472 455l18-54 20 54-20 35z"/>
+</g>
+<ellipse cx="375" cy="480" rx="245" ry="80" fill="url(#magic)"/>
+<g fill="url(#metal)" stroke="url(#gold)" stroke-width="10">
+<path d="M260 355l215-4 56 46-45 54-40 11v69H301v-69l-35-11-68-54z"/>
+<path d="M306 460h137v76H306z" fill="#342d4a"/>
+</g>
+<path d="M267 390h237" stroke="#fff0cd" stroke-width="4" opacity=".6"/>
+<path d="M333 527h73" stroke="#d69afd" stroke-width="10" opacity=".5"/>
+<g fill="none" stroke="#cf77fc" stroke-opacity=".86" stroke-width="7">
+<ellipse cx="374" cy="484" rx="232" ry="53"/>
+<path d="M178 486q195-104 381 0" stroke-width="3" stroke-dasharray="16 17"/>
+</g>
+<g stroke="#f8c988" stroke-width="7" fill="none" opacity=".75">
+<path d="M180 35l62 104M240 26l-28 111M518 27l-39 124M565 27l32 130"/>
+</g>
+<g fill="#ffd4aa"><circle cx="688" cy="308" r="5"/><circle cx="785" cy="172" r="4"/><circle cx="941" cy="259" r="6"/><circle cx="623" cy="448" r="5"/><circle cx="534" cy="300" r="4"/><circle cx="270" cy="245" r="3"/></g>
+<g stroke="#eed9ff" stroke-width="2" fill="none" opacity=".75"><path d="M601 334v21m-10-10h21M149 276v18m-9-9h18M551 203v15m-8-8h15"/></g>
+<rect y="565" width="1080" height="35" fill="#110d1d" opacity=".8"/>
+</svg>
