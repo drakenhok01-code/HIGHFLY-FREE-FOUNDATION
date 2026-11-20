@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400" viewBox="0 0 1600 400">
+<defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#fff9cf"/><stop offset=".4" stop-color="#ffe099"/><stop offset=".72" stop-color="#ffab43"/><stop offset="1" stop-color="#cb5bff"/></linearGradient><linearGradient id="f" x2="1" y2="1"><stop stop-color="#f9d89d"/><stop offset=".25" stop-color="#ffb75c"/><stop offset=".6" stop-color="#f957bd"/><stop offset="1" stop-color="#7321db"/></linearGradient><filter id="halo"><feGaussianBlur stdDeviation="10"/></filter></defs>
+<g transform="translate(12 0)"><g fill="#e443fb" opacity=".55" filter="url(#halo)"><path d="M190 163Q65 35 15 63q26 180 175 217Q314 73 371 63q-42 164-181 214"/></g>
+<path d="M190 165Q102 15 17 47q31 172 145 204Q86 158 69 107q75 61 125 89Q295 78 374 43q-22 168-165 215Q288 158 313 96l-125 103" fill="url(#f)" stroke="#fff0b3" stroke-width="8"/>
+<path d="M189 66q-27 57-1 106 28-41 1-106M189 180q-38 87 0 189 42-102 0-189z" fill="url(#g)" stroke="#fff0c7" stroke-width="7"/>
+<path d="M144 246l43 23 43-23-43 93z" fill="#ffb749" stroke="#fff3b4" stroke-width="6"/></g>
+<text x="405" y="208" fill="url(#g)" font-family="Georgia,serif" font-weight="bold" font-size="161" letter-spacing="8" stroke="#3d1931" stroke-width="4" paint-order="stroke">HIGHFLY</text>
+<text x="445" y="296" fill="#ffd9a3" font-family="Georgia,serif" font-size="56" letter-spacing="8" font-weight="bold">PHOENIX ASCENSION</text>
+<path d="M427 321h1030" stroke="#fbb77b" stroke-width="5" opacity=".8"/>
+</svg>
