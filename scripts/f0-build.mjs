@@ -222,7 +222,7 @@ for(const id of rasterExpected)
 console.log('[HIGHFLY PHOENIX] 48 individual painterly graphics verified');
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));

@@ -32,8 +32,8 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
  const ornaments=await page.evaluate(async()=>{const root=document.querySelector('#hf-rpg');const keys=['--hf-crest','--hf-wave-art','--hf-panel-ornament'];const result={};for(const key of keys){const v=root.style.getPropertyValue(key);const m=v.match(/url\(["']?([^"')]+)/);if(!m)throw Error('Ornament URL missing '+key);const i=new Image();i.src=m[1];await i.decode();result[key]=i.naturalWidth;}return result;});
  assert.ok(Object.values(ornaments).every(v=>v>0),'Phoenix ornate image resources not loaded: '+JSON.stringify(ornaments));
- const frameStyle=await page.evaluate(()=>getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel'),'::before').backgroundImage);
- assert.match(frameStyle,/ui_gold_corners/,'Gold corner frame must be applied to real panels');
+ const frameStyle=await page.evaluate(()=>getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel')).backgroundImage);
+ assert.match(frameStyle,/ui_gold_corners/,'Gold corner frame must be anchored to real panels');
  const artStatus=await page.evaluate(async()=>{const x=getComputedStyle(document.querySelector('#hf-rpg')).getPropertyValue('--hf-hero-art');const url=x.match(/url\(["']?([^"')]+)/)?.[1];if(!url)return {ok:false,x};const image=new Image();image.src=url;await image.decode();return {ok:image.naturalWidth>0,width:image.naturalWidth};});
  assert.ok(artStatus.ok,'Approved sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
 
@@ -45,6 +45,10 @@ try{
  assert.equal(viewport.screen[0],915);assert.equal(viewport.screen[1],412);
  assert.ok(viewport.stage.w>140&&viewport.stage.h>120,'Character stage does not fit S23 landscape '+JSON.stringify(viewport));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-equip-slot').count(),10,'Character must show 10 separate equipment slots');
+ const equipmentFit=await page.evaluate(()=>[...document.querySelectorAll('#hf-rpg .hf-rpg-character-layout>.hf-rpg-left-panel,#hf-rpg .hf-rpg-character-layout>.hf-rpg-right-panel')].map(panel=>({scroll:panel.scrollHeight-panel.clientHeight,overflow:getComputedStyle(panel).overflowY,slots:[...panel.querySelectorAll('.hf-rpg-equip-slot')].map(slot=>{const a=slot.getBoundingClientRect(),b=panel.getBoundingClientRect();return {height:a.height,top:a.top-b.top,bottom:b.bottom-a.bottom};})})));
+ assert.equal(equipmentFit.length,2,'Both gear panels must exist');
+ for(const side of equipmentFit){assert.equal(side.overflow,'hidden','Equipment panels must not scroll: '+JSON.stringify(side));assert.ok(side.scroll<=2,'All five equipment slots must fit without scrolling: '+JSON.stringify(side));assert.ok(side.slots.length===5&&side.slots.every(v=>v.height>=25&&v.top>=0&&v.bottom>=-2),'Equipment slots clipped: '+JSON.stringify(side));}
+
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),0,'Attributes must NOT appear inside Character');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-hero-canvas').count(),1,'Real 3D portrait canvas must exist');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano derecha'}).count()>0);
@@ -102,6 +106,8 @@ try{
  await page.screenshot({path:'qa-rpg-bag.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="forja"]').click();
  await page.screenshot({path:'qa-rpg-forge.png'});
+ const forgeSizes=await page.evaluate(()=>({recipe:document.querySelector('#hf-rpg .hf-rpg-recipe .hf-premium-icon')?.getBoundingClientRect().width,ingredient:document.querySelector('#hf-rpg .hf-rpg-ingredient .hf-premium-icon')?.getBoundingClientRect().width}));
+ assert.ok(forgeSizes.recipe>=43&&forgeSizes.ingredient>=39,'Recipe/material icons remain too small: '+JSON.stringify(forgeSizes));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-material-row').count(),0,'No redundant bag material list in Forge');
  await page.evaluate(()=>{window.__game.player._hfProfession.inventory.herb=2;window.__highflyRpg.render();});
@@ -162,6 +168,8 @@ try{
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
  await page.screenshot({path:'qa-rpg-skills.png'});
+ const skillSize=await page.locator('#hf-rpg .hf-rpg-skill-glyph').first().evaluate(el=>el.getBoundingClientRect().width);
+ assert.ok(skillSize>=43&&skillSize<=48,'Skill glyph must be moderately enlarged, not oversized: '+skillSize);
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-skill-equip-slot').count(),6,'Six RPG skill slots required');
  await page.locator('#hf-rpg [data-hf-skill="dash"]').click();

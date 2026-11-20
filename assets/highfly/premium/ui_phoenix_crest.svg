@@ -1,18 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="660" height="240" viewBox="0 0 660 240">
-<defs><linearGradient id="gold" x1=".3" y1="0" x2=".8" y2="1"><stop stop-color="#fff9dc"/><stop offset=".18" stop-color="#ffe68d"/><stop offset=".48" stop-color="#ff9a40"/><stop offset=".7" stop-color="#f14bd5"/><stop offset="1" stop-color="#8439ed"/></linearGradient><linearGradient id="purple"><stop stop-color="#ae64fa"/><stop offset=".48" stop-color="#ffcdf5"/><stop offset="1" stop-color="#8426d9"/></linearGradient><radialGradient id="aura"><stop stop-color="#fbafff" stop-opacity=".7"/><stop offset=".3" stop-color="#b54bf1" stop-opacity=".35"/><stop offset="1" stop-color="#8e31e9" stop-opacity="0"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="6"/></filter></defs>
-<ellipse cx="330" cy="118" rx="230" ry="91" fill="url(#aura)"/>
-<g fill="none" stroke="#9b33ef" stroke-width="12" filter="url(#glow)" opacity=".68"><path d="M321 128Q195 35 34 72M339 128Q465 35 626 72M330 155L330 226"/></g>
-<g id="left" stroke="url(#gold)" stroke-linejoin="round">
-<path d="M328 115Q243 33 91 26q27 40 83 63Q111 87 23 76q42 63 137 70Q90 151 55 167q102 23 195-15L317 141z" fill="url(#gold)" stroke="#fff1ad" stroke-width="3"/>
-<path d="M314 124Q219 41 109 34q91 60 140 88Q142 109 54 80q100 72 205 62Q151 158 75 171q130 4 226-36" fill="none" stroke="#f8a8fe" stroke-width="4"/>
-<path d="M306 120Q238 70 183 55M298 127Q197 89 122 89M290 137Q205 130 136 147" fill="none" stroke="#ffeebc" stroke-width="3" opacity=".8"/>
-</g><use href="#left" transform="translate(660 0) scale(-1 1)"/>
-<path d="M330 39q-38 22-28 68l28 25 28-25q10-46-28-68z" fill="url(#gold)" stroke="#fff4ca" stroke-width="4"/>
-<path d="M330 51l-15 37 15 18 15-18z" fill="#361255" stroke="#ffb8fd" stroke-width="3"/>
-<path d="M330 114q-22 30-17 70l17 43 17-43q5-40-17-70z" fill="url(#gold)" stroke="#fff0b0" stroke-width="4"/>
-<path d="M330 134l-10 40 10 35 10-35z" fill="url(#purple)"/>
-<path d="M322 65q8-8 17-2l-7 9-11-1z" fill="#3c1c44"/>
-<path d="M305 126q25 16 50 0" fill="none" stroke="#fff5bf" stroke-width="5"/>
-<g fill="none" stroke="#ffb9ff" stroke-width="3" opacity=".9"><path d="M16 188q95-39 210-18M644 188q-95-39-210-18"/><path d="M18 190h113M642 190H529"/></g>
-<g fill="#fff6c5"><path d="M12 180l6 10-6 10-6-10zM648 180l6 10-6 10-6-10z"/><path d="M330 8l7 13-7 13-7-13z"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Fénix HIGHFLY de alas abiertas">
+<defs>
+ <linearGradient id="wing" x1=".15" y1=".05" x2=".82" y2=".92"><stop stop-color="#fff7d5"/><stop offset=".18" stop-color="#ffdc7b"/><stop offset=".38" stop-color="#ff984e"/><stop offset=".66" stop-color="#fa5cae"/><stop offset=".86" stop-color="#c03ff4"/><stop offset="1" stop-color="#6d1bc3"/></linearGradient>
+ <linearGradient id="fire" x1=".2" y1="0" x2=".7" y2="1"><stop stop-color="#fffce8"/><stop offset=".2" stop-color="#ffe88c"/><stop offset=".5" stop-color="#ff9e43"/><stop offset=".79" stop-color="#f34ab7"/><stop offset="1" stop-color="#852aeb"/></linearGradient>
+ <linearGradient id="feather" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#fff5c1"/><stop offset=".38" stop-color="#ffd87d"/><stop offset=".7" stop-color="#e968c4"/><stop offset="1" stop-color="#7623b2"/></linearGradient>
+ <radialGradient id="aura"><stop stop-color="#ef86ff" stop-opacity=".72"/><stop offset=".45" stop-color="#a04cf2" stop-opacity=".2"/><stop offset="1" stop-color="#3b145c" stop-opacity="0"/></radialGradient>
+ <filter id="glow" x="-30%" y="-50%" width="160%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<ellipse cx="500" cy="178" rx="295" ry="140" fill="url(#aura)"/>
+<g fill="none" stroke="#d65bff" stroke-width="15" filter="url(#glow)" opacity=".52">
+ <path d="M494 158Q312 68 48 44M506 158Q688 68 952 44M500 196l-25 154M500 196l25 154"/>
+</g>
+<!-- Broad fan of individual primary feathers: each wing joins the body. -->
+<g id="leftWing">
+ <path d="M485 161Q343 70 205 29Q100 0 42 16q45 54 138 89Q102 102 12 93q54 61 181 93Q99 167 51 179q82 61 206 55Q198 252 134 278q120 26 233-39l120-61z" fill="url(#wing)" stroke="#ffecb1" stroke-width="5"/>
+ <path d="M472 159Q310 64 118 20q45 55 198 124Q183 83 32 88q76 61 292 98Q163 141 69 178q108 55 283 31Q253 239 147 268q132 6 249-56" fill="none" stroke="#fff2c0" stroke-width="8" stroke-linecap="round" opacity=".94"/>
+ <path d="M476 174Q320 106 166 78q68 58 223 118Q296 162 149 148q114 72 252 67Q344 236 270 260q95 13 170-43" fill="#f8a4d6" stroke="#ffe89c" stroke-width="3" opacity=".8"/>
+ <path d="M457 177Q344 109 208 64M446 191Q290 136 111 120M432 205Q303 193 135 195M420 214Q310 240 215 264" fill="none" stroke="#571456" stroke-width="5" opacity=".52"/>
+ <path d="M434 173Q352 93 242 61M432 185Q301 125 181 108M432 201Q297 179 183 172" fill="none" stroke="#fff6d1" stroke-width="3.2" opacity=".95"/>
+ <g fill="url(#feather)" stroke="#ffe1a8" stroke-width="2.5">
+  <path d="M380 187Q288 154 214 143q58 40 123 55z"/>
+  <path d="M378 204Q268 192 202 192q63 38 139 32z"/>
+  <path d="M389 222Q302 242 250 256q72 13 145-25z"/>
+ </g>
+</g>
+<use href="#leftWing" transform="translate(1000 0) scale(-1 1)"/>
+<!-- Wide chest and bird-shaped eagle head, facing right, with hooked beak. -->
+<path d="M490 111Q467 92 465 67q-4-26 14-45l-2 27q17-34 35-44l-7 38q26-25 42-24-16 18-12 35 24-8 36 7-8 16-32 18l-11 19-8 20 13 28-43 50-46-49z" fill="url(#fire)" stroke="#fff6b4" stroke-width="5"/>
+<path d="M532 62q34-15 58 7-21 10-28 26l-30 4-13-23z" fill="#ffe6a0" stroke="#fff9d4" stroke-width="3"/>
+<path d="M563 71l34-6q-16 21-35 22z" fill="#cc592d" stroke="#ffeda4" stroke-width="2"/>
+<path d="M507 61q18-15 35 3-11 11-28 10z" fill="#441039" stroke="#fff1af" stroke-width="2"/>
+<circle cx="529" cy="65" r="4.4" fill="#ec67ff"/>
+<path d="M476 80q21-24 38-23M476 96q30-20 42-13" fill="none" stroke="#fff7d3" stroke-width="5" opacity=".9"/>
+<!-- Neck, heart crystal and spread chest feathers -->
+<path d="M475 126q-37 1-56 26 23 10 32 43l49 63 49-63q12-32 32-43-20-26-53-26l-28 21z" fill="url(#fire)" stroke="#ffe6ab" stroke-width="5"/>
+<path d="M469 169l31 61 31-61-31-26z" fill="#3e115c" stroke="#ffd7ef" stroke-width="5"/>
+<path d="M500 158l22 26-22 34-22-34z" fill="#bf45f8" stroke="#fff2c2" stroke-width="3"/>
+<path d="M500 164l-8 17 8 18 8-18z" fill="#fff5dd"/>
+<path d="M446 163q-12 14-5 32l34 34M554 163q12 14 5 32l-34 34" fill="none" stroke="#fff5c3" stroke-width="5"/>
+<!-- Characteristic phoenix tail; many long flame-feather ribbons, not insect legs. -->
+<g fill="url(#fire)" stroke="#ffe5a0" stroke-width="3.7">
+ <path d="M473 219q-44 32-72 97 34-16 68-43-28 56-9 85 43-45 49-103z"/>
+ <path d="M527 219q44 32 72 97-34-16-68-43 28 56 9 85-43-45-49-103z"/>
+ <path d="M494 220q-15 49 5 133 19-84 5-133z"/>
+ <path d="M457 226q-62 22-104 71 56-8 108-37z" opacity=".82"/>
+ <path d="M543 226q62 22 104 71-56-8-108-37z" opacity=".82"/>
+</g>
+<path d="M500 237q-11 56 0 102 11-46 0-102" fill="#9d30ed" stroke="#fff7ca" stroke-width="2"/>
+<g fill="#fff6c5"><path d="M500 1l8 13-8 13-8-13zM36 282l6 10-6 10-6-10zM964 282l6 10-6 10-6-10z"/></g>
 </svg>

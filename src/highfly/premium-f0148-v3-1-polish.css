@@ -1,0 +1,144 @@
+/*
+ * HIGHFLY v3.1 / precisión visual tras la prueba real en Samsung horizontal
+ * Sin cambios a lógica de RPG, item IDs, KayKit ni slots interactivos.
+ * Art original a tamaño visual: íconos +10-18 %, nunca escalado borroso.
+ */
+
+/* 1. Los ornamentos son parte del marco VISIBLE del panel, no del contenido
+   desplazable. Con background-attachment:scroll permanecen clavados a los
+   cuatro vértices del borde, aun al desplazar listas largas (misiones, bolsa). */
+#hf-rpg .hf-rpg-panel{
+ background-image:
+   var(--hf-panel-ornament),
+   var(--hf-wave-art),
+   radial-gradient(ellipse at 95% 5%,#a340af40,transparent 57%),
+   linear-gradient(152deg,#28113be8,#0e0925f7 58%,#240e3d);
+ background-size:100% 100%,100% 100%,auto,auto;
+ background-position:center center,center center,center,center;
+ background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;
+ background-attachment:scroll,scroll,scroll,scroll;
+}
+#hf-rpg .hf-rpg-panel::before{display:none!important}
+/* Los rieles de oro se fijan en el elemento, no en el área que crece por scroll. */
+#hf-rpg .hf-rpg-panel::after{pointer-events:none}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-hero-panel,
+#hf-rpg .hf-rpg-forge-workshop{
+ /* Permanecen los paisajes de Personaje y Forja por encima de los fondos de panel. */
+ background-size:cover!important;
+ background-position:center center!important;
+}
+
+/* 2. Equipo: 5 ranuras por lado, visibles completas, cero scroll anidado. */
+#hf-rpg .hf-rpg-character-layout>.hf-rpg-left-panel,
+#hf-rpg .hf-rpg-character-layout>.hf-rpg-right-panel{
+ display:flex;flex-direction:column;
+ overflow:hidden!important;min-height:0;
+ padding:8px 9px 7px;
+}
+#hf-rpg .hf-rpg-character-layout>.hf-rpg-left-panel>.hf-rpg-heading,
+#hf-rpg .hf-rpg-character-layout>.hf-rpg-right-panel>.hf-rpg-heading{
+ flex:0 0 auto;margin-bottom:5px;padding:3px 0 5px;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-slot-list{
+ display:grid;grid-template-rows:repeat(5,minmax(0,1fr));
+ gap:4px;flex:1 1 auto;min-height:0;margin:0;padding:0;
+ overflow:hidden;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot{
+ width:100%;height:100%;min-height:0!important;
+ padding:1px 5px;gap:5px;overflow:hidden;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-slot-art{
+ width:30px;height:30px;min-width:30px;max-height:100%;flex:0 0 30px;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-slot-art .hf-premium-icon{
+ width:29px;height:29px;max-width:100%;max-height:100%;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot>span:nth-child(2){
+ min-width:0;overflow:hidden;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot small,
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot b{
+ display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ line-height:1.1;
+}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot small{font-size:9px}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-slot b{font-size:10px}
+#hf-rpg .hf-rpg-character-layout .hf-rpg-equip-more{flex:0 0 auto}
+
+/* 3. Habilidades: incr. visual moderado sin cambiar botones ni hit targets. */
+#hf-rpg .hf-rpg-skill-list{gap:6px}
+#hf-rpg .hf-rpg-skill-list .hf-rpg-skill{
+ min-height:53px;padding:4px 6px;gap:7px;overflow:hidden;
+}
+#hf-rpg .hf-rpg-skill-glyph{
+ width:45px;height:45px;min-width:45px;min-height:45px;
+ display:grid;place-items:center;flex:0 0 45px;
+}
+#hf-rpg .hf-rpg-skill-glyph .hf-skill-svg,
+#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon{
+ width:43px;height:43px;max-width:43px;max-height:43px;
+ object-fit:contain;display:block;
+}
+#hf-rpg .hf-rpg-skill-list::after{height:61px}
+#hf-rpg .hf-rpg-skill-feature>span,
+#hf-rpg .hf-rpg-skill-feature .hf-skill-svg.is-large{
+ width:73px;height:73px;min-width:73px;max-width:73px;max-height:73px;
+}
+#hf-rpg .hf-rpg-skill-feature{min-height:77px;padding:4px 7px;gap:9px}
+#hf-rpg .hf-rpg-skill-equip-slot .hf-skill-svg{width:95%;height:95%;max-height:58px}
+
+/* 4. Forja: objetos legibles, pero 6 recetas continúan en dos columnas. */
+#hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe{
+ min-height:73px;padding:3px 4px;gap:2px;
+}
+#hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe .hf-premium-icon{
+ width:46px;height:46px;max-width:46px;max-height:46px;
+ object-fit:contain;flex:0 0 auto;
+}
+#hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe b{
+ font-size:10px;line-height:1.08;
+}
+#hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient{
+ grid-template-columns:43px minmax(0,1fr);
+ gap:4px;min-height:52px;
+}
+#hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient .hf-premium-icon{
+ width:41px;height:41px;max-width:41px;max-height:41px;
+ object-fit:contain;grid-row:1/span 2;
+}
+#hf-rpg .hf-rpg-forge-result-art .hf-premium-icon.is-large{
+ width:78px!important;height:78px!important;max-height:78px;max-width:78px;
+}
+
+/* 5. Un fénix visible y reconocible, no un insecto. */
+#hf-rpg .hf-rpg-footer::before{
+ width:162px;height:52px;top:-19px;
+ background-image:var(--hf-crest);
+ background-position:center 50%;background-size:contain;background-repeat:no-repeat;
+ filter:drop-shadow(0 0 4px #df63f6a8) drop-shadow(0 0 3px #f2bf89b8);
+ pointer-events:none;
+}
+
+@media(max-width:980px){
+ #hf-rpg .hf-rpg-character-layout>.hf-rpg-left-panel,
+ #hf-rpg .hf-rpg-character-layout>.hf-rpg-right-panel{padding:7px 8px 6px}
+ #hf-rpg .hf-rpg-skill-list .hf-rpg-skill{min-height:52px;padding:3px 5px}
+ #hf-rpg .hf-rpg-skill-glyph{width:44px;height:44px;min-width:44px;min-height:44px;flex-basis:44px}
+ #hf-rpg .hf-rpg-skill-glyph .hf-skill-svg,
+ #hf-rpg .hf-rpg-skill-glyph .hf-premium-icon{width:42px;height:42px;max-width:42px;max-height:42px}
+ #hf-rpg .hf-rpg-skill-list::after{height:57px}
+ #hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe .hf-premium-icon{width:45px;height:45px;max-width:45px;max-height:45px}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient .hf-premium-icon{width:40px;height:40px;max-width:40px;max-height:40px}
+ #hf-rpg .hf-rpg-footer::before{width:146px;height:48px;top:-17px}
+}
+@media(max-height:430px){
+ #hf-rpg .hf-rpg-character-layout .hf-rpg-slot-list{gap:3px}
+ #hf-rpg .hf-rpg-character-layout .hf-rpg-slot-art{height:29px;width:29px;min-width:29px;flex-basis:29px}
+ #hf-rpg .hf-rpg-character-layout .hf-rpg-slot-art .hf-premium-icon{width:28px;height:28px}
+ #hf-rpg .hf-rpg-skill-list .hf-rpg-skill{min-height:51px}
+ #hf-rpg .hf-rpg-skill-list::after{height:53px}
+ #hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe{min-height:69px}
+ #hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe .hf-premium-icon{width:44px;height:44px;max-width:44px;max-height:44px}
+ #hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient{min-height:47px}
+}
