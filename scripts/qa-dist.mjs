@@ -37,7 +37,7 @@ for(const name of ['approved-logo','approved-potions','approved-hero']){
  assert.ok(fs.existsSync(file),'F0.14.7 missing approved art '+name);
  assert.ok(fs.statSync(file).size>1000,'Approved image is empty '+name);
 }
-for(const name of ['premium-icons-atlas','premium-forge','premium-quest-names','premium-quest-map']){
+for(const name of ['premium-icons-atlas','premium-forge','premium-quest-names','premium-quest-map','premium-quest-notes']){
  const file=path.join(root,'highfly',name+'.avif');
  assert.ok(fs.existsSync(file),'Premium approved artwork missing '+name);
  assert.ok(fs.statSync(file).size>2000,'Premium approved artwork is unexpectedly empty '+name);
