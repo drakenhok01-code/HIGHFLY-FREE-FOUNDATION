@@ -37,6 +37,11 @@ for(const name of ['approved-logo','approved-potions','approved-hero']){
  assert.ok(fs.existsSync(file),'F0.14.7 missing approved art '+name);
  assert.ok(fs.statSync(file).size>1000,'Approved image is empty '+name);
 }
+for(const name of ['premium-icons-atlas','premium-forge','premium-quest-names','premium-quest-map']){
+ const file=path.join(root,'highfly',name+'.avif');
+ assert.ok(fs.existsSync(file),'Premium approved artwork missing '+name);
+ assert.ok(fs.statSync(file).size>2000,'Premium approved artwork is unexpectedly empty '+name);
+}
 assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt')));

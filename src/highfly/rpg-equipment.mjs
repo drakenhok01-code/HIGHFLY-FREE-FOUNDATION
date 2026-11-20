@@ -30,7 +30,7 @@ export const EQUIP_ITEM_DEFS=Object.freeze({
   description:'Escudo redondo compatible con la mano izquierda del Knight FREE.'
  },
  training_greatsword:{
-  id:'training_greatsword',name:'Mandoble de Aprendiz',kind:'Equipamiento',icon:'weapon',
+  id:'training_greatsword',name:'Mandoble de Aprendiz',kind:'Equipamiento',icon:'greatsword',
   rarity:'Poco común',max:10,slots:['right_hand'],stats:{physicalAttack:9},
   description:'Mandoble a dos manos ya incluido en el Knight FREE.'
  }

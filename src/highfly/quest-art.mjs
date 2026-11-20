@@ -11,11 +11,11 @@ const THEMES={
  kept:['approved-hero','relic','Reliquias de los Cantores','#fac88d',75,41],
  nine:['quest-petal','bells','Las Nueve Campanas','#ffd08b',70,46],
  answer:['approved-hero','spire','Respuestas a los Ecos','#d299ff',51,48],
- vellum2:['world-petal','map','Los Planos Lejanos','#92e7ed',75,51],
+ vellum2:['premium-quest-map','map','Los Planos Lejanos','#92e7ed',75,51],
  count2:['quest-petal','notes','La Melodía Completa','#e8b4ff',38,45],
- names:['forge-chamber','enemy','Los Cuatro Enemigos con Nombre','#ff999e',70,35],
+ names:['premium-quest-names','enemy','Los Cuatro Enemigos con Nombre','#ff999e',70,35],
  rings:['approved-hero','rings','Las Pruebas Ancestrales','#ffd789',47,49],
- vellum:['world-petal','map','Marcas del Cartógrafo','#eadab2',20,43],
+ vellum:['premium-quest-map','map','Marcas del Cartógrafo','#eadab2',20,43],
  count:['quest-petal','notes','Las Notas Perdidas','#dfc4ff',28,40],
  seeds:['quest-petal','flower','Semillas de la Corte de los Pétalos','#ffbfd5',38,55],
  stair:['approved-hero','stairs','La Guardia de la Escalera','#dfb4ff',63,50],
@@ -54,7 +54,7 @@ export function questArtwork(id){
  // are produced elsewhere from live game quest state.
  return '<div class="hf-rpg-quest-scene" data-hf-quest-art="'+htmlSafe(q.id)+'" role="img" aria-label="'+htmlSafe(q.alt)+'">'+
  '<img class="hf-rpg-quest-scenery" alt="" draggable="false" src="'+img+'" style="object-position:'+q.x+'% '+q.y+'%"/>'+
- '<div class="hf-rpg-quest-scene-glow" style="--hf-quest-glow:'+q.color+'"></div>'+
- '<svg aria-hidden="true" viewBox="0 0 100 100" class="hf-rpg-quest-emblem" style="--hf-quest-glow:'+q.color+'"><g fill="'+q.color+'" fill-opacity=".30" stroke="'+q.color+'" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">'+emblem+'</g></svg>'+
+ ''+
+ ''+
  '<span class="hf-rpg-quest-scene-filigree" aria-hidden="true">✧</span></div>';
 }

@@ -80,6 +80,14 @@ try{
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-potion-approved').count()>=2,true,'Approved health and mana illustrations must replace procedural bottle icons');
+ assert.ok(await page.locator('#hf-rpg [data-hf-premium-icon="health"]').count()>0);
+ assert.ok(await page.locator('#hf-rpg [data-hf-premium-icon="mana"]').count()>0);
+ const iconCheck=await page.locator('#hf-rpg [data-hf-premium-icon="mana"]').first().evaluate(el=>{
+  const s=getComputedStyle(el);
+  return {image:s.backgroundImage,position:s.backgroundPosition,aspect:el.getBoundingClientRect().width/el.getBoundingClientRect().height};
+ });
+ assert.ok(iconCheck.image.includes('premium-icons-atlas.avif'),'Real premium potion artwork not applied '+JSON.stringify(iconCheck));
+ assert.ok(Math.abs(iconCheck.aspect-1)<.11,'Mana potion icon must stay square: '+JSON.stringify(iconCheck));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
