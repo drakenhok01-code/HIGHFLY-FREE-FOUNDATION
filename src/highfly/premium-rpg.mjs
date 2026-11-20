@@ -5,10 +5,13 @@
  */
 import './premium-rpg.css';
 import {paintLiveHero} from './hero-portrait.mjs';
-import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
+import {premiumArt,assetUrl} from './premium-assets.mjs';
+import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
+import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {translateHighfly} from './es-localization.mjs';
 
+const PHOENIX='<svg class="hf-rpg-logo-bird" viewBox="0 0 110 100" aria-hidden="true"><defs><linearGradient id="hfPhoenix" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5d6"/><stop offset=".4" stop-color="#d5a3ff"/><stop offset="1" stop-color="#9944f5"/></linearGradient></defs><path d="M54 22q-12 12-9 28Q22 38 9 10q0 31 29 53Q18 59 2 41q4 32 39 34l12 17 11-17Q101 73 109 41 90 57 71 63q28-22 29-53Q86 37 63 50q2-16-9-28z" fill="url(#hfPhoenix)" stroke="#f7d8ff" stroke-width="1.8"/><path d="M55 8l7 13-7 12-7-12z" fill="#ffeec4"/><path d="M55 43l9 14-9 22-9-22z" fill="#160828" stroke="#ffd4ff" stroke-width="1.4"/></svg>';
 const NAV=[
  ['personaje','♙','Personaje'],['atributos','▥','Atributos'],
  ['bolsa','▣','Bolsa'],['habilidades','✦','Habilidades'],
@@ -18,11 +21,12 @@ const NAV=[
 const safe=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 const numeric=n=>Number.isFinite(Number(n))?Math.floor(Number(n)).toLocaleString('es-AR'):'0';
 const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
-const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'')+'"><span class="hf-rpg-slot-art">'+(active?art(icon):'<span class="hf-rpg-slot-placeholder">✧</span>')+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
+const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'is-empty')+'"><span class="hf-rpg-slot-art">'+art(icon)+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
 const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
 function art(id='stone',large=false){
- // Tiny HIGHFLY-original vector library: no external bitmap/art license.
+ const premium=premiumArt(id,large);if(premium)return premium;
+ // Premium originals from approved asset board; vector fallback for unillustrated assets.
  let interior='';
  if(id==='health'||id==='mana'){
   const red=id==='health';
@@ -85,7 +89,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',toast:'',opened:false,heroTurn:0};
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',toast:'',opened:false,heroTurn:0};
+ root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
+ root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -96,9 +102,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const save=()=>saveRpgState(bag);
  const preview=()=>{
   const mode=weapon();
-  return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>EL CAMINO SE CONSTRUYE · NIVEL '+numeric(attrs().level)+'</small></div>'+
+  return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>NIVEL '+numeric(attrs().level)+'</small></div>'+
    '<div class="hf-rpg-hero-stage" aria-label="Vista 3D del personaje actual">'+
-   '<div class="hf-rpg-stage-halo"></div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
+   '<div class="hf-rpg-stage-halo"></div><div class="hf-rpg-stage-arch" aria-hidden="true">'+PHOENIX+'</div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
    '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
    '</div>'+
    '<div class="hf-rpg-weapon-tag"><span>⚔ '+safe(mode.label)+'</span>'+
@@ -112,13 +118,13 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const off=mode.off==='1H_Sword_Offhand'?'Espada secundaria':mode.off==='Round_Shield'?'Escudo redondo':
    mode.style==='twohand'||mode.style==='spear'||mode.style==='staff'?'Agarre a dos manos':'Vacío';
   return '<div class="hf-rpg-character-layout">'+
-   panel(title('Equipo','Mano dominante y armadura')+
+   panel(title('Equipo','Mano derecha · equipo')+
     '<div class="hf-rpg-slot-list">'+
     slot('Casco','shield')+slot('Pechera','shield')+slot('Guantes','shield')+
     slot('Mano derecha','weapon',main,!!mode.main||!!mode.external)+slot('Collar','ring')+
     '</div>','hf-rpg-left-panel')+
    preview()+
-   panel(title('Equipamiento','Mano secundaria y accesorios')+
+   panel(title('Equipamiento','Mano izquierda · accesorios')+
     '<div class="hf-rpg-slot-list">'+
     slot('Hombros','shield')+slot('Pantalón','shield')+slot('Botas','shield')+
     slot('Mano izquierda',mode.off==='Round_Shield'?'shield':'weapon',off,!!mode.off||mode.style==='twohand'||!!mode.external)+
@@ -144,32 +150,31 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  function attributes(){
   const a=attrs(),rows=a.rows.map(r=>'<div class="hf-rpg-stat-row"><span><b>'+r.id+'</b> <small>'+r.name+'</small></span>'+
     '<span>'+r.level+'</span><span>'+r.training+'</span><span class="is-green">+'+r.equipment+'</span><strong>'+r.total+'</strong></div>').join('');
-  return '<div class="hf-rpg-two">'+panel(title('Atributos','La esencia del cazador universal')+
+  return '<div class="hf-rpg-two">'+panel(title('Atributos','Atributos principales · Nivel '+a.level)+
    '<div class="hf-rpg-stat-head"><span>ATRIBUTO</span><span>NIVEL 80%</span><span>ENTRENAMIENTO 20%</span><span>EQUIPO</span><span>TOTAL</span></div>'+rows+
    '<div class="hf-rpg-rule"></div><p class="hf-rpg-info">Los puntos base nuevos se distribuyen hasta un <b>80% por nivel</b> y hasta un <b>20% por entrenamiento real verificado</b>. Las bonificaciones de equipo se suman por separado.</p>'+
    '<div class="hf-rpg-split">'+panel('<b>PROGRESIÓN</b><p>Nivel real registrado: '+a.level+'</p><small>Puntos por nivel: '+a.levelPoints+'</small>')+
    panel('<b>ENTRENAMIENTO REAL</b><p>'+a.trainingPoints+' / '+a.trainingCap+' puntos</p><small>No se otorgan puntos simulados.</small>')+'</div>')+
-   panel(title('Estadísticas derivadas','Valores actuales, sin atributos ficticios')+
-   '<div class="hf-rpg-stats-aside">'+[['Vida Máx.',health().max],['Maná Máx.',mana().max],['Energía Máx.',p()?.staminaMax],['Vida actual',health().value],['Maná actual',mana().value],['Esquiva','ROLL'],['Arma',weapon().label]].map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>'+
-   blank('Ataque, Defensa y Crítico esperan fórmulas de RPG propias; no se inventan cifras.'),'hf-rpg-right-panel')+'</div>';
+   panel(title('Estadísticas derivadas','Combate y recursos del personaje')+
+   '<div class="hf-rpg-stats-aside">'+[['HP máximo',health().max],['Maná máximo',mana().max],['Energía máxima',p()?.staminaMax],['Oxígeno máximo',p()?._hfOxygenMax??100],['Ataque',p()?.power?'×'+Number(p().power).toFixed(2):'—'],['Defensa',p()?._hfDefense??'—'],['Crítico',p()?._hfCritical??'—'],['Esquiva',p()?._hfEvasion??'—']].map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function bagView(){
   const rows=allItems().filter(o=>local.category==='Todo'||o.kind===local.category);
   const chosen=ITEM_DEFS[local.selected]&&allItems().some(x=>x.id===local.selected)?ITEM_DEFS[local.selected]:rows[0]||null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
-    ['Todo','Consumibles','Materiales'].map(cat=>menuLink('bag:'+cat,cat==='Todo'?'◈':cat==='Consumibles'?'⚗':'❖',cat)).join('')+
-    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>','hf-rpg-left-panel')+
+    ['Todo','Consumibles','Materiales','Especial'].map(cat=>menuLink('bag:'+cat,cat==='Todo'?'◈':cat==='Consumibles'?'⚗':cat==='Materiales'?'❖':'✧',cat)).join('')+
+    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+button('✧ EXPANDIR BOLSA · '+(bag.items.bag_upgrade??0)+' SELLOS','data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican con recursos reales.</small>','hf-rpg-left-panel')+
     panel(title('Inventario','Objetos reales y consumibles utilizables')+
-    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+MAX_BAG_SLOTS+'">'+bagSlots(rows,MAX_BAG_SLOTS).map((o,i)=>o?tile(o.id,o.count,chosen?.id):
+    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id):
   '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
-    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+MAX_BAG_SLOTS+' ESPACIOS OCUPADOS</div>'+
+    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>'+
     '<div class="hf-rpg-bottom-note">La bolsa conserva sus casillas vacías. Cada objeto o material real ocupa un espacio cuando se consigue.</div>')+
     panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.icon,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
     '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
     '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
-    (chosen.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):blank('Material obtenido en el mundo; no se consume directamente.')):
+    (chosen.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):chosen.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):blank('Material obtenido en el mundo; se utiliza en Fabricación.')):
     blank('Sin objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
  }
  function skills(){
