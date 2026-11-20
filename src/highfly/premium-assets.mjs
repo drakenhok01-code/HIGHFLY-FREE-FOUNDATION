@@ -2,6 +2,7 @@
  * Original scalable SVG interpretations of the HIGHFLY approved iconography.
  * The sprite atlas is one lightweight SVG; all menu elements remain real HTML.
  */
+import {extraPremiumIcon} from './premium-extra-art.mjs';
 export const SPRITE_COLS=6,SPRITE_ROWS=2;
 export const ICONS=Object.freeze({
  health:0,mana:1,herb:2,ore:3,wood:4,weapon:5,shield:6,armor:7,
@@ -11,6 +12,7 @@ export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+(name.start
 export function premiumArt(name,large=false){
  if(name==='health'||name==='mana')
   return '<span role="img" aria-label="'+(name==='health'?'Poción de Vida':'Poción de Maná')+'" class="hf-rpg-art hf-rpg-potion-approved '+(name==='health'?'is-health':'is-mana')+(large?' is-large':'')+'"></span>';
+ const extra=extraPremiumIcon(name,large);if(extra)return extra;
  const index=ICONS[name];
  if(index===undefined)return null;
  const x=index%SPRITE_COLS,y=Math.floor(index/SPRITE_COLS);
