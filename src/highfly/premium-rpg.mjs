@@ -27,7 +27,26 @@ function art(id='stone',large=false){
  if(id==='health'||id==='mana'){
   const red=id==='health';
   const hue=red?'#ff416d':'#3d9cff',lite=red?'#ffc0c6':'#c2f8ff',deep=red?'#6d0835':'#10306c';
-  interior='<path d="M37 7h26v12H37z" fill="#b98a4e" stroke="#ffe5a9" stroke-width="3"/><path d="M33 18h34v8l-8 9 18 30c10 19-1 31-27 31S13 84 23 65l18-30-8-9z" fill="#16142c" stroke="#f3c980" stroke-width="4"/><path d="M29 66l14-25h14l14 25q13 24-21 24T29 66z" fill="'+hue+'" stroke="'+lite+'" stroke-width="2"/><path d="M33 72q9-20 17-22" stroke="'+lite+'" stroke-width="6" stroke-linecap="round" opacity=".85"/><path d="M25 69q1 18 25 18" fill="none" stroke="'+deep+'" stroke-width="6"/><path d="M50 47l5 8-5 8-5-8z" fill="'+lite+'"/>';
+  // Resolution-independent original vector painting: crisp at 256, 512 or 4K.
+  // Multilayer metallic stopper, double glass highlight and magical liquid shine.
+  const brew=red?'hfRpgRuby':'hfRpgAzure';
+  interior='<defs>'+
+   '<linearGradient id="hfRpgGilt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff7cf"/><stop offset=".27" stop-color="#bb8750"/><stop offset=".52" stop-color="#ffe5a7"/><stop offset=".77" stop-color="#a76a3d"/><stop offset="1" stop-color="#ffe7ab"/></linearGradient>'+
+   '<linearGradient id="hfRpgGlass" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#e5ffff" stop-opacity=".38"/><stop offset=".32" stop-color="#8de0f3" stop-opacity=".10"/><stop offset=".74" stop-color="#d2ceff" stop-opacity=".22"/><stop offset="1" stop-color="#faf6ff" stop-opacity=".61"/></linearGradient>'+
+   '<linearGradient id="'+brew+'" x1=".2" y1=".1" x2=".8" y2="1"><stop stop-color="'+lite+'"/><stop offset=".22" stop-color="'+hue+'"/><stop offset=".63" stop-color="'+deep+'"/><stop offset="1" stop-color="'+hue+'"/></linearGradient>'+
+   '</defs>'+
+   '<path d="M38 8h24l3 8-3 9H38l-3-9z" fill="url(#hfRpgGilt)" stroke="#ffeac0" stroke-width="2"/>'+
+   '<path d="M39 8h22M38 15h24M38 23h24" stroke="#7c4b41" stroke-width="1.3" opacity=".85"/>'+
+   '<path d="M32 25h36v7l-8 9 17 29c8 15 0 26-27 27C23 96 15 85 23 70l17-29-8-9z" fill="#11152b" stroke="url(#hfRpgGilt)" stroke-width="3"/>'+
+   '<path d="M31 29h38l-8 13 14 27c9 17-7 25-25 25S16 86 25 69l14-27z" fill="url(#hfRpgGlass)" opacity=".85"/>'+
+   '<path d="M29 68l15-24h13l14 24c10 17-1 23-21 23S19 85 29 68z" fill="url(#'+brew+')" stroke="'+lite+'" stroke-width="1.8"/>'+
+   '<path d="M31 72q8-12 19-9 9 3 19-3" fill="none" stroke="'+lite+'" stroke-width="2" opacity=".7"/>'+
+   '<path d="M33 48C23 67 16 82 27 86" stroke="white" stroke-width="4" fill="none" opacity=".8" stroke-linecap="round"/>'+
+   '<path d="M61 46q16 20 17 32" stroke="#fff0fb" stroke-width="2.5" fill="none" opacity=".68" stroke-linecap="round"/>'+
+   '<path d="M47 48l6 10-6 9-6-9z" fill="'+lite+'" stroke="white" stroke-width="1.1"/>'+
+   '<circle cx="37" cy="75" r="2.5" fill="white" opacity=".82"/><circle cx="61" cy="75" r="1.9" fill="'+lite+'"/>'+
+   '<path d="M77 37v11M72 42h11M21 45v8M17 49h8" stroke="'+lite+'" stroke-width="2" stroke-linecap="round" opacity=".82"/>'+
+   '<path d="M36 26h28" stroke="#fff7ce" stroke-width="2" opacity=".85"/>';
  }else if(id==='weapon'||id==='blade'){
   interior='<path d="M70 11L48 67l-13 6 6-14 22-51z" fill="#59bafb" stroke="#d3f9ff" stroke-width="3"/><path d="M51 66L26 77" stroke="#e3b86d" stroke-width="8" stroke-linecap="round"/><path d="M32 68l17 17M23 77l14 14" stroke="#ffd997" stroke-width="5"/><path d="M19 93l12-10" stroke="#eed2ab" stroke-width="5"/>';
  }else if(id==='herb'){
