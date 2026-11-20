@@ -53,7 +53,7 @@ export function premiumVectorArt(name,large=false){
  const shape=shapes[name];if(!shape)return null;
  const pair=colors[name]||['#a878ff','#fff1d5'];
  const tag='hfvec_'+name.replace(/[^a-z0-9_]/gi,'_');
- return '<svg class="hf-rpg-art hf-premium-vector'+(large?' is-large':'')+'" viewBox="0 0 100 100" fill="none" role="img" aria-label="'+name.replaceAll('_',' ')+'" xmlns="http://www.w3.org/2000/svg">'+
+ return '<svg class="hf-rpg-art hf-premium-vector'+(large?' is-large':'')+'" data-hf-art-id="' + name + '" viewBox="0 0 100 100" fill="none" role="img" aria-label="'+name.replaceAll('_',' ')+'" xmlns="http://www.w3.org/2000/svg">'+
  '<defs><linearGradient id="'+tag+'_metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbdc"/><stop offset=".22" stop-color="'+pair[1]+'"/><stop offset=".58" stop-color="'+pair[0]+'"/><stop offset="1" stop-color="#3b1b71"/></linearGradient>'+
  '<radialGradient id="'+tag+'_liquid"><stop stop-color="'+pair[1]+'"/><stop offset=".6" stop-color="'+pair[0]+'"/><stop offset="1" stop-color="#211149"/></radialGradient>'+
  '<linearGradient id="'+tag+'_glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f1f9ff" stop-opacity=".9"/><stop offset=".25" stop-color="'+pair[0]+'" stop-opacity=".25"/><stop offset=".8" stop-color="#16114e" stop-opacity=".35"/><stop offset="1" stop-color="#eeeaff" stop-opacity=".8"/></linearGradient></defs>'+
