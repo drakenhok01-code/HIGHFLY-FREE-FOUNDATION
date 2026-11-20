@@ -31,7 +31,11 @@ try{
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
  const artStatus=await page.evaluate(async()=>{const x=getComputedStyle(document.querySelector('#hf-rpg')).getPropertyValue('--hf-hero-art');const url=x.match(/url\(["']?([^"')]+)/)?.[1];if(!url)return {ok:false,x};const image=new Image();image.src=url;await image.decode();return {ok:image.naturalWidth>0,width:image.naturalWidth};});
- assert.ok(artStatus.ok,'Approved sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
+ assert.ok(artStatus.ok,'Painted sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
+ assert.ok(!artStatus.x?.includes('approved-hero'),'Original hero image has an embedded censored blur. The live portrait must not use it.');
+ await page.waitForFunction(()=>[...document.querySelectorAll('#hf-rpg [data-hf-premium-icon]')].every(e=>e.dataset.hfIsolated==='1'),null,{timeout:15000});
+ assert.equal(await page.locator('#hf-rpg [data-hf-premium-icon]:not([data-hf-isolated="1"])').count(),0,
+   'Every visible premium icon must have its own decoded cell rather than be a shifted background atlas');
 
  const viewport=await page.evaluate(()=>{
   const outer=document.querySelector('#hf-rpg .hf-rpg-shell').getBoundingClientRect();
@@ -86,7 +90,7 @@ try{
   const s=getComputedStyle(el);
   return {image:s.backgroundImage,position:s.backgroundPosition,aspect:el.getBoundingClientRect().width/el.getBoundingClientRect().height};
  });
- assert.ok(iconCheck.image.includes('premium-icons-atlas.avif'),'Real premium potion artwork not applied '+JSON.stringify(iconCheck));
+ assert.ok(iconCheck.image.includes('data:image/webp'),'Individually cropped premium potion must not use CSS atlas offsets '+JSON.stringify(iconCheck));
  assert.ok(Math.abs(iconCheck.aspect-1)<.11,'Mana potion icon must stay square: '+JSON.stringify(iconCheck));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
@@ -103,6 +107,19 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-material-row').count(),0,'No redundant bag material list in Forge');
  await page.evaluate(()=>{window.__game.player._hfProfession.inventory.herb=2;window.__highflyRpg.render();});
  assert.equal(await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').isEnabled(),true);
+ const recipeLayout=await page.evaluate(()=>{
+  const card=document.querySelector('#hf-rpg .hf-rpg-forge-materials .hf-rpg-ingredient');
+  const meta=card?.querySelector('.hf-rpg-ingredient-contents');
+  const title=meta?.querySelector('b');
+  const view=document.querySelector('#hf-rpg .hf-rpg-forge-preview');
+  const pane=document.querySelector('#hf-rpg .hf-rpg-forge-main');
+  const bounds=x=>x?{scroll:x.scrollWidth,client:x.clientWidth,width:x.getBoundingClientRect().width}:null;
+  return {card:bounds(card),meta:bounds(meta),title:bounds(title),view:bounds(view),pane:bounds(pane),text:title?.innerText};
+ });
+ assert.ok(recipeLayout.meta?.client>48,'Forge ingredient content crushed: '+JSON.stringify(recipeLayout));
+ assert.ok(recipeLayout.meta.scroll<=recipeLayout.meta.client+3,'Forge ingredient text overflows its card: '+JSON.stringify(recipeLayout));
+ assert.ok(recipeLayout.view?.width<recipeLayout.pane?.width*.85,'Forge scenic area hidden by oversized recipe: '+JSON.stringify(recipeLayout));
+ await page.screenshot({path:'qa-rpg-forge-f01411.png'});
  const before=await page.evaluate(()=>window.__highflyRpg.state.items.hp_potion);
  await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Craft must request System confirmation');
@@ -136,6 +153,9 @@ try{
    loaded:el.querySelector('img')?.complete&&el.querySelector('img')?.naturalWidth>0
  }));
  assert.ok(questImage.loaded,'The mission image must be a rendered original HIGHFLY asset');
+ const missionArtwork=await page.locator('#hf-rpg .hf-rpg-quest-scene img').getAttribute('src');
+ assert.ok(!missionArtwork.includes('approved-hero')&&!missionArtwork.includes('world-petal'),
+  'Missions must not show the censored sanctuary or flat geometric terrain artwork: '+missionArtwork);
  assert.ok(questImage.alt?.length>10,'Each mission image must explain its scene');
  await page.screenshot({path:'qa-rpg-mission-illustration.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
