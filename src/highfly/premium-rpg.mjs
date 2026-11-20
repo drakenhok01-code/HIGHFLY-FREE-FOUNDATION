@@ -174,35 +174,67 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-stats-aside">'+[['HP máximo',health().max],['Maná máximo',mana().max],['Energía máxima',p()?.staminaMax],['Oxígeno máximo',p()?._hfOxygenMax??100],['Ataque',p()?.power?'×'+Number(p().power).toFixed(2):'—'],['Defensa',p()?._hfDefense??'—'],['Crítico',p()?._hfCritical??'—'],['Esquiva',p()?._hfEvasion??'—']].map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function bagView(){
-  const rows=allItems().filter(o=>local.category==='Todo'||o.kind===local.category);
-  const chosen=ITEM_DEFS[local.selected]&&allItems().some(x=>x.id===local.selected)?ITEM_DEFS[local.selected]:rows[0]||null;
+  const categories=['Todo','Consumibles','Materiales','Equipamiento','Accesorios','Otros'];
+  const rows=allItems().filter(o=>local.category==='Todo'||o.kind===local.category||
+    local.category==='Otros'&&o.kind==='Especial');
+  const owned=rows.find(x=>x.id===local.selected)||rows[0]||null;
+  const chosen=owned?ITEM_DEFS[owned.id]:null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
+  const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};
+  const choices=chosen?.kind==='Equipamiento'&&EQUIP_ITEM_DEFS[chosen.id]?
+   (local.pickEquipItem===chosen.id?
+    '<div class="hf-rpg-bag-equip-choices"><b>¿Dónde equipar?</b>'+
+    EQUIP_ITEM_DEFS[chosen.id].slots.map(id=>button(EQUIP_SLOTS.find(s=>s.id===id)?.label||id,
+    'data-hf-action="equip:'+id+':'+chosen.id+'"','is-primary')).join('')+
+    button('CANCELAR','data-hf-action="cancel-equip"')+'</div>':
+    button('✧ EQUIPAR','data-hf-action="pick-equip:'+chosen.id+'"','is-primary')):
+   chosen?.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):
+   chosen?.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):
+   blank('Este material se utiliza en Fabricación.');
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
-    ['Todo','Consumibles','Materiales','Especial'].map(cat=>menuLink('bag:'+cat,cat==='Todo'?'◈':cat==='Consumibles'?'⚗':cat==='Materiales'?'❖':'✧',cat)).join('')+
-    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+button('✧ EXPANDIR BOLSA · '+(bag.items.bag_upgrade??0)+' SELLOS','data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican con recursos reales.</small>','hf-rpg-left-panel')+
-    panel(title('Inventario','Objetos reales y consumibles utilizables')+
+    categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat)).join('')+
+    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+
+    '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
+    button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
+    '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
+   panel(title('Inventario','Objetos y consumibles reales')+
     '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id):
-  '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
-    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>'+
-    '<div class="hf-rpg-bottom-note">La bolsa conserva sus casillas vacías. Cada objeto o material real ocupa un espacio cuando se consigue.</div>')+
-    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
+     '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
+    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
+   panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.icon,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
-    '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
-    '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
-    (chosen.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):chosen.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):blank('Material obtenido en el mundo; se utiliza en Fabricación.')):
-    blank('Sin objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
+      '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
+      '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
+      (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
+      choices:blank('No hay objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
  }
  function skills(){
   const list=liveSkillRows(p()),chosen=list.find(s=>s.id===local.selectedSkill)||list[0];
-  return '<div class="hf-rpg-two">'+panel(title('Habilidades','Catálogo del Cazador Universal · '+list.filter(s=>s.available).length+' activas')+
-    '<div class="hf-rpg-skill-list">'+list.map((s,i)=>'<button type="button" data-hf-skill="'+safe(s.id)+'" class="hf-rpg-skill '+(!s.available?'is-locked ':'')+(chosen?.id===s.id?'is-selected':'')+'"><span class="hf-rpg-skill-glyph">'+art(s.kind==='Mágica'?'mana':s.kind==='Curación'?'health':'weapon')+'</span><div><b>'+safe(s.label)+'</b><small>'+safe(s.kind)+' · '+safe(s.cost)+'</small></div><em>'+(s.available?'ACTIVA':'BLOQUEADA')+'</em></button>').join('')+'</div>')+
-   panel(title(chosen?.label??'Habilidad','Detalles de la habilidad seleccionada')+
-    '<div class="hf-rpg-skill-scenery">'+art(chosen?.kind==='Curación'?'health':chosen?.kind==='Mágica'?'mana':'skills',true)+'</div>'+
+  const equippedIndex=bag.skillSlots.indexOf(chosen?.id);
+  const choose=local.pickSkill===chosen?.id;
+  const skillSlots=bag.skillSlots.map((id,i)=>{
+   const row=list.find(x=>x.id===id);
+   return '<button class="hf-rpg-skill-equip-slot '+(id?'is-equipped':'is-empty')+'" type="button" data-hf-skill-slot="'+i+'" aria-label="Ranura de habilidad '+(i+1)+'">'+
+    '<span class="hf-rpg-skill-number">'+(i+1)+'</span>'+(id?skillIcon(id):'<span class="hf-rpg-equip-placeholder">+</span>')+
+    '<small>'+safe(row?.label??'Libre')+'</small></button>';
+  }).join('');
+  return '<div class="hf-rpg-two">'+panel(title('Habilidades','Catálogo · '+list.filter(s=>s.available).length+' disponibles')+
+   '<div class="hf-rpg-skill-list">'+list.map(s=>
+    '<button type="button" data-hf-skill="'+safe(s.id)+'" class="hf-rpg-skill '+(!s.available?'is-locked ':'')+(chosen?.id===s.id?'is-selected':'')+'">'+
+    '<span class="hf-rpg-skill-glyph">'+skillIcon(s.id)+'</span>'+
+    '<div><b>'+safe(s.label)+'</b><small>'+safe(s.kind)+' · '+safe(s.cost)+'</small></div>'+
+    '<em>'+(s.available?'DISPONIBLE':'BLOQUEADA')+'</em></button>').join('')+'</div>')+
+   panel(title(chosen?.label??'Habilidad',chosen?.available?'DISPONIBLE':'BLOQUEADA')+
+    '<div class="hf-rpg-skill-feature"><span>'+skillIcon(chosen?.id,true)+'</span>'+
+    '<p>'+safe(chosen?.desc??'')+'</p></div>'+
     '<div class="hf-rpg-tag">'+safe(chosen?.kind??'')+' · '+safe(chosen?.cost??'')+'</div>'+
-    '<p class="hf-rpg-info">'+safe(chosen?.desc??'')+'</p>'+
-    '<div class="hf-rpg-stat-panel"><b>Estado</b><strong>'+(chosen?.available?'Disponible':'Por desbloquear')+'</strong></div>'+
-    (chosen?.id==='heal'?'<p class="hf-rpg-info">Se activa con las cargas curativas disponibles en el mundo.</p>':'')+
-    '<div class="hf-rpg-mini-actions">'+button('VER PERSONAJE','data-hf-tab="personaje"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
+    '<div class="hf-rpg-subtitle">ASIGNACIÓN DE HABILIDAD</div>'+
+    '<p class="hf-rpg-info">Elegí una ranura de combate (1 a 6). Las habilidades bloqueadas no se pueden ejecutar.</p>'+
+    '<div class="hf-rpg-skill-slots">'+skillSlots+'</div>'+
+    '<div class="hf-rpg-mini-actions">'+(equippedIndex>=0?
+     button('DESEQUIPAR DE RANURA '+(equippedIndex+1),'data-hf-action="clear-skill:'+equippedIndex+'"'):
+     button(choose?'TOCÁ UNA RANURA ↑':'EQUIPAR','data-hf-action="choose-skill" '+(chosen?.available?'':'disabled'),'is-primary'))+
+    '</div>','hf-rpg-right-panel')+'</div>';
  }
  function professions(){
   const profession=prof(),jobs=[['Recolección','herb','Recolectar plantas reales'],['Minería','ore','Extraer minerales de vetas'],['Tala','wood','Talar árboles válidos'],['Pesca','fish','Pescar en lugares habilitados'],['Fundición','ingot','Fundir minerales'],['Forja','blade_blank','Fabricar hojas de prueba']];
