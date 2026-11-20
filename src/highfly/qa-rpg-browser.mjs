@@ -84,8 +84,10 @@ try{
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
- assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_hp_potion.svg"]').count()>0,'Individual HP potion art missing');
- assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_mp_potion.svg"]').count()>0,'Individual MP potion art missing');
+ assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_hp_potion.webp"]').count()>0,'Individual HP potion art missing');
+ assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_mp_potion.webp"]').count()>0,'Individual MP potion art missing');
+ const iconLoad=await page.locator('#hf-rpg .hf-premium-icon').evaluateAll(imgs=>({loaded:imgs.filter(x=>x.naturalWidth>0).length,total:imgs.length,allWebp:imgs.every(x=>x.src.endsWith('.webp'))}));
+ assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'Item sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
@@ -133,7 +135,9 @@ try{
  assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
  await page.screenshot({path:'qa-rpg-quests.png'});
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
- assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One fantasy quest illustration exists');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One real mission scene exists');
+ const missionPhoto=await page.locator('#hf-rpg .hf-rpg-quest-art img').evaluate(img=>({src:img.getAttribute('src'),width:img.naturalWidth,height:img.naturalHeight}));
+ assert.ok(missionPhoto.src.endsWith('.webp')&&missionPhoto.width>=800&&missionPhoto.height>=400,'Mission artwork must load as high-detail raster: '+JSON.stringify(missionPhoto));
  assert.ok((await page.locator('#hf-rpg .hf-rpg-quest-art img').getAttribute('src')).includes('premium/quest_'),'Mission should use its own original art');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-map-display').count(),1,'Map must render original world or clearly labeled illustration');

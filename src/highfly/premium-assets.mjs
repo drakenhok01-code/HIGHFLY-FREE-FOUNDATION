@@ -1,7 +1,7 @@
 /** HIGHFLY PREMIUM v2: standalone, resolution-independent artwork per real RPG ID.
  *  F0.14.8 game/UI state still drives all interactivity. No screenshots used as UI.
  */
-export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+(name.startsWith('approved-')?'.webp':'.svg');
+export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+((name.startsWith('approved-')||/^premium\/(item_|skill_|profession_|quest_|character_sanctuary$|forge_workshop$)/.test(name))?'.webp':'.svg');
 const ITEMS=new Set(['hp_potion','mp_potion','herb','ore','wood','fish','ingot','blade_blank','seed','bag_upgrade','training_sword','training_shield','training_greatsword']);
 const SLOTS=new Set(['helmet','chest','gloves','right_hand','necklace','shoulders','pants','boots','left_hand','ring']);
 const PROFS=new Set(['recoleccion','mineria','tala','pesca','cocina','alquimia','fundicion','forja']);
@@ -18,4 +18,4 @@ const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala',
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
 export const questArtUrl=id=>assetUrl('premium/quest_'+(QUESTS.has(id)?id:'primary'));
 export const PREMIUM_IDS=Object.freeze({items:[...ITEMS],slots:[...SLOTS],professions:[...PROFS],skills:[...SKILLS],quests:[...QUESTS]});
-export const PLEDGE='Todos los recursos premium son SVG originales individuales. La lógica sigue en DOM/Canvas de F0.14.8.';
+export const PLEDGE='48 recursos WebP originales independientes, con slots y navegación SVG. La lógica sigue en DOM/Canvas de F0.14.8.';

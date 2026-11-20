@@ -176,11 +176,51 @@ for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal',
  copy(path.join(ROOT,'assets/highfly/'+name+'.svg'),loc('public/highfly/'+name+'.svg'));
 for(const name of ['approved-logo','approved-potions','approved-hero'])
  copy(path.join(ROOT,'assets/highfly/'+name+'.webp'),loc('public/highfly/'+name+'.webp'));
-// F0.14.8 premium illustrations: copy only original, reviewed SVG resources.
+// F0.14.8 premium: hand-painted raster illustration packs are unpacked to REAL
+// individual assets in public/highfly/premium; live game state/UI is untouched.
+// Fixed SHA-256 protects source archives from corruption and accidental drift.
+const premiumArchiveHashes={
+ 'HF_PHOENIX_ITEMS.zip':'a92a67f613fc10d1c42588f83ae8f68c42f24a84df1e18e847765c9b2a559cc6',
+ 'HF_PHOENIX_BACKGROUNDS.zip':'42dfe7d936cbe31b5ff386ddebc75d170722eb863d1a246845a0cff8d8665e88',
+ 'HF_PHOENIX_MISSIONS_A.zip':'ffeff308148c5f61ea75697e010cb8ea4421ab0ac5e3bb7bffb3d28f587980e4',
+ 'HF_PHOENIX_MISSIONS_B.zip':'83291e744de6fa9f27946f0d80ca1aad0e0d5a8286fed7d71b62253e33c5c40d'
+};
+const rasterOutput=loc('public/highfly/premium');
+fs.mkdirSync(rasterOutput,{recursive:true});
 for(const source of walk(path.join(ROOT,'assets/highfly/premium'))){
- if(!source.endsWith('.svg'))throw Error('Unexpected premium asset: '+source);
- copy(source,loc('public/highfly/premium/'+path.basename(source)));
+ if(source.endsWith('.zip'))continue;
+ if(!source.endsWith('.svg'))throw Error('Unexpected premium source: '+source);
+ copy(source,path.join(rasterOutput,path.basename(source)));
 }
+for(const [name,expected] of Object.entries(premiumArchiveHashes)){
+ const archive=path.join(ROOT,'assets/highfly/premium',name);
+ if(!fs.existsSync(archive)||hash(archive)!==expected)throw Error('PREMIUM raster pack missing/corrupt: '+name);
+ const list=capture('unzip',['-Z','-1',archive]).split('\n').filter(Boolean);
+ if(!list.length)throw Error('Empty premium pack: '+name);
+ for(const entry of list)if(!/^(items|skills|professions|backgrounds|quests)\/[a-z0-9_]+\.webp$/.test(entry))throw Error('Invalid ZIP asset path: '+entry);
+ const tmp=path.join(ROOT,'.work','premium-unpack',name);
+ fs.mkdirSync(tmp,{recursive:true});
+ run('unzip',['-qo',archive,'-d',tmp]);
+ for(const entry of list){
+  const source=path.join(tmp,entry),dest=path.join(rasterOutput,path.basename(entry));
+  if(fs.statSync(source).size<1000)throw Error('Premium artwork empty: '+entry);
+  if(fs.existsSync(dest))throw Error('Duplicate premium ID: '+entry);
+  copy(source,dest);
+ }
+ console.log('[HIGHFLY ART]',name,list.length,'individual WebP assets');
+}
+const rasterExpected=[
+ ...'hp_potion mp_potion herb ore wood fish ingot blade_blank seed bag_upgrade training_sword training_shield training_greatsword'.split(' ').map(id=>'item_'+id),
+ ...'attack dash roll heavy pulse heal'.split(' ').map(id=>'skill_'+id),
+ ...'recoleccion mineria tala pesca cocina alquimia fundicion forja'.split(' ').map(id=>'profession_'+id),
+ ...'character_sanctuary forge_workshop'.split(' '),
+ ...'primary scales amber kept nine answer vellum2 count2 names rings vellum count seeds stair voices lamps water debt windfall'.split(' ').map(id=>'quest_'+id)
+];
+if(rasterExpected.length!==48)throw Error('Incorrect raster manifest count');
+for(const id of rasterExpected)
+ if(!fs.existsSync(path.join(rasterOutput,id+'.webp')))throw Error('Missing premium image '+id);
+console.log('[HIGHFLY PHOENIX] 48 individual painterly graphics verified');
+
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
