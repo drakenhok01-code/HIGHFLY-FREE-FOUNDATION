@@ -30,6 +30,8 @@ try{
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+ const artStatus=await page.evaluate(async()=>{const x=getComputedStyle(document.querySelector('#hf-rpg')).getPropertyValue('--hf-hero-art');const url=x.match(/url\(["']?([^"')]+)/)?.[1];if(!url)return {ok:false,x};const image=new Image();image.src=url;await image.decode();return {ok:image.naturalWidth>0,width:image.naturalWidth};});
+ assert.ok(artStatus.ok,'Approved sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
 
  const viewport=await page.evaluate(()=>{
   const outer=document.querySelector('#hf-rpg .hf-rpg-shell').getBoundingClientRect();

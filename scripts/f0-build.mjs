@@ -172,7 +172,7 @@ copy(path.join(ROOT,'src/highfly/cliff-camera.mjs'),loc('src/highfly/cliff-camer
 for(const name of ['rpg-equipment','premium-skill-art'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal'])
  copy(path.join(ROOT,'assets/highfly/'+name+'.svg'),loc('public/highfly/'+name+'.svg'));
-for(const name of ['approved-logo','approved-potions'])
+for(const name of ['approved-logo','approved-potions','approved-hero'])
  copy(path.join(ROOT,'assets/highfly/'+name+'.webp'),loc('public/highfly/'+name+'.webp'));
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));

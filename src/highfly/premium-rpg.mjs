@@ -98,7 +98,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const bag=loadRpgState();
  const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
- root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
+ root.style.setProperty('--hf-hero-art','url("'+assetUrl('approved-hero')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  root.style.setProperty('--hf-potion-art','url("'+assetUrl('approved-potions')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};

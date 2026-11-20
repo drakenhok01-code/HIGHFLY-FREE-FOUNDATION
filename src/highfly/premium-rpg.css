@@ -528,3 +528,13 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg .hf-rpg-slot-art .hf-rpg-potion-approved{width:36px;height:36px}
 #hf-rpg .hf-rpg-detail-art .hf-rpg-potion-approved{width:min(150px,100%);height:130px}
 @media(max-width:980px){#hf-rpg .hf-rpg-approved-logo{height:35px}}
+
+/* Real approved Phoenix sanctuary art, rendered behind the SAME live KayKit
+   canvas. This backdrop never captures taps or draws an alternate character. */
+#hf-rpg .hf-rpg-character-layout .hf-rpg-hero-panel{
+ background:linear-gradient(90deg,#070219b0,#180a2888 20%,#130c202b 50%,#1609258e 80%,#070219b0),var(--hf-hero-art);
+ background-size:cover;background-position:center center;
+}
+#hf-rpg .hf-rpg-stage-arch{display:none}
+#hf-rpg .hf-rpg-hero-canvas{z-index:4}
+#hf-rpg .hf-rpg-hero-stage{background:radial-gradient(ellipse at 50% 85%,#e7a2ff16,transparent 72%)}
