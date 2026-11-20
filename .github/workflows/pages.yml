@@ -54,6 +54,13 @@ jobs:
             .work/unsung/qa-touch-report.json
             .work/unsung/qa-rpg-character.png
             .work/unsung/qa-rpg-bag.png
+            .work/unsung/qa-rpg-attributes.png
+            .work/unsung/qa-rpg-forge.png
+            .work/unsung/qa-rpg-professions.png
+            .work/unsung/qa-rpg-quests.png
+            .work/unsung/qa-rpg-map.png
+            .work/unsung/qa-rpg-skills.png
+            .work/unsung/qa-rpg-options.png
             .work/unsung/qa-rpg-report.json
           if-no-files-found: ignore
       - name: Auditar dist antes de publicar
