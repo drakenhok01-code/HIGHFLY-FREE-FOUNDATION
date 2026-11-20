@@ -27,7 +27,7 @@ try{
  await page.locator('#hf-rpg-launch').click();
  const opening=await page.evaluate(()=>({ok:window.__highflyRpg.opened,game:window.__game.state,harnessReady:window.__hfRpgTest?.ready,health:window.__game.player.health,maximum:window.__game.player.healthMax}));
  assert.ok(opening.ok&&opening.game==='menu'&&opening.harnessReady,'Premium RPG production menu mount failed '+JSON.stringify(opening));
- await page.waitForSelector('#hf-rpg .hf-rpg-three');
+ await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  const viewport=await page.evaluate(()=>{
   const outer=document.querySelector('#hf-rpg .hf-rpg-shell').getBoundingClientRect();
   const stage=document.querySelector('#hf-rpg .hf-rpg-hero-stage').getBoundingClientRect();
