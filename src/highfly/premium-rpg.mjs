@@ -203,8 +203,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
   return '<div class="hf-rpg-three">'+panel(title('Fabricación','Recetas disponibles')+
   Object.values(RECIPES).map(r=>'<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('')+
-  '<div class="hf-rpg-space">ESTACIÓN <strong>Alquimia</strong></div>','hf-rpg-left-panel')+
-  panel(title(recipe.name,'Alquimia · Elaboración real')+'<div class="hf-rpg-craft-focus">'+art(ITEM_DEFS[recipe.item].icon,true)+
+  '<div class="hf-rpg-space">ESTACIÓN <strong>'+safe(recipe.profession)+'</strong></div>','hf-rpg-left-panel')+
+  panel(title(recipe.name,recipe.profession+' · Elaboración real')+'<div class="hf-rpg-craft-focus">'+art(ITEM_DEFS[recipe.item].icon,true)+
    '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p></div></div>'+
    '<div class="hf-rpg-subtitle">MATERIALES NECESARIOS</div>'+
    '<div class="hf-rpg-ingredients">'+Object.entries(recipe.ingredients).map(([id,n])=>'<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+'<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('')+'</div>'+
@@ -259,11 +259,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(!local.opened)return;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
-   '<header class="hf-rpg-top"><div class="hf-rpg-logo">✧ HIGHFLY <small>ASCENSIÓN · MMORPG FITNESS</small></div>'+
+   '<header class="hf-rpg-top"><div class="hf-rpg-logo">'+PHOENIX+'<span class="hf-rpg-brand-name">HIGHFLY<small>PHOENIX ASCENSIÓN</small></span></div>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.2 · HIGHFLY PREMIUM · ANDROID HORIZONTAL')+'</span></footer></div>';
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.5 · HIGHFLY PHOENIX ASCENSIÓN · ANDROID HORIZONTAL')+'</span></footer></div>';
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
  }
  function open(tab='personaje'){
@@ -288,10 +288,16 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(tab){if(tab.startsWith('bag:')){local.tab='bolsa';local.category=tab.slice(4);}
    else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}
   if(b.dataset.hfItem){local.selected=b.dataset.hfItem;render();return;}
+  if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
+  if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
   if(action==='close'){close();return;}
+  if(action==='expand'){
+   const result=consumeBagUpgrade(bag);if(result.ok)save();
+   message(result.ok?'¡Bolsa ampliada a '+result.slots+' casillas!':result.reason);return;
+  }
   if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
   if(action==='weapon'){
    if(!p())return;
