@@ -5,6 +5,8 @@ import {installHudEditor} from '../highfly/hud-editor.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
 import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 import {terrainWallContact} from '../highfly/wall-physics.mjs';
+import {loadRpgState,skillReady,DEFAULT_SKILL_SLOTS} from '../highfly/rpg-core.mjs';
+import {skillIcon} from '../highfly/premium-skill-art.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
 export function joystickVector(rect,px,py,deadzone=0.07){
  const radius=Math.max(1,Math.min(rect.width,rect.height)*0.5-9);
@@ -193,6 +195,9 @@ export function attachHighflyTouch(input){
 #hf-touch .full{border-radius:50%}
 #hf-touch .use{display:none!important}
 #hf-touch button[data-a^="skill"]{border-radius:50%;opacity:.7}
+#hf-touch .hf-skill-svg{width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 0 5px #c17cff)}
+#hf-touch button[data-a^="skill"]{padding:3px;overflow:hidden}
+#hf-touch button[data-a^="skill"][data-locked="1"] .hf-skill-svg{filter:grayscale(.8);opacity:.5}
 #hf-touch button[data-locked="1"]{opacity:.7;filter:grayscale(.35);color:#b9afc7}
 #hf-touch .settings{right:190px;top:8px;width:40px;height:40px;font-size:17px;border-radius:50%}
 #hf-touch .hf-hud-editor{left:50%;top:50%;right:auto;transform:translate(-50%,-50%);width:min(282px,70vw);max-height:75vh;overflow-y:auto;z-index:60;border-radius:14px}
@@ -272,6 +277,8 @@ export function attachHighflyTouch(input){
   if(globalThis.__highflySetGraphics?.(btn.dataset.graphics))t.settingsPanel.hidden=true;
  }));
  for(let i=1;i<=6;i++)t.skillButtons[i]=root.querySelector('.skill'+i);
+ t.skillSlots=[...loadRpgState().skillSlots];
+ t.setSkillBindings=slots=>{t.skillSlots=Array.isArray(slots)?slots.slice(0,6):[...DEFAULT_SKILL_SLOTS];};
  t.questPanel?.querySelector('[data-hf-quest-toggle]')?.addEventListener('pointerdown',e=>{
   if(t.editing)return;
   t.questExpanded=!t.questExpanded;t.questPanel.dataset.collapsed=t.questExpanded?'0':'1';
@@ -406,9 +413,8 @@ export function attachHighflyTouch(input){
    try{b.setPointerCapture(e.pointerId)}catch{}
    if(a.startsWith('skill')){
      const n=Number(a.slice(5)),p=globalThis.__game?.player;
-     const action=n===1?'pulse':n===2?'heavy':n===3?'heal':null;
-     const unlocked=action&&(n===2||(n===1&&p?.skills?.has('pulse'))||(n===3&&p?.refrains>0));
-     if(unlocked)t.pressed.add(action);
+     const action=t.skillSlots?.[n-1];
+     if(action&&skillReady(p,action))t.pressed.add(action);
      return;
    }
    const chosen=a==='context'?t.contextAction:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
@@ -485,14 +491,19 @@ export function applyHighflyTouch(input){
   if(box)box.textContent='Resolución '+Math.round((globalThis.__pipe?.renderScale??1)*100)+' % · '+Math.round(globalThis.__gov?.fps??0)+' FPS';
  }
  if(t.skillButtons){
-   const ready=[!!p?.skills?.has('pulse'),true,!!p?.refrains];
-   for(let i=1;i<=6;i++){
-     const btn=t.skillButtons[i];if(!btn)continue;
-     const available=i<=3&&ready[i-1];
-     btn.dataset.locked=available?'0':'1';
-     if(!available)btn.textContent='🔒';
-     else btn.textContent=i===1?'S1':i===2?'S2':'S3';
+  for(let i=1;i<=6;i++){
+   const btn=t.skillButtons[i];if(!btn)continue;
+   const action=t.skillSlots?.[i-1];
+   const available=!!action&&skillReady(p,action);
+   btn.dataset.locked=available?'0':'1';
+   const shown=action?skillIcon(action):'';
+   if(btn.dataset.hfSkillDrawn!==String(action)){
+    btn.innerHTML=shown||'<span class="hf-hud-skill-empty">✧</span>';
+    btn.dataset.hfSkillDrawn=String(action);
+    btn.setAttribute('aria-label',action?'Habilidad '+action:'Ranura de habilidad '+i+' vacía');
    }
+   btn.dataset.hfSkillReady=available?'1':'0';
+  }
  }
  const lock=rootLock(t);
  if(lock){
