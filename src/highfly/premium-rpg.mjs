@@ -169,12 +169,14 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
   else if(m.type==='assign-skill'){result=assignSkillSlot(bag,m.slotIndex,m.skillId,p());if(result.ok){save();syncSkills();local.pickSkill=null;}}
   else if(m.type==='expand'){result=consumeBagUpgrade(bag);if(result.ok)save();}
-  const output=result.ok?({
-   equip:'¡'+ITEM_DEFS[m.itemId].name+' equipado correctamente!',
-   unequip:'¡Objeto devuelto a tu Bolsa!',
-   'assign-skill':'¡Habilidad asignada a la ranura '+(m.slotIndex+1)+'!',
-   expand:'¡Tu Bolsa ahora tiene '+result.slots+' espacios!'
-  }[m.type]??'Acción completada'):result.reason;
+  let output=result.reason;
+  if(result.ok){
+   if(m.type==='equip')output='¡'+ITEM_DEFS[m.itemId].name+' equipado correctamente!';
+   else if(m.type==='unequip')output='¡Objeto devuelto a tu Bolsa!';
+   else if(m.type==='assign-skill')output='¡Habilidad asignada a la ranura '+(m.slotIndex+1)+'!';
+   else if(m.type==='expand')output='¡Tu Bolsa ahora tiene '+result.slots+' espacios!';
+   else output='Acción completada';
+  }
   local.system={...m,phase:'result',success:result.ok,outcome:output};render();
  }
  const preview=()=>{
