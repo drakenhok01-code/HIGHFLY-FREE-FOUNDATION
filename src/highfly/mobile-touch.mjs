@@ -93,7 +93,7 @@ export function vitalSnapshot(p){
   return {id,label,max,value:Number.isFinite(v)?Math.max(0,Math.min(max,v)):max};
  });
 }
-const hfHud=()=>'<div class="hf-vitals"><div class="hf-profile"><span class="hf-avatar">✦</span><div><b>CAZADOR UNIVERSAL</b><small>HIGHFLY · NIVEL 01</small></div></div>'+
+const hfHud=()=>'<div class="hf-vitals"><div class="hf-profile"><span class="hf-avatar"><svg class="hf-phoenix-mark" viewBox="0 0 110 100" aria-label="Emblema HIGHFLY"><path d="M54 22q-12 12-9 28Q22 38 9 10q0 31 29 53Q18 59 2 41q4 32 39 34l12 17 11-17Q101 73 109 41 90 57 71 63q28-22 29-53Q86 37 63 50q2-16-9-28z" fill="#c989ff" stroke="#fff0d6" stroke-width="3"/><path d="M55 9l7 13-7 12-7-12z" fill="#ffe9ba"/></svg></span><div><b>CAZADOR UNIVERSAL</b><small>HIGHFLY · NIVEL 01</small></div></div>'+
  ['hp','en','mp','o2'].map((id,i)=>'<div class="hf-vital hf-'+id+'"><b>'+['HP','ENERGÍA','MANÁ','OXÍGENO'][i]+'</b><span class="hf-track"><i class="hf-fill"></i></span><span class="hf-number">100/100</span></div>').join('')+
  '</div>'+ 
  '<div class="hf-quests" data-collapsed="0"><div class="hf-quest-head"><b>◈ MISIONES <span class="hf-quest-count">0</span></b><button type="button" class="hf-quest-all" data-hf-quest-open aria-label="Abrir diario completo">TODAS ↗</button><button type="button" class="hf-quest-toggle" data-hf-quest-toggle aria-expanded="true" aria-label="Contraer misiones">⌃</button></div><div class="hf-quest-body">'+
@@ -116,9 +116,10 @@ export function attachHighflyTouch(input){
  #hf-touch .hf-vitals{position:absolute;left:calc(env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 7px);width:330px;box-sizing:border-box;padding:6px 9px 5px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:9px;row-gap:1px;border:1px solid #8766bc99;border-radius:13px;pointer-events:none;background:linear-gradient(115deg,#111329ef,#0b1126ee 75%,#1b1834ed);box-shadow:0 5px 18px #05070f99,inset 0 1px #e9ddff26;backdrop-filter:blur(5px)}
  #hf-touch .hf-profile{display:flex;align-items:center;gap:7px;grid-column:1/-1;padding-bottom:4px;margin-bottom:3px;border-bottom:1px solid #9080c23b}
  #hf-touch .hf-avatar{width:24px;height:24px;flex:none;border-radius:50%;border:2px solid #bc9be8;background:#30254e;color:#e8d3ff;font:bold 17px system-ui;display:grid;place-items:center;box-shadow:0 0 10px #7a53d96b}
+ #hf-touch .hf-phoenix-mark{width:22px;height:22px;filter:drop-shadow(0 0 4px #bd85ef)}
  #hf-touch .hf-profile b{display:block;color:#f6f0ff;font:700 9px system-ui;letter-spacing:.55px}
  #hf-touch .hf-profile small{display:block;color:#ada8d1;font:7px system-ui;letter-spacing:1px;margin-top:1px}
- #hf-touch .hf-vital{display:grid;grid-template-columns:42px minmax(0,1fr) 37px;gap:3px;align-items:center;height:19px}
+ #hf-touch .hf-vital{display:grid;grid-template-columns:52px minmax(0,1fr) 37px;gap:3px;align-items:center;height:19px}
  #hf-touch .hf-vital b{font:700 8px system-ui}
  #hf-touch .hf-number{font:7px monospace;color:#f2eefe;text-align:right;font-variant-numeric:tabular-nums}
  #hf-touch .hf-track{height:8px;overflow:hidden;border-radius:8px;background:#1b1930;border:1px solid #ffffff26;box-shadow:inset 0 1px 2px #0009}
