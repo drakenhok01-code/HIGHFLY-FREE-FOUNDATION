@@ -87,15 +87,15 @@ export function resolveHighflyUse(p){
 }
 export function vitalSnapshot(p){
  const spec=[['hp','HP',p?.health,p?.healthMax],['en','ENERGÍA',p?.stamina,p?.staminaMax],
-  ['mp','MANÁ',p?._hfMana,p?._hfManaMax],['o2','O₂',p?._hfOxygen,p?._hfOxygenMax]];
+  ['mp','MANÁ',p?._hfMana,p?._hfManaMax],['o2','OXÍGENO',p?._hfOxygen,p?._hfOxygenMax]];
  return spec.map(([id,label,v,m])=>{
   const max=Number.isFinite(m)&&m>0?m:100;
   return {id,label,max,value:Number.isFinite(v)?Math.max(0,Math.min(max,v)):max};
  });
 }
 const hfHud=()=>'<div class="hf-vitals"><div class="hf-profile"><span class="hf-avatar">✦</span><div><b>CAZADOR UNIVERSAL</b><small>HIGHFLY · NIVEL 01</small></div></div>'+
- ['hp','en','mp','o2'].map((id,i)=>'<div class="hf-vital hf-'+id+'"><b>'+['HP','ENERGÍA','MANÁ','O₂'][i]+'</b><span class="hf-track"><i class="hf-fill"></i></span><span class="hf-number">100/100</span></div>').join('')+
- '<small class="hf-motto">EL PODER SE CONSTRUYE</small></div>'+
+ ['hp','en','mp','o2'].map((id,i)=>'<div class="hf-vital hf-'+id+'"><b>'+['HP','ENERGÍA','MANÁ','OXÍGENO'][i]+'</b><span class="hf-track"><i class="hf-fill"></i></span><span class="hf-number">100/100</span></div>').join('')+
+ '</div>'+ 
  '<div class="hf-quests" data-collapsed="0"><div class="hf-quest-head"><b>◈ MISIONES <span class="hf-quest-count">0</span></b><button type="button" class="hf-quest-all" data-hf-quest-open aria-label="Abrir diario completo">TODAS ↗</button><button type="button" class="hf-quest-toggle" data-hf-quest-toggle aria-expanded="true" aria-label="Contraer misiones">⌃</button></div><div class="hf-quest-body">'+
  '<div class="hf-primary-quest"></div><div class="hf-side-quests"></div></div></div>';
 export function attachHighflyTouch(input){
@@ -106,10 +106,10 @@ export function attachHighflyTouch(input){
  #ui #hud .fps{display:none!important}
  #hf-touch .hf-quests{position:absolute;left:10px;top:111px;width:330px;box-sizing:border-box;padding:6px 9px;border:1px solid #8b70b35f;border-radius:10px;background:linear-gradient(110deg,#10142df2,#100f25ef);pointer-events:auto;max-height:179px;overflow:hidden;box-shadow:0 4px 14px #0705157a}
  #hf-touch .hf-quest-head{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:25px;color:#dccba7;font:700 10px system-ui;letter-spacing:.3px;pointer-events:auto;border-bottom:1px solid #9478af5c;padding-bottom:4px}
- #hf-touch .hf-quest-body{font:10px system-ui;color:#c8c4df;margin-top:4px;line-height:1.25;max-height:129px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#a788d3 #17142b}
+ #hf-touch .hf-quest-body{font:10px system-ui;color:#c8c4df;margin-top:4px;line-height:1.25;max-height:129px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#a788d3 #17142b;padding-right:12px;box-sizing:border-box}
  #hf-touch .hf-primary-quest{color:#c9dcff;font:700 10px system-ui;padding:5px 3px 7px;margin-bottom:3px;border-bottom:1px solid #9981b84d}
  #hf-touch .hf-side-quests{font:9px system-ui;color:#a9a7cd}
- #hf-touch .hf-side-quests .hf-quest-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 3px;border-bottom:1px solid #9382b341;min-height:24px}#hf-touch .hf-quest-row b{display:block;color:#e7ddfc;font-weight:650;font-size:10px}#hf-touch .hf-quest-row small{display:block;color:#9da9c5;font:9px system-ui;margin-top:2px}#hf-touch .hf-quest-row em{color:#e5cd93;font:700 9px system-ui;white-space:nowrap}#hf-touch .hf-quest-head button{position:static;width:auto;height:24px;min-width:27px;border:1px solid #ae92c177;border-radius:8px;padding:0 6px;background:#483067aa;color:#f4e0ac;font:700 9px system-ui;opacity:.85;touch-action:manipulation}#hf-touch .hf-quest-head b{flex:1;white-space:nowrap}#hf-touch .hf-quest-count{font-weight:500;color:#d1c5ea}
+ #hf-touch .hf-side-quests .hf-quest-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 3px;border-bottom:1px solid #9382b341;min-height:24px}#hf-touch .hf-quest-row b{display:block;color:#e7ddfc;font-weight:650;font-size:10px}#hf-touch .hf-quest-row small{display:block;color:#9da9c5;font:9px system-ui;margin-top:2px}#hf-touch .hf-quest-row em{min-width:34px;text-align:right;color:#e5cd93;font:700 9px system-ui;white-space:nowrap}#hf-touch .hf-quest-head button{position:static;width:auto;height:24px;min-width:27px;border:1px solid #ae92c177;border-radius:8px;padding:0 6px;background:#483067aa;color:#f4e0ac;font:700 9px system-ui;opacity:.85;touch-action:manipulation}#hf-touch .hf-quest-head b{flex:1;white-space:nowrap}#hf-touch .hf-quest-count{font-weight:500;color:#d1c5ea}
  #hf-touch .hf-quests[data-collapsed="1"] .hf-quest-body{display:none}#hf-touch .hf-quests[data-collapsed="1"]{max-height:40px}#hf-touch .hf-quest-body::-webkit-scrollbar{width:4px}#hf-touch .hf-quest-body::-webkit-scrollbar-thumb{background:#a788d3;border-radius:5px}
  #hf-touch .hf-fps{position:absolute;right:6px;bottom:2px;font:9px monospace;color:#b4c6df;background:#0a0c1b9e;padding:2px 5px;border-radius:5px;pointer-events:auto;white-space:nowrap}
  #hf-touch .hf-fps[hidden]{display:none!important}
