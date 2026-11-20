@@ -30,6 +30,10 @@ try{
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+ const ornaments=await page.evaluate(async()=>{const root=document.querySelector('#hf-rpg');const keys=['--hf-crest','--hf-wave-art','--hf-panel-ornament'];const result={};for(const key of keys){const v=root.style.getPropertyValue(key);const m=v.match(/url\(["']?([^"')]+)/);if(!m)throw Error('Ornament URL missing '+key);const i=new Image();i.src=m[1];await i.decode();result[key]=i.naturalWidth;}return result;});
+ assert.ok(Object.values(ornaments).every(v=>v>0),'Phoenix ornate image resources not loaded: '+JSON.stringify(ornaments));
+ const frameStyle=await page.evaluate(()=>getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel'),'::before').backgroundImage);
+ assert.match(frameStyle,/ui_gold_corners/,'Gold corner frame must be applied to real panels');
  const artStatus=await page.evaluate(async()=>{const x=getComputedStyle(document.querySelector('#hf-rpg')).getPropertyValue('--hf-hero-art');const url=x.match(/url\(["']?([^"')]+)/)?.[1];if(!url)return {ok:false,x};const image=new Image();image.src=url;await image.decode();return {ok:image.naturalWidth>0,width:image.naturalWidth};});
  assert.ok(artStatus.ok,'Approved sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
 
@@ -85,6 +89,8 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
+ const activeFilter=await page.locator('#hf-rpg .hf-rpg-side-link.is-selected').count();
+ assert.equal(activeFilter,1,'Exactly one bag category must be visually selected');
  await page.locator('#hf-rpg [data-hf-item="hp_potion"]').click();
  const previous=await page.evaluate(()=>({hp:window.__game.player.health,qty:window.__highflyRpg.state.items.hp_potion}));
  await page.locator('#hf-rpg [data-hf-action="use:hp_potion"]').click();
