@@ -13,9 +13,6 @@ import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_B
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {translateHighfly} from './es-localization.mjs';
 import {describeSystemIntent} from './system-dialog.mjs';
-import {questArtwork} from './quest-art.mjs';
-import {installPremiumIconIsolation} from './premium-icon-isolation.mjs';
-const skillArt=(id,large=false)=>premiumArt('skill-'+id,large)||skillIcon(id,large);
 
 const PHOENIX='<svg class="hf-rpg-logo-bird" viewBox="0 0 110 100" aria-hidden="true"><defs><linearGradient id="hfPhoenix" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5d6"/><stop offset=".4" stop-color="#d5a3ff"/><stop offset="1" stop-color="#9944f5"/></linearGradient></defs><path d="M54 22q-12 12-9 28Q22 38 9 10q0 31 29 53Q18 59 2 41q4 32 39 34l12 17 11-17Q101 73 109 41 90 57 71 63q28-22 29-53Q86 37 63 50q2-16-9-28z" fill="url(#hfPhoenix)" stroke="#f7d8ff" stroke-width="1.8"/><path d="M55 8l7 13-7 12-7-12z" fill="#ffeec4"/><path d="M55 43l9 14-9 22-9-22z" fill="#160828" stroke="#ffd4ff" stroke-width="1.4"/></svg>';
 const NAV=[
@@ -102,17 +99,10 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const bag=loadRpgState();
  const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
- // Use a clean painterly sanctuary: the previous approved-hero image
- // contained a large blurred/censored hole behind the real 3D character.
- root.style.setProperty('--hf-hero-art','url("'+assetUrl('premium-quest-notes')+'")');
+ root.style.setProperty('--hf-hero-art','url("'+assetUrl('approved-hero')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  root.style.setProperty('--hf-potion-art','url("'+assetUrl('approved-potions')+'")');
  root.style.setProperty('--hf-forge-scene','url("'+assetUrl('forge-chamber')+'")');
- root.style.setProperty('--hf-forge-ai','url("'+assetUrl('premium-forge')+'")');
- root.style.setProperty('--hf-premium-forge','url("'+assetUrl('premium-forge')+'")');
- root.style.setProperty('--hf-premium-atlas','url("'+assetUrl('premium-icons-atlas')+'")');
- const iconRegistry=installPremiumIconIsolation(root,assetUrl('premium-icons-atlas'));
- root.dataset.hfIconPipeline='independent-cells-f01411';
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -281,17 +271,17 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const skillSlots=bag.skillSlots.map((id,i)=>{
    const row=list.find(x=>x.id===id);
    return '<button class="hf-rpg-skill-equip-slot '+(id?'is-equipped':'is-empty')+'" type="button" data-hf-skill-slot="'+i+'" aria-label="Ranura de habilidad '+(i+1)+'">'+
-    '<span class="hf-rpg-skill-number">'+(i+1)+'</span>'+(id?skillArt(id):'<span class="hf-rpg-equip-placeholder">+</span>')+
+    '<span class="hf-rpg-skill-number">'+(i+1)+'</span>'+(id?skillIcon(id):'<span class="hf-rpg-equip-placeholder">+</span>')+
     '<small>'+safe(row?.label??'Libre')+'</small></button>';
   }).join('');
   return '<div class="hf-rpg-two">'+panel(title('Habilidades','Catálogo · '+list.filter(s=>s.available).length+' disponibles')+
    '<div class="hf-rpg-skill-list">'+list.map(s=>
     '<button type="button" data-hf-skill="'+safe(s.id)+'" class="hf-rpg-skill '+(!s.available?'is-locked ':'')+(chosen?.id===s.id?'is-selected':'')+'">'+
-    '<span class="hf-rpg-skill-glyph">'+skillArt(s.id)+'</span>'+
+    '<span class="hf-rpg-skill-glyph">'+skillIcon(s.id)+'</span>'+
     '<div><b>'+safe(s.label)+'</b><small>'+safe(s.kind)+' · '+safe(s.cost)+'</small></div>'+
     '<em>'+(s.available?'DISPONIBLE':'BLOQUEADA')+'</em></button>').join('')+'</div>')+
    panel(title(chosen?.label??'Habilidad',chosen?.available?'DISPONIBLE':'BLOQUEADA')+
-    '<div class="hf-rpg-skill-feature"><span>'+skillArt(chosen?.id,true)+'</span>'+
+    '<div class="hf-rpg-skill-feature"><span>'+skillIcon(chosen?.id,true)+'</span>'+
     '<p>'+safe(chosen?.desc??'')+'</p></div>'+
     '<div class="hf-rpg-tag">'+safe(chosen?.kind??'')+' · '+safe(chosen?.cost??'')+'</div>'+
     '<div class="hf-rpg-subtitle">ASIGNACIÓN DE HABILIDAD</div>'+
@@ -309,9 +299,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    {id:'Tala',icon:'wood',desc:'Madera obtenida de árboles',resource:'wood',ready:true},
    {id:'Pesca',icon:'fish',desc:'Capturas en zonas habilitadas',resource:'fish',ready:true},
    {id:'Cocina',icon:'food',desc:'Comidas y recetas',resource:'fish',ready:false},
-   {id:'Alquimia',icon:'mana-prof',desc:'Pociones y elixires',resource:'herb',ready:true},
+   {id:'Alquimia',icon:'mana',desc:'Pociones y elixires',resource:'herb',ready:true},
    {id:'Fundición',icon:'ingot',desc:'Lingotes refinados en horno',resource:'ingot',ready:true},
-   {id:'Forja',icon:'forge-pro',desc:'Armas y equipo del Cazador',resource:'blade_blank',ready:true}
+   {id:'Forja',icon:'forge',desc:'Armas y equipo del Cazador',resource:'blade_blank',ready:true}
   ];
   const profession=prof(),selected=jobs.find(j=>j.id===local.selectedProfession)??jobs[0];
   const owned=profession.inventory?.[selected.resource]??0;
@@ -340,9 +330,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+
    art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('');
   const ingredients=Object.entries(recipe.ingredients).map(([id,n])=>
-   '<div class="hf-rpg-ingredient" title="'+safe(ITEM_DEFS[id].name)+'">'+art(ITEM_DEFS[id].icon)+
-   '<div class="hf-rpg-ingredient-contents"><b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+
-   numeric(prof().inventory[id]??0)+' / '+n+'</span></div></div>').join('');
+   '<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+
+   '<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+
+   numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('');
   return '<div class="hf-rpg-forge-layout">'+
    panel(title('Fabricación','Elegí la receta que querés crear')+
     '<div class="hf-rpg-forge-recipes">'+recipes+'</div>'+
@@ -375,7 +365,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '</div>','hf-rpg-quest-left')+
    panel('<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
     '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
-    '<div class="hf-rpg-quest-art">'+questArtwork(selected?.id??'primary')+'</div>'+
+    '<div class="hf-rpg-quest-art"><img alt="Ilustración del Camino al Patio de los Pétalos" src="'+assetUrl('quest-petal')+'"/></div>'+
     '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
     '</div>','hf-rpg-quest-right')+'</div>';
  }
@@ -408,8 +398,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.11 · ICONOS AISLADOS · ANDROID HORIZONTAL')+'</span></footer></div>'+systemLayer();
-  iconRegistry.apply();
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.8 · SISTEMA PHOENIX · ANDROID HORIZONTAL')+'</span></footer></div>'+systemLayer();
   if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
