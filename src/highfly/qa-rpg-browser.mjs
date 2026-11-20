@@ -64,6 +64,7 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
+ await page.locator('#hf-rpg [data-hf-item="hp_potion"]').click();
  const previous=await page.evaluate(()=>({hp:window.__game.player.health,qty:window.__highflyRpg.state.items.hp_potion}));
  await page.locator('#hf-rpg [data-hf-action="use:hp_potion"]').click();
  const result=await page.evaluate(()=>({hp:window.__game.player.health,qty:window.__highflyRpg.state.items.hp_potion,stored:JSON.parse(localStorage.getItem('highfly-rpg-f014-v1'))?.items?.hp_potion}));
