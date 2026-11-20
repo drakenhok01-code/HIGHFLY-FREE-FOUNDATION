@@ -2,7 +2,10 @@
  * Item definitions and UI assets are original HIGHFLY code, not imported media.
  * 80/20 applies to earned BASE points; equipped item bonuses are independent.
  */
+import {EQUIP_ITEM_DEFS,normalizeEquipped} from './rpg-equipment.mjs';
 export const SAVE_KEY='highfly-rpg-f014-v1';
+export const SKILL_SLOT_COUNT=6;
+export const DEFAULT_SKILL_SLOTS=Object.freeze(['pulse','heavy','heal',null,null,null]);
 /** All 36 grid slots exist even before any item is collected. */
 export const MAX_BAG_SLOTS=36;
 export const MAX_EXPANDED_BAG_SLOTS=72;
@@ -11,6 +14,7 @@ export function bagSlots(items=[],capacity=MAX_BAG_SLOTS){
  return Array.from({length:Math.max(1,Math.floor(capacity))},(_,i)=>items[i]??null);
 }
 export const ITEM_DEFS=Object.freeze({
+ ...EQUIP_ITEM_DEFS,
  hp_potion:{id:'hp_potion',name:'Poción de Vida',kind:'Consumibles',icon:'health',rarity:'Poco común',description:'Recupera el 35% de la Vida máxima.',max:99},
  mp_potion:{id:'mp_potion',name:'Poción de Maná',kind:'Consumibles',icon:'mana',rarity:'Poco común',description:'Recupera el 40% del Maná máximo.',max:99},
  herb:{id:'herb',name:'Hierbas recolectadas',kind:'Materiales',icon:'herb',rarity:'Común',description:'Hierbas obtenidas mediante recolección real.',max:999},
@@ -25,7 +29,10 @@ export const ITEM_DEFS=Object.freeze({
 export const RECIPES=Object.freeze({
  hp_potion:{item:'hp_potion',name:'Poción de Vida',ingredients:{herb:2},count:1,profession:'Alquimia'},
  mp_potion:{item:'mp_potion',name:'Poción de Maná',ingredients:{herb:1,ore:1},count:1,profession:'Alquimia'},
- bag_upgrade:{item:'bag_upgrade',name:'Sello de Expansión',ingredients:{wood:8,ore:8},count:1,profession:'Marroquinería'}
+ bag_upgrade:{item:'bag_upgrade',name:'Sello de Expansión',ingredients:{wood:8,ore:8},count:1,profession:'Marroquinería'},
+ training_sword:{item:'training_sword',name:'Espada de Aprendiz',ingredients:{ingot:2,wood:1},count:1,profession:'Forja'},
+ training_shield:{item:'training_shield',name:'Escudo de Aprendiz',ingredients:{ingot:2,wood:2},count:1,profession:'Forja'},
+ training_greatsword:{item:'training_greatsword',name:'Mandoble de Aprendiz',ingredients:{ingot:4,wood:2},count:1,profession:'Forja'}
 });
 const bounded=(n,max=999)=>Number.isInteger(n)?Math.max(0,Math.min(max,n)):0;
 export function normalizeRpgState(raw){
@@ -34,7 +41,10 @@ export function normalizeRpgState(raw){
  for(const [id,def] of Object.entries(ITEM_DEFS))if(id!=='hp_potion'&&id!=='mp_potion'&&id in counts)
   items[id]=bounded(counts[id],def.max);
  const slots=Number.isInteger(raw?.slots)?Math.min(MAX_EXPANDED_BAG_SLOTS,Math.max(MAX_BAG_SLOTS,raw.slots)):MAX_BAG_SLOTS;
- return {schema:2,items,slots};
+ const equipped=normalizeEquipped(raw?.equipped,true);
+ const skills=Array.isArray(raw?.skillSlots)?raw.skillSlots:DEFAULT_SKILL_SLOTS;
+ const skillSlots=Array.from({length:SKILL_SLOT_COUNT},(_,i)=>typeof skills[i]==='string'&&SKILL_IDS.includes(skills[i])?skills[i]:null);
+ return {schema:3,items,slots,equipped,skillSlots};
 }
 export function loadRpgState(store=globalThis.localStorage){
  try{return normalizeRpgState(JSON.parse(store?.getItem(SAVE_KEY)||'null'));}catch{return normalizeRpgState(null);}
@@ -86,6 +96,24 @@ export function craftPotion(recipeId,professionState,state){
  for(const [id,n] of Object.entries(recipe.ingredients))inventory[id]-=n;
  state.items[recipe.item]=(state.items[recipe.item]??0)+recipe.count;
  return {ok:true,id:recipe.item,count:recipe.count,remaining:state.items[recipe.item]};
+}
+export const SKILL_IDS=Object.freeze(['attack','dash','roll','heavy','pulse','heal']);
+export function skillReady(player,id){
+ if(!SKILL_IDS.includes(id))return false;
+ if(id==='pulse')return !!player?.skills?.has?.('pulse');
+ if(id==='heal')return (player?.refrains??0)>0;
+ return true;
+}
+export function assignSkillSlot(state,slotIndex,skillId,player){
+ if(!state||!Array.isArray(state.skillSlots)||!Number.isInteger(slotIndex)||slotIndex<0||slotIndex>=SKILL_SLOT_COUNT)return {ok:false,reason:'Ranura inválida'};
+ if(!skillReady(player,skillId))return {ok:false,reason:'Esta habilidad todavía no está disponible'};
+ for(let i=0;i<SKILL_SLOT_COUNT;i++)if(state.skillSlots[i]===skillId)state.skillSlots[i]=null;
+ state.skillSlots[slotIndex]=skillId;
+ return {ok:true,slot:slotIndex,skill:skillId};
+}
+export function clearSkillSlot(state,slotIndex){
+ if(!state||!Array.isArray(state.skillSlots)||!Number.isInteger(slotIndex)||slotIndex<0||slotIndex>=SKILL_SLOT_COUNT)return {ok:false,reason:'Ranura inválida'};
+ state.skillSlots[slotIndex]=null;return {ok:true,slot:slotIndex};
 }
 export const ATTRIBUTE_IDS=Object.freeze(['STR','AGI','VIT','PER','INT']);
 export const ATTRIBUTE_LABELS=Object.freeze({STR:'Fuerza',AGI:'Agilidad',VIT:'Vitalidad',PER:'Percepción',INT:'Inteligencia'});
