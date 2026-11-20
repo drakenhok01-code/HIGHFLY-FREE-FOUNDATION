@@ -26,6 +26,12 @@ for(const f of walk(root)){
  assert.ok(!/private_assets|phoenix-source|kaykit.*source|\.fbx$|\.zip$/i.test(f),'Restricted file '+f);
  if(/\.(js|css|html|json)$/.test(f))assert.ok(!/phoenix-source-stage|HIGHFLY_CI_MOCK_SOURCE|private_assets\//i.test(fs.readFileSync(f,'utf8')),'Private dependency '+f);
 }
+for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal']){
+ const f=path.join(root,'highfly',name+'.svg');
+ assert.ok(fs.existsSync(f),'F0.14.5 missing premium visual asset '+name);
+ const s=fs.readFileSync(f,'utf8');
+ assert.match(s,/<svg/,'Premium asset not valid SVG '+name);
+}
 assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt')));
