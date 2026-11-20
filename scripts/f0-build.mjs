@@ -168,6 +168,8 @@ copy(path.join(ROOT,'src/highfly/fog.mjs'),loc('src/highfly/fog.mjs'));
 copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.mjs'));
 copy(path.join(ROOT,'src/highfly/hud-editor.mjs'),loc('src/highfly/hud-editor.mjs'));
 copy(path.join(ROOT,'src/highfly/hero-portrait.mjs'),loc('src/highfly/hero-portrait.mjs'));
+copy(path.join(ROOT,'src/highfly/cliff-camera.mjs'),loc('src/highfly/cliff-camera.mjs'));
+for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
@@ -227,6 +229,16 @@ const freeHeroStart=[
 ].join('\n');
 patch('src/main.js',nativeHero,freeHeroStart);
 
+// Keep Unsung's physical player and world unchanged. Prevent the camera
+// from penetrating the much taller terrain cliffs with a safety volume.
+patch('src/game/camera.js',"import * as THREE from 'three';",
+ "import * as THREE from 'three';\nimport {safeCliffCameraDistance} from '../highfly/cliff-camera.mjs';");
+patch('src/game/camera.js',
+ "const wantDist = Math.max(0.7, Math.min(distance, free));",
+ "const wantDist = safeCliffCameraDistance(this.world,_pivot,_dir,distance,Math.max(0.7,Math.min(distance,free)));");
+patch('src/game/camera.js',
+ "const floor = this.world.groundHeight(_want.x, _want.z) + 0.25;",
+ "const floor = this.world.groundHeight(_want.x, _want.z) + 0.54;");
 patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';");
 patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
 patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
