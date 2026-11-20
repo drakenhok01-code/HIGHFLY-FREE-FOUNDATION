@@ -8,6 +8,8 @@ const config=JSON.parse(fs.readFileSync('foundation.config.json','utf8'));
 const origin=path.join(ROOT,'.work','unsung');
 const output=path.join(ROOT,'dist');
 const SHA=config.unsungCommit;
+const pagesBase=process.env.HIGHFLY_PAGES_BASE??('/'+config.pagesRepo+'/');
+if(!pagesBase.startsWith('/'+config.pagesRepo+'/')||!/^[a-zA-Z0-9_.\/-]+$/.test(pagesBase)||!pagesBase.endsWith('/'))throw Error('Unsafe Pages base: '+pagesBase);
 if(!/^[0-9a-f]{40}$/.test(SHA))throw Error('Expected immutable Unsung commit');
 if(config.allowPrivateAssets||config.allowKaykitPaid||config.allowClaudeAssets)throw Error('Private assets gate disabled');
 function run(cmd,args,cwd=ROOT){
@@ -283,7 +285,7 @@ const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
 if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Error('World generation diff not limited to 3 Pages URLs');
 run('npm',['ci','--no-audit','--no-fund'],origin);
-run('npm',['run','build','--','--base','/'+config.pagesRepo+'/'],origin);
+run('npm',['run','build','--','--base',pagesBase],origin);
 if(!fs.existsSync(loc('dist/index.html')))throw Error('No Vite output');
 fs.cpSync(loc('dist'),output,{recursive:true});
 copy(path.join(ROOT,'data/CATALOGO_FREE_KAYKIT_ADVENTURERS.json'),path.join(output,'catalogo-free.json'));
@@ -329,5 +331,5 @@ for(const [name,options] of modules){
  copy(file,path.join(output,'LICENSES',name.replaceAll('/','_')+'.txt'));
 }
 fs.writeFileSync(path.join(output,'ASSET_MANIFEST.json'),JSON.stringify({schemaVersion:1,source:{repository:config.unsungRepository,commit:SHA},generated:new Date().toISOString(),records},null,2));
-fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.11 COMBAT RECOVERY, ROLL/DASH AIM, ANCHORED CLIMB, QUATERNIUS UAL1/2 RETARGET',originalUnsungCommit:SHA,pagesBase:'/'+config.pagesRepo+'/',worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
+fs.writeFileSync(path.join(output,'BUILD_PROVENANCE.json'),JSON.stringify({phase:'F0.11 COMBAT RECOVERY, ROLL/DASH AIM, ANCHORED CLIMB, QUATERNIUS UAL1/2 RETARGET',originalUnsungCommit:SHA,pagesBase,worldAuthority:'UNSUNG',androidVisualQA:'NOT_RUN',kaykitQA:'GLB_CLIPS_AUDITED_VISUAL_PENDING',kaykitCommit},null,2));
 console.log('[HIGHFLY] Build finished: '+records.length+' original assets. Run npm run qa:dist before deployment.');

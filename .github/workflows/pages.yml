@@ -65,12 +65,38 @@ jobs:
           if-no-files-found: ignore
       - name: Auditar dist antes de publicar
         run: npm run qa:dist
+      # Publish an isolated interactive preview on the SAME GitHub Pages site.
+      # Rebuild the clean F0.14.8 root, and place this branch's game at /preview-v3/.
+      # Thus root /HIGHFLY-FREE-FOUNDATION/ never contains experimental v3 art.
+      - name: Empaquetar Pages estable y laboratorio separados
+        if: github.ref == 'refs/heads/lab-f0148-phoenix-final-art-v3-20261120'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/highfly-premium-v3-preview"
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-v3/ npm run build
+          cp -a dist/. "$RUNNER_TEMP/highfly-premium-v3-preview/"
+          git fetch --depth=1 origin 38e59550766b0914652eb7412393f91b298e29f6
+          git worktree add --detach "$RUNNER_TEMP/highfly-f0148-pristine" 38e59550766b0914652eb7412393f91b298e29f6
+          cd "$RUNNER_TEMP/highfly-f0148-pristine"
+          npm run build
+          npm run qa:dist
+          cd "$GITHUB_WORKSPACE"
+          rm -rf dist
+          mkdir -p dist/preview-v3
+          cp -a "$RUNNER_TEMP/highfly-f0148-pristine/dist/." dist/
+          cp -a "$RUNNER_TEMP/highfly-premium-v3-preview/." dist/preview-v3/
+          touch dist/.nojekyll
+          test -s dist/index.html
+          test -s dist/preview-v3/index.html
+          grep -q '/HIGHFLY-FREE-FOUNDATION/preview-v3/' dist/preview-v3/index.html
+          grep -q '/HIGHFLY-FREE-FOUNDATION/assets/' dist/index.html
+          echo "F0.14.8 stable root + v3 isolated /preview-v3/ ready for Pages."
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
   deploy:
-    if: github.ref == 'refs/heads/f014-premium-rpg-ui-lab'
+    if: github.ref == 'refs/heads/f014-premium-rpg-ui-lab' || github.ref == 'refs/heads/lab-f0148-phoenix-final-art-v3-20261120'
     environment:
       name: highfly-free-preview
     runs-on: ubuntu-latest
