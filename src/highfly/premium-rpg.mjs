@@ -304,6 +304,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
  function render(){
   if(!local.opened)return;
+  if(local.tab==='misiones')local.questScroll=root.querySelector('.hf-rpg-quest-list')?.scrollTop??local.questScroll;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
    '<header class="hf-rpg-top"><div class="hf-rpg-logo">'+PHOENIX+'<span class="hf-rpg-brand-name">HIGHFLY<small>PHOENIX ASCENSIÓN</small></span></div>'+
@@ -312,6 +313,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-content">'+body()+'</div>'+
    '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.5 · HIGHFLY PHOENIX ASCENSIÓN · ANDROID HORIZONTAL')+'</span></footer></div>';
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
+  if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
  }
  function open(tab='personaje'){
   if(local.opened){local.tab=tab;render();return true;}
@@ -319,6 +321,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   game.openMenu('hero');
   if(game.state!=='menu')return false;
   local.opened=true;local.tab=tab;root.hidden=false;
+  syncEquipment();syncSkills();
   document.body.classList.add('hf-rpg-is-open');
   render();return true;
  }
@@ -334,24 +337,63 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const tab=b.dataset.hfTab;
   if(tab){if(tab.startsWith('bag:')){local.tab='bolsa';local.category=tab.slice(4);}
    else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}
-  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;render();return;}
+  if(b.dataset.hfEquipSlot){
+   local.selectedEquipSlot=b.dataset.hfEquipSlot;local.confirmUnequip=null;render();return;
+  }
+  if(b.dataset.hfSkillSlot!==undefined){
+   const index=Number(b.dataset.hfSkillSlot);
+   if(local.pickSkill){
+    const result=assignSkillSlot(bag,index,local.pickSkill,p());
+    if(result.ok){save();syncSkills();local.pickSkill=null;}
+    message(result.ok?'Habilidad asignada a ranura '+(index+1):result.reason);
+   }else{
+    const id=bag.skillSlots[index];if(id){local.selectedSkill=id;render();}
+    else message('Ranura libre: elegí una habilidad y tocá EQUIPAR');
+   }return;
+  }
+  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.pickEquipItem=null;render();return;}
   if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
   if(action==='close'){close();return;}
+  if(action==='cancel-unequip'||action==='cancel-equip'){
+   local.confirmUnequip=null;local.pickEquipItem=null;render();return;
+  }
+  if(action.startsWith('ask-unequip:')){
+   local.confirmUnequip=action.slice('ask-unequip:'.length);render();return;
+  }
+  if(action.startsWith('unequip:')){
+   const result=unequipToBag(bag,action.slice('unequip:'.length));
+   if(result.ok){save();syncEquipment();local.confirmUnequip=null;}
+   message(result.ok?'Objeto devuelto a Bolsa':result.reason);return;
+  }
+  if(action.startsWith('pick-equip:')){
+   local.pickEquipItem=action.slice('pick-equip:'.length);render();return;
+  }
+  if(action.startsWith('equip:')){
+   const [,slotId,itemId]=action.split(':');
+   const result=equipFromBag(bag,slotId,itemId);
+   if(result.ok){save();syncEquipment();local.pickEquipItem=null;}
+   message(result.ok?'Equipo actualizado en '+(EQUIP_SLOTS.find(s=>s.id===slotId)?.label??slotId):result.reason);return;
+  }
+  if(action==='choose-skill'){
+   const selected=liveSkillRows(p()).find(s=>s.id===local.selectedSkill);
+   if(!selected?.available){message('Esta habilidad todavía no está disponible');return;}
+   local.pickSkill=selected.id;render();return;
+  }
+  if(action.startsWith('clear-skill:')){
+   const result=clearSkillSlot(bag,Number(action.slice('clear-skill:'.length)));
+   if(result.ok){save();syncSkills();}
+   message(result.ok?'Ranura liberada':result.reason);return;
+  }
   if(action==='expand'){
    const result=consumeBagUpgrade(bag);if(result.ok)save();
    message(result.ok?'¡Bolsa ampliada a '+result.slots+' casillas!':result.reason);return;
   }
   if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
-  if(action==='weapon'){
-   if(!p())return;
-   p()._hfGearCycle=((p()._hfGearCycle??0)+1)%WEAPON_MODES.length;
-   game.hero?.equip?.(p()._hfGearCycle);
-   message('Arma visible actualizada: '+weapon().label);return;
-  }
+  // Gear is changed ONLY through real Bag <-> Character equip transactions.
   if(action.startsWith('use:')){
    const result=spendPotion(bag,p(),action.slice(4));if(result.ok)save();
    message(result.ok?'Recuperaste '+numeric(result.restored)+' de '+result.resource:result.reason);return;
