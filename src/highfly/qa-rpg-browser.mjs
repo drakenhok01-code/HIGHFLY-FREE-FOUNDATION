@@ -79,7 +79,8 @@ try{
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
- assert.equal(await page.locator('#hf-rpg .hf-rpg-potion-approved').count()>=2,true,'Approved health and mana illustrations must replace procedural bottle icons');
+ assert.ok(await page.locator('#hf-rpg svg[data-hf-art-id="item_hp_potion"]').count()>0,'Dedicated HP icon must render');
+  assert.ok(await page.locator('#hf-rpg svg[data-hf-art-id="item_mp_potion"]').count()>0,'Dedicated MP icon must render');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
@@ -91,7 +92,8 @@ try{
  assert.equal(result.qty,previous.qty-1);assert.equal(result.stored,result.qty);
  await page.screenshot({path:'qa-rpg-bag.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="forja"]').click();
- assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
+ await page.screenshot({path:'qa-rpg-forge.png'});
+  assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-material-row').count(),0,'No redundant bag material list in Forge');
  await page.evaluate(()=>{window.__game.player._hfProfession.inventory.herb=2;window.__highflyRpg.render();});
  assert.equal(await page.locator('#hf-rpg [data-hf-action="craft:hp_potion"]').isEnabled(),true);
@@ -112,7 +114,10 @@ try{
  await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  assert.equal(crafted.qty,before+1,'crafted result not returned to bag');
  assert.equal(crafted.herb,0,'materials were not consumed');
- await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="oficios"]').click();
+  assert.equal(await page.locator('#hf-rpg .hf-rpg-prof-card').count(),8,'Eight professions must remain interactive');
+  await page.screenshot({path:'qa-rpg-professions.png'});
+  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),6,'Five active quests plus main objective, none hidden');
  await page.evaluate(()=>{const el=document.querySelector('#hf-rpg .hf-rpg-quest-list');el.scrollTop=64;});
  const questScrollBefore=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
@@ -120,9 +125,11 @@ try{
  const questScrollAfter=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
  assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
- assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One fantasy quest illustration exists');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art svg[role="img"]').count(),1,'Exactly one semantic vector quest scene exists');
+  await page.screenshot({path:'qa-rpg-quests.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-map-display').count(),1,'Map must render original world or clearly labeled illustration');
+  await page.screenshot({path:'qa-rpg-map.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  await page.evaluate(()=>{window.__highflyRpg.state.items.bag_upgrade=1;window.__highflyRpg.render();});
  await page.locator('#hf-rpg [data-hf-action="expand"]').first().click();
@@ -142,6 +149,7 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
+  await page.screenshot({path:'qa-rpg-skills.png'});
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-skill-equip-slot').count(),6,'Six RPG skill slots required');
  await page.locator('#hf-rpg [data-hf-skill="dash"]').click();
@@ -155,7 +163,9 @@ try{
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
  assert.match(await page.locator('#hf-rpg .hf-rpg-right-panel').innerText(),/Pulso/,'Skills selection renders detail');
 
- await page.locator('#hf-rpg [data-hf-action="close"]').first().click();
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="opciones"]').click();
+  await page.screenshot({path:'qa-rpg-options.png'});
+  await page.locator('#hf-rpg [data-hf-action="close"]').first().click();
  assert.equal(await page.evaluate(()=>window.__game.state),'playing','closing menu must resume original game');
  assert.equal(await page.locator('#hf-rpg').isHidden(),true);
  assert.equal(errors.length,0,'Actual browser JS errors: '+errors.join(' | '));
