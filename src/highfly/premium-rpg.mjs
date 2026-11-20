@@ -100,6 +100,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
+ root.style.setProperty('--hf-potion-art','url("'+assetUrl('approved-potions')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -329,7 +330,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.tab==='misiones')local.questScroll=root.querySelector('.hf-rpg-quest-list')?.scrollTop??local.questScroll;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
-   '<header class="hf-rpg-top"><div class="hf-rpg-logo">'+PHOENIX+'<span class="hf-rpg-brand-name">HIGHFLY<small>PHOENIX ASCENSION</small></span></div>'+
+   '<header class="hf-rpg-top"><div class="hf-rpg-logo"><img class="hf-rpg-approved-logo" src="'+assetUrl('approved-logo')+'" alt="HIGHFLY PHOENIX ASCENSION" draggable="false"/></div>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+

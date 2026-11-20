@@ -32,6 +32,11 @@ for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal']
  const s=fs.readFileSync(f,'utf8');
  assert.match(s,/<svg/,'Premium asset not valid SVG '+name);
 }
+for(const name of ['approved-logo','approved-potions']){
+ const file=path.join(root,'highfly',name+'.webp');
+ assert.ok(fs.existsSync(file),'F0.14.7 missing approved art '+name);
+ assert.ok(fs.statSync(file).size>1000,'Approved image is empty '+name);
+}
 assert.ok(fs.existsSync(path.join(root,'CREDITS_UNSUNG.md')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','UNSUNG-MIT.txt')));
 assert.ok(fs.existsSync(path.join(root,'LICENSES','KAYKIT-ADVENTURERS-CC0.txt')));

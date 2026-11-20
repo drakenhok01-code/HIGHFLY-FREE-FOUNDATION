@@ -28,6 +28,9 @@ try{
  const opening=await page.evaluate(()=>({ok:window.__highflyRpg.opened,game:window.__game.state,harnessReady:window.__hfRpgTest?.ready,health:window.__game.player.health,maximum:window.__game.player.healthMax}));
  assert.ok(opening.ok&&opening.game==='menu'&&opening.harnessReady,'Premium RPG production menu mount failed '+JSON.stringify(opening));
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
+ await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+
  const viewport=await page.evaluate(()=>{
   const outer=document.querySelector('#hf-rpg .hf-rpg-shell').getBoundingClientRect();
   const stage=document.querySelector('#hf-rpg .hf-rpg-hero-stage').getBoundingClientRect();
@@ -61,6 +64,7 @@ try{
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-potion-approved').count()>=2,true,'Approved health and mana illustrations must replace procedural bottle icons');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');

@@ -512,3 +512,19 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
  #hf-rpg .hf-rpg-prof-feature{min-height:75px}
  #hf-rpg .hf-rpg-prof-feature .hf-rpg-art{width:67px;height:67px}
 }
+
+/* F0.14.7: approved raster artwork, NOT CSS geometry. These source images are
+   original HIGHFLY images approved by the project owner in this conversation. */
+#hf-rpg .hf-rpg-approved-logo{display:block;width:100%;height:39px;max-height:100%;object-fit:contain;object-position:left center;filter:drop-shadow(0 0 5px #b54cff)}
+#hf-rpg .hf-rpg-logo{min-height:30px;min-width:0}
+#hf-rpg .hf-rpg-art.hf-rpg-potion-approved{display:inline-block;flex:none;width:40px;height:40px;border-radius:5px;
+ background-image:var(--hf-potion-art);background-repeat:no-repeat;background-size:200% 100%;background-position:left center;
+ filter:drop-shadow(0 0 6px #b766ef84);image-rendering:auto}
+#hf-rpg .hf-rpg-potion-approved.is-mana{background-position:right center}
+#hf-rpg .hf-rpg-potion-approved.is-large{width:130px;height:130px;filter:drop-shadow(0 0 17px #d18effb5)}
+#hf-rpg .hf-rpg-item .hf-rpg-potion-approved{width:100%;height:100%}
+#hf-rpg .hf-rpg-recipe .hf-rpg-potion-approved{width:42px;height:42px}
+#hf-rpg .hf-rpg-ingredient .hf-rpg-potion-approved{width:42px;height:42px}
+#hf-rpg .hf-rpg-slot-art .hf-rpg-potion-approved{width:36px;height:36px}
+#hf-rpg .hf-rpg-detail-art .hf-rpg-potion-approved{width:min(150px,100%);height:130px}
+@media(max-width:980px){#hf-rpg .hf-rpg-approved-logo{height:35px}}
