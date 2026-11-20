@@ -128,6 +128,14 @@ try{
  await page.locator('#hf-rpg [data-hf-action="expand"]').first().click();
  assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="confirm"]').count(),1,'Bag expansion must ask for a System decision');
  await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ const expansion=await page.evaluate(()=>({
+  stage:document.querySelector('#hf-rpg .hf-system-shade')?.dataset.stage,
+  message:document.querySelector('#hf-rpg .hf-system-card')?.innerText?.slice(0,360),
+  slots:window.__highflyRpg.state.slots,
+  expansionItems:window.__highflyRpg.state.items.bag_upgrade,
+  buttons:[...document.querySelectorAll('#hf-rpg [data-hf-system]')].map(x=>x.dataset.hfSystem)
+ }));
+ assert.equal(expansion.stage,'result','Expansion System state did not settle: '+JSON.stringify(expansion)+' JS '+errors.join(' | '));
  await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Expansion must reveal twelve persistent slots');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
