@@ -35,7 +35,7 @@ export function skillIcon(id,large=false){
  return '<svg class="hf-skill-svg'+(large?' is-large':'')+'" viewBox="0 0 100 100" role="img" aria-label="Icono de '+id+'" xmlns="http://www.w3.org/2000/svg">'+
  '<defs><radialGradient id="skillFill"><stop stop-color="'+def.hue+'"/><stop offset="1" stop-color="'+def.mid+'"/></radialGradient>'+
  '<radialGradient id="skillBack"><stop stop-color="#4a317c"/><stop offset="1" stop-color="#10091e"/></radialGradient></defs>'+
- '<rect x="3" y="3" width="94" height="94" rx="12" fill="url(#skillBack)" stroke="'+def.outline+'" stroke-width="2"/>'+
+ ''+
  '<path d="M11 10h25M10 12v25M90 63v24H65" fill="none" stroke="'+def.hue+'" stroke-width="2.4" stroke-linecap="round"/>'+
  '<circle cx="50" cy="50" r="38" fill="'+def.mid+'" opacity=".10"/>'+def.svg+'</svg>';
 }

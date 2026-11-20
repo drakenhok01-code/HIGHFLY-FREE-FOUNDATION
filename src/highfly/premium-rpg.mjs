@@ -4,8 +4,10 @@
  * Premium Android menu enabled by default. Approved backups remain untouched.
  */
 import './premium-rpg.css';
+import './premium-art-lab.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
+import {questIllustration} from './premium-quest-illustrations.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
 import {premiumArt,assetUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
@@ -27,7 +29,7 @@ const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
 const slot=(meta,equipped,selected=false)=>{
  const id=equipped?.[meta.id],item=id?ITEM_DEFS[id]:null;
  return '<button type="button" data-hf-equip-slot="'+meta.id+'" class="hf-rpg-equip-slot '+(id?'is-active':'is-empty')+(selected?' is-selected':'')+'" aria-label="'+safe(meta.label)+' '+safe(item?.name??'vacío')+'">'+
- '<span class="hf-rpg-slot-art">'+art(item?.icon??meta.icon)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?.name??'Vacío')+'</b></span>'+
+ '<span class="hf-rpg-slot-art">'+art(item?.id??'slot_'+meta.id)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?.name??'Vacío')+'</b></span>'+
  '<span class="hf-rpg-equip-more">›</span></button>';
 };
 const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
@@ -79,7 +81,7 @@ function art(id='stone',large=false){
  return '<svg class="hf-rpg-art'+(large?' is-large':'')+'" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="hfrpgGlow"><stop stop-color="#e8e2ff" stop-opacity=".3"/><stop offset="1" stop-color="#3d176c" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="52" r="46" fill="url(#hfrpgGlow)"/>'+interior+'</svg>';
 }
 function tile(id,count,selected){
- const def=ITEM_DEFS[id],icon=def?.icon||'stone';
+ const def=ITEM_DEFS[id],icon=id;
  return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
@@ -258,7 +260,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
-    (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.icon,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
+    (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.id,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
@@ -308,11 +310,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   return '<div class="hf-rpg-two">'+panel(title('Oficios','Ocho profesiones · materiales compartidos con Bolsa')+
    '<div class="hf-rpg-prof-grid">'+jobs.map(job=>
     '<button type="button" class="hf-rpg-prof-card '+(job.id===selected.id?'is-selected':'')+'" data-hf-prof="'+safe(job.id)+'">'+
-    '<span class="hf-rpg-prof-icon">'+art(job.icon)+'</span><div><b>'+job.id+'</b>'+
+    '<span class="hf-rpg-prof-icon">'+art('profession_'+({Recolección:'recoleccion',Minería:'mineria',Tala:'tala',Pesca:'pesca',Cocina:'cocina',Alquimia:'alquimia',Fundición:'fundicion',Forja:'forja'}[job.id]))+'</span><div><b>'+job.id+'</b>'+
     '<small>'+safe(job.desc)+'</small><span class="hf-rpg-prof-chip">'+(job.ready?'DISPONIBLE':'EN DESARROLLO')+'</span></div>'+
     '<span class="hf-rpg-prof-chevron">›</span></button>').join('')+'</div>')+
    panel(title(selected.id,'Ficha de oficio · progreso auténtico')+
-    '<div class="hf-rpg-prof-feature">'+art(selected.icon,true)+
+    '<div class="hf-rpg-prof-feature">'+art('profession_'+({Recolección:'recoleccion',Minería:'mineria',Tala:'tala',Pesca:'pesca',Cocina:'cocina',Alquimia:'alquimia',Fundición:'fundicion',Forja:'forja'}[selected.id]),true)+
     '<div><b>'+safe(selected.id)+'</b><small>'+safe(selected.desc)+'</small></div></div>'+
     '<div class="hf-rpg-stat-panel"><b>Nivel del oficio</b><span>Sin nivel registrado</span></div>'+
     '<div class="hf-rpg-stat-panel"><b>Materiales disponibles</b><strong>'+numeric(owned)+'</strong></div>'+
@@ -328,9 +330,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
   const recipes=Object.values(RECIPES).map(r=>
    '<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+
-   art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('');
+   art(r.item)+'<b>'+safe(r.name)+'</b></button>').join('');
   const ingredients=Object.entries(recipe.ingredients).map(([id,n])=>
-   '<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+
+   '<div class="hf-rpg-ingredient">'+art(id)+
    '<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+
    numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('');
   return '<div class="hf-rpg-forge-layout">'+
@@ -339,7 +341,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-forge-tip">La fabricación utiliza recursos reales. El inventario completo está en Bolsa.</div>',
     'hf-rpg-forge-list')+
    panel('<div class="hf-rpg-forge-workshop">'+title(recipe.name,recipe.profession+' · Estación de creación')+
-    '<div class="hf-rpg-forge-preview"><div class="hf-rpg-forge-result-art">'+art(ITEM_DEFS[recipe.item].icon,true)+'</div>'+
+    '<div class="hf-rpg-forge-preview"><div class="hf-rpg-forge-result-art">'+art(recipe.item,true)+'</div>'+
     '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p><small>Resultado · x'+recipe.count+'</small></div></div>'+
     '<div class="hf-rpg-forge-materials"><div class="hf-rpg-subtitle">RECETA · MATERIALES NECESARIOS</div>'+
     '<div class="hf-rpg-ingredients">'+ingredients+'</div></div>'+
@@ -365,7 +367,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '</div>','hf-rpg-quest-left')+
    panel('<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
     '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
-    '<div class="hf-rpg-quest-art"><img alt="Ilustración del Camino al Patio de los Pétalos" src="'+assetUrl('quest-petal')+'"/></div>'+
+    '<div class="hf-rpg-quest-art">'+questIllustration(selected?.id??'primary',name)+'</div>'+
     '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
     '</div>','hf-rpg-quest-right')+'</div>';
  }
