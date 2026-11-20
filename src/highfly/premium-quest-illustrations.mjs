@@ -36,7 +36,7 @@ export const QUEST_ART_KEYS=Object.freeze(Object.keys(motifs));
 export function questIllustration(id,title=''){
  const key=motifs[id]?id:questNames.find(([,re])=>re.test(title))?.[0]||'primary';
  const motif=motifs[key];
- return '<svg class="hf-rpg-quest-illustration" role="img" aria-label="Escena de misión: '+String(title).replaceAll('"','&quot;')+'" viewBox="0 0 1000 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'+
+ return '<svg class="hf-rpg-quest-illustration" role="img" aria-label="Escena de misión: '+String(title).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')+'" viewBox="0 0 1000 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'+
  '<defs><linearGradient id="hfQuestSky" x2="0" y2="1"><stop stop-color="#25105b"/><stop offset=".48" stop-color="#5e3d9d"/><stop offset="1" stop-color="#f4c39a"/></linearGradient><linearGradient id="hfQuestFloor" x2="0" y2="1"><stop stop-color="#49388c"/><stop offset="1" stop-color="#160a35"/></linearGradient></defs>'+
  '<rect width="1000" height="480" fill="url(#hfQuestSky)"/><circle cx="778" cy="89" r="64" fill="#ffdfa6" opacity=".7"/>'+
  '<path d="M0 251l160-133 150 116 166-153 172 166 151-116 201 150v201H0z" fill="#342877" stroke="#a7a5da" stroke-width="4"/>'+
