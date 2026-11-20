@@ -178,15 +178,15 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     blank('Sin objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
  }
  function skills(){
-  const list=liveSkillRows(p()),available=list.filter(s=>s.available).length;
-  return '<div class="hf-rpg-two">'+panel(title('Habilidades','Arsenal de un solo personaje')+
-   resourceRow('mana','MANÁ',mana().value,mana().max)+resourceRow('energy','ENERGÍA',p()?.stamina??0,p()?.staminaMax??100)+
-   '<div class="hf-rpg-subtitle">CATÁLOGO INTEGRADO · '+available+' disponibles</div>'+
-   '<div class="hf-rpg-skill-list">'+list.map((s,i)=>'<div class="hf-rpg-skill '+(s.available?'':'is-locked')+'"><span class="hf-rpg-skill-glyph">'+['⚔','➤','◈','✦','✺','✚'][i]+'</span><div><b>'+safe(s.label)+'</b><small>'+safe(s.desc)+'</small></div><span class="hf-rpg-tag">'+safe(s.cost)+'</span><em>'+(s.available?'DISPONIBLE':'BLOQUEADA')+'</em></div>').join('')+'</div>')+
-   panel(title('Recursos y progresión','Conectados al combate real')+
-    '<div class="hf-rpg-explain"><span class="hf-rpg-orb is-blue">◈</span><b>MAGIA = MANÁ</b><p>Las habilidades mágicas usan el recurso azul real.</p></div>'+
-    '<div class="hf-rpg-explain"><span class="hf-rpg-orb is-gold">ϟ</span><b>FÍSICA = ENERGÍA</b><p>Golpes y movimiento comparten Energía.</p></div>'+
-    '<div class="hf-rpg-rule"></div>'+blank('Los seis botones de skills actuales siguen en el HUD. La biblioteca masiva de habilidades se integrará por lotes con revisión de licencias.')+
+  const list=liveSkillRows(p()),chosen=list.find(s=>s.id===local.selectedSkill)||list[0];
+  return '<div class="hf-rpg-two">'+panel(title('Habilidades','Catálogo del Cazador Universal · '+list.filter(s=>s.available).length+' activas')+
+    '<div class="hf-rpg-skill-list">'+list.map((s,i)=>'<button type="button" data-hf-skill="'+safe(s.id)+'" class="hf-rpg-skill '+(!s.available?'is-locked ':'')+(chosen?.id===s.id?'is-selected':'')+'"><span class="hf-rpg-skill-glyph">'+art(s.kind==='Mágica'?'mana':s.kind==='Curación'?'health':'weapon')+'</span><div><b>'+safe(s.label)+'</b><small>'+safe(s.kind)+' · '+safe(s.cost)+'</small></div><em>'+(s.available?'ACTIVA':'BLOQUEADA')+'</em></button>').join('')+'</div>')+
+   panel(title(chosen?.label??'Habilidad','Detalles de la habilidad seleccionada')+
+    '<div class="hf-rpg-skill-scenery">'+art(chosen?.kind==='Curación'?'health':chosen?.kind==='Mágica'?'mana':'skills',true)+'</div>'+
+    '<div class="hf-rpg-tag">'+safe(chosen?.kind??'')+' · '+safe(chosen?.cost??'')+'</div>'+
+    '<p class="hf-rpg-info">'+safe(chosen?.desc??'')+'</p>'+
+    '<div class="hf-rpg-stat-panel"><b>Estado</b><strong>'+(chosen?.available?'Disponible':'Por desbloquear')+'</strong></div>'+
+    (chosen?.id==='heal'?'<p class="hf-rpg-info">Se activa con las cargas curativas disponibles en el mundo.</p>':'')+
     '<div class="hf-rpg-mini-actions">'+button('VER PERSONAJE','data-hf-tab="personaje"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function professions(){
@@ -215,19 +215,37 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-mini-actions">'+button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function quests(){
-  const quests=game.quests?.active??[];
+  const rows=game.quests?.active??[];
   const objective=translateHighfly(game.objective||'Explorá el mundo');
-  return '<div class="hf-rpg-two">'+panel(title('Registro de aventuras','Misiones reales del Valle')+
-   '<div class="hf-rpg-quest-main"><small>HISTORIA PRINCIPAL</small><b>'+safe(objective)+'</b></div>'+
-   '<div class="hf-rpg-subtitle">MISIONES ACTIVAS · '+quests.length+'</div>'+
-   '<div class="hf-rpg-quest-list">'+(quests.length?quests.map(q=>{const state=game.quests.state[q.id],progress=game.quests.progress(q);return '<div class="hf-rpg-quest-row"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(state?.s==='ready'?'LISTA PARA ENTREGAR':progress[0]+' / '+progress[1])+'</span></div>';}).join(''):blank('Todavía no hay misiones secundarias activas.'))+'</div>')+
-   panel(title('Registro de misiones','Seguidor del HUD')+
-    '<p class="hf-rpg-info">El objetivo principal proviene del sistema original de misiones. Las categorías de historia, secundarias y profesiones se expandirán sin duplicar registros.</p>'+
-    '<div class="hf-rpg-mini-actions">'+button('PERSONAJE','data-hf-tab="personaje"')+'</div>','hf-rpg-right-panel')+'</div>';
+  const selected=rows.find(q=>q.id===local.selectedQuest)??null;
+  const name=selected?translateHighfly(selected.title):objective;
+  const goal=selected?translateHighfly(selected.verb):objective;
+  const state=selected?game.quests?.state?.[selected.id]:null;
+  const progress=selected?game.quests?.progress?.(selected):null;
+  const progressText=state?.s==='ready'?'LISTA PARA ENTREGAR':progress?.length>=2?progress[0]+' / '+progress[1]:'OBJETIVO PRINCIPAL';
+  return '<div class="hf-rpg-quest-layout">'+panel(title('Misiones','Principal · Secundarias · Profesiones')+
+    '<div class="hf-rpg-subtitle">SEGUIMIENTO · '+rows.length+' ACTIVAS</div>'+
+    '<div class="hf-rpg-quest-list">'+
+     '<button type="button" data-hf-quest="primary" class="hf-rpg-quest-row '+(local.selectedQuest==='primary'?'is-selected':'')+'"><b>✦ HISTORIA · '+safe(objective)+'</b><small>Objetivo principal del Valle</small></button>'+
+     rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+
+    '</div>','hf-rpg-quest-left')+
+   panel('<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
+    '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
+    '<div class="hf-rpg-quest-art"><img alt="Ilustración del Camino al Patio de los Pétalos" src="'+assetUrl('quest-petal')+'"/></div>'+
+    '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
+    '</div>','hf-rpg-quest-right')+'</div>';
  }
  function map(){
-  return panel(title('Mapa del Valle','Mundo original de Unsung preservado')+
-   '<div class="hf-rpg-map-placeholder"><div class="hf-rpg-map-grid">◈</div><b>Mapa y radar HIGHFLY</b><p>'+(game.hasMap?'El mapa original está desbloqueado en tu partida.':'Explorá el Valle para desbloquear el mapa original.')+'</p><small>La capa premium de mapa completo y radar se integrará en F0.14.3.</small></div>');
+  const native=originalMapSnapshot(game);
+  const locations=currentMapLandmarks(game);
+  const visual=native?'<img class="hf-rpg-map-native" alt="Mapa nativo real con terreno, posición y objetivos" src="'+native+'"/>':
+   '<div class="hf-rpg-map-art" role="img" aria-label="Ilustración de la región de Aetheria"></div>';
+  return '<div class="hf-rpg-map-layout">'+panel(title('Mapa del Mundo',native?'Terreno y marcadores reales':'Atlas de Aetheria · Vista ilustrativa')+
+   '<div class="hf-rpg-map-display">'+visual+'</div>'+
+   '<small class="hf-rpg-map-caveat">'+(native?'Mapa original del juego · Tu posición y objetivos están marcados.':'Vista ilustrativa. Conseguí el mapa en la misión del Cartógrafo para acceder a los datos del mundo.')+'</small>','hf-rpg-map-main')+
+   panel(title('Leyenda','Ubicaciones descubiertas')+
+    '<div class="hf-rpg-legend"><div>◈ Tu posición</div><div>✧ Objetivo principal</div><div>✦ Misiones activas</div><div>◇ Lugares descubiertos</div></div>'+
+    (locations.length?'<div class="hf-rpg-subtitle">AGUJAS DEL VALLE</div>'+locations.map(l=>'<div class="hf-rpg-material-row"><span>'+safe(translateHighfly(l.name))+'</span><b>'+(l.unlocked?'DESPIERTA':'CERRADA')+'</b></div>').join(''):blank('Explorá el Valle y descubrí sus lugares.')),'hf-rpg-map-aside')+'</div>';
  }
  function options(){
   return panel(title('Opciones','Ajustes vinculados al renderizador')+
