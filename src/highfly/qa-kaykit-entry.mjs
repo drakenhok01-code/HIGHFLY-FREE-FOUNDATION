@@ -4,6 +4,7 @@
  */
 import * as THREE from 'three';
 import {KayKitFreeHero} from './kaykit-free-hero.mjs';
+import {paintLiveHero} from './hero-portrait.mjs';
 import {WEAPON_MODES,WEAPON_ANIMATIONS,attackAnimation} from './universal-gear.mjs';
 import {Pipeline} from '../engine/pipeline.js';
 window.__hfQa={done:false,ok:false};
@@ -106,7 +107,18 @@ try{
  for(const [o,v] of meshes)o.visible=v;
  if(bodyDifference<120)
   throw Error('GHOST regression: Unsung pipeline refuses skinned body, diff='+bodyDifference);
- // Compare the SAME CC0 Knight GLB in native, non-stylized proportions.
+ // F0.14.2 real GPU portrait of the SAME skinned KayKit actor.
+  const portraitCanvas=document.createElement('canvas');
+  portraitCanvas.style.cssText='width:280px;height:300px;display:block';
+  host.append(portraitCanvas);
+  const portraitReport=paintLiveHero({pipe,hero:ph,player:pj},portraitCanvas,0);
+  if(!portraitReport.ok||portraitReport.pixels<25)
+    throw Error('F0.14.2 ACTUAL PORTRAIT MISSING '+JSON.stringify(portraitReport));
+  // Check that the portrait render restores the native Unsung renderer state.
+  const restoredBody=render();
+  if(diff(blank,restoredBody)<120)
+    throw Error('F0.14.2 portrait damaged native renderer state');
+  // Compare the SAME CC0 Knight GLB in native, non-stylized proportions.
  const prevSearch=location.search;
  history.replaceState(null,'',location.pathname+'?hfstyle=original');
  const originalScene=new THREE.Scene();
@@ -230,7 +242,7 @@ try{
  const reportData={clips:hero.clips.size,ualClips:Object.keys(hero.ualData.clips),ualApplied:hero.ualApplied,states:frames,bones:hero.profile.bones,
   bodyParts:hero.bodyParts.size,headRatio:hero.profile.headRatio,
   boundTracks:hero.profile.tracks,renderMode:hero.diagnostics.mode,
-  partPixels,changedPixels:changed,bodyDifference,
+  partPixels,changedPixels:changed,bodyDifference,portraitReport,
   rollAngle,rollNearGround,swimQA,gearModes:equipmentModes,trailVisible,testedDirectional,weaponClipsChecked,dualTrailVerified:rightSwing&&leftSwing,swordCount:hero.swordMeshes,originalLookPixels:origChanged};
  console.log('[HIGHFLY F08 NATIVE BODY QA]',JSON.stringify(reportData));
  report(true,reportData);
