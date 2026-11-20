@@ -1,20 +1,21 @@
-/** HIGHFLY visual asset registry.
- * Original scalable SVG interpretations of the HIGHFLY approved iconography.
- * The sprite atlas is one lightweight SVG; all menu elements remain real HTML.
+/** HIGHFLY PREMIUM v2: standalone, resolution-independent artwork per real RPG ID.
+ *  F0.14.8 game/UI state still drives all interactivity. No screenshots used as UI.
  */
-export const SPRITE_COLS=6,SPRITE_ROWS=2;
-export const ICONS=Object.freeze({
- health:0,mana:1,herb:2,ore:3,wood:4,weapon:5,shield:6,armor:7,
- ring:8,bag:9,skills:10,forge:11
-});
 export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+(name.startsWith('approved-')?'.webp':'.svg');
+const ITEMS=new Set(['hp_potion','mp_potion','herb','ore','wood','fish','ingot','blade_blank','seed','bag_upgrade','training_sword','training_shield','training_greatsword']);
+const SLOTS=new Set(['helmet','chest','gloves','right_hand','necklace','shoulders','pants','boots','left_hand','ring']);
+const PROFS=new Set(['recoleccion','mineria','tala','pesca','cocina','alquimia','fundicion','forja']);
+const SKILLS=new Set(['attack','dash','roll','heavy','pulse','heal']);
+const QUESTS=new Set(['primary','scales','amber','kept','nine','answer','vellum2','count2','names','rings','vellum','count','seeds','stair','voices','lamps','water','debt','windfall']);
+const ALIAS={health:'item_hp_potion',mana:'item_mp_potion',herb:'item_herb',ore:'item_ore',wood:'item_wood',fish:'item_fish',ingot:'item_ingot',blade:'item_blade_blank',weapon:'item_training_sword',shield:'item_training_shield',expansion:'item_bag_upgrade',armor:'slot_chest',ring:'slot_ring',helmet:'slot_helmet',gloves:'slot_gloves',boots:'slot_boots',forge:'profession_forja',food:'profession_cocina'};
+const valid=id=>id.startsWith('item_')?ITEMS.has(id.slice(5)):id.startsWith('slot_')?SLOTS.has(id.slice(5)):id.startsWith('profession_')?PROFS.has(id.slice(11)):id.startsWith('skill_')?SKILLS.has(id.slice(6)):false;
 export function premiumArt(name,large=false){
- if(name==='health'||name==='mana')
-  return '<span role="img" aria-label="'+(name==='health'?'Poción de Vida':'Poción de Maná')+'" class="hf-rpg-art hf-rpg-potion-approved '+(name==='health'?'is-health':'is-mana')+(large?' is-large':'')+'"></span>';
- const index=ICONS[name];
- if(index===undefined)return null;
- const x=index%SPRITE_COLS,y=Math.floor(index/SPRITE_COLS);
- const style='--hf-sprite-x:'+(100*x/(SPRITE_COLS-1))+'%;--hf-sprite-y:'+(100*y/(SPRITE_ROWS-1))+'%';
- return '<span class="hf-rpg-art hf-rpg-sprite'+(large?' is-large':'')+'" role="img" aria-label="'+name+'" style="'+style+'"></span>';
+ const id=ALIAS[name]||name;
+ if(!valid(id))return null;
+ return '<img class="hf-rpg-art hf-premium-icon'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" src="'+assetUrl('premium/'+id)+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
 }
-export const PLEDGE='Dibujos SVG originales basados en la dirección HIGHFLY aprobada, sin copiar material ajeno';
+const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja'};
+export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
+export const questArtUrl=id=>assetUrl('premium/quest_'+(QUESTS.has(id)?id:'primary'));
+export const PREMIUM_IDS=Object.freeze({items:[...ITEMS],slots:[...SLOTS],professions:[...PROFS],skills:[...SKILLS],quests:[...QUESTS]});
+export const PLEDGE='Todos los recursos premium son SVG originales individuales. La lógica sigue en DOM/Canvas de F0.14.8.';

@@ -2,7 +2,7 @@ name: HIGHFLY FREE - Unsung original Android baseline
 on:
   workflow_dispatch:
   push:
-    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen, f013-unified-highfly-upgrade, f0131-android-visual-foundation, f014-premium-rpg-ui-lab]
+    branches: [free-foundation-v01, f04-unified-actor-lab, f05-body-visibility-lab, f07-overlay-visibility-lab, f08-clean-universal-hero, f081-look-and-hud-cleanup, f09-universal-motion-lab, f010-weapon-motion-lab, f011-combat-motion-climb-swim, f0114-climb-combat-terrain-lab, f0116-emberfall-combat-dive-lab, f012-flow-combat-hud-dive-lab, f0122-directional-attack-hud-slope-oxygen, f013-unified-highfly-upgrade, f0131-android-visual-foundation, f014-premium-rpg-ui-lab, lab-f0148-phoenix-premium-real-v2]
 permissions:
   contents: read
   pages: write
@@ -54,6 +54,13 @@ jobs:
             .work/unsung/qa-touch-report.json
             .work/unsung/qa-rpg-character.png
             .work/unsung/qa-rpg-bag.png
+            .work/unsung/qa-rpg-attributes.png
+            .work/unsung/qa-rpg-forge.png
+            .work/unsung/qa-rpg-professions.png
+            .work/unsung/qa-rpg-quests.png
+            .work/unsung/qa-rpg-map.png
+            .work/unsung/qa-rpg-skills.png
+            .work/unsung/qa-rpg-options.png
             .work/unsung/qa-rpg-report.json
           if-no-files-found: ignore
       - name: Auditar dist antes de publicar
