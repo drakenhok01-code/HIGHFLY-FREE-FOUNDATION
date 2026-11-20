@@ -463,7 +463,7 @@ export function installHighflyUniversalMotion(p){
     return;
    }
   }
-  if(input.pressed.has('equip')&&isMove(this)){
+  if(input.pressed.has('equip')&&isMove(this)&&!this._hfEquipmentLocked){
    this._hfGearCycle=(this._hfGearCycle+1)%WEAPON_MODES.length;
    this.emit('highflyEquipPreview',{variant:this._hfGearCycle});
   }
