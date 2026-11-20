@@ -82,3 +82,26 @@ test('F0.14.2 permanent 36-slot bag, regardless of items equipped or inventory',
  assert.equal(slots.filter(Boolean).length,3);
  assert.equal(slots.filter(x=>x===null).length,33);
 });
+
+test('F0.14.5 crafted inventory expansion is persistent, consumes one item and never exceeds 72',async()=>{
+ const {consumeBagUpgrade}=await import('../src/highfly/rpg-core.mjs');
+ const bag=normalizeRpgState(null);
+ assert.equal(bag.slots,36);
+ assert.equal(consumeBagUpgrade(bag).ok,false);
+ bag.items.bag_upgrade=3;
+ for(const cap of [48,60,72]){
+  assert.equal(consumeBagUpgrade(bag).ok,true);
+  assert.equal(bag.slots,cap);
+ }
+ assert.equal(bag.items.bag_upgrade,0);
+ const restored=normalizeRpgState(JSON.parse(JSON.stringify(bag)));
+ assert.equal(restored.slots,72);
+ assert.equal(consumeBagUpgrade(restored).ok,false);
+ const professions={inventory:{wood:8,ore:8},tools:new Set()};
+ const result=craftPotion('bag_upgrade',professions,restored);
+ assert.equal(result.ok,true);
+ assert.equal(professions.inventory.wood,0);
+ assert.equal(professions.inventory.ore,0);
+ assert.equal(restored.items.bag_upgrade,1);
+ assert.equal(consumeBagUpgrade(restored).ok,false,'A full bag must not spend the expansion token');
+});
