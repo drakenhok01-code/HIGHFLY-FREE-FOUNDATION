@@ -275,7 +275,7 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg .hf-rpg-turn-buttons{display:flex;gap:5px}
 #hf-rpg .hf-rpg-turn-buttons .hf-rpg-button{min-height:25px;min-width:33px;padding:2px 7px;font-size:19px}
 #hf-rpg .hf-rpg-weapon-tag{display:flex;justify-content:space-between;gap:6px;align-items:center;font-size:11px}
-#hf-rpg .hf-rpg-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;align-content:start}
+#hf-rpg .hf-rpg-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;align-content:start}
 #hf-rpg .hf-rpg-empty-slot{position:relative;aspect-ratio:1;border:1px solid #7c5f9d8c;border-radius:5px;
  background:linear-gradient(140deg,#281c448c,#0a0a1dd6);display:grid;place-items:center;box-shadow:inset 0 0 8px #61378236}
 #hf-rpg .hf-rpg-empty-slot span{color:#8f77bb29;font-size:20px;pointer-events:none}
