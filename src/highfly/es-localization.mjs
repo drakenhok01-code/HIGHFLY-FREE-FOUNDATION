@@ -70,6 +70,8 @@ const PAIRS=[
  ['Objective','Objetivo'],['Active quests','Misiones activas'],
  ['Reach the next spire','Alcanzá la siguiente aguja'],
  ['The path goes on','El camino continúa'],
+ ['Follow the path to the Petal Court','Seguí el camino hacia el Patio de los Pétalos'],
+ ['Follow the path to the Petal Court.','Seguí el camino hacia el Patio de los Pétalos.'],
  ['You are dead','Has caído'],['Try again','Volver a intentar'],
  ['Fast travel','Viaje rápido'],['Destination','Destino'],
  ['Close','Cerrar'],['Back','Atrás'],['Apply','Aplicar'],
