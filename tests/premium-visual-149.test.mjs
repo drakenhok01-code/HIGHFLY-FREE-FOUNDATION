@@ -20,7 +20,7 @@ test('F0.14.9 every original Unsung quest has distinct ID-keyed static illustrat
   assert.ok(picture.includes('data-hf-quest-art="'+id+'"'));
   assert.ok(picture.includes('role="img"'));
   assert.ok(picture.includes('hf-rpg-quest-scenery'));
-  assert.ok(picture.includes('hf-rpg-quest-emblem'));
+  assert.ok(!picture.includes('hf-rpg-quest-emblem'),'Geometric emblem should not obscure the approved painting');
   assert.ok(picture.includes(q.alt),'alt should identify the actual mission artwork');
  }
  assert.equal(new Set(required.map(id=>questArtData(id).alt)).size,required.length);
