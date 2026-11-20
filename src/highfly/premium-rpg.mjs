@@ -5,6 +5,7 @@
  */
 import './premium-rpg.css';
 import './premium-f0148-v2.css';
+import './premium-f0148-v3.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -31,7 +32,7 @@ const slot=(meta,equipped,selected=false)=>{
  '<span class="hf-rpg-slot-art">'+art(id?'item_'+id:'slot_'+meta.id)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?.name??'Vacío')+'</b></span>'+
  '<span class="hf-rpg-equip-more">›</span></button>';
 };
-const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
+const menuLink=(tab,icon,label,selected=false)=>'<button type="button" class="hf-rpg-side-link '+(selected?'is-selected':'')+'" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
 function art(id='stone',large=false){
  const premium=premiumArt(id,large);if(premium)return premium;
@@ -104,6 +105,10 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  root.style.setProperty('--hf-potion-art','url("'+assetUrl('approved-potions')+'")');
  root.style.setProperty('--hf-forge-scene','url("'+assetUrl('premium/forge_workshop')+'")');
+  root.style.setProperty('--hf-panel-ornament','url("'+assetUrl('premium/ui_gold_corners')+'")');
+  root.style.setProperty('--hf-wave-art','url("'+assetUrl('premium/ui_silk_waves')+'")');
+  root.style.setProperty('--hf-crest','url("'+assetUrl('premium/ui_phoenix_crest')+'")');
+  root.style.setProperty('--hf-skill-vista','url("'+assetUrl('premium/quest_primary')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -249,7 +254,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    chosen?.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):
    blank('Este material se utiliza en Fabricación.');
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
-    categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat)).join('')+
+    categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat,local.category===cat)).join('')+
     '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
