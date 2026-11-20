@@ -65,9 +65,23 @@ try{
  assert.equal(crafted.qty,before+1,'crafted result not returned to bag');
  assert.equal(crafted.herb,0,'materials were not consumed');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
- assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),5,'Full RPG mission journal must contain ALL active quests');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),6,'Five active quests plus main objective, none hidden');
+ await page.locator('#hf-rpg [data-hf-quest="q3"]').click();
+ assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One fantasy quest illustration exists');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-map-display').count(),1,'Map must render original world or clearly labeled illustration');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
+ await page.evaluate(()=>{window.__highflyRpg.state.items.bag_upgrade=1;window.__highflyRpg.render();});
+ await page.locator('#hf-rpg [data-hf-action="expand"]').first().click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Expansion must reveal twelve persistent slots');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
+ await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
+ assert.match(await page.locator('#hf-rpg .hf-rpg-right-panel').innerText(),/Pulso/,'Skills selection renders detail');
+
  await page.locator('#hf-rpg [data-hf-action="close"]').first().click();
  assert.equal(await page.evaluate(()=>window.__game.state),'playing','closing menu must resume original game');
  assert.equal(await page.locator('#hf-rpg').isHidden(),true);
