@@ -12,6 +12,7 @@ import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {translateHighfly} from './es-localization.mjs';
+import {describeSystemIntent} from './system-dialog.mjs';
 
 const PHOENIX='<svg class="hf-rpg-logo-bird" viewBox="0 0 110 100" aria-hidden="true"><defs><linearGradient id="hfPhoenix" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5d6"/><stop offset=".4" stop-color="#d5a3ff"/><stop offset="1" stop-color="#9944f5"/></linearGradient></defs><path d="M54 22q-12 12-9 28Q22 38 9 10q0 31 29 53Q18 59 2 41q4 32 39 34l12 17 11-17Q101 73 109 41 90 57 71 63q28-22 29-53Q86 37 63 50q2-16-9-28z" fill="url(#hfPhoenix)" stroke="#f7d8ff" stroke-width="1.8"/><path d="M55 8l7 13-7 12-7-12z" fill="#ffeec4"/><path d="M55 43l9 14-9 22-9-22z" fill="#160828" stroke="#ffd4ff" stroke-width="1.4"/></svg>';
 const NAV=[
@@ -96,11 +97,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,toast:'',opened:false,heroTurn:0};
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('approved-hero')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  root.style.setProperty('--hf-potion-art','url("'+assetUrl('approved-potions')+'")');
+ root.style.setProperty('--hf-forge-scene','url("'+assetUrl('forge-chamber')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -116,6 +118,65 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const weapon=()=>weaponMode(equippedMode(bag.equipped));
  const message=(s)=>{local.toast=String(s);render();};
  const save=()=>saveRpgState(bag);
+ const systemLayer=()=>{
+  const m=local.system;if(!m)return '';
+  const busy=m.phase==='working',complete=m.phase==='result',choice=m.phase==='choose';
+  const heading=complete?(m.success?'ACCIÓN COMPLETADA':'ACCIÓN NO COMPLETADA'):
+   busy?'FABRICACIÓN EN CURSO':m.title;
+  const description=complete?m.outcome:busy?'Canalizando la energía de la forja…':m.description;
+  const details=Array.isArray(m.details)&&!complete&&!busy?
+   '<div class="hf-system-details">'+m.details.map(d=>'<div><span>'+safe(d.label)+'</span><b>'+safe(d.value)+'</b></div>').join('')+'</div>':'';
+  const selector=choice?'<div class="hf-system-choice-list">'+m.slots.map(d=>
+   '<button type="button" data-hf-system-slot="'+safe(d.id)+'">'+safe(d.label)+'</button>').join('')+'</div>':'';
+  const actions=busy?'<div class="hf-system-loading"><div class="hf-system-progress"><i></i></div><small>PROCESO PHOENIX · RECETA REAL</small></div>':
+   complete?'<div class="hf-system-actions">'+button('ACEPTAR','data-hf-system="dismiss" data-hf-system-focus','is-primary')+
+      (m.success&&m.type==='craft'?button('VER EN BOLSA','data-hf-system="bag"'):'')+'</div>':
+   '<div class="hf-system-actions">'+button('CANCELAR','data-hf-system="cancel"')+
+     (!choice?button('SÍ, '+safe(m.verb),'data-hf-system="confirm" data-hf-system-focus','is-primary'):'')+'</div>';
+  return '<div class="hf-system-shade" data-stage="'+safe(m.phase)+'"><section class="hf-system-card" role="alertdialog" aria-modal="true" aria-label="Mensaje del Sistema HIGHFLY">'+
+   '<div class="hf-system-topline"><span>✦ SISTEMA PHOENIX</span><small>REGISTRO DE EXISTENCIA</small></div>'+
+   '<div class="hf-system-icon">'+art(m.icon??'weapon',false)+'</div>'+
+   '<h3>'+safe(heading)+'</h3><p class="hf-system-description">'+safe(description??'')+'</p>'+details+selector+actions+
+   '<div class="hf-system-bottomline">EL FUTURO TODAVÍA NO HA SIDO ESCRITO</div></section></div>';
+ };
+ function showSystem(type,payload={}){
+  const intent=describeSystemIntent(type,payload,bag,prof().inventory,p());
+  if(!intent.ok){message(intent.reason);return false;}
+  local.system={...intent,phase:type==='equip-choose'?'choose':'confirm'};
+  render();return true;
+ }
+ function systemConfirm(){
+  const m=local.system;
+  if(!m||m.phase!=='confirm')return;
+  if(m.type==='craft'){
+   const updated=describeSystemIntent('craft',{recipeId:m.recipeId},bag,prof().inventory,p());
+   if(!updated.ok){local.system={...m,phase:'result',success:false,outcome:updated.reason};render();return;}
+   m.phase='working';render();
+   // Visual progress is a short presentation; real inventory is mutated ONLY
+   // at completion after revalidation, once. The user can't double confirm.
+   setTimeout(()=>{
+    if(!local.opened||local.system!==m||m.phase!=='working')return;
+    const result=craftPotion(m.recipeId,prof(),bag);
+    if(result.ok){save();p()?._hfProfessionSave?.();}
+    local.system={...m,phase:'result',success:result.ok,
+     outcome:result.ok?'¡Conseguiste '+result.count+' × '+ITEM_DEFS[result.id].name+'! El objeto ya está en tu Bolsa.':result.reason};
+    render();
+   },850);
+   return;
+  }
+  let result={ok:false,reason:'Acción no compatible'};
+  if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
+  else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
+  else if(m.type==='assign-skill'){result=assignSkillSlot(bag,m.slotIndex,m.skillId,p());if(result.ok){save();syncSkills();local.pickSkill=null;}}
+  else if(m.type==='expand'){result=consumeBagUpgrade(bag);if(result.ok)save();}
+  const output=result.ok?({
+   equip:'¡'+ITEM_DEFS[m.itemId].name+' equipado correctamente!',
+   unequip:'¡Objeto devuelto a tu Bolsa!',
+   'assign-skill':'¡Habilidad asignada a la ranura '+(m.slotIndex+1)+'!',
+   expand:'¡Tu Bolsa ahora tiene '+result.slots+' espacios!'
+  }[m.type]??'Acción completada'):result.reason;
+  local.system={...m,phase:'result',success:result.ok,outcome:output};render();
+ }
  const preview=()=>{
   const mode=weapon();
   return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>NIVEL '+numeric(attrs().level)+'</small></div>'+
@@ -133,13 +194,10 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const selected=EQUIP_SLOTS.find(v=>v.id===local.selectedEquipSlot);
   const chosen=selected&&ITEM_DEFS[eq?.[selected.id]];
   const detail=selected?
-   '<div class="hf-rpg-equip-selected"><b>'+safe(selected.label)+': '+safe(chosen?.name??'Vacío')+'</b>'+
-    (chosen?local.confirmUnequip===selected.id?
-      '<span>¿Devolver a Bolsa?</span>'+button('CONFIRMAR','data-hf-action="unequip:'+selected.id+'"','is-primary')+
-      button('CANCELAR','data-hf-action="cancel-unequip"'):
-      button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
-     '<span>Slot libre. Conseguí equipo compatible en el mundo o en Forja.</span>')+'</div>':
-   '<div class="hf-rpg-equip-selected"><b>Equipo real · '+safe(weapon().label)+'</b><span>Tocá una ranura para ver su contenido.</span></div>';
+   '<div class="hf-rpg-equip-selected"><b title="'+safe(chosen?.name??selected.label)+'">'+safe(chosen?.name??selected.label+' libre')+'</b>'+
+   (chosen?button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
+    button('VER BOLSA','data-hf-tab="bolsa"'))+'</div>':
+   '<div class="hf-rpg-equip-selected"><b>Equipo real · '+safe(weapon().label)+'</b></div>';
   return '<div class="hf-rpg-character-layout">'+
    panel(title('Equipo','Mano derecha · equipo')+
     '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-left-panel')+
@@ -183,12 +241,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
   const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};
   const choices=chosen?.kind==='Equipamiento'&&EQUIP_ITEM_DEFS[chosen.id]?
-   (local.pickEquipItem===chosen.id?
-    '<div class="hf-rpg-bag-equip-choices"><b>¿Dónde equipar?</b>'+
-    EQUIP_ITEM_DEFS[chosen.id].slots.map(id=>button(EQUIP_SLOTS.find(s=>s.id===id)?.label||id,
-    'data-hf-action="equip:'+id+':'+chosen.id+'"','is-primary')).join('')+
-    button('CANCELAR','data-hf-action="cancel-equip"')+'</div>':
-    button('✧ EQUIPAR','data-hf-action="pick-equip:'+chosen.id+'"','is-primary')):
+   button('✧ EQUIPAR','data-hf-action="pick-equip:'+chosen.id+'"','is-primary'):
    chosen?.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):
    chosen?.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):
    blank('Este material se utiliza en Fabricación.');
@@ -271,18 +324,27 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
-  return '<div class="hf-rpg-three">'+panel(title('Fabricación','Recetas disponibles')+
-  Object.values(RECIPES).map(r=>'<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('')+
-  '<div class="hf-rpg-space">ESTACIÓN <strong>'+safe(recipe.profession)+'</strong></div>','hf-rpg-left-panel')+
-  panel(title(recipe.name,recipe.profession+' · Elaboración real')+'<div class="hf-rpg-craft-focus">'+art(ITEM_DEFS[recipe.item].icon,true)+
-   '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p></div></div>'+
-   '<div class="hf-rpg-subtitle">MATERIALES NECESARIOS</div>'+
-   '<div class="hf-rpg-ingredients">'+Object.entries(recipe.ingredients).map(([id,n])=>'<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+'<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('')+'</div>'+
-   '<div class="hf-rpg-rule"></div>'+button(ok.ok?'✧ FABRICAR 1':'FALTAN MATERIALES','data-hf-action="craft:'+recipe.item+'" '+(ok.ok?'':'disabled'),'is-primary')+
-   '<div class="hf-rpg-bottom-note">No se crean materiales ni se entregan recetas sin insumos.</div>')+
-  panel(title('Materiales en bolsa','Cantidades actuales')+
-   Object.keys(ITEM_DEFS).filter(k=>ITEM_DEFS[k].kind==='Materiales').map(id=>'<div class="hf-rpg-material-row">'+art(ITEM_DEFS[id].icon)+'<span>'+safe(ITEM_DEFS[id].name)+'</span><b>x'+numeric(prof().inventory[id]??0)+'</b></div>').join('')+
-   '<div class="hf-rpg-mini-actions">'+button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
+  const recipes=Object.values(RECIPES).map(r=>
+   '<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+
+   art(ITEM_DEFS[r.item].icon)+'<b>'+safe(r.name)+'</b></button>').join('');
+  const ingredients=Object.entries(recipe.ingredients).map(([id,n])=>
+   '<div class="hf-rpg-ingredient">'+art(ITEM_DEFS[id].icon)+
+   '<b>'+safe(ITEM_DEFS[id].name)+'</b><span class="'+((prof().inventory[id]??0)<n?'is-red':'is-green')+'">'+
+   numeric(prof().inventory[id]??0)+' / '+n+'</span></div>').join('');
+  return '<div class="hf-rpg-forge-layout">'+
+   panel(title('Fabricación','Elegí la receta que querés crear')+
+    '<div class="hf-rpg-forge-recipes">'+recipes+'</div>'+
+    '<div class="hf-rpg-forge-tip">La fabricación utiliza recursos reales. El inventario completo está en Bolsa.</div>',
+    'hf-rpg-forge-list')+
+   panel('<div class="hf-rpg-forge-workshop">'+title(recipe.name,recipe.profession+' · Estación de creación')+
+    '<div class="hf-rpg-forge-preview"><div class="hf-rpg-forge-result-art">'+art(ITEM_DEFS[recipe.item].icon,true)+'</div>'+
+    '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p><small>Resultado · x'+recipe.count+'</small></div></div>'+
+    '<div class="hf-rpg-forge-materials"><div class="hf-rpg-subtitle">RECETA · MATERIALES NECESARIOS</div>'+
+    '<div class="hf-rpg-ingredients">'+ingredients+'</div></div>'+
+    '<div class="hf-rpg-forge-actions">'+button(ok.ok?'⚒ INICIAR FABRICACIÓN':'FALTAN MATERIALES',
+    'data-hf-action="craft:'+recipe.item+'" '+(ok.ok?'':'disabled'),'is-primary')+
+    button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>'+
+   '</div>','hf-rpg-forge-main')+'</div>';
  }
  function quests(){
   const rows=game.quests?.active??[];
@@ -334,7 +396,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.5 · HIGHFLY PHOENIX ASCENSION · ANDROID HORIZONTAL')+'</span></footer></div>';
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.8 · SISTEMA PHOENIX · ANDROID HORIZONTAL')+'</span></footer></div>'+systemLayer();
+  if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
  }
@@ -349,7 +412,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   render();return true;
  }
  function close(){
-  if(!local.opened)return;
+  if(!local.opened||local.system?.phase==='working')return;
+  if(local.system){local.system=null;render();return;}
   local.opened=false;root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
@@ -357,18 +421,29 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const api={open,close,toggle:()=>local.opened?close():open(),render,get opened(){return local.opened},get state(){return bag}};
  root.addEventListener('click',e=>{
   const b=e.target?.closest?.('button');if(!b)return;
+  if(local.system){
+   const sys=b.dataset.hfSystem;
+   if(b.dataset.hfSystemSlot){
+    showSystem('equip',{itemId:local.system.itemId,slotId:b.dataset.hfSystemSlot});return;
+   }
+   if(sys==='cancel'||sys==='dismiss'){local.system=null;render();return;}
+   if(sys==='bag'){local.system=null;local.tab='bolsa';local.category='Todo';render();return;}
+   if(sys==='confirm'){systemConfirm();return;}
+   // Ignore EVERY click on underlying menus while the System message is visible.
+   return;
+  }
   const tab=b.dataset.hfTab;
   if(tab){if(tab.startsWith('bag:')){local.tab='bolsa';local.category=tab.slice(4);}
    else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}
   if(b.dataset.hfEquipSlot){
-   local.selectedEquipSlot=b.dataset.hfEquipSlot;local.confirmUnequip=null;render();return;
+   const chosen=b.dataset.hfEquipSlot;
+   if(local.selectedEquipSlot===chosen&&bag.equipped[chosen]){showSystem('unequip',{slotId:chosen});return;}
+   local.selectedEquipSlot=chosen;render();return;
   }
   if(b.dataset.hfSkillSlot!==undefined){
    const index=Number(b.dataset.hfSkillSlot);
    if(local.pickSkill){
-    const result=assignSkillSlot(bag,index,local.pickSkill,p());
-    if(result.ok){save();syncSkills();local.pickSkill=null;}
-    message(result.ok?'Habilidad asignada a ranura '+(index+1):result.reason);
+    showSystem('assign-skill',{slotIndex:index,skillId:local.pickSkill});
    }else{
     const id=bag.skillSlots[index];if(id){local.selectedSkill=id;render();}
     else message('Ranura libre: elegí una habilidad y tocá EQUIPAR');
@@ -390,21 +465,15 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    local.confirmUnequip=null;local.pickEquipItem=null;render();return;
   }
   if(action.startsWith('ask-unequip:')){
-   local.confirmUnequip=action.slice('ask-unequip:'.length);render();return;
+   showSystem('unequip',{slotId:action.slice('ask-unequip:'.length)});return;
   }
-  if(action.startsWith('unequip:')){
-   const result=unequipToBag(bag,action.slice('unequip:'.length));
-   if(result.ok){save();syncEquipment();local.confirmUnequip=null;}
-   message(result.ok?'Objeto devuelto a Bolsa':result.reason);return;
-  }
+  if(action.startsWith('unequip:')){showSystem('unequip',{slotId:action.slice('unequip:'.length)});return;}
   if(action.startsWith('pick-equip:')){
-   local.pickEquipItem=action.slice('pick-equip:'.length);render();return;
+   const id=action.slice('pick-equip:'.length),slots=EQUIP_ITEM_DEFS[id]?.slots??[];
+   showSystem(slots.length===1?'equip':'equip-choose',slots.length===1?{itemId:id,slotId:slots[0]}:{itemId:id});return;
   }
   if(action.startsWith('equip:')){
-   const [,slotId,itemId]=action.split(':');
-   const result=equipFromBag(bag,slotId,itemId);
-   if(result.ok){save();syncEquipment();local.pickEquipItem=null;}
-   message(result.ok?'Equipo actualizado en '+(EQUIP_SLOTS.find(s=>s.id===slotId)?.label??slotId):result.reason);return;
+   const [,slotId,itemId]=action.split(':');showSystem('equip',{itemId,slotId});return;
   }
   if(action==='choose-skill'){
    const selected=liveSkillRows(p()).find(s=>s.id===local.selectedSkill);
@@ -416,24 +485,21 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    if(result.ok){save();syncSkills();}
    message(result.ok?'Ranura liberada':result.reason);return;
   }
-  if(action==='expand'){
-   const result=consumeBagUpgrade(bag);if(result.ok)save();
-   message(result.ok?'¡Bolsa ampliada a '+result.slots+' casillas!':result.reason);return;
-  }
+  if(action==='expand'){showSystem('expand');return;}
   if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
   // Gear is changed ONLY through real Bag <-> Character equip transactions.
   if(action.startsWith('use:')){
    const result=spendPotion(bag,p(),action.slice(4));if(result.ok)save();
    message(result.ok?'Recuperaste '+numeric(result.restored)+' de '+result.resource:result.reason);return;
   }
-  if(action.startsWith('craft:')){
-   const result=craftPotion(action.slice(6),prof(),bag);if(result.ok){save();p()?._hfProfessionSave?.();}
-   message(result.ok?'¡Fabricaste '+ITEM_DEFS[result.id].name+'!':result.reason);return;
-  }
+  if(action.startsWith('craft:')){showSystem('craft',{recipeId:action.slice(6)});return;}
  });
  document.addEventListener('keydown',e=>{
   if(e.repeat||e.target?.matches?.('input,textarea,select,[contenteditable]'))return;
-  if(local.opened&&e.code==='Escape'){e.preventDefault();close();return;}
+  if(local.opened&&e.code==='Escape'){
+   e.preventDefault();if(local.system?.phase==='working')return;
+   if(local.system){local.system=null;render();}else close();return;
+  }
   if(e.code==='KeyI'||e.code==='KeyB'){
    if(game.state==='playing'||local.opened){e.preventDefault();if(local.opened)close();else open(e.code==='KeyB'?'bolsa':'personaje');}
   }
