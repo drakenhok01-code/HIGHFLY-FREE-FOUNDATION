@@ -92,6 +92,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('hero-sanctuary')+'")');
+ root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
