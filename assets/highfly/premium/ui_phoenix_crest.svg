@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="240" viewBox="0 0 660 240">
+<defs><linearGradient id="gold" x1=".3" y1="0" x2=".8" y2="1"><stop stop-color="#fff9dc"/><stop offset=".18" stop-color="#ffe68d"/><stop offset=".48" stop-color="#ff9a40"/><stop offset=".7" stop-color="#f14bd5"/><stop offset="1" stop-color="#8439ed"/></linearGradient><linearGradient id="purple"><stop stop-color="#ae64fa"/><stop offset=".48" stop-color="#ffcdf5"/><stop offset="1" stop-color="#8426d9"/></linearGradient><radialGradient id="aura"><stop stop-color="#fbafff" stop-opacity=".7"/><stop offset=".3" stop-color="#b54bf1" stop-opacity=".35"/><stop offset="1" stop-color="#8e31e9" stop-opacity="0"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<ellipse cx="330" cy="118" rx="230" ry="91" fill="url(#aura)"/>
+<g fill="none" stroke="#9b33ef" stroke-width="12" filter="url(#glow)" opacity=".68"><path d="M321 128Q195 35 34 72M339 128Q465 35 626 72M330 155L330 226"/></g>
+<g id="left" stroke="url(#gold)" stroke-linejoin="round">
+<path d="M328 115Q243 33 91 26q27 40 83 63Q111 87 23 76q42 63 137 70Q90 151 55 167q102 23 195-15L317 141z" fill="url(#gold)" stroke="#fff1ad" stroke-width="3"/>
+<path d="M314 124Q219 41 109 34q91 60 140 88Q142 109 54 80q100 72 205 62Q151 158 75 171q130 4 226-36" fill="none" stroke="#f8a8fe" stroke-width="4"/>
+<path d="M306 120Q238 70 183 55M298 127Q197 89 122 89M290 137Q205 130 136 147" fill="none" stroke="#ffeebc" stroke-width="3" opacity=".8"/>
+</g><use href="#left" transform="translate(660 0) scale(-1 1)"/>
+<path d="M330 39q-38 22-28 68l28 25 28-25q10-46-28-68z" fill="url(#gold)" stroke="#fff4ca" stroke-width="4"/>
+<path d="M330 51l-15 37 15 18 15-18z" fill="#361255" stroke="#ffb8fd" stroke-width="3"/>
+<path d="M330 114q-22 30-17 70l17 43 17-43q5-40-17-70z" fill="url(#gold)" stroke="#fff0b0" stroke-width="4"/>
+<path d="M330 134l-10 40 10 35 10-35z" fill="url(#purple)"/>
+<path d="M322 65q8-8 17-2l-7 9-11-1z" fill="#3c1c44"/>
+<path d="M305 126q25 16 50 0" fill="none" stroke="#fff5bf" stroke-width="5"/>
+<g fill="none" stroke="#ffb9ff" stroke-width="3" opacity=".9"><path d="M16 188q95-39 210-18M644 188q-95-39-210-18"/><path d="M18 190h113M642 190H529"/></g>
+<g fill="#fff6c5"><path d="M12 180l6 10-6 10-6-10zM648 180l6 10-6 10-6-10z"/><path d="M330 8l7 13-7 13-7-13z"/></g>
+</svg>
