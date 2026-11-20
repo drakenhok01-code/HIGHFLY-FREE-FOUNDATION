@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="510" viewBox="0 0 900 510">
+<defs><linearGradient id="land" x2="1" y2="1"><stop stop-color="#4e8552"/><stop offset=".55" stop-color="#81b86c"/><stop offset="1" stop-color="#3e7b56"/></linearGradient>
+<linearGradient id="water" x2=".7" y2="1"><stop stop-color="#83dfff"/><stop offset=".5" stop-color="#278fb6"/><stop offset="1" stop-color="#175b84"/></linearGradient>
+<radialGradient id="light"><stop stop-color="#e6fcb2"/><stop offset="1" stop-color="#7cbd63" stop-opacity=".1"/></radialGradient>
+</defs>
+<rect width="900" height="510" fill="#183e52"/>
+<path d="M0 20L115 0l94 52 94-42 125 40 121-46 140 49 97-20 114 32v445H0z" fill="url(#water)"/>
+<path d="M9 120Q110 75 167 155q64-45 132 3 128-117 232-6 85-53 169 45 65 0 160-26v339H34z" fill="url(#land)" stroke="#e2dba2" stroke-width="11"/>
+<path d="M0 15L92 59l43 81 45-41 45 68 90-66 61 84 56-71 34 82-51 41H0z" fill="#b3c6c9" stroke="#fff7f0" stroke-width="5"/>
+<path d="M0 15L92 59l43 81 45-41 45 68 90-66 61 84 56-71 34 82-51 41H0z" fill="#6c7e8e" opacity=".65"/>
+<path d="M0 14l92 54-36 42 53-17 26 48 45-40 18 28 27 45 66-45" stroke="#f4f3f2" stroke-width="12" fill="none" opacity=".9"/>
+<path d="M592 0Q565 98 626 164q65 58-28 113-44 27-68 78-10 46-106 66" fill="none" stroke="#155a83" stroke-width="48"/>
+<path d="M592 0Q565 98 626 164q65 58-28 113-44 27-68 78-10 46-106 66" fill="none" stroke="url(#water)" stroke-width="28"/>
+<path d="M792 0Q725 73 749 145q42 101-7 142-70 47-31 163" fill="none" stroke="#155a83" stroke-width="33"/>
+<path d="M792 0Q725 73 749 145q42 101-7 142-70 47-31 163" fill="none" stroke="url(#water)" stroke-width="20"/>
+<path d="M274 441Q390 357 340 265q-15-75 90-91t129 54" stroke="#a5804e" stroke-width="22" fill="none" stroke-linecap="round"/>
+<path d="M274 441Q390 357 340 265q-15-75 90-91t129 54" stroke="#f3d5a0" stroke-width="12" fill="none" stroke-linecap="round"/>
+<g fill="#245c48" stroke="#183f43" stroke-width="1">
+<circle cx="195" cy="255" r="29"/><circle cx="235" cy="272" r="30"/><circle cx="185" cy="307" r="25"/><circle cx="269" cy="331" r="24"/><circle cx="435" cy="294" r="25"/><circle cx="465" cy="335" r="22"/><circle cx="540" cy="255" r="23"/><circle cx="588" cy="385" r="30"/><circle cx="674" cy="362" r="25"/><circle cx="786" cy="233" r="27"/><circle cx="810" cy="353" r="20"/><circle cx="365" cy="205" r="21"/><circle cx="98" cy="290" r="25"/><circle cx="150" cy="400" r="32"/>
+</g>
+<g fill="#4c9b56" stroke="#d2da77" stroke-width="1">
+<circle cx="194" cy="252" r="17"/><circle cx="230" cy="267" r="17"/><circle cx="180" cy="301" r="15"/><circle cx="445" cy="292" r="16"/><circle cx="586" cy="380" r="18"/><circle cx="789" cy="233" r="16"/>
+</g>
+<g fill="#f4e2c8" stroke="#b79d83" stroke-width="3">
+<path d="M460 152l25-15 25 15v33h-50z"/><path d="M517 172l18-12 18 12v30h-36z"/><path d="M455 200h95v8h-95z"/>
+</g>
+<g fill="#af77d6" stroke="#efc3f8" stroke-width="2"><circle cx="738" cy="242" r="30"/><circle cx="770" cy="273" r="26"/><circle cx="710" cy="275" r="23"/><circle cx="796" cy="253" r="17"/></g>
+<g stroke="#f0c87c" stroke-width="7" fill="#5b328f"><path d="M337 281l15 20-15 20-15-20z"/><circle cx="352" cy="301" r="18" fill="none"/><path d="M638 334l12 18-12 18-12-18z"/></g>
+<g font-family="serif" font-size="24" fill="#f8e7bf" stroke="#2c3a48" stroke-width="3" paint-order="stroke"><text x="390" y="115">Valle del Inicio</text><text x="557" y="446">Bosque Brumoso</text><text x="56" y="205">Montañas</text></g>
+</svg>
