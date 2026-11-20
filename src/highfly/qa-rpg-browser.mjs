@@ -121,6 +121,15 @@ try{
  assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One fantasy quest illustration exists');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-scene[role="img"]').count(),1,
+   'Mission journal must show ID-linked thematic illustration, not a fixed backdrop');
+ const questImage=await page.locator('#hf-rpg .hf-rpg-quest-scene').evaluate(el=>({
+   id:el.dataset.hfQuestArt,alt:el.getAttribute('aria-label'),
+   loaded:el.querySelector('img')?.complete&&el.querySelector('img')?.naturalWidth>0
+ }));
+ assert.ok(questImage.loaded,'The mission image must be a rendered original HIGHFLY asset');
+ assert.ok(questImage.alt?.length>10,'Each mission image must explain its scene');
+ await page.screenshot({path:'qa-rpg-mission-illustration.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="mapa"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-map-display').count(),1,'Map must render original world or clearly labeled illustration');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
