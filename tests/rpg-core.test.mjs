@@ -70,3 +70,15 @@ test('F0.14 catalog only exposes native available skills and marks locked skills
  assert.equal(skills.find(x=>x.id==='heal').available,false);
  assert.ok(skills.find(x=>x.id==='attack').available);
 });
+
+test('F0.14.2 permanent 36-slot bag, regardless of items equipped or inventory',async()=>{
+ const {bagSlots,MAX_BAG_SLOTS}=await import('../src/highfly/rpg-core.mjs');
+ assert.equal(MAX_BAG_SLOTS,36);
+ assert.equal(bagSlots([]).length,36);
+ assert.equal(bagSlots([]).filter(Boolean).length,0);
+ const items=inventoryRows(normalizeRpgState(null),{herb:3});
+ const slots=bagSlots(items);
+ assert.equal(slots.length,36);
+ assert.equal(slots.filter(Boolean).length,3);
+ assert.equal(slots.filter(x=>x===null).length,33);
+});

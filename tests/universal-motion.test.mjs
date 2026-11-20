@@ -442,3 +442,10 @@ test('F0.12.2 oxygen lasts about 50 seconds submerged and regenerates over 6.25 
    p.setState('swim');p.update(1/60,input(),0);}
  assert.ok(p._hfOxygen>99,'surface recovery should fill oxygen in seconds');
 });
+
+test('F0.14.2 second jump speed and brief input buffer are increased without affecting original first jump',async()=>{
+ const {MOTION}=await import('../src/highfly/universal-motion.mjs');
+ assert.ok(MOTION.secondJumpSpeed>=7.4&&MOTION.secondJumpSpeed<8,'A modest extra height, not flight');
+ assert.ok(MOTION.secondJumpBuffer>=.15&&MOTION.secondJumpBuffer<=.22,'Tolerate an early second tap');
+ assert.ok(MOTION.minAirBeforeSecond>0,'Still requires a genuine first jump');
+});

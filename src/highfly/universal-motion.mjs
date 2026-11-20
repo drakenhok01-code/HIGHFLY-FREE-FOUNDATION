@@ -12,7 +12,7 @@ import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
 import {allowTerrainTraverse,wallRunEligible,WALL_RUN,terrainWallContact,allowCliffCapsule,walkableBuiltFloor} from './wall-physics.mjs';
 import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
 export const MOTION={
-  secondJumpSpeed:7.05,secondJumpCost:9,
+  secondJumpSpeed:7.58,secondJumpCost:9,secondJumpBuffer:.17,
   minAirBeforeSecond:.095,mantleTime:.42,
   climbSpeed:1.85,climbStrafeSpeed:1.55,climbCostPerSecond:6,climbIdleCost:1.5,
   combatWalk:3.25,combatRun:4.6,combatResponse:12,
@@ -407,14 +407,15 @@ export function installHighflyUniversalMotion(p){
   }
   return result;
  };
- p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpFx=0;p._hfGearCycle=0;
+ p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpQueued=0;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
-  nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;
+  nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;this._hfJumpQueued=0;
   this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
   this._hfJumpFx=Math.max(0,(this._hfJumpFx||0)-step);
+  this._hfJumpQueued=Math.max(0,(this._hfJumpQueued||0)-step);
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
   this._hfFlowClock+=step;
@@ -486,13 +487,15 @@ export function installHighflyUniversalMotion(p){
   }
   // Only grant second jump after the first genuine Unsung ground jump.
   // Never grant it from a cliff fall, during water, ROLL, DASH or attacks.
+  if(isMove(this)&&!this.grounded&&this._hfJumpPrimed&&!this._hfDoubleUsed&&input.pressed.has('jump'))
+   this._hfJumpQueued=MOTION.secondJumpBuffer;
   const second=isMove(this)&&!this.grounded&&this._hfJumpPrimed&&
    !this._hfDoubleUsed&&this.airTime>=MOTION.minAirBeforeSecond&&
-   input.pressed.has('jump')&&this.stamina>=MOTION.secondJumpCost;
+   this._hfJumpQueued>0&&this.stamina>=MOTION.secondJumpCost;
   if(second){
    this.spend(MOTION.secondJumpCost);
    this.vel.y=Math.max(MOTION.secondJumpSpeed,this.vel.y);
-   this._hfDoubleUsed=true;this._hfJumpPrimed=false;
+   this._hfDoubleUsed=true;this._hfJumpPrimed=false;this._hfJumpQueued=0;
    this._hfJumpFx=.55;this.fallStart=this.pos.y;
    this.emit('highflyDoubleJump');
    input=otherInput(input,['jump']);
@@ -563,10 +566,10 @@ export function installHighflyUniversalMotion(p){
    this.emit('hfRollDirection',{direction:this._hfRollVisual});
   }
   if(this.events?.slice(startEvents).some(e=>e.type==='jump')){
-   this._hfJumpPrimed=true;this._hfDoubleUsed=false;
+   this._hfJumpPrimed=true;this._hfDoubleUsed=false;this._hfJumpQueued=0;
   }
   if(this.grounded){
-   this._hfJumpPrimed=false;this._hfDoubleUsed=false;
+   this._hfJumpPrimed=false;this._hfDoubleUsed=false;this._hfJumpQueued=0;
   }
   return result;
  };

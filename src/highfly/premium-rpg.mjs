@@ -4,7 +4,8 @@
  * Preview gated by ?hfrpg=1. Approved F0.13.1 remains untouched by default.
  */
 import './premium-rpg.css';
-import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
+import {paintLiveHero} from './hero-portrait.mjs';
+import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {translateHighfly} from './es-localization.mjs';
 
@@ -17,7 +18,7 @@ const NAV=[
 const safe=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 const numeric=n=>Number.isFinite(Number(n))?Math.floor(Number(n)).toLocaleString('es-AR'):'0';
 const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
-const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'')+'"><span class="hf-rpg-slot-art">'+art(icon)+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
+const slot=(name,icon,value='Vacío',active=false)=>'<div class="hf-rpg-equip-slot '+(active?'is-active':'')+'"><span class="hf-rpg-slot-art">'+(active?art(icon):'<span class="hf-rpg-slot-placeholder">✧</span>')+'</span><span><small>'+safe(name)+'</small><b>'+safe(value)+'</b></span></div>';
 const menuLink=(tab,icon,label)=>'<button type="button" class="hf-rpg-side-link" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
 function art(id='stone',large=false){
@@ -65,7 +66,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',toast:'',opened:false};
+ const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',toast:'',opened:false,heroTurn:0};
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
@@ -75,31 +76,51 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const message=(s)=>{local.toast=String(s);render();};
  const save=()=>saveRpgState(bag);
  const preview=()=>{
-  const equip=weapon();
-  return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>Nv. '+numeric(attrs().level)+'</small></div>'+
-   '<div class="hf-rpg-hero-stage" aria-label="Personaje 3D renderizado en el mundo original">'+
-   '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-note">TU PERSONAJE 3D · HIGHFLY</div></div>'+
-   '<div class="hf-rpg-weapon-tag">⚔ '+safe(equip.label)+' <small>Arma visible en el mundo</small></div>','hf-rpg-hero-panel');
+  const mode=weapon();
+  return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>EL CAMINO SE CONSTRUYE · NIVEL '+numeric(attrs().level)+'</small></div>'+
+   '<div class="hf-rpg-hero-stage" aria-label="Vista 3D del personaje actual">'+
+   '<div class="hf-rpg-stage-halo"></div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
+   '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
+   '</div>'+
+   '<div class="hf-rpg-weapon-tag"><span>⚔ '+safe(mode.label)+'</span>'+
+   '<span class="hf-rpg-turn-buttons">'+button('↶','data-hf-action="turn:left" aria-label="Girar personaje a la izquierda"')+
+   button('↷','data-hf-action="turn:right" aria-label="Girar personaje a la derecha"')+'</span></div>',
+   'hf-rpg-hero-panel');
  };
  function character(){
-  const equip=weapon();
-  return '<div class="hf-rpg-three">'+panel(
-    title('Equipo','Ranuras conectadas al personaje')+
-    '<div class="hf-rpg-slot-list">'+slot('Arma',equip.id==='unarmed'?'shield':'weapon',equip.label,true)+
-    slot('Armadura','shield')+slot('Casco','shield')+slot('Guantes','shield')+
-    slot('Botas','shield')+slot('Accesorio','ring')+'</div>'+
-    button('CAMBIAR ARMA','data-hf-action="weapon"','is-primary')
-    ,'hf-rpg-left-panel')+
-    preview()+
-    panel(title('Estado del cazador','Datos reales del Player')+
-      resourceRow('health','VIDA',health().value,health().max)+
-      resourceRow('mana','MANÁ',mana().value,mana().max)+
-      resourceRow('energy','ENERGÍA',p()?.stamina??0,p()?.staminaMax??100)+
-      '<div class="hf-rpg-rule"></div>'+
-      '<p class="hf-rpg-info">Arma actual: <b>'+safe(equip.label)+'</b>. Los demás slots se habilitarán al integrar equipamiento real.</p>'+
-      '<div class="hf-rpg-mini-actions">'+button('VER ATRIBUTOS','data-hf-tab="atributos"','is-primary')+
-      button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+
-   '</div>';
+  const mode=weapon();
+  const main=mode.main?mode.label:mode.external?mode.label:'Sin arma';
+  const off=mode.off==='1H_Sword_Offhand'?'Espada secundaria':mode.off==='Round_Shield'?'Escudo redondo':
+   mode.style==='twohand'||mode.style==='spear'||mode.style==='staff'?'Agarre a dos manos':'Vacío';
+  return '<div class="hf-rpg-character-layout">'+
+   panel(title('Equipo','Mano dominante y armadura')+
+    '<div class="hf-rpg-slot-list">'+
+    slot('Casco','shield')+slot('Pechera','shield')+slot('Guantes','shield')+
+    slot('Mano derecha','weapon',main,!!mode.main||!!mode.external)+slot('Collar','ring')+
+    '</div>','hf-rpg-left-panel')+
+   preview()+
+   panel(title('Equipamiento','Mano secundaria y accesorios')+
+    '<div class="hf-rpg-slot-list">'+
+    slot('Hombros','shield')+slot('Pantalón','shield')+slot('Botas','shield')+
+    slot('Mano izquierda',mode.off==='Round_Shield'?'shield':'weapon',off,!!mode.off||mode.style==='twohand'||!!mode.external)+
+    slot('Anillo','ring')+'</div>','hf-rpg-right-panel')+
+   '<div class="hf-rpg-equip-footer">'+button('⚔ CAMBIAR ARMA ACTUAL','data-hf-action="weapon"','is-primary')+
+   '<span>Los slots vacíos se habilitarán con equipo real, sin inventar objetos.</span>'+
+   button('ATRIBUTOS →','data-hf-tab="atributos"')+'</div></div>';
+ }
+ function refreshPortrait(){
+  if(local.tab!=='personaje'||!local.opened)return;
+  const canvas=root.querySelector('[data-hf-hero]'),status=root.querySelector('[data-hf-hero-status]');
+  if(!canvas||!canvas.isConnected)return;
+  const result=paintLiveHero(game,canvas,local.heroTurn);
+  if(status){status.textContent=result.ok?'':result.reason||'No se pudo mostrar el personaje';
+   status.hidden=!!result.ok;status.dataset.ready=String(result.ok);}
+  if(!result.ok&&!game.hero?.actor){
+   const count=Number(canvas.dataset.retry||0);
+   if(count<24){canvas.dataset.retry=String(count+1);setTimeout(()=>{
+    if(local.opened&&local.tab==='personaje'&&canvas.isConnected)refreshPortrait();
+   },500);}
+  }
  }
  function attributes(){
   const a=attrs(),rows=a.rows.map(r=>'<div class="hf-rpg-stat-row"><span><b>'+r.id+'</b> <small>'+r.name+'</small></span>'+
@@ -121,8 +142,10 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     ['Todo','Consumibles','Materiales'].map(cat=>menuLink('bag:'+cat,cat==='Todo'?'◈':cat==='Consumibles'?'⚗':'❖',cat)).join('')+
     '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>','hf-rpg-left-panel')+
     panel(title('Inventario','Objetos reales y consumibles utilizables')+
-    '<div class="hf-rpg-grid">'+(rows.length?rows.map(o=>tile(o.id,o.count,chosen?.id)).join(''):blank('Esta categoría todavía está vacía.'))+'</div>'+
-    '<div class="hf-rpg-bottom-note">Las pociones se guardan por separado de los materiales obtenidos en profesiones.</div>')+
+    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+MAX_BAG_SLOTS+'">'+bagSlots(rows,MAX_BAG_SLOTS).map((o,i)=>o?tile(o.id,o.count,chosen?.id):
+  '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
+    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+MAX_BAG_SLOTS+' ESPACIOS OCUPADOS</div>'+
+    '<div class="hf-rpg-bottom-note">La bolsa conserva sus casillas vacías. Cada objeto o material real ocupa un espacio cuando se consigue.</div>')+
     panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art">'+art(chosen.icon,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
     '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
@@ -198,7 +221,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><span>'+icon+'</span>'+name+'</button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14 · Vista interactiva de la app · Android horizontal')+'</span></footer></div>';
+   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.2 · HIGHFLY PREMIUM · ANDROID HORIZONTAL')+'</span></footer></div>';
+  if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
  }
  function open(tab='personaje'){
   if(local.opened){local.tab=tab;render();return true;}
@@ -226,6 +250,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
   if(action==='close'){close();return;}
+  if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
   if(action==='weapon'){
    if(!p())return;
    p()._hfGearCycle=((p()._hfGearCycle??0)+1)%WEAPON_MODES.length;

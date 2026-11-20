@@ -3,6 +3,11 @@
  * 80/20 applies to earned BASE points; equipped item bonuses are independent.
  */
 export const SAVE_KEY='highfly-rpg-f014-v1';
+/** All 36 grid slots exist even before any item is collected. */
+export const MAX_BAG_SLOTS=36;
+export function bagSlots(items=[],capacity=MAX_BAG_SLOTS){
+ return Array.from({length:Math.max(1,Math.floor(capacity))},(_,i)=>items[i]??null);
+}
 export const ITEM_DEFS=Object.freeze({
  hp_potion:{id:'hp_potion',name:'Poción de Vida',kind:'Consumibles',icon:'health',rarity:'Poco común',description:'Recupera el 35% de la Vida máxima.',max:99},
  mp_potion:{id:'mp_potion',name:'Poción de Maná',kind:'Consumibles',icon:'mana',rarity:'Poco común',description:'Recupera el 40% del Maná máximo.',max:99},
