@@ -443,9 +443,22 @@ test('F0.12.2 oxygen lasts about 50 seconds submerged and regenerates over 6.25 
  assert.ok(p._hfOxygen>99,'surface recovery should fill oxygen in seconds');
 });
 
-test('F0.14.2 second jump speed and brief input buffer are increased without affecting original first jump',async()=>{
- const {MOTION}=await import('../src/highfly/universal-motion.mjs');
+test('F0.14.2 second jump speed and brief input buffer are increased without affecting original first jump',()=>{
  assert.ok(MOTION.secondJumpSpeed>=7.4&&MOTION.secondJumpSpeed<8,'A modest extra height, not flight');
  assert.ok(MOTION.secondJumpBuffer>=.15&&MOTION.secondJumpBuffer<=.22,'Tolerate an early second tap');
  assert.ok(MOTION.minAirBeforeSecond>0,'Still requires a genuine first jump');
+});
+
+test('F0.14.2 early second tap is buffered until minimum airtime and never creates third jump',()=>{
+ const p=player();
+ p.update(1/60,input(['jump']),0);
+ assert.equal(p._hfJumpPrimed,true);
+ p.update(1/60,input(['jump']),0); // Early second press within first 50ms
+ assert.equal(p._hfDoubleUsed,false,'second jump must still respect minimum airtime');
+ assert.ok(p._hfJumpQueued>0,'early second tap is queued');
+ for(let i=0;i<10;i++)p.update(1/60,input(),0);
+ assert.equal(p._hfDoubleUsed,true,'buffered tap eventually triggers one double jump');
+ const height=p.vel.y;
+ p.update(1/60,input(['jump']),0);
+ assert.ok(p.vel.y<height+.1,'third jump never refreshes upward impulse');
 });
