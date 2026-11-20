@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" aria-label="skill_heal"><defs>
+ <radialGradient id="body" cx=".35" cy=".18" r=".83"><stop stop-color="#edffc0"/><stop offset=".29" stop-color="#7fff3f"/><stop offset=".7" stop-color="#139c33"/><stop offset="1" stop-color="#230932"/></radialGradient>
+ <linearGradient id="silver" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#fffaf0"/><stop offset=".25" stop-color="#edffc0"/><stop offset=".57" stop-color="#5987c6"/><stop offset=".85" stop-color="#139c33"/><stop offset="1" stop-color="#e3fbff"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#fffcd9"/><stop offset=".2" stop-color="#ffdd8b"/><stop offset=".43" stop-color="#b56b2d"/><stop offset=".68" stop-color="#ffda80"/><stop offset="1" stop-color="#fef1bd"/></linearGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efffff" stop-opacity=".82"/><stop offset=".28" stop-color="#139c33" stop-opacity=".15"/><stop offset=".65" stop-color="#130c41" stop-opacity=".36"/><stop offset=".9" stop-color="#fff7ff" stop-opacity=".66"/></linearGradient>
+ <filter id="shadow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="10" result="b"/><feOffset in="b" dx="8" dy="17" result="o"/><feColorMatrix in="o" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0 0 0 0 0 0.14 0 0 0 .6 0" result="dark"/><feMerge><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="glow"><feGaussianBlur stdDeviation="23"/></filter></defs>
+ <g opacity=".52"><ellipse cx="512" cy="572" rx="310" ry="270" fill="#139c33" filter="url(#glow)"/></g>
+ <g filter="url(#shadow)"><path d="M387 149h250v232h231v250H637v238H387V631H150V381h237z" fill="url(#body)" stroke="#eaffca" stroke-width="24"/><path d="M511 257v511M254 506h515" stroke="#fff" stroke-width="31"/><path d="M194 753q-200-289 37-529M832 243q231 272 11 520" stroke="#aaff9c" stroke-width="38" fill="none" stroke-linecap="round"/></g>
+ <g fill="#edffc0" opacity=".9"><circle cx="210" cy="225" r="8"/><circle cx="824" cy="744" r="9"/><circle cx="727" cy="177" r="6"/></g>
+ <path d="M225 205l0-29M211 190h29M814 183v34M798 200h34" stroke="#edffc0" stroke-width="7" stroke-linecap="round" opacity=".7"/></svg>
