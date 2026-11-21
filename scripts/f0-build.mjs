@@ -266,6 +266,7 @@ if(userIconCount!==60)throw Error('Expected 60 user icons, got '+userIconCount);
 // Original user WebPs are RGB opaque; remove connected near-black border exterior,
 // preserving the gilded art, and keep URLs/real item IDs exactly the same.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-icon-alpha.py',iconDest]);
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-metal-variants.py',iconDest]);
 console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 future references kept inactive');
 
 

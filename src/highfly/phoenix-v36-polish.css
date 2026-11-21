@@ -2,3 +2,39 @@
 #hf-rpg .hf-rpg-skill-list::after{content:none!important;display:none!important;background:none!important;height:0!important;box-shadow:none!important}
 #hf-rpg .hf-rpg-skill-list{align-content:start}
 #hf-rpg .hf-rpg-skill-feature>span:has(.hf-user-icon){border:0!important;background:transparent!important;box-shadow:none!important}
+
+/* Itemization: frame is a CSS quality layer, not six new copies of an icon. */
+#hf-rpg [data-hf-rarity]{--hf-grade:#a59aae}
+#hf-rpg [data-hf-rarity="Común"]{--hf-grade:#b6aebf}
+#hf-rpg [data-hf-rarity="Poco común"]{--hf-grade:#65d7a5}
+#hf-rpg [data-hf-rarity="Raro"]{--hf-grade:#60b6ff}
+#hf-rpg [data-hf-rarity="Épico"]{--hf-grade:#d69bff}
+#hf-rpg [data-hf-rarity="Legendario"]{--hf-grade:#ffc36a}
+#hf-rpg [data-hf-rarity="Mítico"]{--hf-grade:#ff80d5}
+#hf-rpg .hf-rpg-item[data-hf-rarity],
+#hf-rpg .hf-rpg-equip-slot.is-active[data-hf-rarity]{
+ outline:1px solid var(--hf-grade);
+ outline-offset:-2px;
+}
+#hf-rpg .hf-rpg-quality{
+ display:flex;justify-content:space-between;align-items:center;
+ margin:5px 0;padding:4px 7px;border:1px solid var(--hf-grade);
+ border-radius:7px;background:#27163c88;font:700 12px Georgia,serif;
+}
+#hf-rpg .hf-rpg-quality strong{font-size:16px;color:#ffe4ae}
+#hf-rpg .hf-rpg-variants{display:flex;gap:4px;flex-wrap:wrap;padding:2px 0}
+#hf-rpg .hf-rpg-variants button{border:1px solid #946bb5;border-radius:6px;background:#26113e;color:#f6e8ff;font-size:10px;padding:3px 5px}
+#hf-rpg .hf-rpg-variants button.is-selected{border-color:#ffe1a1;background:#682b8a}
+#hf-rpg .hf-rpg-item[data-hf-item^="ingot_"]{position:relative}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_copper"]::after{content:"Cu"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_iron"]::after{content:"Fe"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_silver"]::after{content:"Ag"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_gold"]::after{content:"Au"}
+#hf-rpg .hf-rpg-item[data-hf-item^="ingot_"]::after{
+ position:absolute;top:1px;left:2px;z-index:3;color:#ffe9bf;
+ font:bold 9px Georgia,serif;text-shadow:0 1px #160b25;
+ pointer-events:none;
+}
+/* Status and interaction buttons remain legible in compact Android layout. */
+#hf-rpg .hf-rpg-equip-selected{gap:4px}
+#hf-rpg .hf-rpg-equip-selected .hf-rpg-button{padding-inline:7px;font-size:10px}

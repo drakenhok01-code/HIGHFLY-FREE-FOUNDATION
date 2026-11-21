@@ -86,9 +86,9 @@ function art(id='stone',large=false){
  }
  return '<svg class="hf-rpg-art'+(large?' is-large':'')+'" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="hfrpgGlow"><stop stop-color="#e8e2ff" stop-opacity=".3"/><stop offset="1" stop-color="#3d176c" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="52" r="46" fill="url(#hfrpgGlow)"/>'+interior+'</svg>';
 }
-function tile(id,count,selected){
+function tile(id,count,selected,trait=null){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
+ return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -277,7 +277,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
     '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
    panel(title('Inventario','Objetos y consumibles reales')+
-    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id):
+    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,0)):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
