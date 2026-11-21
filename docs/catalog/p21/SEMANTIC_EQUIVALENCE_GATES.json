@@ -1,0 +1,125 @@
+{
+  "schema": "HIGHFLY_P21_SEMANTIC_EQUIVALENCE_GATES_V1",
+  "date": "2026-11-21",
+  "status": "DESIGN_ONLY",
+  "ranges": {
+    "catalogueCount": 47,
+    "sourceWocIds": 1626,
+    "sourceLootRows": 916,
+    "newItems": 28
+  },
+  "equalities": [
+    {
+      "topic": "Dagas sencillas / dagas dobles",
+      "highflyIds": [
+        "hf_dagger_basic"
+      ],
+      "equivalence": "SAME_ITEM_TEMPLATE_TWO_DISTINCT_INSTANCES_IF_DUAL",
+      "decision": "One dagger template, two separately owned objects; reserved icon 'dual_daggers' not approved as single dagger art",
+      "gate": "P4_ANIMATION_RIG_AND_ART"
+    },
+    {
+      "topic": "Vara / orbe",
+      "highflyIds": [
+        "hf_wand_basic",
+        "hf_orb_basic"
+      ],
+      "equivalence": "RELATED_NOT_DUPLICATE",
+      "decision": "Two different templates and slots sharing icon candidate 'wand_orb'; cannot merge inventories",
+      "gate": "P21_ART_SEPARATION"
+    },
+    {
+      "topic": "Mineral genérico / minerales específicos",
+      "highflyIds": [
+        "ore",
+        "hf_ore_copper",
+        "hf_ore_iron",
+        "hf_ore_silver",
+        "hf_ore_gold"
+      ],
+      "equivalence": "BROADER_VS_NARROWER_NOT_DUPLICATE",
+      "decision": "Retain legacy ore stocks, specific nodes and recipes only after migration",
+      "gate": "P4_ECONOMY"
+    },
+    {
+      "topic": "Lingote genérico / lingotes por metal",
+      "highflyIds": [
+        "ingot",
+        "ingot_copper",
+        "ingot_iron",
+        "ingot_silver",
+        "ingot_gold"
+      ],
+      "equivalence": "BROADER_VS_NARROWER_NOT_DUPLICATE",
+      "decision": "Keep 12 legacy recipes unchanged; 4 new metal-restricted recipes as parallel proposals",
+      "gate": "P4_SAVE_AND_RECIPES"
+    },
+    {
+      "topic": "Cuero en bruto / icono de cuero",
+      "highflyIds": [
+        "hf_rough_hide"
+      ],
+      "equivalence": "MATERIAL_STAGE_MISMATCH_POSSIBLE",
+      "decision": "Review texture first; never equate raw hide with processed leather",
+      "gate": "P21_ART_REVIEW"
+    },
+    {
+      "topic": "Cobre/anillo y plata/collar",
+      "highflyIds": [
+        "hf_copper_ring",
+        "hf_silver_necklace"
+      ],
+      "equivalence": "STYLE_ANALOGUE_ONLY",
+      "decision": "Generic reserve art needs exact material review. Equipment is stat-only",
+      "gate": "P21_ART_REVIEW"
+    },
+    {
+      "topic": "Hierro / ranuras armadura",
+      "highflyIds": [
+        "hf_iron_helmet",
+        "hf_iron_chest",
+        "hf_iron_gloves",
+        "hf_iron_shoulders",
+        "hf_iron_pants",
+        "hf_iron_boots"
+      ],
+      "equivalence": "SLOT_EQUIVALENCE_NOT_MATERIAL_EQUIVALENCE",
+      "decision": "5 generic slot images candidate; pants missing; all remain stat-only",
+      "gate": "P21_ART_AND_P4_SLOT"
+    },
+    {
+      "topic": "Amuleto / collar",
+      "highflyIds": [
+        "hf_amulet_basic",
+        "hf_silver_necklace"
+      ],
+      "equivalence": "NOT_THE_SAME_SLOT",
+      "decision": "No amulet slot in v3.6. Do not hijack necklace slot",
+      "gate": "P4_UI_DECISION"
+    },
+    {
+      "topic": "Proveniencia ClaudeCraft/Emberfall",
+      "highflyIds": [],
+      "equivalence": "SOURCE_ANALOGIES_NOT_GAME_IDS",
+      "decision": "No source asset licensed by code MIT alone; no direct image, 3D, sound or names copied",
+      "gate": "RIGHTS_ASSET_PER_FILE"
+    }
+  ],
+  "confirmedFixedRules": [
+    "ALL_NEW_GEAR_PLUS_0",
+    "ONE_UNIVERSAL_HUNTER",
+    "V36_NO_CHANGE",
+    "ORIGINAL_ITEM_IDS_KEPT",
+    "ARMOR_AND_JEWELRY_STAT_ONLY",
+    "DIFFERENT_TEMPLATE_ID_REMAINS_DIFFERENT_ITEM",
+    "SOURCE_MEDIA_RIGHTS_PER_FILE"
+  ],
+  "blockedTransitions": [
+    "P21_ART_NOT_AUTO_ACTIVATED",
+    "P21_DOES_NOT_CHANGE_32_RECIPES",
+    "P21_DOES_NOT_MIGRATE_SAVE",
+    "P21_DOES_NOT_ATTACH_NEW_WEAPON_RIGS",
+    "P21_DOES_NOT_CREATE_MARKET",
+    "P21_DOES_NOT_CHANGE_ANDROID_HUD"
+  ]
+}

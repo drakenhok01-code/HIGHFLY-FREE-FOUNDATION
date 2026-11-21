@@ -1,0 +1,1811 @@
+{
+  "schema": "HIGHFLY_P21_ICON_RECONCILIATION_V1",
+  "date": "2026-11-21",
+  "derivedFrom": {
+    "repo": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+    "branch": "p2-highfly-master-catalog-20261121",
+    "commit": "e859091305897fecb56688ef78830f9b38cc5956",
+    "p2Catalog": "docs/catalog/p2/MASTER_CATALOG_47.json"
+  },
+  "status": "STATIC_DESIGN_AND_SOURCE_TREE_AUDIT_NOT_RUNTIME_BINDING",
+  "stage": "P2.1",
+  "counts": {
+    "existingPreserved": 19,
+    "newReservedCandidates": 15,
+    "newArtworkRequired": 13,
+    "originalIconZipFilesExpected": 60,
+    "originalActivePhysicalFilesExpected": 36,
+    "originalReservedPhysicalFilesExpected": 24,
+    "buildDerivedMetalWebps": 4,
+    "noNewIconFilesCreated": true
+  },
+  "policies": [
+    "Do not update or replace v3.6 images, CSS or active binding routes.",
+    "Reserved icons are assets supplied by the user, not permission to use a mismatched image as a final HIGHFLY item.",
+    "All new UI bindings remain DISABLED until artwork is visually approved and game behavior is integrated.",
+    "Material colors in icon art do not assign ingot/ore inventory identity.",
+    "All new gear +0; no auto-enchantment or bonus from rarity interpreted as +N.",
+    "Armor/necklaces/rings never modify avatar mesh during P4.",
+    "Never publish KayKit SOURCE or restricted ClaudeCraft/Emberfall media.",
+    "These icon paths are proposals: archive contents are checked by CI; pixel-by-pixel visual identity must be reviewed by a human."
+  ],
+  "items": [
+    {
+      "itemId": "training_sword",
+      "nameEs": "Espada de Aprendiz",
+      "kind": "weapon",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "weapons/sword",
+      "proposedRelativePath": "weapons/sword",
+      "sourceWebpInCommittedZip": "weapons/sword.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/sword.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "training_sword",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "worn_sword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "eastbrook_arming_sword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [
+          {
+            "id": "fire-sword",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "training_shield",
+      "nameEs": "Escudo de Aprendiz",
+      "kind": "shield",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "armor/shield",
+      "proposedRelativePath": "armor/shield",
+      "sourceWebpInCommittedZip": "armor/shield.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/shield.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": {
+        "kind": "shield",
+        "slot": "left_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "training_shield",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "eastbrook_buckler",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "training_greatsword",
+      "nameEs": "Mandoble de Aprendiz",
+      "kind": "weapon",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "weapons/greatsword",
+      "proposedRelativePath": "weapons/greatsword",
+      "sourceWebpInCommittedZip": "weapons/greatsword.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/greatsword.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "training_greatsword",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "eastbrook_greatsword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "duskforged_warblade",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [
+          {
+            "id": "fire-greatsword",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hp_potion",
+      "nameEs": "Poción de Vida",
+      "kind": "consumable",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/hp_potion",
+      "proposedRelativePath": "items/hp_potion",
+      "sourceWebpInCommittedZip": "items/hp_potion.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/hp_potion.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hp_potion",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "minor_healing_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "healing_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "mp_potion",
+      "nameEs": "Poción de Maná",
+      "kind": "consumable",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/mp_potion",
+      "proposedRelativePath": "items/mp_potion",
+      "sourceWebpInCommittedZip": "items/mp_potion.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/mp_potion.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "mp_potion",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "mana_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "herb",
+      "nameEs": "Hierbas recolectadas",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/herb",
+      "proposedRelativePath": "items/herb",
+      "sourceWebpInCommittedZip": "items/herb.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/herb.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "herb",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ore",
+      "nameEs": "Mineral",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/ore",
+      "proposedRelativePath": "items/ore",
+      "sourceWebpInCommittedZip": "items/ore.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/ore.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ore",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "copper_ore",
+            "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+          },
+          {
+            "id": "iron_ore",
+            "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "KEEP_LEGACY_GENERIC",
+        "notes": "No convertir ni debitar por mineral de metal concreto"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "wood",
+      "nameEs": "Madera",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/wood",
+      "proposedRelativePath": "items/wood",
+      "sourceWebpInCommittedZip": "items/wood.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/wood.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "wood",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "fish",
+      "nameEs": "Pescado",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/fish",
+      "proposedRelativePath": "items/fish",
+      "sourceWebpInCommittedZip": "items/fish.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/fish.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "fish",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ingot",
+      "nameEs": "Lingote sin clasificar",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/ingot",
+      "proposedRelativePath": "items/ingot",
+      "sourceWebpInCommittedZip": "items/ingot.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/ingot.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ingot",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "KEEP_LEGACY_GENERIC",
+        "notes": "No convertir a cobre/hierro/plata/oro"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "blade_blank",
+      "nameEs": "Hoja sin terminar",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/blade_blank",
+      "proposedRelativePath": "items/blade_blank",
+      "sourceWebpInCommittedZip": "items/blade_blank.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/blade_blank.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "blade_blank",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "seed",
+      "nameEs": "Semillas",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/seed",
+      "proposedRelativePath": "items/seed",
+      "sourceWebpInCommittedZip": "items/seed.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/seed.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "seed",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "bag_upgrade",
+      "nameEs": "Sello de Expansión",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/bag_upgrade",
+      "proposedRelativePath": "items/bag_upgrade",
+      "sourceWebpInCommittedZip": "items/bag_upgrade.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/bag_upgrade.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "bag_upgrade",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ingot_copper",
+      "nameEs": "Lingote de cobre",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_BUILD_METAL_DERIVATION",
+      "originalP2Path": "items/ingot_copper",
+      "proposedRelativePath": "items/ingot_copper",
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": "highfly/user-icons/items/ingot_copper.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ingot_copper",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ingot_iron",
+      "nameEs": "Lingote de hierro",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_BUILD_METAL_DERIVATION",
+      "originalP2Path": "items/ingot_iron",
+      "proposedRelativePath": "items/ingot_iron",
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": "highfly/user-icons/items/ingot_iron.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ingot_iron",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ingot_silver",
+      "nameEs": "Lingote de plata",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_BUILD_METAL_DERIVATION",
+      "originalP2Path": "items/ingot_silver",
+      "proposedRelativePath": "items/ingot_silver",
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": "highfly/user-icons/items/ingot_silver.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ingot_silver",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ingot_gold",
+      "nameEs": "Lingote de oro",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_BUILD_METAL_DERIVATION",
+      "originalP2Path": "items/ingot_gold",
+      "proposedRelativePath": "items/ingot_gold",
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": "highfly/user-icons/items/ingot_gold.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ingot_gold",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "upgrade_stone",
+      "nameEs": "Piedra de mejora",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/ore",
+      "proposedRelativePath": "items/ore",
+      "sourceWebpInCommittedZip": "items/ore.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/ore.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "upgrade_stone",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "ascension_core",
+      "nameEs": "Núcleo de Ascensión",
+      "kind": "material",
+      "statusP2": "V36_EXISTING",
+      "iconDecision": "PRESERVE_V36_BINDING",
+      "sourceKind": "V36_ACTIVE_ORIGINAL_USER_ARCHIVE",
+      "originalP2Path": "items/ore",
+      "proposedRelativePath": "items/ore",
+      "sourceWebpInCommittedZip": "items/ore.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/ore.webp",
+      "gameBindingAlreadyExists": true,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "ZIP_PRESENT_IN_GIT_BUILD_EXPECTS_EXTRACTION",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": false,
+      "reason": "No reemplazar binding ni imagen v3.6.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "ascension_core",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_dagger_basic",
+      "nameEs": "Daga de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/dual_daggers",
+      "proposedRelativePath": "weapons/dual_daggers",
+      "sourceWebpInCommittedZip": "weapons/dual_daggers.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/dual_daggers.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "El dibujo incluye dagas dobles, no certifica una daga única. El equipo dual usa dos instanceId y dos slots.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_dagger_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "rusty_dagger",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "keen_dirk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_axe_basic",
+      "nameEs": "Hacha de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/axe",
+      "proposedRelativePath": "weapons/axe",
+      "sourceWebpInCommittedZip": "weapons/axe.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/axe.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Corroborar visual real, tamaño 256x256, estilo/material y licencia de este mismo paquete original.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_axe_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "rusty_hatchet",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "copper_bearded_axe",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_spear_basic",
+      "nameEs": "Lanza de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/spear",
+      "proposedRelativePath": "weapons/spear",
+      "sourceWebpInCommittedZip": "weapons/spear.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/spear.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Corroborar visual real, tamaño 256x256, estilo/material y licencia de este mismo paquete original.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_spear_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "ironbark_boar_spear",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [
+          {
+            "id": "lightning-spear",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_bow_basic",
+      "nameEs": "Arco de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/bow",
+      "proposedRelativePath": "weapons/bow",
+      "sourceWebpInCommittedZip": "weapons/bow.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/bow.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Corroborar visual real, tamaño 256x256, estilo/material y licencia de este mismo paquete original.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_bow_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_staff_basic",
+      "nameEs": "Bastón de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/staff",
+      "proposedRelativePath": "weapons/staff",
+      "sourceWebpInCommittedZip": "weapons/staff.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/staff.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Corroborar visual real, tamaño 256x256, estilo/material y licencia de este mismo paquete original.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_staff_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "gnarled_staff",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "apprentice_staff",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [
+          {
+            "id": "water-staff",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_wand_basic",
+      "nameEs": "Vara de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/wand_orb",
+      "proposedRelativePath": "weapons/wand_orb",
+      "sourceWebpInCommittedZip": "weapons/wand_orb.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/wand_orb.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Comparte el arte estilo vara+orbe con un objeto diferente; requerirá decidir una imagen específica.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_wand_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "wand_of_quenched_sparks",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_mace_basic",
+      "nameEs": "Maza de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "right_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_mace_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "training_mace",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "copper_flanged_mace",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_orb_basic",
+      "nameEs": "Orbe de aprendiz",
+      "kind": "weapon",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "weapons/wand_orb",
+      "proposedRelativePath": "weapons/wand_orb",
+      "sourceWebpInCommittedZip": "weapons/wand_orb.webp",
+      "buildOutputRelativePath": "highfly/user-icons/weapons/wand_orb.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No confundir orbe independiente de mano izquierda con el objeto vara. Mismo arte no implica mismo inventario.",
+      "visualCompatibility": {
+        "kind": "weapon",
+        "slot": "left_hand",
+        "avatarMeshChanges": "WEAPON_RIG_VERIFICATION_REQUIRED",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_orb_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_helmet",
+      "nameEs": "Casco de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/helmet",
+      "proposedRelativePath": "armor/helmet",
+      "sourceWebpInCommittedZip": "armor/helmet.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/helmet.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de casco no garantiza hierro: revisar material y estética.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "helmet",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_helmet",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "roadwardens_helm",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_chest",
+      "nameEs": "Pechera de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/chest",
+      "proposedRelativePath": "armor/chest",
+      "sourceWebpInCommittedZip": "armor/chest.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/chest.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de pechera no garantiza hierro: revisar material y estética.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "chest",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_chest",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "ironlink_hauberk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_gloves",
+      "nameEs": "Guantes de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/gloves",
+      "proposedRelativePath": "armor/gloves",
+      "sourceWebpInCommittedZip": "armor/gloves.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/gloves.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de guantes no garantiza hierro: revisar material y estética.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "gloves",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_gloves",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "acolyte_chain_grips",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_shoulders",
+      "nameEs": "Hombreras de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/shoulders",
+      "proposedRelativePath": "armor/shoulders",
+      "sourceWebpInCommittedZip": "armor/shoulders.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/shoulders.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de hombreras no garantiza hierro: revisar material y estética.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "shoulders",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_shoulders",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "ironlink_spaulders",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_pants",
+      "nameEs": "Pantalones de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "pants",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_pants",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "ironlink_legguards",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_iron_boots",
+      "nameEs": "Botas de hierro",
+      "kind": "armor",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/boots",
+      "proposedRelativePath": "armor/boots",
+      "sourceWebpInCommittedZip": "armor/boots.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/boots.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de botas no garantiza hierro: revisar material y estética.",
+      "visualCompatibility": {
+        "kind": "armor",
+        "slot": "boots",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_iron_boots",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "hobnail_boots",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_copper_ring",
+      "nameEs": "Anillo de cobre",
+      "kind": "accessory",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/ring",
+      "proposedRelativePath": "armor/ring",
+      "sourceWebpInCommittedZip": "armor/ring.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/ring.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de anillo genérico, no necesariamente anillo de cobre.",
+      "visualCompatibility": {
+        "kind": "accessory",
+        "slot": "ring",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_copper_ring",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "hammered_copper_band",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_silver_necklace",
+      "nameEs": "Collar de plata",
+      "kind": "accessory",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": "armor/necklace",
+      "proposedRelativePath": "armor/necklace",
+      "sourceWebpInCommittedZip": "armor/necklace.webp",
+      "buildOutputRelativePath": "highfly/user-icons/armor/necklace.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de collar genérico, no necesariamente collar de plata.",
+      "visualCompatibility": {
+        "kind": "accessory",
+        "slot": "necklace",
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_silver_necklace",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "wyrmfall_pendant",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_amulet_basic",
+      "nameEs": "Amuleto del viajero",
+      "kind": "accessory",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": {
+        "kind": "accessory",
+        "slot": null,
+        "avatarMeshChanges": "NO_3D_ARMOR_OR_JEWELRY",
+        "fixedClass": "UNIVERSAL_HUNTER"
+      },
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_amulet_basic",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "heartspring_amulet",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": true,
+      "enhancementAtNewCreation": 0,
+      "rarityIndependentOfEnhancement": true
+    },
+    {
+      "itemId": "hf_ore_copper",
+      "nameEs": "Mineral de cobre",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_ore_copper",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "copper_ore",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "NEW_RESOURCE_NODE_REQUIRED",
+        "notes": "Debe provenir de veta concreta, no de ore genérico"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_ore_iron",
+      "nameEs": "Mineral de hierro",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_ore_iron",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "iron_ore",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "NEW_RESOURCE_NODE_REQUIRED",
+        "notes": "Debe provenir de veta concreta, no de ore genérico"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_ore_silver",
+      "nameEs": "Mineral de plata",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_ore_silver",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "NEW_RESOURCE_NODE_REQUIRED",
+        "notes": "HIGHFLY original, no fingir procedencia ClaudeCraft"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_ore_gold",
+      "nameEs": "Mineral de oro",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_ore_gold",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": {
+        "decision": "NEW_RESOURCE_NODE_REQUIRED",
+        "notes": "HIGHFLY original, no fingir procedencia ClaudeCraft"
+      },
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_rough_hide",
+      "nameEs": "Cuero en bruto",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "RESERVED_CANDIDATE_REQUIRES_VISUAL_APPROVAL",
+      "sourceKind": "USER_RESERVED_ORIGINAL_WEBP",
+      "originalP2Path": null,
+      "proposedRelativePath": "items/leather",
+      "sourceWebpInCommittedZip": "items/leather.webp",
+      "buildOutputRelativePath": "highfly/user-icons/items/leather.webp",
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "Icono de cuero genérico: confirmar que representa cuero EN BRUTO y no cuero ya curtido.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_rough_hide",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "rough_hide",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_wolf_fang",
+      "nameEs": "Colmillo de lobo",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_wolf_fang",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "wolf_fang",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_spider_silk",
+      "nameEs": "Seda de araña",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_spider_silk",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "spider_silk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_bone_fragments",
+      "nameEs": "Fragmentos de hueso",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_bone_fragments",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "bone_fragments",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_homespun_cloth",
+      "nameEs": "Tela rústica",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_homespun_cloth",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "homespun_cloth",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_spool_of_thread",
+      "nameEs": "Carrete de hilo",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_spool_of_thread",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "spool_of_thread",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    },
+    {
+      "itemId": "hf_smithing_flux",
+      "nameEs": "Fundente de herrería",
+      "kind": "material",
+      "statusP2": "P2_DEFINED_NOT_LIVE",
+      "iconDecision": "NEW_ART_REQUIRED",
+      "sourceKind": "NO_APPROVED_SOURCE",
+      "originalP2Path": null,
+      "proposedRelativePath": null,
+      "sourceWebpInCommittedZip": null,
+      "buildOutputRelativePath": null,
+      "gameBindingAlreadyExists": false,
+      "approvedForNewRuntimeBinding": false,
+      "archiveState": "USER_MEDIA_CANDIDATE_OR_MISSING",
+      "sourceVerification": "ZIP_BLOB_PRESENT__ZIP_CONTENT_AND_PIXELS_TO_BE_VERIFIED_BY_P21_CI",
+      "manualArtworkReviewRequired": true,
+      "reason": "No reutilizar icono falso ni del juego upstream.",
+      "visualCompatibility": null,
+      "semanticEquivalence": {
+        "highflyTemplateId": "hf_smithing_flux",
+        "sharedArtDoesNotMeanSharedItem": true,
+        "upstreamRefs": [
+          {
+            "id": "smithing_flux",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallRefs": [],
+        "upstreamMediaCopied": false,
+        "automaticTemplateMerge": false
+      },
+      "materialGate": null,
+      "isEquipment": false,
+      "enhancementAtNewCreation": null,
+      "rarityIndependentOfEnhancement": false
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "schema": "HIGHFLY_P21_PREMIUM_USER_ICON_ZIP_INVENTORY_V1",
+  "date": "2026-11-21",
+  "snapshotRef": "e859091305897fecb56688ef78830f9b38cc5956",
+  "verificationToday": "GITHUB_TREE_ZIP_BLOBS_CONFIRMED; HASH_AND_ENTRIES_TO_BE_EXECUTED_BY_CI",
+  "pipeline": "scripts/f0-build.mjs -> ZIP SHA-256 verification -> unzip -> highfly-icon-alpha.py -> highfly-metal-variants.py -> public/highfly/user-icons",
+  "sourceLicense": "ORIGINAL_ART_SUPPLIED_BY_USER_FOR_HIGHFLY",
+  "sourcePacks": [
+    {
+      "category": "armor",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_armor.zip",
+      "sha256PinnedByExistingBuild": "5ae833209b0fdffbe6e0d33ab8c58de609f639e0d6142a035e04e3ceb910bc21",
+      "expectedEntries": 8,
+      "entries": [
+        "armor/boots.webp",
+        "armor/chest.webp",
+        "armor/gloves.webp",
+        "armor/helmet.webp",
+        "armor/necklace.webp",
+        "armor/ring.webp",
+        "armor/shield.webp",
+        "armor/shoulders.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "items",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_items.zip",
+      "sha256PinnedByExistingBuild": "0861a7fc17ec50ff88403969cca115da8cef1aabffcef9e43b24ce59a07aa774",
+      "expectedEntries": 11,
+      "entries": [
+        "items/bag_upgrade.webp",
+        "items/blade_blank.webp",
+        "items/fish.webp",
+        "items/herb.webp",
+        "items/hp_potion.webp",
+        "items/ingot.webp",
+        "items/leather.webp",
+        "items/mp_potion.webp",
+        "items/ore.webp",
+        "items/seed.webp",
+        "items/wood.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "navigation",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_navigation.zip",
+      "sha256PinnedByExistingBuild": "01f7f2d60cd598e96557c4f49548f8ab631d556f357f6317be4add418df209b8",
+      "expectedEntries": 9,
+      "entries": [
+        "navigation/atributos.webp",
+        "navigation/bolsa.webp",
+        "navigation/forja.webp",
+        "navigation/habilidades.webp",
+        "navigation/mapa.webp",
+        "navigation/misiones.webp",
+        "navigation/oficios.webp",
+        "navigation/opciones.webp",
+        "navigation/personaje.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "professions",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_professions.zip",
+      "sha256PinnedByExistingBuild": "2f888665537bc7b96f7bce8d88ca6602395c393500cfa4ca02f9dbcfdff151c0",
+      "expectedEntries": 8,
+      "entries": [
+        "professions/alquimia.webp",
+        "professions/cocina.webp",
+        "professions/forja.webp",
+        "professions/fundicion.webp",
+        "professions/mineria.webp",
+        "professions/pesca.webp",
+        "professions/recoleccion.webp",
+        "professions/tala.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "skills",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_skills.zip",
+      "sha256PinnedByExistingBuild": "c0ae669e42610c5e041d91b62c1aa059b814dc85b7d7f5ded9f043bf71b523e1",
+      "expectedEntries": 8,
+      "entries": [
+        "skills/attack.webp",
+        "skills/dash.webp",
+        "skills/heal.webp",
+        "skills/heavy.webp",
+        "skills/impact_jump.webp",
+        "skills/parry.webp",
+        "skills/pulse.webp",
+        "skills/roll.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "skills-advanced",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_skills-advanced.zip",
+      "sha256PinnedByExistingBuild": "5f0c40d5e6034e41dc3b264f6383e340d42bb39aca1289d808cdff2cf6fd935b",
+      "expectedEntries": 8,
+      "entries": [
+        "skills-advanced/arcane_arrow.webp",
+        "skills-advanced/berserker.webp",
+        "skills-advanced/flame_slash.webp",
+        "skills-advanced/frost_nova.webp",
+        "skills-advanced/holy_seal.webp",
+        "skills-advanced/lightning.webp",
+        "skills-advanced/shadow_summon.webp",
+        "skills-advanced/spinning_slash.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    },
+    {
+      "category": "weapons",
+      "repositoryPath": "assets/highfly/premium/hf_user_icons_weapons.zip",
+      "sha256PinnedByExistingBuild": "ef5cef4b03b5ad00b74618167b84a5d592e94c42770aa7293786a6fe75fb3173",
+      "expectedEntries": 8,
+      "entries": [
+        "weapons/axe.webp",
+        "weapons/bow.webp",
+        "weapons/dual_daggers.webp",
+        "weapons/greatsword.webp",
+        "weapons/spear.webp",
+        "weapons/staff.webp",
+        "weapons/sword.webp",
+        "weapons/wand_orb.webp"
+      ],
+      "verifiedByGitTree": true,
+      "zipEntryListAuditedInCurrentChat": false
+    }
+  ],
+  "derivedDuringBuild": [
+    "highfly/user-icons/items/ingot_copper.webp",
+    "highfly/user-icons/items/ingot_iron.webp",
+    "highfly/user-icons/items/ingot_silver.webp",
+    "highfly/user-icons/items/ingot_gold.webp"
+  ],
+  "nonPhysicalAliasBindings": [
+    "item_upgrade_stone => items/ore",
+    "item_ascension_core => items/ore"
+  ],
+  "assertionsRequiredInCI": [
+    "7 committed ZIP files match the SHA-256 already locked in f0-build.mjs",
+    "Exactly 60 unique WebP entries; 36 active physical + 24 reserved",
+    "Images are 256x256; source archive WebP signatures are valid",
+    "Only 4 new ingot variants are generated by existing build; P2.1 creates zero new images",
+    "No media copied from upstream or private SOURCE"
+  ]
+}

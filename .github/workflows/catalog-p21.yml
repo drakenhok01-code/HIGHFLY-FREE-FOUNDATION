@@ -1,0 +1,18 @@
+name: HIGHFLY P2.1 - catalog and real icon archives QA (no deployment)
+on:
+  push:
+    branches:
+      - p21-highfly-real-icons-equivalences-20261121
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  catalog-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check P2 contract and P2.1 60 real WebPs
+        run: node --test tests/catalog-p2.test.mjs tests/catalog-p21.test.mjs
