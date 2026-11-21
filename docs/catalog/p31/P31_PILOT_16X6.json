@@ -1,0 +1,216 @@
+{
+  "schema": "HIGHFLY_P31_PILOT_MATRIX_V1",
+  "date": "2026-11-21",
+  "repoBaseCommit": "54ff6eb6eea1ac9b7d8bee327d517ec8c7c880e1",
+  "sourceBranch": "p3-highfly-rarity-equipment-ui-lab-20261121",
+  "stage": "ISOLATED_VISUAL_CATALOG_OFFLINE_ART_SEPARATE",
+  "counts": {
+    "templates": 16,
+    "rarityStates": 6,
+    "webp256Total": 96,
+    "equipment": 10,
+    "materialSamples": 6
+  },
+  "artwork": {
+    "archiveInConversation": "HIGHFLY_P31_CATALOGO_16X6_COMPLETO.zip",
+    "standalone": "HIGHFLY_P31_ABRIR_CATALOGO_16X6.html",
+    "manifest": "MANIFEST_P31_16X6.json",
+    "source": "16 HIGHFLY real artworks (1 approved V36, 15 P2.2 candidates)",
+    "pixelSize": [
+      256,
+      256
+    ],
+    "repositoryBinaryImported": false,
+    "centerPixelsUntouched": true,
+    "outerFrameGoldRecolored": true,
+    "frameArtworkDifferentAcrossOriginalSources": true,
+    "automatedBrowserPreviewVerified": false
+  },
+  "invariants": {
+    "sixOfficialTiers": true,
+    "allNewEquipmentSpawnsPlus0": true,
+    "nonGearMaterialsHaveNoRandomRarity": true,
+    "no3DArmor": true,
+    "keepPremiumV36Untouched": true,
+    "noNewLoot": true,
+    "noLiveMenuIntegration": true
+  },
+  "rarities": [
+    {
+      "key": "comun",
+      "name": "Común",
+      "color": "#CCD3DF"
+    },
+    {
+      "key": "poco-comun",
+      "name": "Poco común",
+      "color": "#54D898"
+    },
+    {
+      "key": "raro",
+      "name": "Raro",
+      "color": "#51A8FF"
+    },
+    {
+      "key": "epico",
+      "name": "Épico",
+      "color": "#BD77FF"
+    },
+    {
+      "key": "legendario",
+      "name": "Legendario",
+      "color": "#FFD16E"
+    },
+    {
+      "key": "mitico",
+      "name": "Mítico",
+      "color": "#FF609F"
+    }
+  ],
+  "items": [
+    {
+      "id": "training_sword",
+      "category": "Arma",
+      "artSource": "legacy",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_dagger_basic",
+      "category": "Arma",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_bow_basic",
+      "category": "Arma",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_mace_basic",
+      "category": "Arma",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_iron_helmet",
+      "category": "Armadura",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_iron_chest",
+      "category": "Armadura",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_iron_pants",
+      "category": "Armadura",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_iron_boots",
+      "category": "Armadura",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_copper_ring",
+      "category": "Accesorio",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_silver_necklace",
+      "category": "Accesorio",
+      "artSource": "p22",
+      "enhancementBirth": 0,
+      "rarityPreviewStates": 6,
+      "rarityLive": "P2_DEFINED_NOT_LIVE",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_spider_silk",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_wolf_fang",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_ore_copper",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_ore_iron",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_rough_hide",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    },
+    {
+      "id": "hf_spool_of_thread",
+      "category": "Material",
+      "artSource": "p22",
+      "enhancementBirth": null,
+      "rarityPreviewStates": 6,
+      "rarityLive": "FIXED_RARITY_VISUAL_MOCK",
+      "approval": "PILOT_REVIEW_PENDING"
+    }
+  ]
+}

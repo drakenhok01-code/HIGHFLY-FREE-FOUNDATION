@@ -1,0 +1,17 @@
+name: HIGHFLY P3.1 - 16x6 rarity catalog contract (no deployment)
+on:
+  push:
+    branches: [p31-highfly-16x6-visual-rarity-catalog-20261121]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  p31-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate P2, P2.1, P2.2, P3.0 and P3.1
+        run: node --test tests/catalog-p2.test.mjs tests/catalog-p21.test.mjs tests/catalog-p22-contract.test.mjs tests/catalog-p3.test.mjs tests/catalog-p31.test.mjs
