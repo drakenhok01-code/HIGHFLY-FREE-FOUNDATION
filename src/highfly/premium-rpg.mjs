@@ -119,7 +119,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   root.style.setProperty('--hf-skill-vista','url("'+assetUrl('premium/quest_primary')+'")');
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
- const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
+ const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0,bonuses());
  const bonuses=()=>equipmentBonuses(bag.equipped,bag.gearTraits);
  const syncEquipment=()=>{
   if(!p())return;
@@ -259,7 +259,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const owned=rows.find(x=>x.id===local.selected)||rows[0]||null;
   const chosen=owned?ITEM_DEFS[owned.id]:null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
-   const variants=chosen?.kind==='Equipamiento'?bag.gearTraits?.bag?.[chosen.id]??[]:[];
+   const variants=EQUIP_ITEM_DEFS[chosen?.id]?bag.gearTraits?.bag?.[chosen.id]??[]:[];
    const variantIndex=Math.max(0,Math.min(variants.length-1,local.selectedGearIndex));
    const trait=variants[variantIndex]??null;
    const qualities=trait?'<div class="hf-rpg-quality" data-hf-rarity="'+safe(trait.rarity)+'"><b>'+safe(trait.rarity)+'</b><strong>+'+trait.plus+'</strong></div>'+
@@ -267,7 +267,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
      '<div class="hf-rpg-mini-actions">'+button('MEJORAR +1','data-hf-action="gear:upgrade:bag:'+chosen.id+':'+variantIndex+'"')+
      (trait.plus===9?button('ASCENDER','data-hf-action="gear:ascend:bag:'+chosen.id+':'+variantIndex+'"'):'')+'</div>':'';
   const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};
-  const choices=chosen?.kind==='Equipamiento'&&EQUIP_ITEM_DEFS[chosen.id]?
+  const choices=chosen&&EQUIP_ITEM_DEFS[chosen.id]?
    button('✧ EQUIPAR','data-hf-action="pick-equip:'+chosen.id+'"','is-primary'):
    chosen?.kind==='Consumibles'?button('✧ USAR','data-hf-action="use:'+safe(chosen.id)+'"','is-primary'):
    chosen?.id==='bag_upgrade'?button('✧ EXPANDIR BOLSA','data-hf-action="expand"','is-primary'):
