@@ -356,8 +356,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(local.recipe,prof().inventory,bag);
-  const recipes=Object.entries(RECIPES).map(([recipeId,r])=>
-   '<button type="button" data-hf-recipe="'+recipeId+'" class="hf-rpg-recipe '+(recipeId===local.recipe?'is-selected':'')+'">'+
+  const recipes=Object.entries(RECIPES).filter(([recipeId])=>!['ingot_copper','ingot_iron','ingot_silver','ingot_gold'].includes(recipeId)).map(([recipeId,r])=>
+   '<button type="button" data-hf-recipe="'+recipeId+'" data-hf-forge-item="'+r.item+'" class="hf-rpg-recipe '+(recipeId===local.recipe?'is-selected':'')+'">'+
    art('item_'+r.item)+'<b>'+safe(r.name)+'</b></button>').join('');
   const ingredients=Object.entries(recipe.ingredients).map(([id,n])=>
    '<div class="hf-rpg-ingredient">'+art('item_'+id)+
