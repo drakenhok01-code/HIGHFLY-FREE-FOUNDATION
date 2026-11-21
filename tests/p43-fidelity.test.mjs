@@ -16,7 +16,7 @@ test('P4.3 frames are inside real 256px icons and six rarity grade names are can
  const script=source('scripts/highfly-p43-premium-art.py');
  for(const key of ['comun','poco-comun','raro','epico','legendario','mitico'])assert.match(script,new RegExp(key));
  assert.match(script,/256,256/);
- assert.match(script,/original/);
+ assert.match(script,/approved painterly/);
  const css=source('src/highfly/premium-p43.css');
  assert.match(css,/::before,|::after/);
  assert.match(css,/padding:0!important/);
