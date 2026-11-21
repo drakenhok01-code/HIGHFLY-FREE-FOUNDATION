@@ -160,7 +160,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 10
       }
     },
     {
@@ -259,7 +260,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 10
       }
     },
     {
@@ -366,7 +368,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 10
       }
     },
     {
@@ -425,7 +428,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 99
       }
     },
     {
@@ -480,7 +484,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 99
       }
     },
     {
@@ -530,7 +535,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -589,7 +595,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -639,7 +646,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -689,7 +697,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -739,7 +748,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -789,7 +799,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -839,7 +850,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -889,7 +901,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 3
       }
     },
     {
@@ -939,7 +952,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -989,7 +1003,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -1039,7 +1054,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -1089,7 +1105,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -1139,7 +1156,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 999
       }
     },
     {
@@ -1189,7 +1207,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": false,
         "requiresSlotDecision": false,
-        "notAncient": true
+        "notAncient": true,
+        "legacyRuntimeMaxStack": 99
       }
     },
     {
@@ -1204,7 +1223,8 @@
       "equipment": {
         "slot": "right_hand",
         "compatibleSlots": [
-          "right_hand"
+          "right_hand",
+          "left_hand"
         ],
         "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
         "baseStats": {
@@ -1234,7 +1254,8 @@
             "license": "CC0_1_0",
             "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
           }
-        ]
+        ],
+        "dualWieldPolicy": "TWO_INDEPENDENT_ITEM_INSTANCE_IDS_REQUIRE_VERIFIED_ANIMATION_ADAPTER"
       },
       "fixedRarityForNonEquipment": null,
       "icon": {
@@ -2703,7 +2724,8 @@
         "requiresSourceIconCheck": true,
         "requiresP4RuntimeIntegration": true,
         "requiresSlotDecision": true,
-        "notAncient": true
+        "notAncient": true,
+        "warning": "CANNOT_EQUIP_BEFORE_SEPARATE_SLOT_DECISION_OR_EXISTING_NECKLACE_MAPPING"
       }
     },
     {
@@ -3301,5 +3323,6 @@
         "notAncient": true
       }
     }
-  ]
+  ],
+  "migrationNote": "P2 stackMax1 is the proposed individually identified equipment representation, not the current v3.6 count-based gear max=10. Migrate saved copies without losing any."
 }
