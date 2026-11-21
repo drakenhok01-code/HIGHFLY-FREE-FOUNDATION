@@ -1,7 +1,7 @@
 /** HIGHFLY PHOENIX — no-side-effect validation and copy for premium System decisions.
  * Only a confirmed action in premium-rpg.mjs may modify the real RPG state.
  */
-import {ITEM_DEFS,RECIPES,canCraft,skillReady} from './rpg-core.mjs';
+import {ITEM_DEFS,RECIPES,canCraft,ownedMaterialCount,skillReady} from './rpg-core.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS} from './rpg-equipment.mjs';
 import {RARITIES,rarityIndex,gearTraitAt} from './rpg-itemization.mjs';
 
@@ -63,7 +63,7 @@ export function describeSystemIntent(type,payload={},bag={},professionInventory=
    description:'¿Querés fabricar '+recipe.count+' × '+recipe.name+' usando estos materiales?',
    icon:ITEM_DEFS[recipe.item].icon,verb:'FABRICAR',
    details:Object.entries(recipe.ingredients).map(([id,n])=>({
-    label:ITEM_DEFS[id]?.name??id,value:n+' unidades',have:professionInventory[id]??0}))};
+    label:ITEM_DEFS[id]?.name??id,value:n+' unidades',have:ownedMaterialCount(id,professionInventory,bag)}))};
  }
  if(type==='assign-skill'){
   const {slotIndex,skillId}=payload;
