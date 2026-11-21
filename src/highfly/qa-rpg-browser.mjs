@@ -32,6 +32,16 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
  const navUserImages=await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>imgs.map(i=>({src:i.src,loaded:i.complete&&i.naturalWidth===256})));
  assert.equal(navUserImages.length,9,'All nine tabs need real user-supplied icons');
+  const alphaProbe=await page.locator('#hf-rpg .hf-user-nav-icon').first().evaluate(async icon=>{
+    await icon.decode();
+    const c=document.createElement('canvas');c.width=c.height=256;
+    const ctx=c.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(icon,0,0,256,256);
+    return {corner:ctx.getImageData(0,0,1,1).data[3],
+            center:ctx.getImageData(128,128,1,1).data[3]};
+  });
+  assert.ok(alphaProbe.corner<=15&&alphaProbe.center===255,
+    'User WebP must have REAL exterior transparency, not opaque black: '+JSON.stringify(alphaProbe));
  await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
  assert.ok(navUserImages.every(x=>x.src.includes('/user-icons/navigation/')),'Navigation still using old assets: '+JSON.stringify(navUserImages));
  const ornaments=await page.evaluate(async()=>{const root=document.querySelector('#hf-rpg');const keys=['--hf-crest','--hf-wave-art','--hf-panel-ornament'];const result={};for(const key of keys){const v=root.style.getPropertyValue(key);const m=v.match(/url\(["']?([^"')]+)/);if(!m)throw Error('Ornament URL missing '+key);const i=new Image();i.src=m[1];await i.decode();result[key]=i.naturalWidth;}return result;});
@@ -51,6 +61,8 @@ try{
  assert.equal(viewport.screen[0],915);assert.equal(viewport.screen[1],412);
  assert.ok(viewport.stage.w>140&&viewport.stage.h>120,'Character stage does not fit S23 landscape '+JSON.stringify(viewport));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-equip-slot').count(),10,'Character must show 10 separate equipment slots');
+  assert.equal(await page.locator('#hf-rpg .hf-rpg-equip-slot.is-empty .hf-user-icon').count(),0,
+   'Empty equipment slots must show neutral silhouettes, not dark painted armor pieces');
  const equipmentFit=await page.evaluate(()=>[...document.querySelectorAll('#hf-rpg .hf-rpg-character-layout>.hf-rpg-left-panel,#hf-rpg .hf-rpg-character-layout>.hf-rpg-right-panel')].map(panel=>({scroll:panel.scrollHeight-panel.clientHeight,overflow:getComputedStyle(panel).overflowY,slots:[...panel.querySelectorAll('.hf-rpg-equip-slot')].map(slot=>{const a=slot.getBoundingClientRect(),b=panel.getBoundingClientRect();return {height:a.height,top:a.top-b.top,bottom:b.bottom-a.bottom};})})));
  assert.equal(equipmentFit.length,2,'Both gear panels must exist');
  for(const side of equipmentFit){assert.equal(side.overflow,'hidden','Equipment panels must not scroll: '+JSON.stringify(side));assert.ok(side.scroll<=2,'All five equipment slots must fit without scrolling: '+JSON.stringify(side));assert.ok(side.slots.length===5&&side.slots.every(v=>v.height>=25&&v.top>=0&&v.bottom>=-2),'Equipment slots clipped: '+JSON.stringify(side));}

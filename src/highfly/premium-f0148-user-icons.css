@@ -95,3 +95,18 @@
  transform:none!important;
  transform-origin:center!important;
 }
+
+
+/* v3.4 — Transparent outside the real gold artwork, not a black raster rectangle.
+ * Empty armor slots must never imitate equipped objects. */
+#hf-rpg .hf-user-icon {background:transparent!important;border:0!important;border-radius:0;mix-blend-mode:normal}
+#hf-rpg .hf-rpg-equip-slot.is-empty .hf-rpg-slot-art>.hf-premium-icon:not(.hf-user-icon){
+ opacity:.78!important;
+ filter:brightness(1.4) saturate(.65)!important;
+}
+#hf-rpg .hf-rpg-equip-slot.is-empty .hf-rpg-slot-art {
+ background:radial-gradient(circle,#4e2c6d8a,#24123d66)!important;
+ border:1px solid #946ca3b3!important;
+ border-radius:7px!important;
+ box-shadow:inset 0 0 5px #bd7cd84a!important;
+}

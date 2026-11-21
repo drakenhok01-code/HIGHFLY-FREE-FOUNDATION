@@ -261,6 +261,9 @@ for(const [category,expectedHash] of Object.entries(userIconPackHashes)){
  console.log('[HIGHFLY USER ICONS]',category,entries.length,'original 256x256 WebP images verified');
 }
 if(userIconCount!==60)throw Error('Expected 60 user icons, got '+userIconCount);
+// Original user WebPs are RGB opaque; remove connected near-black border exterior,
+// preserving the gilded art, and keep URLs/real item IDs exactly the same.
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-icon-alpha.py',iconDest]);
 console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 future references kept inactive');
 
 

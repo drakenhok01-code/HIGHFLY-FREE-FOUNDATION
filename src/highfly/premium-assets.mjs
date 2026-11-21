@@ -19,10 +19,8 @@ const USER_ICONS=Object.freeze({
  ...Object.fromEntries('attack dash roll heavy pulse heal'.split(' ').map(x=>['skill_'+x,'skills/'+x])),
  ...Object.fromEntries('recoleccion mineria tala pesca cocina alquimia fundicion forja'.split(' ').map(x=>['profession_'+x,'professions/'+x])),
  ...Object.fromEntries('personaje atributos bolsa habilidades oficios forja misiones mapa opciones'.split(' ').map(x=>['nav_'+x,'navigation/'+x])),
- slot_helmet:'armor/helmet',slot_chest:'armor/chest',slot_gloves:'armor/gloves',
- slot_right_hand:'weapons/sword',slot_necklace:'armor/necklace',
- slot_shoulders:'armor/shoulders',slot_boots:'armor/boots',
- slot_left_hand:'armor/shield',slot_ring:'armor/ring'
+ // Empty equip slots always render their light, neutral outline SVG.
+ // Gold equipment paintings are reserved for inventory and truly equipped objects.
 });
 export const USER_ICON_ACTIVE_IDS=Object.freeze(Object.keys(USER_ICONS).filter(x=>!x.startsWith('slot_')));
 export const USER_ICON_RESERVED_FILES=Object.freeze([
