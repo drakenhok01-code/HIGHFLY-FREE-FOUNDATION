@@ -1,0 +1,223 @@
+{
+  "schema": "HIGHFLY_P1_EMBERFALL_SOURCE_REVIEW",
+  "repo": "we1jia/emberfall",
+  "ref": "5d199ab4888e428b0dab80528a37ab8ac0107360",
+  "scope": "Source code data; candidate-only, no binary model imported or tested in HIGHFLY",
+  "rootCodeLicense": "MIT",
+  "weapons": [
+    {
+      "id": "fire-sword",
+      "sourceName": "余烬长剑",
+      "type": "sword",
+      "element": "fire",
+      "tier": 1
+    },
+    {
+      "id": "fire-greatsword",
+      "sourceName": "烬王重剑",
+      "type": "greatsword",
+      "element": "fire",
+      "tier": 2
+    },
+    {
+      "id": "lightning-spear",
+      "sourceName": "引雷长枪",
+      "type": "spear",
+      "element": "lightning",
+      "tier": 1
+    },
+    {
+      "id": "lightning-halberd",
+      "sourceName": "风暴战戟",
+      "type": "halberd",
+      "element": "lightning",
+      "tier": 2
+    },
+    {
+      "id": "water-staff",
+      "sourceName": "涌泉法杖",
+      "type": "staff",
+      "element": "water",
+      "tier": 1
+    },
+    {
+      "id": "water-scepter",
+      "sourceName": "深潮权杖",
+      "type": "scepter",
+      "element": "water",
+      "tier": 2
+    }
+  ],
+  "skillForms": [
+    {
+      "id": "fire-pillars",
+      "element": "fire",
+      "sourceName": "地脉焚柱"
+    },
+    {
+      "id": "fire-meteor",
+      "element": "fire",
+      "sourceName": "坠星"
+    },
+    {
+      "id": "water-blizzard",
+      "element": "water",
+      "sourceName": "白夜暴雪"
+    },
+    {
+      "id": "water-torrent",
+      "element": "water",
+      "sourceName": "奔潮"
+    },
+    {
+      "id": "lightning-chain",
+      "element": "lightning",
+      "sourceName": "导雷"
+    },
+    {
+      "id": "lightning-lances",
+      "element": "lightning",
+      "sourceName": "裂空雷枪"
+    }
+  ],
+  "buildEquipment": [
+    {
+      "id": "fire-pillars",
+      "slot": "relic",
+      "element": "fire",
+      "sourceName": "地脉余烬"
+    },
+    {
+      "id": "fire-meteor",
+      "slot": "relic",
+      "element": "fire",
+      "sourceName": "坠星熔核"
+    },
+    {
+      "id": "water-blizzard",
+      "slot": "relic",
+      "element": "water",
+      "sourceName": "雪暴棱镜"
+    },
+    {
+      "id": "water-torrent",
+      "slot": "relic",
+      "element": "water",
+      "sourceName": "逐浪石"
+    },
+    {
+      "id": "lightning-chain",
+      "slot": "relic",
+      "element": "lightning",
+      "sourceName": "导雷线圈"
+    },
+    {
+      "id": "lightning-lances",
+      "slot": "relic",
+      "element": "lightning",
+      "sourceName": "裂空棱晶"
+    },
+    {
+      "id": "ash-mantle",
+      "slot": "armor",
+      "element": "fire",
+      "sourceName": "余烬披风"
+    },
+    {
+      "id": "glacier-robes",
+      "slot": "armor",
+      "element": "water",
+      "sourceName": "冰川长袍"
+    },
+    {
+      "id": "storm-vest",
+      "slot": "armor",
+      "element": "lightning",
+      "sourceName": "风暴护衣"
+    }
+  ],
+  "supplies": [
+    {
+      "id": "damage-tonic",
+      "sourceName": "烈刃药剂",
+      "price": 45
+    },
+    {
+      "id": "ward-charm",
+      "sourceName": "守护符",
+      "price": 35
+    }
+  ],
+  "modelManifestEntries": [
+    {
+      "path": "public/assets/models-v3/Mage.glb",
+      "file": "Mage.glb",
+      "license": "CC0 1.0",
+      "provenance": "Kay Lousberg / KayKit Game Assets",
+      "animations": 76,
+      "sha256": "cf898585da33fab50c724d31605fb931eb2912e6d2280092141e98ca81ad507d"
+    },
+    {
+      "path": "public/assets/models-v3/Fire_Sword.glb",
+      "file": "Fire_Sword.glb",
+      "license": "PROJECT_GENERATED_VERIFY",
+      "provenance": "Original Emberfall project geometry generated in Blender",
+      "animations": 0,
+      "sha256": "e9997fea0f8fd61cea847c30c1048d83bfa6cfe2d7c9f7d62f4f3e83ee83a886"
+    },
+    {
+      "path": "public/assets/models-v3/Lightning_Spear.glb",
+      "file": "Lightning_Spear.glb",
+      "license": "PROJECT_GENERATED_VERIFY",
+      "provenance": "Original Emberfall project geometry generated in Blender",
+      "animations": 0,
+      "sha256": "fa0ca2b83f5e12aa23c74a429b43d49c78a99982b3b12a3d623b949d9646c429"
+    },
+    {
+      "path": "public/assets/models-v3/Water_Staff.glb",
+      "file": "Water_Staff.glb",
+      "license": "PROJECT_GENERATED_VERIFY",
+      "provenance": "Original Emberfall project geometry generated in Blender",
+      "animations": 0,
+      "sha256": "d38e82e7aea27ef140498ecec1d2815e4825f9daa054d09536e06e13e4ed9e64"
+    },
+    {
+      "path": "public/assets/models-v6/Knight.glb",
+      "file": "Knight.glb",
+      "license": "CC0-1.0",
+      "provenance": "/assets/vendor/kaykit/Knight.glb",
+      "animations": 76,
+      "sha256": "2bff3e49b21230709761c3eea9571e794e771feec58edcbf996314a464c2d657"
+    },
+    {
+      "path": "public/assets/models-v6/Rogue_Hooded.glb",
+      "file": "Rogue_Hooded.glb",
+      "license": "CC0-1.0",
+      "provenance": "/assets/vendor/kaykit/Rogue_Hooded.glb",
+      "animations": 76,
+      "sha256": "a1c540512cfdf318e0a26c5e12ca8a83a8d0dc709165170c53a2389249627e29"
+    },
+    {
+      "path": "public/assets/models-v6/Mage.glb",
+      "file": "Mage.glb",
+      "license": "CC0-1.0",
+      "provenance": "/assets/models-v3/Mage.glb",
+      "animations": 76,
+      "sha256": "f5a1c0af976450ffa2e24e78bed2912c9f4244282f2813fa22592216693cc791"
+    }
+  ],
+  "audio": {
+    "manifestClaims": "Original synthesis; no external samples or recordings.",
+    "files": [
+      "ambience.wav",
+      "hit.wav",
+      "slash.wav",
+      "dash.wav",
+      "heal.wav",
+      "pickup.wav",
+      "boss.wav"
+    ],
+    "note": "Media redistribution depends on applicable file provenance/permissions; do not equate program license with unrestricted media"
+  },
+  "noProfessionCatalogVerified": true
+}
