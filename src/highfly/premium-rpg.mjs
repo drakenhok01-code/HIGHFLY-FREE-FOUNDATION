@@ -45,8 +45,9 @@ const slot=(meta,equipped,selected=false,gearTraits=null)=>{
 };
 const menuLink=(tab,icon,label,selected=false)=>'<button type="button" class="hf-rpg-side-link '+(selected?'is-selected':'')+'" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
-function art(id='stone',large=false,rarity='Común'){
- const premium=premiumArt(id,large,rarity);if(premium)return premium;
+function art(id='stone',large=false,rarity=null){
+ const effectiveRarity=rarity??(id.startsWith('item_')?ITEM_DEFS[id.slice(5)]?.rarity:'Común')??'Común';
+ const premium=premiumArt(id,large,effectiveRarity);if(premium)return premium;
  // Premium originals from approved asset board; vector fallback for unillustrated assets.
  let interior='';
  if(id==='health'||id==='mana'){
