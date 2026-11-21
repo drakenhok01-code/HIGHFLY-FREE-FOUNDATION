@@ -31,11 +31,11 @@ test('P4.3 portrait rotates through real pointer drag, no left/right arrows',()=
  assert.match(ui,/setPointerCapture/);
  assert.match(ui,/refreshPortrait\(\)/);
 });
-test('P4.3 1600px source logo replaces pixelated 160px AVIF at startup',()=>{
+test('P4.4: actual approved HIGHFLY RPG FITNESS brand replaces unrelated phoenix SVG',()=>{
  const css=source('src/highfly/phoenix-native-boot.css');
- assert.match(css,/highfly\/premium\/logo_highfly\.svg/);
- assert.doesNotMatch(css,/highfly-official\.avif/);
- assert.match(source('assets/highfly/premium/logo_highfly.svg'),/width="1600"/);
+ assert.match(css,/highfly\/brand\/official-rpg-fitness\.webp/);
+ assert.doesNotMatch(css,/premium\/logo_highfly\.svg/);
+ assert.match(source('scripts/highfly-p44-align-art.py'),/Official original restored/);
 });
 test('P4.3 unused legacy generic ingots migrate to typed iron without losing qty',()=>{
  const state=normalizeRpgState({items:{hp_potion:2,mp_potion:2,ingot:7,ingot_iron:3}});
