@@ -147,7 +147,15 @@ try{
  await page.screenshot({path:'qa-rpg-bag.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="forja"]').click();
  await page.locator('#hf-rpg .hf-rpg-recipe .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
- await page.screenshot({path:'qa-rpg-forge.png'});
+ assert.equal(await page.locator('#hf-rpg [data-hf-recipe="ingot_copper"]').count(),1,'Copper needs its own recipe');
+  assert.equal(await page.locator('#hf-rpg [data-hf-recipe="ingot_iron"]').count(),1,'Iron needs its own recipe');
+  assert.equal(await page.locator('#hf-rpg [data-hf-recipe="ingot_silver"]').count(),1,'Silver needs its own recipe');
+  assert.equal(await page.locator('#hf-rpg [data-hf-recipe="ingot_gold"]').count(),1,'Gold needs its own recipe');
+  await page.locator('#hf-rpg [data-hf-recipe="ingot_copper"]').click();
+  const metalImage=await page.locator('#hf-rpg .hf-rpg-forge-result-art .hf-user-icon').evaluate(async img=>{await img.decode();return {src:img.src,width:img.naturalWidth}});
+  assert.ok(metalImage.src.endsWith('/items/ingot_copper.webp')&&metalImage.width===256,'Copper artwork missing');
+  await page.locator('#hf-rpg [data-hf-recipe="hp_potion"]').click();
+  await page.screenshot({path:'qa-rpg-forge.png'});
  const forgeSizes=await page.evaluate(()=>({recipe:document.querySelector('#hf-rpg .hf-rpg-recipe .hf-premium-icon')?.getBoundingClientRect().width,ingredient:document.querySelector('#hf-rpg .hf-rpg-ingredient .hf-premium-icon')?.getBoundingClientRect().width}));
  assert.ok(forgeSizes.recipe>=43&&forgeSizes.ingredient>=39,'Recipe/material icons remain too small: '+JSON.stringify(forgeSizes));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
@@ -215,7 +223,9 @@ try{
  const actualSkillArt=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-user-icon').evaluateAll(imgs=>imgs.map(x=>({src:x.src,w:x.naturalWidth,h:x.naturalHeight})));
  assert.equal(actualSkillArt.length,6,'Must show six real skill icons');
  assert.ok(actualSkillArt.every(x=>x.src.includes('/user-icons/skills/')&&x.w===256&&x.h===256),'Wrong skill icon dimensions or routes: '+JSON.stringify(actualSkillArt));
- await page.screenshot({path:'qa-rpg-skills.png'});
+ const filler=await page.locator('#hf-rpg .hf-rpg-skill-list').evaluate(el=>getComputedStyle(el,'::after').display);
+  assert.equal(filler,'none','Decorative skill rectangle still visible');
+  await page.screenshot({path:'qa-rpg-skills.png'});
  const skillSize=await page.locator('#hf-rpg .hf-rpg-skill-glyph').first().evaluate(el=>el.getBoundingClientRect().width);
  assert.ok(skillSize>=43&&skillSize<=48,'Skill glyph must be moderately enlarged, not oversized: '+skillSize);
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();

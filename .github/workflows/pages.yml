@@ -27,7 +27,7 @@ jobs:
         run: |
           npm run qa:static
           npm run qa:gameplay
-          node --test tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs tests/system-dialog.test.mjs
+          node --test tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs tests/system-dialog.test.mjs tests/itemization.test.mjs
       - name: Compilar Unsung original congelado
         run: npm run build
       - name: Simular movimiento real sobre el Player original
