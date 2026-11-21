@@ -1,0 +1,970 @@
+{
+  "schema": "HIGHFLY_P11_SEMANTIC_EQUIVALENCE_REVIEW",
+  "source": "v0.44.7 + Emberfall pinned + HIGHFLY v3.6",
+  "semantics": {
+    "exactDuplicate": "Same asset/logic/properties confirmed through code and license; no two catalog templates needed",
+    "relatedAnalogues": "Same weapon/equipment function but different name or stats; keep distinct until designer approves",
+    "broaderNarrower": "Generic ore must not be treated as same commodity as copper/iron ore; migration explicitly maps or splits",
+    "generatedRarityVariants": "Rare, Epic, legendary-map authored hoard variants may map to a single HIGHFLY template with separate rarity/stats, if approved; + stays ZERO on spawn"
+  },
+  "upstreamHoard": {
+    "prototypes": 32,
+    "sourceVariantRows": 96,
+    "possibleReducedTemplateRows": 32,
+    "potentialSourceDefinitionConsolidation": 64,
+    "requiresManualReview": true,
+    "groups": [
+      {
+        "sourceFamily": "collapsar_band_of_nyxaris",
+        "sourceVariants": [
+          "collapsar_band_of_nyxaris",
+          "rare_collapsar_band_of_nyxaris",
+          "legendary_collapsar_band_of_nyxaris"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "orb_collapsing_void",
+        "sourceVariants": [
+          "orb_collapsing_void",
+          "rare_orb_collapsing_void",
+          "legendary_orb_collapsing_void"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "cowl_of_event_horizon",
+        "sourceVariants": [
+          "cowl_of_event_horizon",
+          "rare_cowl_of_event_horizon",
+          "legendary_cowl_of_event_horizon"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "mantle_of_singularity",
+        "sourceVariants": [
+          "mantle_of_singularity",
+          "rare_mantle_of_singularity",
+          "legendary_mantle_of_singularity"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "glacier_hewn_bulwark",
+        "sourceVariants": [
+          "glacier_hewn_bulwark",
+          "rare_glacier_hewn_bulwark",
+          "legendary_glacier_hewn_bulwark"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "permafrost_legguards",
+        "sourceVariants": [
+          "permafrost_legguards",
+          "rare_permafrost_legguards",
+          "legendary_permafrost_legguards"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "frostbitten_rime_slippers",
+        "sourceVariants": [
+          "frostbitten_rime_slippers",
+          "rare_frostbitten_rime_slippers",
+          "legendary_frostbitten_rime_slippers"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "rime_crusted_grips",
+        "sourceVariants": [
+          "rime_crusted_grips",
+          "rare_rime_crusted_grips",
+          "legendary_rime_crusted_grips"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "ember_wrought_crown",
+        "sourceVariants": [
+          "ember_wrought_crown",
+          "rare_ember_wrought_crown",
+          "legendary_ember_wrought_crown"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "cinder_stitched_robes",
+        "sourceVariants": [
+          "cinder_stitched_robes",
+          "rare_cinder_stitched_robes",
+          "legendary_cinder_stitched_robes"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "chained_ember_choker",
+        "sourceVariants": [
+          "chained_ember_choker",
+          "rare_chained_ember_choker",
+          "legendary_chained_ember_choker"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "molten_clinker_girdle",
+        "sourceVariants": [
+          "molten_clinker_girdle",
+          "rare_molten_clinker_girdle",
+          "legendary_molten_clinker_girdle"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "storm_tuned_buckler",
+        "sourceVariants": [
+          "storm_tuned_buckler",
+          "rare_storm_tuned_buckler",
+          "legendary_storm_tuned_buckler"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "hauberk_tempest_gale",
+        "sourceVariants": [
+          "hauberk_tempest_gale",
+          "rare_hauberk_tempest_gale",
+          "legendary_hauberk_tempest_gale"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "gale_strider_boots",
+        "sourceVariants": [
+          "gale_strider_boots",
+          "rare_gale_strider_boots",
+          "legendary_gale_strider_boots"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "tempest_strike_grips",
+        "sourceVariants": [
+          "tempest_strike_grips",
+          "rare_tempest_strike_grips",
+          "legendary_tempest_strike_grips"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "breastplate_tectonic_might",
+        "sourceVariants": [
+          "breastplate_tectonic_might",
+          "rare_breastplate_tectonic_might",
+          "legendary_breastplate_tectonic_might"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "band_mountains_weight",
+        "sourceVariants": [
+          "band_mountains_weight",
+          "rare_band_mountains_weight",
+          "legendary_band_mountains_weight"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "monolithic_shoulderguards",
+        "sourceVariants": [
+          "monolithic_shoulderguards",
+          "rare_monolithic_shoulderguards",
+          "legendary_monolithic_shoulderguards"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "earthshaker_warboots",
+        "sourceVariants": [
+          "earthshaker_warboots",
+          "rare_earthshaker_warboots",
+          "legendary_earthshaker_warboots"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "silkstalker_woven_vest",
+        "sourceVariants": [
+          "silkstalker_woven_vest",
+          "rare_silkstalker_woven_vest",
+          "legendary_silkstalker_woven_vest"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "spun_venom_spaulders",
+        "sourceVariants": [
+          "spun_venom_spaulders",
+          "rare_spun_venom_spaulders",
+          "legendary_spun_venom_spaulders"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "broodmother_chitin_cowl",
+        "sourceVariants": [
+          "broodmother_chitin_cowl",
+          "rare_broodmother_chitin_cowl",
+          "legendary_broodmother_chitin_cowl"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "venom_etched_waistcord",
+        "sourceVariants": [
+          "venom_etched_waistcord",
+          "rare_venom_etched_waistcord",
+          "legendary_venom_etched_waistcord"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "bone_studded_pauldrons",
+        "sourceVariants": [
+          "bone_studded_pauldrons",
+          "rare_bone_studded_pauldrons",
+          "legendary_bone_studded_pauldrons"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "legguards_of_the_ossuary",
+        "sourceVariants": [
+          "legguards_of_the_ossuary",
+          "rare_legguards_of_the_ossuary",
+          "legendary_legguards_of_the_ossuary"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "seal_of_the_cryptwalker",
+        "sourceVariants": [
+          "seal_of_the_cryptwalker",
+          "rare_seal_of_the_cryptwalker",
+          "legendary_seal_of_the_cryptwalker"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "ossuary_bone_crown",
+        "sourceVariants": [
+          "ossuary_bone_crown",
+          "rare_ossuary_bone_crown",
+          "legendary_ossuary_bone_crown"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "chalice_of_living_tides",
+        "sourceVariants": [
+          "chalice_of_living_tides",
+          "rare_chalice_of_living_tides",
+          "legendary_chalice_of_living_tides"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "pendant_continuous_flow",
+        "sourceVariants": [
+          "pendant_continuous_flow",
+          "rare_pendant_continuous_flow",
+          "legendary_pendant_continuous_flow"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "coral_encrusted_girdle",
+        "sourceVariants": [
+          "coral_encrusted_girdle",
+          "rare_coral_encrusted_girdle",
+          "legendary_coral_encrusted_girdle"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      },
+      {
+        "sourceFamily": "riptide_handwraps",
+        "sourceVariants": [
+          "riptide_handwraps",
+          "rare_riptide_handwraps",
+          "legendary_riptide_handwraps"
+        ],
+        "highflyProposal": "ONE_TEMPLATE_THREE_RARITY_INSTANCES_IF_STATS_BALANCE_APPROVED",
+        "automaticMerge": false,
+        "reason": "same source prototype builds tier-specific items; semantic family shared, actual stats and rarity mapping differ",
+        "birthPlusAllVariants": 0
+      }
+    ]
+  },
+  "existingHFGenericPairs": [
+    {
+      "genericId": "ore",
+      "specificFuture": [
+        "hf_ore_copper",
+        "hf_ore_iron",
+        "hf_ore_silver",
+        "hf_ore_gold"
+      ],
+      "decision": "DO_NOT_AUTO_MERGE",
+      "reason": "Different resource types; preserve old generic ore on migration and update recipes carefully"
+    },
+    {
+      "genericId": "ingot",
+      "specificExisting": [
+        "ingot_copper",
+        "ingot_iron",
+        "ingot_silver",
+        "ingot_gold"
+      ],
+      "decision": "DO_NOT_AUTO_MERGE",
+      "reason": "Existing ingot not tagged to material; do not destroy or automatically convert saved stock"
+    }
+  ],
+  "styles": [
+    {
+      "style": "dual_daggers",
+      "decision": "TWO_DAGGER_INSTANCES_NOT_NEW_DUPLICATE_TEMPLATE",
+      "sourceTemplate": "hf_dagger_basic",
+      "requires": "independent left/right instance IDs + verified dual combat"
+    }
+  ],
+  "crossSourceFamilies": [
+    {
+      "highflyTemplateId": "training_sword",
+      "highflyNameEs": "Espada de Aprendiz",
+      "priorityPhase": "KEEP_V36",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "worn_sword",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "eastbrook_arming_sword",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [
+        {
+          "id": "fire-sword",
+          "relation": "WEAPON_STYLE_ANALOGUE"
+        }
+      ],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "training_shield",
+      "highflyNameEs": "Escudo de Aprendiz",
+      "priorityPhase": "KEEP_V36",
+      "type": "shield",
+      "category": "escudo",
+      "refsWoc": [
+        {
+          "id": "eastbrook_buckler",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "training_greatsword",
+      "highflyNameEs": "Mandoble de Aprendiz",
+      "priorityPhase": "KEEP_V36",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "eastbrook_greatsword",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "duskforged_warblade",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [
+        {
+          "id": "fire-greatsword",
+          "relation": "WEAPON_STYLE_ANALOGUE"
+        }
+      ],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "hp_potion",
+      "highflyNameEs": "Poción de Vida",
+      "priorityPhase": "KEEP_V36",
+      "type": "consumable",
+      "category": "consumible",
+      "refsWoc": [
+        {
+          "id": "minor_healing_potion",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "healing_potion",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "mp_potion",
+      "highflyNameEs": "Poción de Maná",
+      "priorityPhase": "KEEP_V36",
+      "type": "consumable",
+      "category": "consumible",
+      "refsWoc": [
+        {
+          "id": "mana_potion",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "ore",
+      "highflyNameEs": "Mineral",
+      "priorityPhase": "KEEP_V36",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "copper_ore",
+          "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+        },
+        {
+          "id": "iron_ore",
+          "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID"
+    },
+    {
+      "highflyTemplateId": "hf_dagger_basic",
+      "highflyNameEs": "Daga de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "rusty_dagger",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "keen_dirk",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_axe_basic",
+      "highflyNameEs": "Hacha de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "rusty_hatchet",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "copper_bearded_axe",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_spear_basic",
+      "highflyNameEs": "Lanza de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "ironbark_boar_spear",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [
+        {
+          "id": "lightning-spear",
+          "relation": "WEAPON_STYLE_ANALOGUE"
+        }
+      ],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_staff_basic",
+      "highflyNameEs": "Bastón de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "gnarled_staff",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "apprentice_staff",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [
+        {
+          "id": "water-staff",
+          "relation": "WEAPON_STYLE_ANALOGUE"
+        }
+      ],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_wand_basic",
+      "highflyNameEs": "Vara de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "wand_of_quenched_sparks",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_mace_basic",
+      "highflyNameEs": "Maza de aprendiz",
+      "priorityPhase": "P4_PILOT",
+      "type": "weapon",
+      "category": "arma",
+      "refsWoc": [
+        {
+          "id": "training_mace",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "copper_flanged_mace",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_helmet",
+      "highflyNameEs": "Casco de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "roadwardens_helm",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_chest",
+      "highflyNameEs": "Pechera de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "ironlink_hauberk",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_gloves",
+      "highflyNameEs": "Guantes de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "acolyte_chain_grips",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_shoulders",
+      "highflyNameEs": "Hombreras de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "ironlink_spaulders",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_pants",
+      "highflyNameEs": "Pantalones de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "ironlink_legguards",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_iron_boots",
+      "highflyNameEs": "Botas de hierro",
+      "priorityPhase": "P4_PILOT",
+      "type": "armor",
+      "category": "armadura",
+      "refsWoc": [
+        {
+          "id": "hobnail_boots",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_copper_ring",
+      "highflyNameEs": "Anillo de cobre",
+      "priorityPhase": "P4_PILOT",
+      "type": "accessory",
+      "category": "accesorio",
+      "refsWoc": [
+        {
+          "id": "hammered_copper_band",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_silver_necklace",
+      "highflyNameEs": "Collar de plata",
+      "priorityPhase": "P4_PILOT",
+      "type": "accessory",
+      "category": "accesorio",
+      "refsWoc": [
+        {
+          "id": "wyrmfall_pendant",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_amulet_basic",
+      "highflyNameEs": "Amuleto del viajero",
+      "priorityPhase": "FUTURE_SLOT_REVIEW",
+      "type": "accessory",
+      "category": "accesorio",
+      "refsWoc": [
+        {
+          "id": "heartspring_amulet",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_ore_copper",
+      "highflyNameEs": "Mineral de cobre",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "copper_ore",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_ore_iron",
+      "highflyNameEs": "Mineral de hierro",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "iron_ore",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_rough_hide",
+      "highflyNameEs": "Cuero en bruto",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "rough_hide",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_wolf_fang",
+      "highflyNameEs": "Colmillo de lobo",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "wolf_fang",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_spider_silk",
+      "highflyNameEs": "Seda de araña",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "spider_silk",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_bone_fragments",
+      "highflyNameEs": "Fragmentos de hueso",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_homespun_cloth",
+      "highflyNameEs": "Tela rústica",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "homespun_cloth",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_spool_of_thread",
+      "highflyNameEs": "Carrete de hilo",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "spool_of_thread",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    },
+    {
+      "highflyTemplateId": "hf_smithing_flux",
+      "highflyNameEs": "Fundente de herrería",
+      "priorityPhase": "P4_MATERIALS",
+      "type": "material",
+      "category": "material",
+      "refsWoc": [
+        {
+          "id": "smithing_flux",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "refsEmberfall": [],
+      "duplicateDecision": "RELATED_SOURCE_NOT_AUTOMATIC_SAME_ITEM",
+      "approvedArtPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON"
+    }
+  ],
+  "status": "HUMAN_REVIEW_REQUIRED_NOT_AUTO_IMPORTED"
+}
