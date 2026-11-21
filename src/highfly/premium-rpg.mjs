@@ -32,10 +32,10 @@ const NAV=[
 const safe=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 const numeric=n=>Number.isFinite(Number(n))?Math.floor(Number(n)).toLocaleString('es-AR'):'0';
 const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
-const slot=(meta,equipped,selected=false)=>{
- const id=equipped?.[meta.id],item=id?ITEM_DEFS[id]:null;
- return '<button type="button" data-hf-equip-slot="'+meta.id+'" class="hf-rpg-equip-slot '+(id?'is-active':'is-empty')+(selected?' is-selected':'')+'" aria-label="'+safe(meta.label)+' '+safe(item?.name??'vacío')+'">'+
- '<span class="hf-rpg-slot-art">'+art(id?'item_'+id:'slot_'+meta.id)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?.name??'Vacío')+'</b></span>'+
+const slot=(meta,equipped,selected=false,gearTraits=null)=>{
+ const id=equipped?.[meta.id],item=id?ITEM_DEFS[id]:null,trait=gearTraits?.equipped?.[meta.id];
+ return '<button type="button" data-hf-equip-slot="'+meta.id+'" data-hf-rarity="'+safe(trait?.rarity??'')+'" class="hf-rpg-equip-slot '+(id?'is-active':'is-empty')+(selected?' is-selected':'')+'" aria-label="'+safe(meta.label)+' '+safe(item?.name??'vacío')+'">'+
+ '<span class="hf-rpg-slot-art">'+art(id?'item_'+id:'slot_'+meta.id)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?traitLabel(item.name,trait):'Vacío')+'</b></span>'+
  '<span class="hf-rpg-equip-more">›</span></button>';
 };
 const menuLink=(tab,icon,label,selected=false)=>'<button type="button" class="hf-rpg-side-link '+(selected?'is-selected':'')+'" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
@@ -88,7 +88,7 @@ function art(id='stone',large=false){
 }
 function tile(id,count,selected){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
+ return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -208,14 +208,17 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const eq=bag.equipped;
   const selected=EQUIP_SLOTS.find(v=>v.id===local.selectedEquipSlot);
   const chosen=selected&&ITEM_DEFS[eq?.[selected.id]];
+   const trait=selected?gearTraitAt(bag,'equipped',selected.id):null;
   const detail=selected?
-   '<div class="hf-rpg-equip-selected"><b title="'+safe(chosen?.name??selected.label)+'">'+safe(chosen?.name??selected.label+' libre')+'</b>'+
-   (chosen?button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
+   '<div class="hf-rpg-equip-selected"><b title="'+safe(chosen?.name??selected.label)+'">'+safe(chosen?traitLabel(chosen.name,trait)+' · '+(trait?.rarity??'Común'):selected.label+' libre')+'</b>'+
+   (chosen?button('MEJORAR +1','data-hf-action="gear:upgrade:equipped:'+selected.id+':0"')+
+    (trait?.plus===9?button('ASCENDER','data-hf-action="gear:ascend:equipped:'+selected.id+':0"'):'')+
+    button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
     button('VER BOLSA','data-hf-tab="bolsa"'))+'</div>':
    '<div class="hf-rpg-equip-selected"><b>Equipo real · '+safe(weapon().label)+'</b></div>';
   return '<div class="hf-rpg-character-layout">'+
    panel(title('Equipo','Mano derecha · equipo')+
-    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-left-panel')+
+    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-left-panel')+
    preview()+
    panel(title('Equipamiento','Mano izquierda · accesorios')+
     '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-right-panel')+
@@ -254,6 +257,13 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const owned=rows.find(x=>x.id===local.selected)||rows[0]||null;
   const chosen=owned?ITEM_DEFS[owned.id]:null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
+   const variants=chosen?.kind==='Equipamiento'?bag.gearTraits?.bag?.[chosen.id]??[]:[];
+   const variantIndex=Math.max(0,Math.min(variants.length-1,local.selectedGearIndex));
+   const trait=variants[variantIndex]??null;
+   const qualities=trait?'<div class="hf-rpg-quality" data-hf-rarity="'+safe(trait.rarity)+'"><b>'+safe(trait.rarity)+'</b><strong>+'+trait.plus+'</strong></div>'+
+     (variants.length>1?'<div class="hf-rpg-variants">'+variants.map((t,i)=>'<button type="button" class="'+(i===variantIndex?'is-selected':'')+'" data-hf-gear-index="'+i+'">'+safe(t.rarity)+' +'+t.plus+'</button>').join('')+'</div>':'')+
+     '<div class="hf-rpg-mini-actions">'+button('MEJORAR +1','data-hf-action="gear:upgrade:bag:'+chosen.id+':'+variantIndex+'"')+
+     (trait.plus===9?button('ASCENDER','data-hf-action="gear:ascend:bag:'+chosen.id+':'+variantIndex+'"'):'')+'</div>':'';
   const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};
   const choices=chosen?.kind==='Equipamiento'&&EQUIP_ITEM_DEFS[chosen.id]?
    button('✧ EQUIPAR','data-hf-action="pick-equip:'+chosen.id+'"','is-primary'):
@@ -272,7 +282,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art">'+art('item_'+chosen.id,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
-      '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+
+      '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
       choices:blank('No hay objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
