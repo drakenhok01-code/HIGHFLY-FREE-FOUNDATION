@@ -74,6 +74,8 @@ export function normalizeRpgState(raw){
  const items={hp_potion:bounded(counts.hp_potion??2,99),mp_potion:bounded(counts.mp_potion??2,99)};
  for(const [id,def] of Object.entries(ITEM_DEFS))if(id!=='hp_potion'&&id!=='mp_potion'&&id in counts)
   items[id]=bounded(counts[id],def.max);
+ // Saved generic ingots become a typed material; no legacy item lost.
+ if((items.ingot??0)>0){items.ingot_iron=bounded((items.ingot_iron??0)+items.ingot,999);delete items.ingot;}
  const slots=Number.isInteger(raw?.slots)?Math.min(MAX_EXPANDED_BAG_SLOTS,Math.max(MAX_BAG_SLOTS,raw.slots)):MAX_BAG_SLOTS;
  const equipped=normalizeEquipped(raw?.equipped,true);
  const skills=Array.isArray(raw?.skillSlots)?raw.skillSlots:DEFAULT_SKILL_SLOTS;
@@ -97,6 +99,7 @@ export function inventoryRows(state,professionInventory={}){
  const owned={...state?.items};
  for(const [id,n] of Object.entries(professionInventory??{}))
   if(Number.isInteger(n)&&n>0)owned[id]=(owned[id]??0)+n;
+ if((owned.ingot??0)>0){owned.ingot_iron=(owned.ingot_iron??0)+owned.ingot;delete owned.ingot;}
  return Object.entries(owned).filter(([id,n])=>ITEM_DEFS[id]&&Number.isInteger(n)&&n>0)
   .map(([id,n])=>({...ITEM_DEFS[id],count:n})).sort((a,b)=>a.kind.localeCompare(b.kind)||a.name.localeCompare(b.name));
 }
@@ -116,7 +119,8 @@ export function spendPotion(state,player,id){
  return {ok:true,restored,remaining:state.items[id],resource:life?'Vida':'Maná'};
 }
 export const ownedMaterialCount=(id,professionInventory={},state=null)=>
- Math.max(0,Number(professionInventory?.[id])||0)+Math.max(0,Number(state?.items?.[id])||0);
+ Math.max(0,Number(professionInventory?.[id])||0)+Math.max(0,Number(state?.items?.[id])||0)+
+ (id==='ingot_iron'?Math.max(0,Number(professionInventory?.ingot)||0)+Math.max(0,Number(state?.items?.ingot)||0):0);
 export function canCraft(recipeId,professionInventory={},state){
  const recipe=RECIPES[recipeId];
  if(!recipe)return {ok:false,reason:'Receta desconocida'};
@@ -139,8 +143,13 @@ export function craftPotion(recipeId,professionState,state){
  for(const [id,n] of Object.entries(recipe.ingredients)){
   const fromProf=Math.min(n,Math.max(0,inventory[id]??0));
   if(fromProf)inventory[id]-=fromProf;
-  const fromBag=n-fromProf;
+  const fromBag=Math.min(n-fromProf,Math.max(0,state.items[id]??0));
   if(fromBag)state.items[id]-=fromBag;
+  let legacy=n-fromProf-fromBag;
+  if(legacy&&id==='ingot_iron'){
+   const source=Math.min(legacy,Math.max(0,inventory.ingot??0));inventory.ingot-=source;legacy-=source;
+   if(legacy){state.items.ingot=(state.items.ingot??0)-legacy;}
+  }
  }
  state.items[recipe.item]=(state.items[recipe.item]??0)+recipe.count;
  registerCraftedGear(state,recipe.item,recipe.count);
