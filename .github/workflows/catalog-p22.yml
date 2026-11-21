@@ -1,0 +1,17 @@
+name: HIGHFLY P2.2 - master catalog and artwork mappings (no deployment)
+on:
+  push:
+    branches: [p22-highfly-visual-icons-20261121]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate P2, P2.1 and P2.2 contracts
+        run: node --test tests/catalog-p2.test.mjs tests/catalog-p21.test.mjs tests/catalog-p22-contract.test.mjs

@@ -1,0 +1,496 @@
+{
+  "schema": "HIGHFLY_P22_ASSET_IMPORT_MANIFEST_V1",
+  "date": "2026-11-21",
+  "stage": "ARTWORK_PACKAGE_DELIVERED_SEPARATELY",
+  "packageName": "HIGHFLY_P22_WEBP256_LISTO_PARA_INTEGRAR.zip",
+  "importScript": "scripts/p22-import-icons.mjs",
+  "webpCount": 28,
+  "sourceMix": {
+    "newIllustration": 16,
+    "originalAdaptation": 8,
+    "originalUnmodified": 4
+  },
+  "qaLocal": {
+    "checksPassed": 173,
+    "checksFailed": 0,
+    "notes": "Verified image size 256, PNG reference 512, SHA, transparent new-art corners, and duplicate IDs in local package. GitHub CI cannot inspect binary files until package is imported."
+  },
+  "files": [
+    {
+      "id": "hf_dagger_basic",
+      "nameEs": "Daga de aprendiz",
+      "kind": "weapon",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_dagger_basic.webp",
+      "sha256": "6c51a2194dde9933c4e5095aa6fde743d59710631df9eda835c6490acd39b5fb",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_dagger_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_dagger_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_axe_basic",
+      "nameEs": "Hacha de aprendiz",
+      "kind": "weapon",
+      "source": "REUSED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_axe_basic.webp",
+      "sha256": "72c27c1e63b2268c7c692af74bd3c3c95dfee5bd63f294de6ae708b059f52a02",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_axe_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_axe_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_spear_basic",
+      "nameEs": "Lanza de aprendiz",
+      "kind": "weapon",
+      "source": "REUSED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_spear_basic.webp",
+      "sha256": "b7eb89acde1589fbdb59e7133d00673c83835d4fad124c2cdb1e2dc799ff8990",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_spear_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_spear_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_bow_basic",
+      "nameEs": "Arco de aprendiz",
+      "kind": "weapon",
+      "source": "REUSED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_bow_basic.webp",
+      "sha256": "d48e00ffe5aa9ad3573fca00d0baa631d92269e3a6ace641cf7823f553acb66c",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_bow_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_bow_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_staff_basic",
+      "nameEs": "Bastón de aprendiz",
+      "kind": "weapon",
+      "source": "REUSED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_staff_basic.webp",
+      "sha256": "994cf276019a72976ad74557c0bec69969a2a3a740c9eb00eb5ceaea8b343259",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_staff_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_staff_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_wand_basic",
+      "nameEs": "Vara de aprendiz",
+      "kind": "weapon",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_wand_basic.webp",
+      "sha256": "85f47e61c29b2dfd28f8e66fa61e75816a239e62f2a43cc727d8bb37b0b90f7f",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_wand_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_wand_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_mace_basic",
+      "nameEs": "Maza de aprendiz",
+      "kind": "weapon",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_mace_basic.webp",
+      "sha256": "8152a611bd75d355a6a5f31a0abca27f13e7ca35dadc0a894708efda0fbc6711",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_mace_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_mace_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_orb_basic",
+      "nameEs": "Orbe de aprendiz",
+      "kind": "weapon",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/weapons/hf_orb_basic.webp",
+      "sha256": "2065cc7608420b3fc8a90882f184b0697313b42a7598d6c35ba6e7f301992844",
+      "intendedRepoFile": "assets/highfly/p22/weapons/hf_orb_basic.webp",
+      "runtimePath": "highfly/user-icons/weapons/hf_orb_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_helmet",
+      "nameEs": "Casco de hierro",
+      "kind": "armor",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_helmet.webp",
+      "sha256": "fe92b2ece8b16d83f5aaeef8c8a178675e3022e71755263981e62ab93c67307b",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_helmet.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_helmet.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_chest",
+      "nameEs": "Pechera de hierro",
+      "kind": "armor",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_chest.webp",
+      "sha256": "3a846029f205844cbb0f10c999244dcaacd4f8c0349ac57876e90e62081688f4",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_chest.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_chest.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_gloves",
+      "nameEs": "Guantes de hierro",
+      "kind": "armor",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_gloves.webp",
+      "sha256": "b81e8dbb711065d5209b8eaafef3cde8e4dba79663c09a1dec41bfe40f8da606",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_gloves.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_gloves.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_shoulders",
+      "nameEs": "Hombreras de hierro",
+      "kind": "armor",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_shoulders.webp",
+      "sha256": "1f76983107fdfd3b30da6ff17b6322a0f5f03cbc5cd90bd376c08e7742451195",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_shoulders.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_shoulders.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_pants",
+      "nameEs": "Pantalones de hierro",
+      "kind": "armor",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_pants.webp",
+      "sha256": "799ab643671e45b0354618847128794a02ecbe272257491af72ba64a566b9939",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_pants.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_pants.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_iron_boots",
+      "nameEs": "Botas de hierro",
+      "kind": "armor",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_iron_boots.webp",
+      "sha256": "8e22a618feb13bc86d806142c985f03e1b0774eccf8de998b8b92918c21c1bf2",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_iron_boots.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_iron_boots.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_copper_ring",
+      "nameEs": "Anillo de cobre",
+      "kind": "accessory",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_copper_ring.webp",
+      "sha256": "808fbf522a5ab8a0b543f7f98caf19a0fc030aead15111672845a2a474a93b0e",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_copper_ring.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_copper_ring.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_silver_necklace",
+      "nameEs": "Collar de plata",
+      "kind": "accessory",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_silver_necklace.webp",
+      "sha256": "b4c30173d77e6a1a4c79efdf8c73d19bdb6ea992c3c31ff69a9cd9f54b8af810",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_silver_necklace.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_silver_necklace.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_amulet_basic",
+      "nameEs": "Amuleto del viajero",
+      "kind": "accessory",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/armor/hf_amulet_basic.webp",
+      "sha256": "d74a884911682f969dace212e9af3431ef8d4d42c7e295108883d1f015229493",
+      "intendedRepoFile": "assets/highfly/p22/armor/hf_amulet_basic.webp",
+      "runtimePath": "highfly/user-icons/armor/hf_amulet_basic.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_ore_copper",
+      "nameEs": "Mineral de cobre",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_ore_copper.webp",
+      "sha256": "3040037e2f08d7a593d3193198177be50b85ce54621412e2dcedf66d46ff9233",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_ore_copper.webp",
+      "runtimePath": "highfly/user-icons/items/hf_ore_copper.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_ore_iron",
+      "nameEs": "Mineral de hierro",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_ore_iron.webp",
+      "sha256": "33df0344e77ab5ea507235c772cbdefd07717066767844ae5381833e1b2e94bc",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_ore_iron.webp",
+      "runtimePath": "highfly/user-icons/items/hf_ore_iron.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_ore_silver",
+      "nameEs": "Mineral de plata",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_ore_silver.webp",
+      "sha256": "7d60b75b665533b51ff57e87d44bb37afc907918ab8e24ff82fa412b535a5c8b",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_ore_silver.webp",
+      "runtimePath": "highfly/user-icons/items/hf_ore_silver.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_ore_gold",
+      "nameEs": "Mineral de oro",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_ore_gold.webp",
+      "sha256": "d4e3ed7ab68087535b58473987b340847fcdc66450cabe2d79b617eca7bdfec4",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_ore_gold.webp",
+      "runtimePath": "highfly/user-icons/items/hf_ore_gold.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_rough_hide",
+      "nameEs": "Cuero en bruto",
+      "kind": "material",
+      "source": "ADAPTED_USER_ORIGINAL",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_rough_hide.webp",
+      "sha256": "ef32fc6386b1ac4e28954f9230c20842d9c78feb3c57477421de41a2bdfa7b94",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_rough_hide.webp",
+      "runtimePath": "highfly/user-icons/items/hf_rough_hide.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_wolf_fang",
+      "nameEs": "Colmillo de lobo",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_wolf_fang.webp",
+      "sha256": "8ab6d25d24694c2ff54959c7c1ad03fa60aa39f30ef493cfd9c37421216e233c",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_wolf_fang.webp",
+      "runtimePath": "highfly/user-icons/items/hf_wolf_fang.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_spider_silk",
+      "nameEs": "Seda de araña",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_spider_silk.webp",
+      "sha256": "6b39b78f50c08f40ca962ece6611ad3f31bd850a658f9fd34209d89262613779",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_spider_silk.webp",
+      "runtimePath": "highfly/user-icons/items/hf_spider_silk.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_bone_fragments",
+      "nameEs": "Fragmentos de hueso",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_bone_fragments.webp",
+      "sha256": "202a3329759cedee5d8365f6d0a06f4ce4897c92a3dfba4b48c9c421549cc744",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_bone_fragments.webp",
+      "runtimePath": "highfly/user-icons/items/hf_bone_fragments.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_homespun_cloth",
+      "nameEs": "Tela rústica",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_homespun_cloth.webp",
+      "sha256": "8d8f059a7425f86c907ae478c85066541002eca9bc9bec1a462e2f3e9791120f",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_homespun_cloth.webp",
+      "runtimePath": "highfly/user-icons/items/hf_homespun_cloth.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_spool_of_thread",
+      "nameEs": "Carrete de hilo",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_spool_of_thread.webp",
+      "sha256": "e166ee365313c9fc95392a6929002a7fe6c5f355bbff5fb951b69b0493dc0ebb",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_spool_of_thread.webp",
+      "runtimePath": "highfly/user-icons/items/hf_spool_of_thread.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    },
+    {
+      "id": "hf_smithing_flux",
+      "nameEs": "Fundente de herrería",
+      "kind": "material",
+      "source": "NEW_ILLUSTRATION",
+      "format": "WebP",
+      "sizePx": [
+        256,
+        256
+      ],
+      "zipEntry": "highfly/user-icons/items/hf_smithing_flux.webp",
+      "sha256": "1c5a2e2a22194225c2ea1ef1b817fa112ebe050289c28b0b01c92c1124681743",
+      "intendedRepoFile": "assets/highfly/p22/items/hf_smithing_flux.webp",
+      "runtimePath": "highfly/user-icons/items/hf_smithing_flux.webp",
+      "status": "ART_CANDIDATE_NOT_ACTIVE",
+      "visualApprovalRequired": true
+    }
+  ]
+}
