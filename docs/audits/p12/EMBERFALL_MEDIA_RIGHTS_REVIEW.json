@@ -1,0 +1,70 @@
+{
+  "schema": "HIGHFLY_P12_EMBERFALL_MEDIA_RIGHTS",
+  "source": "we1jia/emberfall",
+  "sourceSha": "5d199ab4888e428b0dab80528a37ab8ac0107360",
+  "auditedSourceFiles": [
+    "README.en.md",
+    "docs/art-assets.md",
+    "docs/asset-research-v2.md",
+    "src/gear-appearance.js",
+    "public/assets/models-v6/LICENSE-KayKit.txt",
+    "public/assets/vendor/polyhaven/LICENSE-CC0.txt"
+  ],
+  "checks": {
+    "originalMIT": true,
+    "thirdPartyRetainsRights": true,
+    "synthAudioOriginal": true,
+    "kayCC0": true,
+    "polyCC0": true,
+    "kaySourceProvenance": true,
+    "weaponAppearanceProcedural": true
+  },
+  "decisions": [
+    {
+      "category": "original_source_code",
+      "evidence": "LICENSE + README.en.md",
+      "upstream": "MIT",
+      "status": "PERMITTED_IF_LICENSE_NOTICE_PRESERVED",
+      "note": "Review copied source dependencies individually"
+    },
+    {
+      "category": "KayKit models/characters",
+      "evidence": "docs/asset-research-v2.md + bundled LICENSE-KayKit.txt",
+      "upstream": "CC0",
+      "status": "PERMITTED_SOURCE_CANDIDATE",
+      "note": "Verify each model against pinned original KayKit repo; do not substitute private SOURCE assets"
+    },
+    {
+      "category": "Poly Haven textures",
+      "evidence": "docs/asset-research-v2.md + bundled LICENSE-CC0.txt",
+      "upstream": "CC0",
+      "status": "PERMITTED_SOURCE_CANDIDATE",
+      "note": "Prefer direct official source and preserve provenance"
+    },
+    {
+      "category": "project-generated synthesized audio",
+      "evidence": "docs/art-assets.md + tools/generate_audio.py",
+      "upstream": "Original Emberfall content claimed MIT in README",
+      "status": "CODE_AND_GENERATOR_CANDIDATE_REVIEW_FILE_LICENSE",
+      "note": "Original waveform generation described; do not assume all third-party audio is MIT"
+    },
+    {
+      "category": "weapon style geometry",
+      "evidence": "src/gear-appearance.js procedural Three.js and src/content.js weapon names",
+      "upstream": "MIT code mechanics; mixed KayKit base assets",
+      "status": "REUSE_LOGIC_FIRST_MEDIA_BY_EXACT_SOURCE",
+      "note": "No automatic permission inferred for separately authored GLB files"
+    },
+    {
+      "category": "project-specific or third-party art",
+      "evidence": "README.en.md rights carve-out",
+      "upstream": "Varies by file",
+      "status": "BLOCK_UNTIL_PROVEN",
+      "note": "No direct copying of unknown models, logos, sounds or UI paintings"
+    }
+  ],
+  "highflyAppStatus": "NO_ASSETS_IMPORTED_IN_P12",
+  "playerRule": "ONE_UNIVERSAL_HUNTER",
+  "armorVisuals": "DO_NOT_ATTACH_TO_CHARACTER_YET",
+  "gearCreation": "ALWAYS_PLUS_ZERO"
+}
