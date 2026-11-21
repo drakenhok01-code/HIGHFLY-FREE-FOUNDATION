@@ -1,0 +1,1596 @@
+{
+  "schema": "HIGHFLY_P12_HEROIC_RECONCILED_V2",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "tag": "v0.44.7",
+  "method": "Parsed complete multiline literal objects, normalOnlyRow helper calls and the Nythraxis weighted loot expansion across six heroic instance spawn lists",
+  "countEligibleMonsterIds": 26,
+  "countMonsterLootRowsDirect": 128,
+  "countRaidSpreadRows": 58,
+  "sourceDefinitionsMobs": 41,
+  "missingMonsterDefs": [],
+  "unresolvedEligibleSourceExpressions": [],
+  "generatedVariants": 78,
+  "previousLowerBound": 78,
+  "addedAgainstPrevious": [],
+  "previousCandidateMissingNow": [],
+  "sourceLevels": {
+    "22": 47,
+    "25": 1,
+    "27": 30
+  },
+  "variants": [
+    {
+      "baseId": "boneguard_breastplate",
+      "generatedId": "heroic_boneguard_breastplate",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Boneguard Breastplate",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bonewrought_bulwark",
+      "generatedId": "heroic_bonewrought_bulwark",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "offhand",
+      "sourceName": "Bonewrought Bulwark",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bonewrought_greatsword",
+      "generatedId": "heroic_bonewrought_greatsword",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Bonewrought Greatsword",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "boundstone_girdle",
+      "generatedId": "heroic_boundstone_girdle",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "waist",
+      "sourceName": "Boundstone Girdle",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "sanctum_boneguard",
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/items.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "boundstone_helm",
+      "generatedId": "heroic_boundstone_helm",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Boundstone Helm",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "sanctum_boneguard",
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/items.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_cinch",
+      "generatedId": "heroic_bramblehide_cinch",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "waist",
+      "sourceName": "Roots' Bramblehide Cinch",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_crown",
+      "generatedId": "heroic_bramblehide_crown",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Roots' Bramblehide Crown",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_grips",
+      "generatedId": "heroic_bramblehide_grips",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "gloves",
+      "sourceName": "Roots' Bramblehide Grips",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_harness",
+      "generatedId": "heroic_bramblehide_harness",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Roots' Bramblehide Harness",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_legguards",
+      "generatedId": "heroic_bramblehide_legguards",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Roots' Bramblehide Legguards",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_mantle",
+      "generatedId": "heroic_bramblehide_mantle",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Roots' Bramblehide Mantle",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "bramblehide_treads",
+      "generatedId": "heroic_bramblehide_treads",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Roots' Bramblehide Treads",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "courtiers_bonefang",
+      "generatedId": "heroic_courtiers_bonefang",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Courtier's Bonefang",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "crownforged_dreadhelm",
+      "generatedId": "heroic_crownforged_dreadhelm",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Bonewrought Dreadhelm",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "crownforged_warspaulders",
+      "generatedId": "heroic_crownforged_warspaulders",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Bonewrought Warspaulders",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "deathless_heartwood",
+      "generatedId": "heroic_deathless_heartwood",
+      "sourceQuality": "legendary",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Heartwood of the Deathless Crown",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 1,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "deathlord_legguards",
+      "generatedId": "heroic_deathlord_legguards",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Barrowlord Legguards",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "deathlord_warplate",
+      "generatedId": "heroic_deathlord_warplate",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Barrowlord Warplate",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "deathlords_dread_visage",
+      "generatedId": "heroic_deathlords_dread_visage",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Barrowlord Dread Visage",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "direfang_greatblade",
+      "generatedId": "heroic_direfang_greatblade",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Direfang Greatblade",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "direfang_quiver",
+      "generatedId": "heroic_direfang_quiver",
+      "sourceQuality": "epic",
+      "sourceKind": "held_offhand",
+      "sourceSlot": "offhand",
+      "sourceName": "Direfang Quiver",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "drowned_prayer_leggings",
+      "generatedId": "heroic_drowned_prayer_leggings",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Drowned Prayer Leggings",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "vael_the_mistcaller"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "drowned_prayer_sandals",
+      "generatedId": "heroic_drowned_prayer_sandals",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Drowned Prayer Sandals",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "vael_the_mistcaller"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "duskwhisper",
+      "generatedId": "heroic_duskwhisper",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Duskwhisper",
+      "sourceLevel": 25,
+      "sourceLevelReason": "FIVE_MAN_HEROIC_BOSS_APPEND",
+      "sourceRows": 1,
+      "mobs": [
+        "wildheart_beastmaster"
+      ],
+      "instances": [
+        "wildheart_basin"
+      ],
+      "sourceFile": "src/sim/content/wildheart.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "eelscale_leggings",
+      "generatedId": "heroic_eelscale_leggings",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Eelscale Leggings",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "knight_commander_olen"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "eelscale_treads",
+      "generatedId": "heroic_eelscale_treads",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Eelscale Treads",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "vael_the_mistcaller"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "fang_of_korzul",
+      "generatedId": "heroic_fang_of_korzul",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Fang of Korzul",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "fanglords_beastspear",
+      "generatedId": "heroic_fanglords_beastspear",
+      "sourceQuality": "rare",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Fanglord's Beastspear",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "wildheart_beastmaster"
+      ],
+      "instances": [
+        "wildheart_basin"
+      ],
+      "sourceFile": "src/sim/content/wildheart.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravecourt_hewer",
+      "generatedId": "heroic_gravecourt_hewer",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Gravecourt Hewer",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_bone_quiver",
+      "generatedId": "heroic_gravewyrm_bone_quiver",
+      "sourceQuality": "rare",
+      "sourceKind": "held_offhand",
+      "sourceSlot": "offhand",
+      "sourceName": "Gravewyrm Bone Quiver",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_gauntlets",
+      "generatedId": "heroic_gravewyrm_gauntlets",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "gloves",
+      "sourceName": "Gravewyrm Gauntlets",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "sanctum_drakonid",
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/items.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_mantle",
+      "generatedId": "heroic_gravewyrm_mantle",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Gravewyrm Mantle",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "sanctum_drakonid",
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/items.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_sabatons",
+      "generatedId": "heroic_gravewyrm_sabatons",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Gravewyrm Sabatons",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_stalkers_treads",
+      "generatedId": "heroic_gravewyrm_stalkers_treads",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Gravewyrm Stalker's Treads",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "gravewyrm_thornmaul",
+      "generatedId": "heroic_gravewyrm_thornmaul",
+      "sourceQuality": "rare",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Gravewyrm Thornmaul",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "sanctum_drakonid"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "grovewardens_grips",
+      "generatedId": "heroic_grovewardens_grips",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "gloves",
+      "sourceName": "Grovewarden's Grips",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "kingsbane_last_oath",
+      "generatedId": "heroic_kingsbane_last_oath",
+      "sourceQuality": "legendary",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Thronebane, Last Oath of Thornpeak",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 1,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "korgaths_chainwraps",
+      "generatedId": "heroic_korgaths_chainwraps",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Korgath's Chainwraps",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "maul_of_the_scourged_wilds",
+      "generatedId": "heroic_maul_of_the_scourged_wilds",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Maul of the Scourged Wilds",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "moonshroud_breastplate",
+      "generatedId": "heroic_moonshroud_breastplate",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Moonwrack Breastplate",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "ysolei"
+      ],
+      "instances": [
+        "drowned_temple"
+      ],
+      "sourceFile": "src/sim/content/temple.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "moonshroud_robe",
+      "generatedId": "heroic_moonshroud_robe",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Moonwrack Robe",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "ysolei"
+      ],
+      "instances": [
+        "drowned_temple"
+      ],
+      "sourceFile": "src/sim/content/temple.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "moonshroud_tunic",
+      "generatedId": "heroic_moonshroud_tunic",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Moonwrack Tunic",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "ysolei"
+      ],
+      "instances": [
+        "drowned_temple"
+      ],
+      "sourceFile": "src/sim/content/temple.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "necromancers_soulspire_mantle",
+      "generatedId": "heroic_necromancers_soulspire_mantle",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Mournweave Soulspire Mantle",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "necromancers_soulsteps",
+      "generatedId": "heroic_necromancers_soulsteps",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Mournweave Soulsteps",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "necromancers_starshroud",
+      "generatedId": "heroic_necromancers_starshroud",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Mournweave Starshroud",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "nightfangs_greatstaff",
+      "generatedId": "heroic_nightfangs_greatstaff",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Nightfang's Greatstaff",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "nighttalon_crown",
+      "generatedId": "heroic_nighttalon_crown",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Direfang Crown",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "nighttalon_shoulderguards",
+      "generatedId": "heroic_nighttalon_shoulderguards",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Direfang Shoulderguards",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "selthes_seastriders",
+      "generatedId": "heroic_selthes_seastriders",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Selthe's Sea-Striders",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "choirmother_selthe"
+      ],
+      "instances": [
+        "drowned_temple"
+      ],
+      "sourceFile": "src/sim/content/temple.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "shadowmeld_tunic",
+      "generatedId": "heroic_shadowmeld_tunic",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Nightveil Tunic",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "korgath_the_bound",
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "soulflame_cowl",
+      "generatedId": "heroic_soulflame_cowl",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Wraithfire Cowl",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "soulflame_mantle",
+      "generatedId": "heroic_soulflame_mantle",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Wraithfire Mantle",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "staff_of_the_gravewyrm",
+      "generatedId": "heroic_staff_of_the_gravewyrm",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Staff of the Gravewyrm",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "staff_of_velkhar",
+      "generatedId": "heroic_staff_of_velkhar",
+      "sourceQuality": "rare",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Staff of Velkhar",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 2,
+      "mobs": [
+        "korgath_the_bound",
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "stormcallers_crown",
+      "generatedId": "heroic_stormcallers_crown",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Galecall Crown",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "stormcallers_spaulders",
+      "generatedId": "heroic_stormcallers_spaulders",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "shoulder",
+      "sourceName": "Galecall Spaulders",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "stormhymn_chain_grips",
+      "generatedId": "heroic_stormhymn_chain_grips",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "gloves",
+      "sourceName": "Stormhymn Chain Grips",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "stormhymn_chain_treads",
+      "generatedId": "heroic_stormhymn_chain_treads",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Stormhymn Chain Treads",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "thornpeak_moonhide_cowl",
+      "generatedId": "heroic_thornpeak_moonhide_cowl",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "helmet",
+      "sourceName": "Thornpeak Moonhide Cowl",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "thornpeak_wardblade",
+      "generatedId": "heroic_thornpeak_wardblade",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Thornpeak Wardblade",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "tideguard_greaves",
+      "generatedId": "heroic_tideguard_greaves",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Tideguard Greaves",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "knight_commander_olen"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "tideguard_sabatons",
+      "generatedId": "heroic_tideguard_sabatons",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Tideguard Sabatons",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "knight_commander_olen"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "tidescale_vest",
+      "generatedId": "heroic_tidescale_vest",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Tidescale Vest",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "vael_the_mistcaller"
+      ],
+      "instances": [
+        "sunken_bastion"
+      ],
+      "sourceFile": "src/sim/content/zone2.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "verdant_walkers",
+      "generatedId": "heroic_verdant_walkers",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Verdant Walkers",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "votive_ward_of_the_deathless_court",
+      "generatedId": "heroic_votive_ward_of_the_deathless_court",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "offhand",
+      "sourceName": "Votive Ward of the Deathless Court",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wildgrowth_leggings",
+      "generatedId": "heroic_wildgrowth_leggings",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Wildgrowth Leggings",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wildheart_fangknife",
+      "generatedId": "heroic_wildheart_fangknife",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Fangknife of Zulgar",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "wildheart_high_priest"
+      ],
+      "instances": [
+        "wildheart_basin"
+      ],
+      "sourceFile": "src/sim/content/wildheart.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wildheart_hexwood_staff",
+      "generatedId": "heroic_wildheart_hexwood_staff",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Hexwood Staff of the Basin",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "wildheart_high_priest"
+      ],
+      "instances": [
+        "wildheart_basin"
+      ],
+      "sourceFile": "src/sim/content/wildheart.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wildheart_tuskblade",
+      "generatedId": "heroic_wildheart_tuskblade",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Wildheart Tuskblade",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "wildheart_high_priest"
+      ],
+      "instances": [
+        "wildheart_basin"
+      ],
+      "sourceFile": "src/sim/content/wildheart.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wraithfire_orb",
+      "generatedId": "heroic_wraithfire_orb",
+      "sourceQuality": "epic",
+      "sourceKind": "held_offhand",
+      "sourceSlot": "offhand",
+      "sourceName": "Wraithfire Orb",
+      "sourceLevel": 27,
+      "sourceLevelReason": "RAID_TIER",
+      "sourceRows": 2,
+      "mobs": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instances": [
+        "nythraxis_boss_arena"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmcult_grand_robe",
+      "generatedId": "heroic_wyrmcult_grand_robe",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Broodsworn Grand Robe",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmcult_soulsteps",
+      "generatedId": "heroic_wyrmcult_soulsteps",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Broodsworn Soulsteps",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmfang_greatblade",
+      "generatedId": "heroic_wyrmfang_greatblade",
+      "sourceQuality": "epic",
+      "sourceKind": "weapon",
+      "sourceSlot": "mainhand",
+      "sourceName": "Wyrmfang Greatblade",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmshadow_harness",
+      "generatedId": "heroic_wyrmshadow_harness",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "chest",
+      "sourceName": "Nightfang Harness",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmshadow_legguards",
+      "generatedId": "heroic_wyrmshadow_legguards",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Nightfang Legguards",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "grand_necromancer_velkhar"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmshadow_talongrips",
+      "generatedId": "heroic_wyrmshadow_talongrips",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "gloves",
+      "sourceName": "Nightfang Talongrips",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korzul_the_gravewyrm"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "wyrmshadow_treads",
+      "generatedId": "heroic_wyrmshadow_treads",
+      "sourceQuality": "epic",
+      "sourceKind": "armor",
+      "sourceSlot": "feet",
+      "sourceName": "Nightfang Treads",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "korgath_the_bound"
+      ],
+      "instances": [
+        "gravewyrm_sanctum"
+      ],
+      "sourceFile": "src/sim/content/zone3.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    },
+    {
+      "baseId": "ysols_pearl_greaves",
+      "generatedId": "heroic_ysols_pearl_greaves",
+      "sourceQuality": "rare",
+      "sourceKind": "armor",
+      "sourceSlot": "legs",
+      "sourceName": "Ysolei's Pearl Greaves",
+      "sourceLevel": 22,
+      "sourceLevelReason": "FIVE_MAN_BASE_HEROIC",
+      "sourceRows": 1,
+      "mobs": [
+        "ysolei"
+      ],
+      "instances": [
+        "drowned_temple"
+      ],
+      "sourceFile": "src/sim/content/temple.ts",
+      "rule": "UPSTREAM_EQUIPPABLE_RARE_EPIC_LEGENDARY_WITH_HEROIC_INSTANCE_LOOT",
+      "enhancementWhenAdaptedToHIGHFLY": 0
+    }
+  ],
+  "notes": [
+    "Includes normalOnlyRow(...) entries because the generator builds from template.loot, regardless of difficulty flags.",
+    "Includes two Nythraxis weighted groups and both reserved legendary base items.",
+    "The runtime `heroicLootItemId` swaps only when generated item level increases; buildHeroicVariants candidate count is not necessarily the number of upgraded drops awarded per run.",
+    "Source heroic variant quality/tier is NOT HIGHFLY upgrade +1...+9. Always born +0 in HIGHFLY.",
+    "No actual TS module execution; derived from pinned source under static code constraints."
+  ]
+}
