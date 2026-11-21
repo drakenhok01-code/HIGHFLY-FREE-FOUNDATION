@@ -10,7 +10,7 @@ permissions:
   id-token: write
 concurrency:
   group: highfly-gitpages-p42-isolated-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
