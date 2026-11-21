@@ -1,0 +1,375 @@
+{
+  "schema": "HIGHFLY_P11_VERTICAL_SLICE",
+  "stage": "P4_P5_PLAN_ONLY",
+  "purpose": "Build first end-to-end item cycle without modifying approved app",
+  "character": "ONE_PERSISTENT_UNIVERSAL_HUNTER",
+  "visualRule": {
+    "weapon3d": true,
+    "armor3d": false,
+    "armorAttributes": true
+  },
+  "acquisitionEntries": [
+    {
+      "templateId": "hf_wolf_fang",
+      "sourceItemId": "wolf_fang",
+      "sourceMobId": "forest_wolf",
+      "upstreamChanceReference": 0.45,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "monster_drop",
+      "phase": "P5",
+      "sourceEvidence": "src/sim/content/zone1.ts",
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_bone_fragments",
+      "sourceItemId": "bone_fragments",
+      "sourceMobId": "restless_bones",
+      "upstreamChanceReference": 0.6,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "monster_drop",
+      "phase": "P5",
+      "sourceEvidence": "src/sim/content/zone1.ts",
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_ore_copper",
+      "sourceItemId": "copper_ore",
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "ore_vein_gathering",
+      "phase": "P4",
+      "sourceEvidence": "WOC_ITEM_DEFINITION_ONLY",
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_ore_iron",
+      "sourceItemId": "iron_ore",
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "ore_vein_gathering",
+      "phase": "P4",
+      "sourceEvidence": "WOC_ITEM_DEFINITION_ONLY",
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_ore_silver",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "ore_vein_gathering_original_highfly",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_ore_gold",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "ore_vein_gathering_original_highfly",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "ingot_copper",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "smelting",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "ingot_iron",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "smelting",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "ingot_silver",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "smelting",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "ingot_gold",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "smelting",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": null
+    },
+    {
+      "templateId": "hf_iron_chest",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_iron_helmet",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_iron_gloves",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_iron_shoulders",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_iron_pants",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_iron_boots",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_copper_ring",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    },
+    {
+      "templateId": "hf_silver_necklace",
+      "sourceItemId": null,
+      "sourceMobId": null,
+      "upstreamChanceReference": null,
+      "plannedChanceHIGHFLY": null,
+      "acquisition": "crafting_or_monster_drop_TBD",
+      "phase": "P4",
+      "sourceEvidence": null,
+      "implementationStatus": "NOT_INTEGRATED",
+      "onEquipmentSpawnPlus": 0
+    }
+  ],
+  "logicStages": [
+    {
+      "step": 1,
+      "id": "source",
+      "action": "Wolf and skeleton drop original HIGHFLY items; copper/iron ore from veins",
+      "status": "MISSING_RUNTIME"
+    },
+    {
+      "step": 2,
+      "id": "bag",
+      "action": "Move real obtained objects to one persistent inventory, no double-grants",
+      "status": "MISSING_RUNTIME"
+    },
+    {
+      "step": 3,
+      "id": "smelt",
+      "action": "Refine each specific ore into matching ingot; existing generic ore recipes to be migrated",
+      "status": "MISSING_RUNTIME"
+    },
+    {
+      "step": 4,
+      "id": "forge",
+      "action": "Craft an iron chestplate and other gear using validated materials/skill",
+      "status": "MISSING_RUNTIME"
+    },
+    {
+      "step": 5,
+      "id": "quality",
+      "action": "Determine rarity per item instance, spawn every item at +0",
+      "status": "SPEC_APPROVED"
+    },
+    {
+      "step": 6,
+      "id": "equip",
+      "action": "Equip chestplate; apply stats to actual combat and attributes panel; no visual mesh change",
+      "status": "MISSING_RUNTIME"
+    },
+    {
+      "step": 7,
+      "id": "upgrade",
+      "action": "Explicit player enhancement +1...+9, full cost and ownership checks",
+      "status": "MISSING_RUNTIME_NEW_GEAR"
+    },
+    {
+      "step": 8,
+      "id": "save",
+      "action": "Persist unique instance ID, rarity and enhancement across reload",
+      "status": "MISSING_RUNTIME_NEW_GEAR"
+    },
+    {
+      "step": 9,
+      "id": "trade",
+      "action": "Later player marketplace transfers same instance with its upgrade and rarity",
+      "status": "FUTURE_MARKETPLACE"
+    }
+  ],
+  "sourceRecipesExamples": [
+    {
+      "upstreamId": "recipe_eastbrook_arming_sword",
+      "output": "eastbrook_arming_sword",
+      "materials": [
+        {
+          "id": "wolf_fang",
+          "count": 2
+        },
+        {
+          "id": "bone_fragments",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 6
+        }
+      ],
+      "profession": "weaponcrafting",
+      "skillReq": 0,
+      "relation": "UPSTREAM_RECIPE_INSPIRATION_ONLY_NOT_HIGHFLY_RECIPE"
+    },
+    {
+      "upstreamId": "recipe_eastbrook_chain_vest",
+      "output": "eastbrook_chain_vest",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 9
+        }
+      ],
+      "profession": "armorcrafting",
+      "skillReq": 0,
+      "relation": "UPSTREAM_RECIPE_INSPIRATION_ONLY_NOT_HIGHFLY_RECIPE"
+    },
+    {
+      "upstreamId": "recipe_tanned_leather_jerkin",
+      "output": "tanned_leather_jerkin",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 5
+        }
+      ],
+      "profession": "leatherworking",
+      "skillReq": 0,
+      "relation": "UPSTREAM_RECIPE_INSPIRATION_ONLY_NOT_HIGHFLY_RECIPE"
+    },
+    {
+      "upstreamId": "recipe_minor_healing_potion",
+      "output": "minor_healing_potion",
+      "materials": [
+        {
+          "id": "linen_scrap",
+          "count": 1
+        },
+        {
+          "id": "spider_leg",
+          "count": 1
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        }
+      ],
+      "profession": "alchemy",
+      "skillReq": 0,
+      "relation": "UPSTREAM_RECIPE_INSPIRATION_ONLY_NOT_HIGHFLY_RECIPE"
+    }
+  ],
+  "reviewTasks": [
+    "Keep current 60 user icon files and URL bindings; assign unapproved icon slots only after artwork verified",
+    "Do NOT copy source drop rates into HIGHFLY: upstreamChanceReference is documentary, plannedChanceHIGHFLY null",
+    "Don't use WOC source classes. All gear may be used by universal hunter subject to level and weapon compatibility only",
+    "Separate copper/iron/silver/gold ores before replacing legacy generic 'ore' and 'ingot' recipes",
+    "Do not import offhand armor meshes or preview unverified artwork as active equipment",
+    "A rare or legendary world drop always starts +0, and cannot be sold as +3 unless some player upgraded it"
+  ]
+}
