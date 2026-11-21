@@ -195,7 +195,8 @@ export function attachHighflyTouch(input){
 #hf-touch .full{border-radius:50%}
 #hf-touch .use{display:none!important}
 #hf-touch button[data-a^="skill"]{border-radius:50%;opacity:.7}
-#hf-touch .hf-skill-svg{width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 0 5px #c17cff)}
+#hf-touch .hf-skill-svg{width:100%;height:100%;display:block;pointer-events:none;border-radius:50%;clip-path:circle(45% at 50% 50%);object-fit:cover;filter:drop-shadow(0 0 3px #c17cff);transform:scale(1.11);transform-origin:center}
+#hf-touch button[data-a^="skill"]{border:2px solid #cdb0f9!important;border-radius:50%!important;background:radial-gradient(circle at 40% 30%,#3d255b,#0a0c1c)!important;box-shadow:inset 0 0 6px #c59cfb66,0 0 5px #7c55aa63!important}
 #hf-touch button[data-a^="skill"]{padding:3px;overflow:hidden}
 #hf-touch button[data-a^="skill"][data-locked="1"] .hf-skill-svg{filter:grayscale(.8);opacity:.5}
 #hf-touch button[data-locked="1"]{opacity:.7;filter:grayscale(.35);color:#b9afc7}
