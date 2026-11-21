@@ -84,111 +84,8 @@
   "mobDefinitionsInspected": 41,
   "missingMobDefinitions": [],
   "eligibleDropLiteralRows": 128,
-  "unparsedLootInEligibleMobs": [
-    {
-      "mobId": "nythraxis_scourge_of_thornpeak",
-      "source": "src/sim/content/dungeons.ts",
-      "registry": "DUNGEON_MOBS",
-      "sourceName": "Nythraxis, Scourge of Thornpeak",
-      "lootExpr": "[",
-      "drops": [
-        {
-          "id": "pattern_duskforged_warblade",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_ridgebreaker",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_duskforged_bulwark",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_wyrmfall_pendant",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_warhewn_signet",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_prismglass_loop",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_gyrelens_array",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_masters_field_forge",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_makers_charm",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_voidbound_grimoire",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_patterns",
-          "normalOnly": false
-        },
-        {
-          "id": "pattern_harvest_feast",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_farm",
-          "normalOnly": false
-        },
-        {
-          "id": "gilded_sunmelon_seed",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_farm",
-          "normalOnly": false
-        },
-        {
-          "id": "evergarden_greens_seed",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_farm",
-          "normalOnly": false
-        },
-        {
-          "id": "gilded_yam_seed",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_farm",
-          "normalOnly": false
-        },
-        {
-          "id": "evergarden_pumpkin_seed",
-          "chance": "0.04",
-          "rollGroup": "nythraxis_farm",
-          "normalOnly": false
-        }
-      ],
-      "unparsed": [
-        "LOOT_ARRAY_WITH_FUNCTION_OR_SPREAD"
-      ]
-    }
-  ],
-  "generatedHeroicCandidateCount": 48,
+  "unparsedLootInEligibleMobs": [],
+  "generatedHeroicCandidateCount": 78,
   "generatedHeroicCandidates": [
     {
       "baseId": "boneguard_breastplate",
@@ -207,7 +104,48 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "bonewrought_bulwark",
+      "generatedId": "heroic_bonewrought_bulwark",
+      "name": null,
+      "quality": "epic",
+      "slot": "offhand",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bonewrought_greatsword",
+      "generatedId": "heroic_bonewrought_greatsword",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "boundstone_girdle",
@@ -227,7 +165,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "boundstone_helm",
@@ -247,7 +186,228 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "bramblehide_cinch",
+      "generatedId": "heroic_bramblehide_cinch",
+      "name": null,
+      "quality": "epic",
+      "slot": "waist",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_crown",
+      "generatedId": "heroic_bramblehide_crown",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_grips",
+      "generatedId": "heroic_bramblehide_grips",
+      "name": null,
+      "quality": "epic",
+      "slot": "gloves",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_harness",
+      "generatedId": "heroic_bramblehide_harness",
+      "name": null,
+      "quality": "epic",
+      "slot": "chest",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_legguards",
+      "generatedId": "heroic_bramblehide_legguards",
+      "name": null,
+      "quality": "epic",
+      "slot": "legs",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_mantle",
+      "generatedId": "heroic_bramblehide_mantle",
+      "name": null,
+      "quality": "epic",
+      "slot": "shoulder",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "bramblehide_treads",
+      "generatedId": "heroic_bramblehide_treads",
+      "name": null,
+      "quality": "epic",
+      "slot": "feet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "courtiers_bonefang",
+      "generatedId": "heroic_courtiers_bonefang",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "crownforged_dreadhelm",
+      "generatedId": "heroic_crownforged_dreadhelm",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "crownforged_warspaulders",
+      "generatedId": "heroic_crownforged_warspaulders",
+      "name": null,
+      "quality": "epic",
+      "slot": "shoulder",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "deathless_heartwood",
+      "generatedId": "heroic_deathless_heartwood",
+      "name": null,
+      "quality": "legendary",
+      "slot": "SOURCE_CONFIRMED",
+      "kind": "SOURCE_CONFIRMED",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "deathlord_legguards",
@@ -266,7 +426,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "deathlord_warplate",
@@ -285,7 +446,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "deathlords_dread_visage",
@@ -304,7 +466,48 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "direfang_greatblade",
+      "generatedId": "heroic_direfang_greatblade",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "direfang_quiver",
+      "generatedId": "heroic_direfang_quiver",
+      "name": null,
+      "quality": "epic",
+      "slot": "offhand",
+      "kind": "held_offhand",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "drowned_prayer_leggings",
@@ -323,7 +526,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "drowned_prayer_sandals",
@@ -342,7 +546,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "duskwhisper",
@@ -352,7 +557,7 @@
       "slot": "mainhand",
       "kind": "weapon",
       "sourceFile": "src/sim/content/wildheart.ts",
-      "sourceLevel": 22,
+      "sourceLevel": 25,
       "mobIds": [
         "wildheart_beastmaster"
       ],
@@ -361,7 +566,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BOSS"
     },
     {
       "baseId": "eelscale_leggings",
@@ -380,7 +586,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "eelscale_treads",
@@ -399,7 +606,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "fang_of_korzul",
@@ -418,7 +626,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "fanglords_beastspear",
@@ -437,7 +646,28 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "gravecourt_hewer",
+      "generatedId": "heroic_gravecourt_hewer",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "gravewyrm_bone_quiver",
@@ -456,7 +686,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "gravewyrm_gauntlets",
@@ -476,7 +707,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "gravewyrm_mantle",
@@ -496,7 +728,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "gravewyrm_sabatons",
@@ -515,7 +748,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "gravewyrm_stalkers_treads",
@@ -534,7 +768,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "gravewyrm_thornmaul",
@@ -553,7 +788,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "grovewardens_grips",
@@ -572,7 +808,28 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "kingsbane_last_oath",
+      "generatedId": "heroic_kingsbane_last_oath",
+      "name": null,
+      "quality": "legendary",
+      "slot": "SOURCE_CONFIRMED",
+      "kind": "SOURCE_CONFIRMED",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "korgaths_chainwraps",
@@ -591,7 +848,28 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "maul_of_the_scourged_wilds",
+      "generatedId": "heroic_maul_of_the_scourged_wilds",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "moonshroud_breastplate",
@@ -610,7 +888,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "moonshroud_robe",
@@ -629,7 +908,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "moonshroud_tunic",
@@ -648,7 +928,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "necromancers_soulspire_mantle",
@@ -667,7 +948,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "necromancers_soulsteps",
@@ -686,7 +968,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "necromancers_starshroud",
@@ -705,7 +988,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "nightfangs_greatstaff",
@@ -724,7 +1008,48 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "nighttalon_crown",
+      "generatedId": "heroic_nighttalon_crown",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "nighttalon_shoulderguards",
+      "generatedId": "heroic_nighttalon_shoulderguards",
+      "name": null,
+      "quality": "epic",
+      "slot": "shoulder",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "selthes_seastriders",
@@ -743,7 +1068,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "shadowmeld_tunic",
@@ -763,7 +1089,48 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "soulflame_cowl",
+      "generatedId": "heroic_soulflame_cowl",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "soulflame_mantle",
+      "generatedId": "heroic_soulflame_mantle",
+      "name": null,
+      "quality": "epic",
+      "slot": "shoulder",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "staff_of_the_gravewyrm",
@@ -782,7 +1149,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "staff_of_velkhar",
@@ -802,7 +1170,128 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "stormcallers_crown",
+      "generatedId": "heroic_stormcallers_crown",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "stormcallers_spaulders",
+      "generatedId": "heroic_stormcallers_spaulders",
+      "name": null,
+      "quality": "epic",
+      "slot": "shoulder",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "stormhymn_chain_grips",
+      "generatedId": "heroic_stormhymn_chain_grips",
+      "name": null,
+      "quality": "epic",
+      "slot": "gloves",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "stormhymn_chain_treads",
+      "generatedId": "heroic_stormhymn_chain_treads",
+      "name": null,
+      "quality": "epic",
+      "slot": "feet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "thornpeak_moonhide_cowl",
+      "generatedId": "heroic_thornpeak_moonhide_cowl",
+      "name": null,
+      "quality": "epic",
+      "slot": "helmet",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
+    },
+    {
+      "baseId": "thornpeak_wardblade",
+      "generatedId": "heroic_thornpeak_wardblade",
+      "name": null,
+      "quality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "tideguard_greaves",
@@ -821,7 +1310,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "tideguard_sabatons",
@@ -840,7 +1330,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "tidescale_vest",
@@ -859,7 +1350,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "verdant_walkers",
@@ -878,7 +1370,28 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "votive_ward_of_the_deathless_court",
+      "generatedId": "heroic_votive_ward_of_the_deathless_court",
+      "name": null,
+      "quality": "epic",
+      "slot": "offhand",
+      "kind": "armor",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "wildgrowth_leggings",
@@ -897,7 +1410,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wildheart_fangknife",
@@ -916,7 +1430,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wildheart_hexwood_staff",
@@ -935,7 +1450,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wildheart_tuskblade",
@@ -954,7 +1470,28 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
+    },
+    {
+      "baseId": "wraithfire_orb",
+      "generatedId": "heroic_wraithfire_orb",
+      "name": null,
+      "quality": "epic",
+      "slot": "offhand",
+      "kind": "held_offhand",
+      "sourceFile": "src/sim/content/nythraxis_loot.ts",
+      "sourceLevel": 27,
+      "sourceTier": "RAID_HEROIC_ILVL_BUDGET",
+      "mobIds": [
+        "nythraxis_scourge_of_thornpeak"
+      ],
+      "instanceIds": [
+        "nythraxis_boss_arena"
+      ],
+      "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
+      "birthPlusHIGHFLY": 0,
+      "status": "STATIC_RECONSTRUCTION_FROM_WEIGHTED_RAID_LOOT"
     },
     {
       "baseId": "wyrmcult_grand_robe",
@@ -973,7 +1510,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmcult_soulsteps",
@@ -992,7 +1530,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmfang_greatblade",
@@ -1011,7 +1550,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmshadow_harness",
@@ -1030,7 +1570,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmshadow_legguards",
@@ -1049,7 +1590,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmshadow_talongrips",
@@ -1068,7 +1610,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "wyrmshadow_treads",
@@ -1087,7 +1630,8 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     },
     {
       "baseId": "ysols_pearl_greaves",
@@ -1106,14 +1650,30 @@
       ],
       "computedStatBudget": "REQUIRES_UPSTREAM_RUNTIME_VERIFICATION",
       "birthPlusHIGHFLY": 0,
-      "status": "CANDIDATE_STATIC_RECONSTRUCTION"
+      "status": "CANDIDATE_STATIC_RECONSTRUCTION",
+      "sourceTier": "FIVE_MAN_HEROIC_BASE"
     }
   ],
   "notes": [
     "The actual runtime generator filters quality and equippable kind, produces 'heroic_'+id, adjusts stats/rating with item_budget; the data here does not execute TypeScript/runtime.",
-    "Heroic source level for some five-man boss variants may be 25 instead of 22; detect via heroic boss append references before treating level as final.",
-    "If eligible mobs have dynamic loot expressions, generated candidate count is a lower bound.",
     "ClaudeCraft heroic quality is NOT HIGHFLY enhancement. Any adaptation creates plus 0 gear regardless quality.",
-    "No existing HIGHFLY code or asset has been modified."
-  ]
+    "No existing HIGHFLY code or asset has been modified.",
+    "Nythraxis 28 weighted epic + 2 reserved legendary base IDs were previously hidden in `...NYTHRAXIS_EQUIPMENT_LOOT`; they are now reconciled and inserted.",
+    "Five-man source 25 is used if heroic boss table explicitly references generated variant; raid source 27 takes precedence."
+  ],
+  "dynamicSpreadResolved": {
+    "source": "src/sim/content/nythraxis_loot.ts",
+    "sourceEpicIds": 28,
+    "sourceLegendaryIds": 2,
+    "addedGeneratedVariants": 30,
+    "sourceRowsTwoLootGroups": 60,
+    "normalOnlyReplacedByHeroicBossExtra": true
+  },
+  "eligibleDropRowsFromNythraxisSpread": 60,
+  "generatedCountsBySourceLevel": {
+    "22": 47,
+    "25": 1,
+    "27": 30
+  },
+  "authoredVsGeneratedIdOverlaps": []
 }
