@@ -17,6 +17,8 @@ const USER_ICONS=Object.freeze({
  item_training_sword:'weapons/sword',
  item_training_shield:'armor/shield',
  item_training_greatsword:'weapons/greatsword',
+ item_ingot_copper:'items/ingot_copper',item_ingot_iron:'items/ingot_iron',item_ingot_silver:'items/ingot_silver',item_ingot_gold:'items/ingot_gold',
+ item_upgrade_stone:'items/ore',item_ascension_core:'items/ore',
  ...Object.fromEntries('attack dash roll heavy pulse heal'.split(' ').map(x=>['skill_'+x,'skills/'+x])),
  ...Object.fromEntries('recoleccion mineria tala pesca cocina alquimia fundicion forja'.split(' ').map(x=>['profession_'+x,'professions/'+x])),
  ...Object.fromEntries('personaje atributos bolsa habilidades oficios forja misiones mapa opciones'.split(' ').map(x=>['nav_'+x,'navigation/'+x])),

@@ -3,6 +3,7 @@
  */
 import {ITEM_DEFS,RECIPES,canCraft,skillReady} from './rpg-core.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS} from './rpg-equipment.mjs';
+import {RARITIES,rarityIndex,gearTraitAt} from './rpg-itemization.mjs';
 
 const findSlot=id=>EQUIP_SLOTS.find(s=>s.id===id);
 export function describeSystemIntent(type,payload={},bag={},professionInventory={},player=null){
@@ -14,12 +15,36 @@ export function describeSystemIntent(type,payload={},bag={},professionInventory=
   if(!def||!item||(bag.items?.[itemId]??0)<1)
    return {ok:false,reason:'Ese equipo ya no está disponible en tu Bolsa'};
   if(type==='equip-choose')
-   return {ok:true,type,itemId,title:'ELEGIR RANURA',description:'¿Dónde querés equipar '+def.name+'?',icon:def.icon,
+   return {ok:true,type,itemId,variantIndex:payload.variantIndex??0,title:'ELEGIR RANURA',description:'¿Dónde querés equipar '+def.name+'?',icon:def.icon,
     slots:def.slots.map(id=>({id,label:findSlot(id)?.label??id}))};
   if(!def.slots.includes(slotId)||!findSlot(slotId))return {ok:false,reason:'Ranura incompatible con ese equipo'};
-  return {ok:true,type,itemId,slotId,title:'¿EQUIPAR OBJETO?',description:def.name+' se equipará en '+findSlot(slotId).label+
+  return {ok:true,type,itemId,slotId,variantIndex:payload.variantIndex??0,title:'¿EQUIPAR OBJETO?',description:def.name+' se equipará en '+findSlot(slotId).label+
    (bag.equipped?.[slotId]?' y reemplazará el objeto actual.':'.'),
    icon:def.icon,verb:'EQUIPAR',details:[{label:'Destino',value:findSlot(slotId).label}]};
+ }
+ if(type==='gear-upgrade'){
+  const {place,id,index=0,kind='upgrade'}=payload;
+  if(!['bag','equipped'].includes(place))return {ok:false,reason:'Origen de equipo inválido'};
+  const trait=gearTraitAt(bag,place,id,index);
+  if(!trait)return {ok:false,reason:'No hay un equipo válido seleccionado'};
+  if(kind==='upgrade'){
+   if(trait.plus>=9)return {ok:false,reason:'El equipo ya está en +9'};
+   const count=1+Math.floor(trait.plus/3);
+   if((bag.items?.upgrade_stone??0)<count)return {ok:false,reason:'Necesitás '+count+' Piedras de mejora'};
+   return {ok:true,type,place,id,index,kind,title:'MEJORA DE EQUIPO',verb:'MEJORAR',
+    description:'¿Querés subir este equipo a +'+(trait.plus+1)+'? Éxito garantizado.',
+    details:[{label:'Calidad',value:trait.rarity},{label:'Costo',value:count+' Piedras de mejora'}],icon:'ore'};
+  }
+  if(kind==='ascend'){
+   const next=rarityIndex(trait.rarity)+1;
+   if(trait.plus<9)return {ok:false,reason:'Se necesita +9 para ascender'};
+   if(next>=RARITIES.length)return {ok:false,reason:'El equipo ya es Mítico'};
+   if((bag.items?.ascension_core??0)<1)return {ok:false,reason:'Necesitás un Núcleo de Ascensión'};
+   return {ok:true,type,place,id,index,kind,title:'ASCENSIÓN DE CALIDAD',verb:'ASCENDER',
+    description:'¿Ascender a '+RARITIES[next]+'? La mejora volverá a +0.',
+    details:[{label:'Calidad nueva',value:RARITIES[next]},{label:'Costo',value:'1 Núcleo de Ascensión'}],icon:'ore'};
+  }
+  return {ok:false,reason:'Mejora desconocida'};
  }
  if(type==='unequip'){
   if(!findSlot(slotId)||!EQUIP_ITEM_DEFS[bag.equipped?.[slotId]])
