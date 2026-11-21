@@ -36,8 +36,8 @@ test('P4.1: mine -> copper ingot, spending only actual minerals',()=>{
  const loot=grantP41TestLoot(bag,prof,'veta');
  assert.equal(loot.ok,true);
  assert.equal(ownedMaterialCount('ore_copper',prof.inventory,bag),5);
- assert.equal(canCraft('ingot_copper',prof.inventory,bag).ok,true);
- const crafted=craftPotion('ingot_copper',prof,bag);
+ assert.equal(canCraft('refine_copper',prof.inventory,bag).ok,true);
+ const crafted=craftPotion('refine_copper',prof,bag);
  assert.equal(crafted.ok,true);
  assert.equal(bag.items.ingot_copper,1);
  assert.equal(prof.inventory.ore_copper,3);
@@ -47,7 +47,7 @@ test('P4.1: mixed-source crafting spends profession stock then bag stock without
  const {bag,prof}=fixture();
  prof.inventory.ore_copper=1;bag.items.ore_copper=1;
  assert.equal(ownedMaterialCount('ore_copper',prof.inventory,bag),2);
- const r=craftPotion('ingot_copper',prof,bag);
+ const r=craftPotion('refine_copper',prof,bag);
  assert.equal(r.ok,true);
  assert.equal(prof.inventory.ore_copper,0);
  assert.equal(bag.items.ore_copper,0);
