@@ -73,3 +73,15 @@ Se agregó [el informe P1.1 completo](../p11/README.md), con catálogo prioritar
 **Decisión de gameplay:** TODO equipo se crea con `plus:0` aunque su rareza sea Legendaria o Mítica. Sólo la mejora explícita de un jugador genera `+1` a `+9`. El comercio debe transferir el MISMO objeto y su mejora. Hay UN único personaje universal. Armadura y joyas suman atributos y ocupan ranuras, pero no cambian el modelo 3D; solo las armas pueden actualizar la apariencia mediante adapter verificado.
 
 **No incorporado todavía al código jugable:** los 28 ítems candidatos, el comercio entre jugadores, el loot P1.1 y las mejoras de UI. Se completó documentación y comprobación estática; los tests de juego permanecen pendientes. P1 global sigue con variantes heroicas/dinámicas y licencias multimedia por verificar.
+
+## P1.2 — reconcilicación de generadores, loot heroico y licencias
+
+**Actualización del censo (21/11/2026):** el dato P1 inicial de **1.488 objetos** es un **subconjunto**, no el total de objetos upstream. P1.2 amplió la cobertura a **1.626 IDs fuente** distintos: +16 trinkets creados por funciones, +33 armaduras de colección Crucible, +11 manuales Crucible y +78 variantes heroicas calculadas.
+
+Se reunieron **916 filas de evidencia de loot**: 587 anteriores, 76 recuperadas (inline y normal-only), 82 funciones/arrays extendidos y 171 filas de 14 tablas adicionales de jefes heroicos. El conteo no equivale a ítems ya integrados ni a drops de todos los sistemas del mundo. Los 175 patrones de recetas de un módulo tienen ahora **33 recetas generadas adicionales confirmadas**, sin alegar que la suma sea el total completo de todas las recetas upstream.
+
+Se inspeccionó directamente `CREDITS.md` de ClaudeCraft v0.44.7: **255 grupos** multimedia clasificados, de los cuales **36** están etiquetados CC0/"Yes", **137** "With the project only", **69** requieren permiso, **9** no comerciales, y el resto llevan otras condiciones. No se importó ningún archivo multimedia; se prefieren las fuentes oficiales CC0 y se descarta copiar imágenes de origen dudoso.
+
+**Carpeta de entregables y criterios técnicos:** [P1.2 — Informe completo](../p12/README.md). Todos los documentos son de auditoría, no código jugable.
+
+**Reglas HIGHFLY invariables:** un personaje universal; armas visibles sólo con modelo aprobado; armaduras y joyas únicamente en inventario/ranuras/atributos; **cualquier equipamiento que nazca de loot, fabricación, tienda o recompensa nace +0**, aun siendo Legendario o Mítico. El comercio futuro conserva el objeto y su mejora hecha por jugadores.
