@@ -13,9 +13,9 @@ import './phoenix-brand.css';
 import './phoenix-v36-polish.css';
 import './premium-p41.css';
 import './premium-p42.css';
+import './premium-p43.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
-import {p42ItemArt} from './p42-item-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
 import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
@@ -40,14 +40,13 @@ const pct=(a,b)=>b>0?Math.min(100,Math.max(0,100*a/b)):0;
 const slot=(meta,equipped,selected=false,gearTraits=null)=>{
  const id=equipped?.[meta.id],item=id?ITEM_DEFS[id]:null,trait=gearTraits?.equipped?.[meta.id];
  return '<button type="button" data-hf-equip-slot="'+meta.id+'" data-hf-rarity="'+safe(trait?.rarity??'')+'" class="hf-rpg-equip-slot '+(id?'is-active':'is-empty')+(selected?' is-selected':'')+'" aria-label="'+safe(meta.label)+' '+safe(item?.name??'vacío')+'">'+
- '<span class="hf-rpg-slot-art">'+art(id?'item_'+id:'slot_'+meta.id)+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?traitLabel(item.name,trait):'Vacío')+'</b></span>'+
+ '<span class="hf-rpg-slot-art">'+art(id?'item_'+id:'slot_'+meta.id,false,trait?.rarity??item?.rarity??'Común')+'</span><span><small>'+safe(meta.label)+'</small><b>'+safe(item?traitLabel(item.name,trait):'Vacío')+'</b></span>'+
  '<span class="hf-rpg-equip-more">›</span></button>';
 };
 const menuLink=(tab,icon,label,selected=false)=>'<button type="button" class="hf-rpg-side-link '+(selected?'is-selected':'')+'" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
-function art(id='stone',large=false){
- const renewed=p42ItemArt(String(id).replace(/^item_/,''),large);if(renewed)return renewed;
- const premium=premiumArt(id,large);if(premium)return premium;
+function art(id='stone',large=false,rarity='Común'){
+ const premium=premiumArt(id,large,rarity);if(premium)return premium;
  // Premium originals from approved asset board; vector fallback for unillustrated assets.
  let interior='';
  if(id==='health'||id==='mana'){
@@ -94,7 +93,7 @@ function art(id='stone',large=false){
 }
 function tile(id,count,selected,trait=null){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon)+'<b>x'+numeric(count)+'</b></button>';
+ return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+'<b>x'+numeric(count)+'</b></button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -213,8 +212,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
    '</div>'+
    '<div class="hf-rpg-weapon-tag" aria-label="Girar vista del personaje">'+
-   '<span class="hf-rpg-turn-buttons">'+button('↶','data-hf-action="turn:left" aria-label="Girar personaje a la izquierda"')+
-   button('↷','data-hf-action="turn:right" aria-label="Girar personaje a la derecha"')+'</span></div>',
+   '<span class="hf-p43-drag-hint">↔ DESLIZÁ SOBRE EL PERSONAJE PARA GIRAR</span></div>',
    'hf-rpg-hero-panel');
  };
  function character(){
@@ -284,7 +282,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
-    (chosen?'<div class="hf-rpg-detail-art" data-hf-rarity="'+safe(trait?.rarity??chosen.rarity)+'">'+art('item_'+chosen.id,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
+    (chosen?'<div class="hf-rpg-detail-art" data-hf-rarity="'+safe(trait?.rarity??chosen.rarity)+'">'+art('item_'+chosen.id,true,trait?.rarity??chosen.rarity)+'</div><h3>'+safe(chosen.name)+'</h3>'+
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
@@ -338,7 +336,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   ];
   const profession=prof(),selected=jobs.find(j=>j.id===local.selectedProfession)??jobs[0];
   const owned=ownedMaterialCount(selected.resource,profession.inventory,bag);
-  const picture=(job,large=false)=>job.mark?'<span class="hf-p42-prof-mark" aria-hidden="true">'+job.mark+'</span>':art(professionIcon(job.id),large);
+  const picture=(job,large=false)=>art(professionIcon(job.id),large);
   return '<div class="hf-rpg-two hf-p42-professions">'+panel(title('Oficios','15 disciplinas · iconos exclusivos')+
    '<div class="hf-rpg-prof-grid">'+jobs.map(job=>
     '<button type="button" class="hf-rpg-prof-card '+(job.id===selected.id?'is-selected':'')+'" data-hf-prof="'+safe(job.id)+'">'+
@@ -451,6 +449,37 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
  const api={open,close,toggle:()=>local.opened?close():open(),render,get opened(){return local.opened},get state(){return bag}};
+ // P4.3: real 3D portrait yaw through Android touch / mouse drag.
+ // Only repaint the existing original actor in its shared WebGL renderer.
+ let portraitDrag=null,portraitRaf=0;
+ root.addEventListener('pointerdown',e=>{
+  const canvas=e.target?.closest?.('[data-hf-hero]');
+  if(!canvas||!local.opened||local.tab!=='personaje')return;
+  portraitDrag={id:e.pointerId,x:e.clientX};
+  canvas.setPointerCapture?.(e.pointerId);
+  e.preventDefault();
+ });
+ root.addEventListener('pointermove',e=>{
+  if(!portraitDrag||e.pointerId!==portraitDrag.id)return;
+  const step=e.clientX-portraitDrag.x;
+  portraitDrag.x=e.clientX;
+  if(!Number.isFinite(step))return;
+  local.heroTurn+=step*.014;
+  if(!portraitRaf){
+   portraitRaf=requestAnimationFrame(()=>{
+    portraitRaf=0;
+    if(local.opened&&local.tab==='personaje')refreshPortrait();
+   });
+  }
+  e.preventDefault();
+ });
+ const endPortraitDrag=e=>{
+  if(portraitDrag?.id!==e.pointerId)return;
+  portraitDrag=null;
+ };
+ root.addEventListener('pointerup',endPortraitDrag);
+ root.addEventListener('pointercancel',endPortraitDrag);
+
  root.addEventListener('click',e=>{
   const b=e.target?.closest?.('button');if(!b)return;
   if(local.system){
