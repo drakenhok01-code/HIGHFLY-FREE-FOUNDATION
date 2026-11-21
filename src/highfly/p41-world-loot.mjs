@@ -84,7 +84,7 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
      label.textContent='✦ USAR · RECOGER '+(nearest.id==='leather'?'CUERO DE CRIATURA':nearest.id==='ore'?'MINERAL':'ESCUDO RARO +0');
      label.hidden=false;
      if(game.input?.pressed?.has('interact')){
-      const result=receiveP41WorldPickup(bag,getProfession()?.inventory,nearest);
+      const result=receiveP41WorldPickup(bag,getProfession(),nearest);
       if(result.ok){
        saveRpgState(bag);
        msg('✦ Obtenido: '+result.name+' · '+result.rarity+' +0');
