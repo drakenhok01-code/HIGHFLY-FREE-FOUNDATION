@@ -126,11 +126,33 @@ for(const [folder,fileName,expected] of [
  ['universal_animation_library_1/','UAL1_Standard.glb','69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997'],
  ['universal_animation_library_2/','UAL2_Standard.glb','8cee20ab1bc55130092447e810e26df22dd2803eccc54f52137a7d54d7ab88a8']
 ]){
- const url=ualRoot+folder+fileName,response=await fetch(url);
- if(!response.ok)throw Error('Pinned Quaternius unavailable '+response.status+' '+url);
  const file=loc('hf-ual-internal/'+fileName);
  fs.mkdirSync(path.dirname(file),{recursive:true});
- fs.writeFileSync(file,Buffer.from(await response.arrayBuffer()));
+ // Former Elderforge remote deleted both binary assets. Recover only from
+ // unchanged, versioned CC0 Quaternius mirrors and verify the original hash.
+ const originUrl=ualRoot+folder+fileName;
+ const response=await fetch(originUrl);
+ if(response.ok){fs.writeFileSync(file,Buffer.from(await response.arrayBuffer()));}
+ else if(fileName==='UAL1_Standard.glb'){
+  const mirror='https://github.com/WaviestSun/atelier-packs/releases/download/characters-1/UAL1_Standard.glb';
+  const fallback=await fetch(mirror);
+  if(!fallback.ok)throw Error('Quaternius UAL1 approved mirror unavailable '+fallback.status);
+  fs.writeFileSync(file,Buffer.from(await fallback.arrayBuffer()));
+  console.log('[HIGHFLY] Quaternius UAL1 exact SHA verified mirror');
+ }else{
+  const mirror='https://github.com/WaviestSun/atelier-packs/releases/download/packs-2/Universal-Animation-Library-2-Standard.zip';
+  const fallback=await fetch(mirror);
+  if(!fallback.ok)throw Error('Quaternius UAL2 approved mirror unavailable '+fallback.status);
+  const zip=loc('hf-ual-internal/UAL2-mirror.zip');
+  fs.writeFileSync(zip,Buffer.from(await fallback.arrayBuffer()));
+  if(hash(zip)!=='4008ea208a604773a2b2177d965f0f5d3195498b5bf838c3f5785d68e95f2a68')
+   throw Error('Quaternius UAL2 zip SHA-256 mismatch');
+  const extract=spawnSync('python3',['-c',
+   'import sys,zipfile,shutil;z=zipfile.ZipFile(sys.argv[1]);paths=[p for p in z.namelist() if p.endswith("/UAL2_Standard.glb")];assert len(paths)==1,paths;f=z.open(paths[0]);o=open(sys.argv[2],"wb");shutil.copyfileobj(f,o);o.close();f.close()',zip,file],{encoding:'utf8'});
+  if(extract.status!==0)throw Error('Quaternius UAL2 mirror extraction failed '+extract.stderr);
+  fs.rmSync(zip,{force:true});
+  console.log('[HIGHFLY] Quaternius UAL2 exact SHA verified mirror');
+ }
  if(hash(file)!==expected)throw Error('Quaternius GLB SHA-256 mismatch '+fileName);
  ualIn.push(file);
 }
