@@ -1,0 +1,27 @@
+/* Official HIGHFLY fitness brand; CSS layout stays live and interactive. */
+#hf-rpg .hf-rpg-top{grid-template-columns:133px minmax(0,1fr) 37px;gap:3px;min-width:0;padding-inline:3px}
+#hf-rpg .hf-rpg-brand{border:0!important;box-shadow:none!important;background:none!important;padding:0 2px!important;display:flex;align-items:center;gap:3px;text-align:left;height:38px;min-width:0;cursor:pointer}
+#hf-rpg .hf-rpg-brand-mark{width:38px;height:37px;min-width:38px;max-width:38px;max-height:37px;object-fit:contain;filter:drop-shadow(0 0 4px #d25cff88)}
+#hf-rpg .hf-rpg-brand-text{display:flex;flex-direction:column;min-width:0;line-height:1.05}
+#hf-rpg .hf-rpg-brand-text strong{font:bold 14px Georgia,serif;letter-spacing:.01em;color:#ffe7aa;text-shadow:0 0 5px #b661fa;white-space:nowrap}
+#hf-rpg .hf-rpg-brand-text small{font:bold 7px system-ui,sans-serif;letter-spacing:.07em;color:#ebbbff;margin-top:3px;white-space:nowrap}
+#hf-rpg .hf-rpg-nav{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr));gap:2px!important;height:35px;overflow:visible!important;min-width:0}
+#hf-rpg .hf-rpg-nav button{display:flex;align-items:center;justify-content:center;gap:2px;max-width:100%;min-width:0!important;overflow:hidden;padding:2px 1px!important;font-size:8px!important;white-space:nowrap}
+#hf-rpg .hf-rpg-nav button span{font-size:inherit!important;margin:0!important;white-space:nowrap}
+#hf-rpg .hf-rpg-nav .hf-user-nav-icon{width:10px!important;height:10px!important;min-width:10px!important;max-width:10px!important;flex:none}
+#hf-rpg .hf-rpg-close{z-index:2;position:relative;width:35px;height:35px;justify-self:end}
+#hf-rpg .hf-rpg-footer{height:2px!important;min-height:0!important;padding:0!important}
+#hf-phoenix-intro{position:fixed;inset:0;z-index:20000;isolation:isolate;display:grid;place-items:center;overflow:hidden;color:#fff1c7;background:radial-gradient(ellipse at 50% 48%,#381466,#0b071d 68%,#070413);font-family:system-ui,sans-serif;animation:hfIntroIn .3s ease both}
+#hf-phoenix-intro:before{content:"";position:absolute;inset:-30%;pointer-events:none;background:conic-gradient(transparent,#b459f52f,transparent,#f9cf8433,transparent,#b459f52f,transparent);animation:hfIntroOrbit 16s linear infinite}
+#hf-phoenix-intro .hf-intro-halo{position:absolute;width:min(48vw,420px);height:min(75vh,310px);border:1px solid #cf8bea5a;border-radius:50%;box-shadow:0 0 75px #a340e85c,inset 0 0 25px #71318f68;pointer-events:none}
+#hf-phoenix-intro .hf-intro-body{z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;max-height:100vh}
+#hf-phoenix-intro .hf-intro-image{width:min(31vw,255px);height:min(64vh,260px);object-fit:contain;filter:drop-shadow(0 0 13px #bb4beab8);animation:hfIntroRise .85s ease both}
+#hf-phoenix-intro p{margin:0 0 4px;font:bold clamp(9px,1vw,12px) Georgia,serif;letter-spacing:.12em}
+#hf-phoenix-intro button{touch-action:manipulation;min-height:35px;border:1px solid #ffe8a8;border-radius:19px;background:linear-gradient(#ad54df,#45167a);color:#fff2d1;font:bold 12px Georgia,serif;padding:6px 25px;box-shadow:0 0 15px #d14ff4b5;cursor:pointer}
+#hf-phoenix-intro button:focus-visible{outline:3px solid #95f2ff;outline-offset:2px}
+#hf-phoenix-intro.hf-intro-exit{pointer-events:none;animation:hfIntroOut .38s ease both}
+@keyframes hfIntroIn{from{opacity:0}to{opacity:1}}
+@keyframes hfIntroOut{to{opacity:0;transform:scale(1.05)}}
+@keyframes hfIntroOrbit{to{transform:rotate(360deg)}}
+@keyframes hfIntroRise{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#hf-phoenix-intro,#hf-phoenix-intro:before,#hf-phoenix-intro .hf-intro-image{animation:none}}

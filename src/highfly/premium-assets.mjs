@@ -1,6 +1,7 @@
 /** HIGHFLY PREMIUM v2: standalone, resolution-independent artwork per real RPG ID.
  *  F0.14.8 game/UI state still drives all interactivity. No screenshots used as UI.
  */
+export const officialLogoUrl=()=>import.meta.env.BASE_URL+'highfly/brand/highfly-official.avif';
 export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+((name.startsWith('approved-')||name.startsWith('user-icons/')||/^premium\/(item_|skill_|profession_|quest_|character_sanctuary$|forge_workshop$)/.test(name))?'.webp':'.svg');
 const ITEMS=new Set(['hp_potion','mp_potion','herb','ore','wood','fish','ingot','blade_blank','seed','bag_upgrade','training_sword','training_shield','training_greatsword']);
 const SLOTS=new Set(['helmet','chest','gloves','right_hand','necklace','shoulders','pants','boots','left_hand','ring']);
@@ -42,6 +43,16 @@ export function premiumArt(name,large=false){
 }
 const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja'};
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
-export const questArtUrl=id=>assetUrl('premium/quest_'+(QUESTS.has(id)?id:'primary'));
+export const questArtUrl=(id,title='')=>{
+ if(!id||id==='primary')return assetUrl('premium/quest_primary');
+ if(QUESTS.has(id))return assetUrl('premium/quest_'+id);
+ const text=String(title).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const hints=[['names',/cuatro nombres/],['vellum',/pergamino|cartogra/],['count',/cuenta del guardian|notas/],['scales',/campanillas/],['amber',/ambar/],['kept',/relicario/],['seeds',/semillas/],['stair',/escalera/]];
+ const hit=hints.find(([,re])=>re.test(text));
+ if(hit)return assetUrl('premium/quest_'+hit[0]);
+ const keys=[...QUESTS].filter(x=>x!=='primary');
+ let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))>>>0;
+ return assetUrl('premium/quest_'+keys[h%keys.length]);
+};
 export const PREMIUM_IDS=Object.freeze({items:[...ITEMS],slots:[...SLOTS],professions:[...PROFS],skills:[...SKILLS],quests:[...QUESTS]});
 export const PLEDGE='60 iconos WebP 256x256 aportados por el usuario e integrados por ID: solo 36 funciones actuales, futuros reservados. F0.14.8 conserva lógica DOM/Canvas.';

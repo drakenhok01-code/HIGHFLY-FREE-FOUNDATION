@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
-const url='http://127.0.0.1:5177/qa-rpg.html';
+const url='http://127.0.0.1:5177/qa-rpg.html?hfintro=1';
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5177','--strictPort'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
 let output='';server.stdout.on('data',b=>output+=String(b));server.stderr.on('data',b=>output+=String(b));
 let browser;
@@ -21,6 +21,12 @@ try{
  const page=await context.newPage();const errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
+ await page.waitForSelector('#hf-phoenix-intro',{state:'visible',timeout:15000});
+ const official=await page.locator('#hf-phoenix-intro .hf-intro-image').evaluate(async img=>{await img.decode();return {src:img.src,width:img.naturalWidth};});
+ assert.ok(official.src.endsWith('/highfly/brand/highfly-official.avif')&&official.width===160,'Original user logo missing in welcome: '+JSON.stringify(official));
+ await page.screenshot({path:'qa-rpg-intro.png'});
+ await page.locator('#hf-phoenix-intro [data-hf-intro-enter]').click();
+ await page.waitForSelector('#hf-phoenix-intro',{state:'detached',timeout:3000});
  await page.waitForFunction('window.__hfRpgTest?.ready && window.__highflyRpg && window.__game',null,{timeout:15000});
  await page.waitForSelector('#hf-rpg-launch',{state:'visible'});
  await page.evaluate(()=>{const g=window.__game;g.input.lockPointer=()=>{};g.start();g.player.health=Math.max(1,g.player.healthMax-60);});
@@ -30,6 +36,8 @@ try{
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+ const tabFit=await page.evaluate(()=>{const t=[...document.querySelectorAll('#hf-rpg .hf-rpg-nav button')];return {length:t.length,last:t.at(-1).getBoundingClientRect().right,close:document.querySelector('#hf-rpg .hf-rpg-close').getBoundingClientRect().left};});
+ assert.ok(tabFit.length===9&&tabFit.last<=tabFit.close-1,'Tab Opciones overlaps close X: '+JSON.stringify(tabFit));
  const navUserImages=await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>imgs.map(i=>({src:i.src,loaded:i.complete&&i.naturalWidth===256})));
  assert.equal(navUserImages.length,9,'All nine tabs need real user-supplied icons');
   const alphaProbe=await page.locator('#hf-rpg .hf-user-nav-icon').first().evaluate(async icon=>{

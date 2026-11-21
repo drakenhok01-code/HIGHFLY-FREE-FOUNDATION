@@ -9,10 +9,11 @@ import './premium-f0148-v3.css';
 import './premium-f0148-v3-1-polish.css';
 import './premium-f0148-v3-2-clean.css';
 import './premium-f0148-user-icons.css';
+import './phoenix-brand.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
-import {premiumArt,assetUrl,questArtUrl,professionIcon} from './premium-assets.mjs';
+import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
@@ -373,7 +374,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '</div>','hf-rpg-quest-left')+
    panel('<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
     '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
-    '<div class="hf-rpg-quest-art"><img alt="Escena de misión: '+safe(name)+'" src="'+questArtUrl(selected?.id)+'" loading="eager" draggable="false"/></div>'+
+    '<div class="hf-rpg-quest-art"><img alt="Escena de misión: '+safe(name)+'" src="'+questArtUrl(selected?.id,name)+'" loading="eager" draggable="false"/></div>'+
     '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
     '</div>','hf-rpg-quest-right')+'</div>';
  }
@@ -402,11 +403,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.tab==='misiones')local.questScroll=root.querySelector('.hf-rpg-quest-list')?.scrollTop??local.questScroll;
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
-   '<header class="hf-rpg-top"><div class="hf-rpg-logo"><img class="hf-rpg-approved-logo" src="'+assetUrl('premium/logo_highfly')+'" alt="HIGHFLY PHOENIX ASCENSION" draggable="false"/></div>'+
+   '<header class="hf-rpg-top"><button type="button" class="hf-rpg-logo hf-rpg-brand" data-hf-action="intro" title="Ver introducción"><img class="hf-rpg-approved-logo hf-rpg-brand-mark" src="'+officialLogoUrl()+'" alt="HIGHFLY RPG FITNESS" draggable="false"/><span class="hf-rpg-brand-text"><strong>HIGHFLY</strong><small>RPG FITNESS</small></span></button>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><img class="hf-rpg-nav-icon hf-user-nav-icon" alt="" aria-hidden="true" src="'+assetUrl('user-icons/navigation/'+id)+'"/><span>'+name+'</span></button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
-   '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.8 · SISTEMA PHOENIX · ANDROID HORIZONTAL')+'</span></footer></div>'+systemLayer();
+   '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer();
   if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
@@ -466,6 +467,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
+  if(action==='intro'){globalThis.__highflyIntro?.show?.();return;}
   if(action==='close'){close();return;}
   if(action.startsWith('zoom:')){
    const change=action.slice(5);local.mapZoom=change==='reset'?1:Math.max(.75,Math.min(2.8,local.mapZoom*(change==='in'?1.25:.8)));
