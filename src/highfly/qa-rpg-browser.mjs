@@ -170,6 +170,24 @@ try{
  const gridCols=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).length);
  assert.equal(gridCols,6,'P4.2 inventory must have exactly six visible columns');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
+ const bagLayout=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>{
+  const r=el.getBoundingClientRect(),first=el.firstElementChild.getBoundingClientRect(),
+   image=el.querySelector('.hf-rpg-item img')?.getBoundingClientRect();
+  const x0=el.scrollTop;el.scrollTop=1e6;
+  const last=el.lastElementChild.getBoundingClientRect();
+  const metrics={cols:getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).length,
+   grid:{left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height},
+   item:{left:first.left,top:first.top,width:first.width,height:first.height},
+   art:image&&{width:image.width,height:image.height},
+   last:{bottom:last.bottom},scrollTop:el.scrollTop,scrollHeight:el.scrollHeight};
+  el.scrollTop=x0;return metrics;
+ });
+ console.log('[HIGHFLY P4.4 BAG GEOMETRY]',JSON.stringify(bagLayout));
+ assert.ok(Math.abs(bagLayout.item.width-bagLayout.item.height)<1.25,'Bag item image box is not square');
+ assert.ok(bagLayout.item.left>=bagLayout.grid.left-1,'First item frame clipped horizontally');
+ assert.ok(Math.abs(bagLayout.art.width-bagLayout.item.width)<1.25,'Premium full-bleed frame must equal its square slot');
+ assert.ok(bagLayout.last.bottom<=bagLayout.grid.bottom+2,'Last bag slot is clipped/inaccessible after scrolling');
+
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
  const activeFilter=await page.locator('#hf-rpg .hf-rpg-side-link.is-selected').count();
  assert.equal(activeFilter,1,'Exactly one bag category must be visually selected');
@@ -216,6 +234,18 @@ try{
  assert.equal(crafted.herb,0,'materials were not consumed');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="oficios"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-prof-card').count(),15,'All registered HIGHFLY professions must appear');
+ const engineering=page.locator('#hf-rpg .hf-rpg-prof-card').filter({hasText:'Ingeniería'});
+ assert.equal(await engineering.count(),1,'Engineering profession must exist');
+ const engineeringIcon=await engineering.locator('img').evaluate(async image=>{await image.decode();return {src:image.getAttribute('src'),width:image.naturalWidth}});
+ assert.ok(engineeringIcon.src.includes('professions/ingenieria.webp')&&engineeringIcon.width===256,'Engineering needs its own high-quality 256px gears illustration');
+ const profPanel=await page.locator('#hf-rpg .hf-p42-professions>.hf-rpg-panel:first-child').evaluate(el=>{
+  const before=el.scrollTop;el.scrollTop=el.scrollHeight;
+  const child=el.querySelector('.hf-rpg-prof-card:last-child')?.getBoundingClientRect();
+  const box=el.getBoundingClientRect(),result={lastVisible:!child||child.bottom<=box.bottom+2,scrollTop:el.scrollTop};
+  el.scrollTop=before;return result;
+ });
+ assert.ok(profPanel.lastVisible,'Last profession should remain accessible by internal scrolling');
+
  assert.equal(await page.locator('#hf-rpg .hf-rpg-prof-card .hf-p42-prof-frame').count(),15,'Every profession needs a dedicated frame');
  await page.screenshot({path:'qa-rpg-professions.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
@@ -253,6 +283,15 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
+ const detailScroll=await page.locator('#hf-rpg .hf-rpg-two>.hf-rpg-panel:last-child').evaluate(el=>{
+  const before=el.scrollTop;el.scrollTop=1e6;
+  const reached=el.scrollHeight<=el.clientHeight+2||el.scrollTop>0;
+  const info={scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,reached};
+  el.scrollTop=before;return info;
+ });
+ console.log('[HIGHFLY P4.4 SKILLS DETAIL]',JSON.stringify(detailScroll));
+ assert.ok(detailScroll.reached,'Skills detail cuts information without allowing scrolling');
+
  await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
  const alphaReframing=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').first().evaluate(el=>getComputedStyle(el).transform);
  assert.equal(alphaReframing,'none','User skill icon already has its own frame and must never be zoomed/cropped');
