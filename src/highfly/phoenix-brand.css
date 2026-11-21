@@ -25,3 +25,46 @@
 @keyframes hfIntroOrbit{to{transform:rotate(360deg)}}
 @keyframes hfIntroRise{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#hf-phoenix-intro,#hf-phoenix-intro:before,#hf-phoenix-intro .hf-intro-image{animation:none}}
+
+/* Exact-positioned brand: older F0.14.8 full-width logo styles must never
+ * push the new official emblem/text outside the first header grid cell. */
+#hf-rpg .hf-rpg-top > .hf-rpg-logo.hf-rpg-brand{
+ grid-row:1!important;grid-column:1!important;
+ position:relative!important;inset:auto!important;
+ align-self:center!important;justify-self:stretch!important;
+ display:flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:flex-start!important;
+ min-width:0!important;width:100%!important;max-width:100%!important;
+ height:36px!important;min-height:36px!important;
+ gap:3px!important;z-index:3;overflow:visible!important;
+ opacity:1!important;visibility:visible!important;
+ transform:none!important;
+}
+#hf-rpg .hf-rpg-top > .hf-rpg-logo.hf-rpg-brand > .hf-rpg-approved-logo.hf-rpg-brand-mark{
+ position:static!important;display:block!important;
+ width:37px!important;height:35px!important;
+ max-width:37px!important;max-height:35px!important;
+ min-width:37px!important;flex:0 0 37px!important;
+ margin:0!important;padding:0!important;
+ opacity:1!important;visibility:visible!important;
+ object-fit:contain!important;object-position:center!important;
+}
+#hf-rpg .hf-rpg-top > .hf-rpg-logo.hf-rpg-brand > .hf-rpg-brand-text{
+ display:flex!important;position:relative!important;z-index:3;
+ visibility:visible!important;opacity:1!important;
+ flex:1 1 auto!important;min-width:0!important;
+ overflow:visible!important;
+}
+#hf-rpg .hf-rpg-top > .hf-rpg-logo.hf-rpg-brand .hf-rpg-brand-text strong{
+ display:block!important;color:#ffe5a5!important;opacity:1!important;
+ font-size:14px!important;line-height:1.1!important;white-space:nowrap!important;
+}
+#hf-rpg .hf-rpg-top > .hf-rpg-logo.hf-rpg-brand .hf-rpg-brand-text small{
+ display:block!important;opacity:1!important;white-space:nowrap!important;
+}
+@media (max-width:980px){
+ #hf-rpg .hf-rpg-top>.hf-rpg-logo.hf-rpg-brand{height:35px!important;min-height:35px!important}
+ #hf-rpg .hf-rpg-top>.hf-rpg-logo.hf-rpg-brand>.hf-rpg-approved-logo.hf-rpg-brand-mark{
+  width:33px!important;height:33px!important;max-width:33px!important;min-width:33px!important;max-height:33px!important;flex-basis:33px!important;
+ }
+}

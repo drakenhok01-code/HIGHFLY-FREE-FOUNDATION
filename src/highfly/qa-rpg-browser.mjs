@@ -24,6 +24,7 @@ try{
  await page.waitForSelector('#hf-phoenix-intro',{state:'visible',timeout:15000});
  const official=await page.locator('#hf-phoenix-intro .hf-intro-image').evaluate(async img=>{await img.decode();return {src:img.src,width:img.naturalWidth};});
  assert.ok(official.src.endsWith('/highfly/brand/highfly-official.avif')&&official.width===160,'Original user logo missing in welcome: '+JSON.stringify(official));
+ await page.waitForTimeout(600);
  await page.screenshot({path:'qa-rpg-intro.png'});
  await page.locator('#hf-phoenix-intro [data-hf-intro-enter]').click();
  await page.waitForSelector('#hf-phoenix-intro',{state:'detached',timeout:3000});
@@ -36,6 +37,17 @@ try{
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+ const logoGeometry=await page.evaluate(()=>{
+  const e=document.querySelector('#hf-rpg .hf-rpg-brand'),
+        im=e?.querySelector('img'),
+        title=e?.querySelector('.hf-rpg-brand-text strong');
+  const rect=n=>{const r=n?.getBoundingClientRect();return r&&{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right}};
+  const style=n=>n?{display:getComputedStyle(n).display,visibility:getComputedStyle(n).visibility,opacity:getComputedStyle(n).opacity,position:getComputedStyle(n).position}:null;
+  return {button:rect(e),image:rect(im),title:rect(title),buttonStyle:style(e),imgStyle:style(im),titleStyle:style(title),imageReady:im?.naturalWidth};
+ });
+ console.log('[HIGHFLY OFFICIAL BRAND]',JSON.stringify(logoGeometry));
+ assert.ok(logoGeometry.button?.x>=0&&logoGeometry.button.x<150&&logoGeometry.image?.width>=28&&logoGeometry.image.x>=0&&logoGeometry.image.right<=150&&logoGeometry.title?.x>=0&&logoGeometry.title.x<150&&logoGeometry.title.width>45,
+  'Brand must be VISIBLE within header logo column: '+JSON.stringify(logoGeometry));
  const tabFit=await page.evaluate(()=>{const t=[...document.querySelectorAll('#hf-rpg .hf-rpg-nav button')];return {length:t.length,last:t.at(-1).getBoundingClientRect().right,close:document.querySelector('#hf-rpg .hf-rpg-close').getBoundingClientRect().left};});
  assert.ok(tabFit.length===9&&tabFit.last<=tabFit.close-1,'Tab Opciones overlaps close X: '+JSON.stringify(tabFit));
  const navUserImages=await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>imgs.map(i=>({src:i.src,loaded:i.complete&&i.naturalWidth===256})));
