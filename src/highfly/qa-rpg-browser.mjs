@@ -30,6 +30,10 @@ try{
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
+ const navUserImages=await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>imgs.map(i=>({src:i.src,loaded:i.complete&&i.naturalWidth===256})));
+ assert.equal(navUserImages.length,9,'All nine tabs need real user-supplied icons');
+ await page.locator('#hf-rpg .hf-rpg-nav .hf-user-nav-icon').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
+ assert.ok(navUserImages.every(x=>x.src.includes('/user-icons/navigation/')),'Navigation still using old assets: '+JSON.stringify(navUserImages));
  const ornaments=await page.evaluate(async()=>{const root=document.querySelector('#hf-rpg');const keys=['--hf-crest','--hf-wave-art','--hf-panel-ornament'];const result={};for(const key of keys){const v=root.style.getPropertyValue(key);const m=v.match(/url\(["']?([^"')]+)/);if(!m)throw Error('Ornament URL missing '+key);const i=new Image();i.src=m[1];await i.decode();result[key]=i.naturalWidth;}return result;});
  assert.ok(Object.values(ornaments).every(v=>v>0),'Phoenix ornate image resources not loaded: '+JSON.stringify(ornaments));
  const frameStyle=await page.evaluate(()=>getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel')).backgroundImage);
@@ -92,10 +96,13 @@ try{
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
- assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_hp_potion.webp"]').count()>0,'Individual HP potion art missing');
- assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="item_mp_potion.webp"]').count()>0,'Individual MP potion art missing');
+ assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="/user-icons/items/hp_potion.webp"]').count()>0,'User HP potion icon missing');
+ assert.ok(await page.locator('#hf-rpg .hf-premium-icon[src$="/user-icons/items/mp_potion.webp"]').count()>0,'User MP potion icon missing');
  const iconLoad=await page.locator('#hf-rpg .hf-premium-icon').evaluateAll(imgs=>({loaded:imgs.filter(x=>x.naturalWidth>0).length,total:imgs.length,allWebp:imgs.every(x=>x.src.endsWith('.webp'))}));
  assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'Item sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
+ const packPaths=await page.locator('#hf-rpg .hf-user-icon').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));
+ assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'Some dynamic objects still point to legacy images');
+ assert.ok(packPaths.length>9,'Missing original user icon pack in bag and equipment');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
@@ -174,7 +181,10 @@ try{
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
  await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
  const alphaReframing=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').first().evaluate(el=>getComputedStyle(el).transform);
- assert.match(alphaReframing,/matrix\(4\.15, 0, 0, 4\.15/,'Skill art crop must fill its tile without a double frame');
+ assert.equal(alphaReframing,'none','User skill icon already has its own frame and must never be zoomed/cropped');
+ const actualSkillArt=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-user-icon').evaluateAll(imgs=>imgs.map(x=>({src:x.src,w:x.naturalWidth,h:x.naturalHeight})));
+ assert.equal(actualSkillArt.length,6,'Must show six real skill icons');
+ assert.ok(actualSkillArt.every(x=>x.src.includes('/user-icons/skills/')&&x.w===256&&x.h===256),'Wrong skill icon dimensions or routes: '+JSON.stringify(actualSkillArt));
  await page.screenshot({path:'qa-rpg-skills.png'});
  const skillSize=await page.locator('#hf-rpg .hf-rpg-skill-glyph').first().evaluate(el=>el.getBoundingClientRect().width);
  assert.ok(skillSize>=43&&skillSize<=48,'Skill glyph must be moderately enlarged, not oversized: '+skillSize);

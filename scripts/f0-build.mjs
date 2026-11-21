@@ -221,8 +221,52 @@ for(const id of rasterExpected)
  if(!fs.existsSync(path.join(rasterOutput,id+'.webp')))throw Error('Missing premium image '+id);
 console.log('[HIGHFLY PHOENIX] 48 individual painterly graphics verified');
 
+// HIGHFLY ICON PACK V1: exact user-provided WebP 256x256 assets.
+// Archives are pinned by SHA-256 and expanded into real individual files.
+// Independent of F0.14.8 mechanics, KayKit models and skill unlock state.
+const userIconPackHashes={
+ 'armor':'5ae833209b0fdffbe6e0d33ab8c58de609f639e0d6142a035e04e3ceb910bc21',
+ 'items':'0861a7fc17ec50ff88403969cca115da8cef1aabffcef9e43b24ce59a07aa774',
+ 'navigation':'01f7f2d60cd598e96557c4f49548f8ab631d556f357f6317be4add418df209b8',
+ 'professions':'2f888665537bc7b96f7bce8d88ca6602395c393500cfa4ca02f9dbcfdff151c0',
+ 'skills':'c0ae669e42610c5e041d91b62c1aa059b814dc85b7d7f5ded9f043bf71b523e1',
+ 'skills-advanced':'5f0c40d5e6034e41dc3b264f6383e340d42bb39aca1289d808cdff2cf6fd935b',
+ 'weapons':'ef5cef4b03b5ad00b74618167b84a5d592e94c42770aa7293786a6fe75fb3173'
+};
+const packSizes={armor:8,items:11,navigation:9,professions:8,skills:8,'skills-advanced':8,weapons:8};
+const iconDest=loc('public/highfly/user-icons');
+fs.mkdirSync(iconDest,{recursive:true});
+let userIconCount=0;
+for(const [category,expectedHash] of Object.entries(userIconPackHashes)){
+ const name='hf_user_icons_'+category+'.zip';
+ const file=path.join(ROOT,'assets/highfly/premium',name);
+ if(!fs.existsSync(file)||hash(file)!==expectedHash)throw Error('Original user icon pack missing or hash mismatch: '+name);
+ const entries=capture('unzip',['-Z','-1',file]).split('\n').filter(Boolean);
+ if(entries.length!==packSizes[category])throw Error('Wrong icon count '+category+': '+entries.length);
+ for(const entry of entries){
+  if(!entry.startsWith(category+'/')||!/^(armor|items|navigation|professions|skills|skills-advanced|weapons)\/[a-z0-9_]+\.webp$/.test(entry))
+   throw Error('Unsafe user icon entry '+entry);
+ }
+ const temp=path.join(ROOT,'.work','user-icons-unpack',category);
+ fs.mkdirSync(temp,{recursive:true});
+ run('unzip',['-qo',file,'-d',temp]);
+ for(const entry of entries){
+  const source=path.join(temp,entry),dest=path.join(iconDest,entry);
+  const bytes=fs.readFileSync(source);
+  if(bytes.length<1000||bytes.toString('ascii',0,4)!=='RIFF'||bytes.toString('ascii',8,12)!=='WEBP')throw Error('Not a WebP icon '+entry);
+  if(fs.existsSync(dest))throw Error('Duplicate user icon '+entry);
+  copy(source,dest);
+  userIconCount++;
+ }
+ console.log('[HIGHFLY USER ICONS]',category,entries.length,'original 256x256 WebP images verified');
+}
+if(userIconCount!==60)throw Error('Expected 60 user icons, got '+userIconCount);
+console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 future references kept inactive');
+
+
+
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));

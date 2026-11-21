@@ -8,6 +8,7 @@ import './premium-f0148-v2.css';
 import './premium-f0148-v3.css';
 import './premium-f0148-v3-1-polish.css';
 import './premium-f0148-v3-2-clean.css';
+import './premium-f0148-user-icons.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -402,7 +403,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const body=bodies[local.tab]||character;
   root.innerHTML='<div class="hf-rpg-fade"></div><div class="hf-rpg-shell" role="dialog" aria-label="Menú del sistema HIGHFLY">'+
    '<header class="hf-rpg-top"><div class="hf-rpg-logo"><img class="hf-rpg-approved-logo" src="'+assetUrl('premium/logo_highfly')+'" alt="HIGHFLY PHOENIX ASCENSION" draggable="false"/></div>'+
-   '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><img class="hf-rpg-nav-icon" alt="" aria-hidden="true" src="'+assetUrl('premium/nav_'+id)+'"/><span>'+name+'</span></button>').join('')+'</nav>'+
+   '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><img class="hf-rpg-nav-icon hf-user-nav-icon" alt="" aria-hidden="true" src="'+assetUrl('user-icons/navigation/'+id)+'"/><span>'+name+'</span></button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+
    '<footer class="hf-rpg-footer"><span>✦ CAZADOR UNIVERSAL · UNA SOLA AVENTURA</span><span>'+safe(local.toast||'F0.14.8 · SISTEMA PHOENIX · ANDROID HORIZONTAL')+'</span></footer></div>'+systemLayer();
