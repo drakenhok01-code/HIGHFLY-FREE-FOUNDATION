@@ -5,7 +5,7 @@
  * compatible with KayKit gear meshes, saved game and legacy inventory.
  */
 export const RARITIES=Object.freeze(['Común','Poco común','Raro','Épico','Legendario','Mítico']);
-export const GEAR_IDS=Object.freeze(['training_sword','training_shield','training_greatsword']);
+export const GEAR_IDS=Object.freeze(['training_sword','training_shield','training_greatsword','hf_iron_helmet','hf_iron_chest','hf_iron_gloves','hf_iron_pants','hf_iron_boots','hf_iron_shoulders','hf_copper_ring','hf_silver_necklace']);
 export const MAX_ENHANCEMENT=9;
 export const defaultTrait=id=>({id,rarity:'Común',plus:0});
 const validTrait=(raw,id)=>{
