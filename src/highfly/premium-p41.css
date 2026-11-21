@@ -41,3 +41,18 @@
 @media(max-width:980px){
  #hf-rpg .hf-p41-toast{bottom:4px;max-width:85%;font-size:9px;padding:4px 8px}
 }
+
+#hf-p41-pickup-prompt,#hf-p41-world-toast{
+ position:fixed;z-index:99999;left:50%;transform:translateX(-50%);
+ pointer-events:none;text-align:center;max-width:80vw;
+ border:1px solid #be8effaa;background:#1b102bed;box-shadow:0 0 15px #934cff72;
+ border-radius:12px;color:#f6edff;padding:8px 15px;
+ font:700 12px/1.35 system-ui,sans-serif;letter-spacing:.03em;
+}
+#hf-p41-pickup-prompt{bottom:calc(14% + 8px);color:#ffdb8c;border-color:#e2b760aa}
+#hf-p41-world-toast{top:14%;bottom:auto}
+#hf-p41-pickup-prompt[hidden],#hf-p41-world-toast[hidden]{display:none!important}
+@media(max-width:980px){
+ #hf-p41-pickup-prompt{bottom:17%;font-size:10px;padding:5px 9px}
+ #hf-p41-world-toast{top:10%;font-size:10px;padding:5px 9px}
+}
