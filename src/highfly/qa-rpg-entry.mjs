@@ -2,6 +2,7 @@
  * Native Unsung build/WebGL is covered separately; this makes the UI test fast.
  */
 import {installPremiumRpgUI} from './premium-rpg.mjs';
+import {installHighflyIntro} from './phoenix-intro.mjs';
 const player={
  state:'move',health:40,healthMax:100,stamina:70,staminaMax:100,
  _hfMana:30,_hfManaMax:100,_hfLevel:4,_hfTrainingScore:1,_hfGearCycle:0,
@@ -22,4 +23,5 @@ const game={
 window.__game=game;
 window.__highflySetGraphics=mode=>['performance','balanced','quality'].includes(mode);
 window.__highflyRpg=installPremiumRpgUI(game,{search:''});
+window.__highflyIntro=installHighflyIntro();
 window.__hfRpgTest={ready:!!window.__highflyRpg,game};
