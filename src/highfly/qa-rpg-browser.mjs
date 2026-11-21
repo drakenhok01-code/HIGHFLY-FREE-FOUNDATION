@@ -33,7 +33,9 @@ try{
  const ornaments=await page.evaluate(async()=>{const root=document.querySelector('#hf-rpg');const keys=['--hf-crest','--hf-wave-art','--hf-panel-ornament'];const result={};for(const key of keys){const v=root.style.getPropertyValue(key);const m=v.match(/url\(["']?([^"')]+)/);if(!m)throw Error('Ornament URL missing '+key);const i=new Image();i.src=m[1];await i.decode();result[key]=i.naturalWidth;}return result;});
  assert.ok(Object.values(ornaments).every(v=>v>0),'Phoenix ornate image resources not loaded: '+JSON.stringify(ornaments));
  const frameStyle=await page.evaluate(()=>getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel')).backgroundImage);
- assert.match(frameStyle,/ui_gold_corners/,'Gold corner frame must be anchored to real panels');
+ assert.doesNotMatch(frameStyle,/ui_gold_corners/,'Old corner ornament should be gone');
+ const cleanFrame=await page.evaluate(()=>({panelBefore:getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel'),'::before').display,panelAfter:getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-panel'),'::after').display,footerBefore:getComputedStyle(document.querySelector('#hf-rpg .hf-rpg-footer'),'::before').display}));
+ assert.deepEqual(cleanFrame,{panelBefore:'none',panelAfter:'none',footerBefore:'none'},'Decorations are still blocking menu contents');
  const artStatus=await page.evaluate(async()=>{const x=getComputedStyle(document.querySelector('#hf-rpg')).getPropertyValue('--hf-hero-art');const url=x.match(/url\(["']?([^"')]+)/)?.[1];if(!url)return {ok:false,x};const image=new Image();image.src=url;await image.decode();return {ok:image.naturalWidth>0,width:image.naturalWidth};});
  assert.ok(artStatus.ok,'Approved sanctuary background must be a REAL raster image, '+JSON.stringify(artStatus));
 
@@ -51,6 +53,8 @@ try{
 
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),0,'Attributes must NOT appear inside Character');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-hero-canvas').count(),1,'Real 3D portrait canvas must exist');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-weapon-tag').first().evaluate(el=>el.textContent.includes('Espada')),false,'Redundant weapon caption remains in 3D stage');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-turn-buttons button').count(),2,'Character rotation buttons must stay functional');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano derecha'}).count()>0);
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano izquierda'}).count()>0);
  await page.locator('#hf-rpg [data-hf-action="turn:right"]').click();
@@ -170,7 +174,7 @@ try{
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
  await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
  const alphaReframing=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').first().evaluate(el=>getComputedStyle(el).transform);
- assert.match(alphaReframing,/matrix\(3\.45, 0, 0, 3\.45/,'Skill source artwork must be reframed, not only container resized');
+ assert.match(alphaReframing,/matrix\(4\.15, 0, 0, 4\.15/,'Skill art crop must fill its tile without a double frame');
  await page.screenshot({path:'qa-rpg-skills.png'});
  const skillSize=await page.locator('#hf-rpg .hf-rpg-skill-glyph').first().evaluate(el=>el.getBoundingClientRect().width);
  assert.ok(skillSize>=43&&skillSize<=48,'Skill glyph must be moderately enlarged, not oversized: '+skillSize);

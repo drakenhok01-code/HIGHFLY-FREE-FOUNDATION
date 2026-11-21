@@ -7,6 +7,7 @@ import './premium-rpg.css';
 import './premium-f0148-v2.css';
 import './premium-f0148-v3.css';
 import './premium-f0148-v3-1-polish.css';
+import './premium-f0148-v3-2-clean.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -187,13 +188,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   local.system={...m,phase:'result',success:result.ok,outcome:output};render();
  }
  const preview=()=>{
-  const mode=weapon();
   return panel('<div class="hf-rpg-character-title">✧ CAZADOR UNIVERSAL <small>NIVEL '+numeric(attrs().level)+'</small></div>'+
    '<div class="hf-rpg-hero-stage" aria-label="Vista 3D del personaje actual">'+
    '<div class="hf-rpg-stage-halo"></div><div class="hf-rpg-stage-arch" aria-hidden="true">'+PHOENIX+'</div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
    '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
    '</div>'+
-   '<div class="hf-rpg-weapon-tag"><span>⚔ '+safe(mode.label)+'</span>'+
+   '<div class="hf-rpg-weapon-tag" aria-label="Girar vista del personaje">'+
    '<span class="hf-rpg-turn-buttons">'+button('↶','data-hf-action="turn:left" aria-label="Girar personaje a la izquierda"')+
    button('↷','data-hf-action="turn:right" aria-label="Girar personaje a la derecha"')+'</span></div>',
    'hf-rpg-hero-panel');
