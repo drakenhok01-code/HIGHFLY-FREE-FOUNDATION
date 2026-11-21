@@ -1,0 +1,602 @@
+{
+  "schemaVersion": "highfly-audit-catalog-v0.1",
+  "generatedOn": "2026-11-21",
+  "scope": "HIGHFLY v3.6 code definitions only (NOT complete external packs; NOT proof of runtime behavior)",
+  "approvedRef": "bf88ecdcef64337083146caad2390a6d147f30cf",
+  "itemCount": 19,
+  "recipeCount": 12,
+  "items": [
+    {
+      "id": "training_sword",
+      "name": "Espada de Aprendiz",
+      "kind": "Equipamiento",
+      "baseRarity": "Común",
+      "iconKey": "weapon",
+      "description": "Espada KayKit FREE real del Cazador Universal. Equipada al comenzar.",
+      "maxStack": 10,
+      "slots": [
+        "right_hand",
+        "left_hand"
+      ],
+      "baseStats": {
+        "physicalAttack": 4
+      },
+      "recipes": [
+        "training_sword"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-equipment.mjs"
+      },
+      "implementationStatus": "equipment_def_and_transaction_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "KayKit FREE adapter documented; inspect source file per mesh",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "training_shield",
+      "name": "Escudo de Aprendiz",
+      "kind": "Equipamiento",
+      "baseRarity": "Común",
+      "iconKey": "shield",
+      "description": "Escudo redondo compatible con la mano izquierda del Knight FREE.",
+      "maxStack": 10,
+      "slots": [
+        "left_hand"
+      ],
+      "baseStats": {
+        "defense": 3,
+        "blockChance": 2
+      },
+      "recipes": [
+        "training_shield"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-equipment.mjs"
+      },
+      "implementationStatus": "equipment_def_and_transaction_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "KayKit FREE adapter documented; inspect source file per mesh",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "training_greatsword",
+      "name": "Mandoble de Aprendiz",
+      "kind": "Equipamiento",
+      "baseRarity": "Poco común",
+      "iconKey": "weapon",
+      "description": "Mandoble a dos manos ya incluido en el Knight FREE.",
+      "maxStack": 10,
+      "slots": [
+        "right_hand"
+      ],
+      "baseStats": {
+        "physicalAttack": 9
+      },
+      "recipes": [
+        "training_greatsword"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-equipment.mjs"
+      },
+      "implementationStatus": "equipment_def_and_transaction_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "KayKit FREE adapter documented; inspect source file per mesh",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "hp_potion",
+      "name": "Poción de Vida",
+      "kind": "Consumibles",
+      "baseRarity": "Poco común",
+      "iconKey": "health",
+      "description": "Recupera el 35% de la Vida máxima.",
+      "maxStack": 99,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "hp_potion"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "mp_potion",
+      "name": "Poción de Maná",
+      "kind": "Consumibles",
+      "baseRarity": "Poco común",
+      "iconKey": "mana",
+      "description": "Recupera el 40% del Maná máximo.",
+      "maxStack": 99,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "mp_potion"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "herb",
+      "name": "Hierbas recolectadas",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "herb",
+      "description": "Hierbas obtenidas mediante recolección real.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ore",
+      "name": "Mineral",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ore",
+      "description": "Mineral conseguido de una veta real.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "wood",
+      "name": "Madera",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "wood",
+      "description": "Madera talada en el mundo.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "fish",
+      "name": "Pescado",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "fish",
+      "description": "Captura obtenida con caña.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ingot",
+      "name": "Lingote sin clasificar",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ingot",
+      "description": "Aleación genérica producida por la fundición original.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "blade_blank",
+      "name": "Hoja sin terminar",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "blade",
+      "description": "Pieza forjada, todavía no equipable.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "seed",
+      "name": "Semillas",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "herb",
+      "description": "Semillas para plantar.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "bag_upgrade",
+      "name": "Sello de Expansión",
+      "kind": "Especial",
+      "baseRarity": "Raro",
+      "iconKey": "expansion",
+      "description": "Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.",
+      "maxStack": 3,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "bag_upgrade"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ingot_copper",
+      "name": "Lingote de cobre",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ingot",
+      "description": "Metal refinado: cobre.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "ingot_copper"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ingot_iron",
+      "name": "Lingote de hierro",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ingot",
+      "description": "Metal refinado: hierro.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "ingot_iron"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ingot_silver",
+      "name": "Lingote de plata",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ingot",
+      "description": "Metal refinado: plata.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "ingot_silver"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ingot_gold",
+      "name": "Lingote de oro",
+      "kind": "Materiales",
+      "baseRarity": "Común",
+      "iconKey": "ingot",
+      "description": "Metal refinado: oro.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "ingot_gold"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "upgrade_stone",
+      "name": "Piedra de mejora",
+      "kind": "Materiales",
+      "baseRarity": "Raro",
+      "iconKey": "ore",
+      "description": "Se consume para mejorar equipo de +1 a +9. Éxito garantizado.",
+      "maxStack": 999,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "upgrade_stone"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    },
+    {
+      "id": "ascension_core",
+      "name": "Núcleo de Ascensión",
+      "kind": "Especial",
+      "baseRarity": "Épico",
+      "iconKey": "ore",
+      "description": "Sube la rareza de un objeto +9, reiniciándolo a +0.",
+      "maxStack": 99,
+      "slots": [],
+      "baseStats": {},
+      "recipes": [
+        "ascension_core"
+      ],
+      "provenance": {
+        "repository": "drakenhok01-code/HIGHFLY-FREE-FOUNDATION",
+        "ref": "bf88ecdcef64337083146caad2390a6d147f30cf",
+        "definitionFile": "src/highfly/rpg-core.mjs"
+      },
+      "implementationStatus": "item_definition_present",
+      "rights": {
+        "definition": "HIGHFLY project code",
+        "model3D": "not verified",
+        "icon2D": "asset binding to be verified"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": "hp_potion",
+      "outputId": "hp_potion",
+      "profession": "Alquimia",
+      "ingredients": {
+        "herb": 2
+      },
+      "count": 1
+    },
+    {
+      "id": "mp_potion",
+      "outputId": "mp_potion",
+      "profession": "Alquimia",
+      "ingredients": {
+        "herb": 1,
+        "ore": 1
+      },
+      "count": 1
+    },
+    {
+      "id": "bag_upgrade",
+      "outputId": "bag_upgrade",
+      "profession": "Marroquinería",
+      "ingredients": {
+        "wood": 8,
+        "ore": 8
+      },
+      "count": 1
+    },
+    {
+      "id": "training_sword",
+      "outputId": "training_sword",
+      "profession": "Forja",
+      "ingredients": {
+        "ingot": 2,
+        "wood": 1
+      },
+      "count": 1
+    },
+    {
+      "id": "training_shield",
+      "outputId": "training_shield",
+      "profession": "Forja",
+      "ingredients": {
+        "ingot": 2,
+        "wood": 2
+      },
+      "count": 1
+    },
+    {
+      "id": "training_greatsword",
+      "outputId": "training_greatsword",
+      "profession": "Forja",
+      "ingredients": {
+        "ingot": 4,
+        "wood": 2
+      },
+      "count": 1
+    },
+    {
+      "id": "ingot_copper",
+      "outputId": "ingot_copper",
+      "profession": "Fundición",
+      "ingredients": {
+        "ore": 2
+      },
+      "count": 1
+    },
+    {
+      "id": "ingot_iron",
+      "outputId": "ingot_iron",
+      "profession": "Fundición",
+      "ingredients": {
+        "ore": 3
+      },
+      "count": 1
+    },
+    {
+      "id": "ingot_silver",
+      "outputId": "ingot_silver",
+      "profession": "Fundición",
+      "ingredients": {
+        "ore": 5
+      },
+      "count": 1
+    },
+    {
+      "id": "ingot_gold",
+      "outputId": "ingot_gold",
+      "profession": "Fundición",
+      "ingredients": {
+        "ore": 8
+      },
+      "count": 1
+    },
+    {
+      "id": "upgrade_stone",
+      "outputId": "upgrade_stone",
+      "profession": "Forja",
+      "ingredients": {
+        "ore": 2,
+        "ingot": 1
+      },
+      "count": 1
+    },
+    {
+      "id": "ascension_core",
+      "outputId": "ascension_core",
+      "profession": "Forja",
+      "ingredients": {
+        "ore": 6,
+        "ingot": 3
+      },
+      "count": 1
+    }
+  ]
+}
