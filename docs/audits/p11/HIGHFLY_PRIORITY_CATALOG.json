@@ -1,0 +1,1759 @@
+{
+  "schema": "highfly-p11-priority-catalog-v1",
+  "date": "2026-11-21",
+  "status": "CATALOG_DESIGN_ONLY_NOT_LOADED_IN_APP",
+  "baseApprovedCommit": "bf88ecdcef64337083146caad2390a6d147f30cf",
+  "character": "UNIQUE_UNIVERSAL_HUNTER",
+  "equipmentBirthPlusRule": 0,
+  "noPreEnhancedDrop": true,
+  "sourceCandidateCount": 1488,
+  "sourceAssetModelCount": 519,
+  "sourceRecipeCount": 175,
+  "notes": [
+    "Original HIGHFLY IDs retained, new hf_* IDs are proposals only",
+    "Rarity must not be equated to enhancement; all new weapon/armor/accessory item instances spawn plus 0",
+    "Upstream weapon/armor data and names are NOT copied directly into game; source links are analogies, not legal media",
+    "Armor/jewelry stat-only in initial RPG; no 3D attachments",
+    "Missing model means no visual weapon until a verified adapter and rig tests exist",
+    "Amulet slot is future review, not a sneaky UI change"
+  ],
+  "weaponStyles": [
+    {
+      "style": "espada_1_mano",
+      "templateId": "training_sword",
+      "visualPriority": null
+    },
+    {
+      "style": "mandoble",
+      "templateId": "training_greatsword",
+      "visualPriority": null
+    },
+    {
+      "style": "daga",
+      "templateId": "hf_dagger_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "dagas_dobles",
+      "templateId": "hf_dagger_basic",
+      "visualPriority": "REQUIRES_TWO_INDEPENDENT_DAGGER_INSTANCES"
+    },
+    {
+      "style": "hacha",
+      "templateId": "hf_axe_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "lanza",
+      "templateId": "hf_spear_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "arco",
+      "templateId": "hf_bow_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "baston",
+      "templateId": "hf_staff_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "vara_orbe",
+      "templateId": "hf_wand_basic",
+      "visualPriority": "WAND_FIRST_ORB_SEPARATE_CANDIDATE"
+    },
+    {
+      "style": "maza_martillo",
+      "templateId": "hf_mace_basic",
+      "visualPriority": null
+    },
+    {
+      "style": "escudo",
+      "templateId": "training_shield",
+      "visualPriority": null
+    }
+  ],
+  "items": [
+    {
+      "templateId": "training_sword",
+      "nameEs": "Espada de Aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": {
+        "physicalAttack": 4
+      },
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "worn_sword",
+          "sourceName": "Pitted Shortsword",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "eastbrook_arming_sword",
+          "sourceName": "Eastbrook Arming Sword",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [
+        {
+          "id": "fire-sword",
+          "element": "fire",
+          "relation": "WEAPON_STYLE_ANALOGUE",
+          "mediaPermission": "REQUIRES_FILE_SPECIFIC_REVIEW"
+        }
+      ],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_1handed.gltf",
+          "blobSha": "ea5115c52ee9c07b2128105c0701fe706add7593",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "training_sword",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "training_shield",
+      "nameEs": "Escudo de Aprendiz",
+      "category": "escudo",
+      "type": "shield",
+      "slot": "left_hand",
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": {
+        "defense": 3,
+        "blockChance": 2
+      },
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "eastbrook_buckler",
+          "sourceName": "Eastbrook Buckler",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/shield_round.gltf",
+          "blobSha": "d1a20d3ce24239a540236806c4ce424e137439ea",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "training_shield",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "training_greatsword",
+      "nameEs": "Mandoble de Aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": {
+        "physicalAttack": 9
+      },
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "eastbrook_greatsword",
+          "sourceName": "Eastbrook Greatsword",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "duskforged_warblade",
+          "sourceName": "Duskforged Warblade",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [
+        {
+          "id": "fire-greatsword",
+          "element": "fire",
+          "relation": "WEAPON_STYLE_ANALOGUE",
+          "mediaPermission": "REQUIRES_FILE_SPECIFIC_REVIEW"
+        }
+      ],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_2handed.gltf",
+          "blobSha": "593016769c491c37ce4705bc76f80e2a042ccaee",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "training_greatsword",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Poco común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "hp_potion",
+      "nameEs": "Poción de Vida",
+      "category": "consumible",
+      "type": "consumable",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "minor_healing_potion",
+          "sourceName": "Minor Healing Potion",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "healing_potion",
+          "sourceName": "Healing Potion",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "hp_potion",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Poco común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "mp_potion",
+      "nameEs": "Poción de Maná",
+      "category": "consumible",
+      "type": "consumable",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "mana_potion",
+          "sourceName": "Mana Potion",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "mp_potion",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Poco común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "herb",
+      "nameEs": "Hierbas recolectadas",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "ore",
+      "nameEs": "Mineral",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "copper_ore",
+          "sourceName": "Copper Ore",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+        },
+        {
+          "id": "iron_ore",
+          "sourceName": "Iron Ore",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "wood",
+      "nameEs": "Madera",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "fish",
+      "nameEs": "Pescado",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "ingot",
+      "nameEs": "Lingote sin clasificar",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "Existing generic ingot must be migrated carefully; never silently merge with individual metal ingots"
+    },
+    {
+      "templateId": "blade_blank",
+      "nameEs": "Hoja sin terminar",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "seed",
+      "nameEs": "Semillas",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "bag_upgrade",
+      "nameEs": "Sello de Expansión",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "bag_upgrade",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Raro",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "ingot_copper",
+      "nameEs": "Lingote de cobre",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "ingot_copper",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "Existing ingot recipe consumes generic ore: P4 must introduce correctly identified ores by type"
+    },
+    {
+      "templateId": "ingot_iron",
+      "nameEs": "Lingote de hierro",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "ingot_iron",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "Existing ingot recipe consumes generic ore: P4 must introduce correctly identified ores by type"
+    },
+    {
+      "templateId": "ingot_silver",
+      "nameEs": "Lingote de plata",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "ingot_silver",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "Existing ingot recipe consumes generic ore: P4 must introduce correctly identified ores by type"
+    },
+    {
+      "templateId": "ingot_gold",
+      "nameEs": "Lingote de oro",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "ingot_gold",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Común",
+      "reviewNote": "Existing ingot recipe consumes generic ore: P4 must introduce correctly identified ores by type"
+    },
+    {
+      "templateId": "upgrade_stone",
+      "nameEs": "Piedra de mejora",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "upgrade_stone",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Raro",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "ascension_core",
+      "nameEs": "Núcleo de Ascensión",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "DEFINED_IN_APPROVED_V36",
+      "phase": "KEEP_V36",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": {},
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "PRESERVE_APPROVED_BINDING_CHECK_ID",
+      "recipeId": "ascension_core",
+      "recipeStatus": "EXISTING_V36_RECIPE_REQUIRES_REVIEW",
+      "newGameDataOnly": true,
+      "approvedBaseRarity": "Épico",
+      "reviewNote": "PRESERVE_APPROVED_ID_AND_ART; current behavior remains until migration"
+    },
+    {
+      "templateId": "hf_dagger_basic",
+      "nameEs": "Daga de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "rusty_dagger",
+          "sourceName": "Rusty Dagger",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "keen_dirk",
+          "sourceName": "Keen Dirk",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/dagger.gltf",
+          "blobSha": "f090037e4ecdd0e6e891a412b2c4a9409226825e",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Dual daggers = two individually owned dagger instances; requires dual-hand animation adapter"
+    },
+    {
+      "templateId": "hf_axe_basic",
+      "nameEs": "Hacha de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "rusty_hatchet",
+          "sourceName": "Rusty Hatchet",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "copper_bearded_axe",
+          "sourceName": "Copper Bearded Axe",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/axe_1handed.gltf",
+          "blobSha": "b367258502ed8f8b172d18c72c71d81befbb39f4",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true
+    },
+    {
+      "templateId": "hf_spear_basic",
+      "nameEs": "Lanza de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "ironbark_boar_spear",
+          "sourceName": "Ironbark Boar Spear",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [
+        {
+          "id": "lightning-spear",
+          "element": "lightning",
+          "relation": "WEAPON_STYLE_ANALOGUE",
+          "mediaPermission": "REQUIRES_FILE_SPECIFIC_REVIEW"
+        }
+      ],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "No confirmed KayKit FREE spear among four packs. Emberfall model redistribution/rig compatibility unverified."
+    },
+    {
+      "templateId": "hf_bow_basic",
+      "nameEs": "Arco de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only crossbow was found in 4 KayKit FREE packs; no conventional bow model confirmed. Do not substitute crossbow silently."
+    },
+    {
+      "templateId": "hf_staff_basic",
+      "nameEs": "Bastón de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "gnarled_staff",
+          "sourceName": "Bogoak Staff",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "apprentice_staff",
+          "sourceName": "Vale Apprentice Staff",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [
+        {
+          "id": "water-staff",
+          "element": "water",
+          "relation": "WEAPON_STYLE_ANALOGUE",
+          "mediaPermission": "REQUIRES_FILE_SPECIFIC_REVIEW"
+        }
+      ],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/staff.gltf",
+          "blobSha": "d8bbebc6f3f6fb59e152d6b45de52add254f0697",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true
+    },
+    {
+      "templateId": "hf_wand_basic",
+      "nameEs": "Vara de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "wand_of_quenched_sparks",
+          "sourceName": "Wand of Quenched Sparks",
+          "sourceFile": "src/sim/content/ignivar_loot.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [
+        {
+          "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/wand.gltf",
+          "blobSha": "67f272fb273bdeb403674509464d7948a3aeb826",
+          "license": "CC0_1_0",
+          "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+        }
+      ],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true
+    },
+    {
+      "templateId": "hf_mace_basic",
+      "nameEs": "Maza de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "right_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "training_mace",
+          "sourceName": "Training Mace",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        },
+        {
+          "id": "copper_flanged_mace",
+          "sourceName": "Copper Flanged Mace",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "3D mace not verified in four audited KayKit FREE packs"
+    },
+    {
+      "templateId": "hf_orb_basic",
+      "nameEs": "Orbe de aprendiz",
+      "category": "arma",
+      "type": "weapon",
+      "slot": "left_hand",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "WEAPON_VISIBLE_ONLY_AFTER_VERIFIED_ADAPTER",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Offhand orb is a separate model/proficiency adapter. No verified 3D in audited packs. Prefer slot over unnecessary class"
+    },
+    {
+      "templateId": "hf_iron_helmet",
+      "nameEs": "Casco de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "helmet",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "roadwardens_helm",
+          "sourceName": "Roadwarden's Helm",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Icon/stat only: no 3D helmet. Upstream is a slot analogue, not same item."
+    },
+    {
+      "templateId": "hf_iron_chest",
+      "nameEs": "Pechera de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "chest",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "ironlink_hauberk",
+          "sourceName": "Ironlink Hauberk",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Icon/stat only. Can drop at any configured rarity, ALWAYS +0"
+    },
+    {
+      "templateId": "hf_iron_gloves",
+      "nameEs": "Guantes de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "gloves",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "acolyte_chain_grips",
+          "sourceName": "Acolyte Chain Grips",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Analogous slot; final armor stats and name original HIGHFLY"
+    },
+    {
+      "templateId": "hf_iron_shoulders",
+      "nameEs": "Hombreras de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "shoulders",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "ironlink_spaulders",
+          "sourceName": "Ironlink Spaulders",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "WOC slot 'shoulder', HF slot 'shoulders'; alias needed. No model overlay."
+    },
+    {
+      "templateId": "hf_iron_pants",
+      "nameEs": "Pantalones de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "pants",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "ironlink_legguards",
+          "sourceName": "Ironlink Legguards",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "WOC slot 'legs', HF 'pants'; alias needed. No model overlay."
+    },
+    {
+      "templateId": "hf_iron_boots",
+      "nameEs": "Botas de hierro",
+      "category": "armadura",
+      "type": "armor",
+      "slot": "boots",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "hobnail_boots",
+          "sourceName": "Hobnailed Boots",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "WOC slot 'feet', HF 'boots'; alias needed. No model overlay."
+    },
+    {
+      "templateId": "hf_copper_ring",
+      "nameEs": "Anillo de cobre",
+      "category": "accesorio",
+      "type": "accessory",
+      "slot": "ring",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "hammered_copper_band",
+          "sourceName": "Hammered Copper Band",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Icon/stat only; no jewelry meshes"
+    },
+    {
+      "templateId": "hf_silver_necklace",
+      "nameEs": "Collar de plata",
+      "category": "accesorio",
+      "type": "accessory",
+      "slot": "necklace",
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_PILOT",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "wyrmfall_pendant",
+          "sourceName": "Wyrmfall Pendant",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Slot analogue (upstream 'neck'), not equivalent material; no jewelry meshes"
+    },
+    {
+      "templateId": "hf_amulet_basic",
+      "nameEs": "Amuleto del viajero",
+      "category": "accesorio",
+      "type": "accessory",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "FUTURE_SLOT_REVIEW",
+      "visualPolicy": "STAT_ONLY_NO_CHARACTER_MESH",
+      "birthEnhancement": 0,
+      "allowRarity": [
+        "Común",
+        "Poco común",
+        "Raro",
+        "Épico",
+        "Legendario",
+        "Mítico"
+      ],
+      "balanceStats": null,
+      "requiresNewBalance": true,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "heartspring_amulet",
+          "sourceName": "Heartspring Amulet",
+          "sourceFile": "src/sim/content/ignivar_loot.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Prompt requests amulet, but APPROVED v3.6 has no separate amulet slot: do not add or change UI now."
+    },
+    {
+      "templateId": "hf_ore_copper",
+      "nameEs": "Mineral de cobre",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "copper_ore",
+          "sourceName": "Copper Ore",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_ore_iron",
+      "nameEs": "Mineral de hierro",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "iron_ore",
+          "sourceName": "Iron Ore",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_ore_silver",
+      "nameEs": "Mineral de plata",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "HIGHFLY original material: not present as literal WOC ID; required to split generic ore"
+    },
+    {
+      "templateId": "hf_ore_gold",
+      "nameEs": "Mineral de oro",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "HIGHFLY original material: not present as literal WOC ID; required to split generic ore"
+    },
+    {
+      "templateId": "hf_rough_hide",
+      "nameEs": "Cuero en bruto",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "rough_hide",
+          "sourceName": "Rough Hide",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_wolf_fang",
+      "nameEs": "Colmillo de lobo",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "wolf_fang",
+          "sourceName": "Cracked Wolf Fang",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_spider_silk",
+      "nameEs": "Seda de araña",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "spider_silk",
+          "sourceName": "Spider Silk",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_bone_fragments",
+      "nameEs": "Fragmentos de hueso",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "bone_fragments",
+          "sourceName": "Bone Fragments",
+          "sourceFile": "src/sim/content/items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_homespun_cloth",
+      "nameEs": "Tela rústica",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "homespun_cloth",
+          "sourceName": "Homespun Cloth",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_spool_of_thread",
+      "nameEs": "Carrete de hilo",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "spool_of_thread",
+          "sourceName": "Spool of Thread",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    },
+    {
+      "templateId": "hf_smithing_flux",
+      "nameEs": "Fundente de herrería",
+      "category": "material",
+      "type": "material",
+      "slot": null,
+      "gameStatus": "P4_CANDIDATE_NOT_IMPLEMENTED",
+      "phase": "P4_MATERIALS",
+      "visualPolicy": "ICON_IN_UI_ONLY",
+      "birthEnhancement": null,
+      "allowRarity": null,
+      "balanceStats": null,
+      "requiresNewBalance": false,
+      "dropTable": null,
+      "tradeImplementation": "NOT_IMPLEMENTED",
+      "purchaseImplementation": "NOT_IMPLEMENTED",
+      "wocReferences": [
+        {
+          "id": "smithing_flux",
+          "sourceName": "Smithing Flux",
+          "sourceFile": "src/sim/content/profession_items.ts",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+        }
+      ],
+      "emberfallReferences": [],
+      "kaykitFreeModelCandidates": [],
+      "iconPolicy": "REUSE_EXISTING_USER_ICON_IF_FILE_VERIFIED_ELSE_NEW_APPROVED_ICON",
+      "recipeId": null,
+      "recipeStatus": "RECIPE_NOT_AUTHORED",
+      "newGameDataOnly": true,
+      "reviewNote": "Only source gameplay item data verified; HIGHFLY obtaining/crafting must be authored"
+    }
+  ]
+}
