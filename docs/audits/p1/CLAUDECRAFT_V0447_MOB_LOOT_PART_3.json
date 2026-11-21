@@ -1,0 +1,1466 @@
+{
+  "sourceRef": "v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "dataType": "STATIC SOURCE DROP EVIDENCE NOT HIGHFLY IMPLEMENTATION",
+  "registries": [
+    {
+      "symbol": "REALM_MOBS",
+      "path": "src/sim/content/realm.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "glimmerwisp",
+          "sourceName": "'Glimmerwisp'",
+          "minimumLevel": "15",
+          "maximumLevel": "16",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "75",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 75, chance: 1"
+            },
+            {
+              "itemId": "wisp_mote",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_wisp_lights",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'wisp_mote', chance: 0.6, questId: 'q_wisp_lights'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "duskwisp",
+          "sourceName": "'Duskwisp'",
+          "minimumLevel": "15",
+          "maximumLevel": "16",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "70",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 70, chance: 1"
+            },
+            {
+              "itemId": "duskwisp_essence",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_veil_thinned",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'duskwisp_essence', chance: 0.6, questId: 'q_veil_thinned'"
+            },
+            {
+              "itemId": "starfall_shard",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": "q_shards_of_starfall",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'starfall_shard', chance: 0.5, questId: 'q_shards_of_starfall'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "veiled_stag",
+          "sourceName": "'Veiled Stag'",
+          "minimumLevel": "15",
+          "maximumLevel": "16",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "45",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 45, chance: 1"
+            },
+            {
+              "itemId": "gleaming_antler",
+              "copper": null,
+              "chance": "0.55",
+              "rollGroup": null,
+              "questId": "q_gleaming_antlers",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'gleaming_antler', chance: 0.55, questId: 'q_gleaming_antlers'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "veiled_doe",
+          "sourceName": "'Veiled Doe'",
+          "minimumLevel": "14",
+          "maximumLevel": "15",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 40, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gleamstag",
+          "sourceName": "'The Gleamstag'",
+          "minimumLevel": "17",
+          "maximumLevel": "17",
+          "elite": "true",
+          "boss": null,
+          "rare": "true",
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "260",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 260, chance: 1"
+            },
+            {
+              "itemId": "gleamstag_charm",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'gleamstag_charm', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "mushroom_pixie",
+          "sourceName": "'Gleamfolk Pixie'",
+          "minimumLevel": "15",
+          "maximumLevel": "16",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 80, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "sporeling_gatherer",
+          "sourceName": "'Sporeling Gatherer'",
+          "minimumLevel": "15",
+          "maximumLevel": "15",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 75, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "corrupted_sporeling",
+          "sourceName": "'Corrupted Sporeling'",
+          "minimumLevel": "16",
+          "maximumLevel": "17",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "85",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 85, chance: 1"
+            },
+            {
+              "itemId": "spore_heart",
+              "copper": null,
+              "chance": "0.65",
+              "rollGroup": null,
+              "questId": "q_spore_hearts",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'spore_heart', chance: 0.65, questId: 'q_spore_hearts'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "treant_elder",
+          "sourceName": "'Treant Elder'",
+          "minimumLevel": "18",
+          "maximumLevel": "18",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "90",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 90, chance: 1"
+            },
+            {
+              "itemId": "elder_bark",
+              "copper": null,
+              "chance": "0.7",
+              "rollGroup": null,
+              "questId": "q_treant_accord",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'elder_bark', chance: 0.7, questId: 'q_treant_accord'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "ancient_guardian",
+          "sourceName": "'Ancient Guardian'",
+          "minimumLevel": "18",
+          "maximumLevel": "19",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "95",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 95, chance: 1"
+            },
+            {
+              "itemId": "guardian_core",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'guardian_core', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "old_marrowshell",
+          "sourceName": "'Old Marrowshell'",
+          "minimumLevel": "17",
+          "maximumLevel": "17",
+          "elite": "true",
+          "boss": null,
+          "rare": "true",
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "700",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 700, chance: 1"
+            },
+            {
+              "itemId": "guardian_core",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'guardian_core', chance: 1"
+            },
+            {
+              "itemId": "duskfang_dirk",
+              "copper": null,
+              "chance": "0.35",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'duskfang_dirk', chance: 0.35"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "aurelhorn",
+          "sourceName": "'Aurelhorn, First of the Herd'",
+          "minimumLevel": "18",
+          "maximumLevel": "18",
+          "elite": "true",
+          "boss": null,
+          "rare": "true",
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "700",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 700, chance: 1"
+            },
+            {
+              "itemId": "gleaming_antler",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'gleaming_antler', chance: 1"
+            },
+            {
+              "itemId": "veilsteel_blade",
+              "copper": null,
+              "chance": "0.35",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'veilsteel_blade', chance: 0.35"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "waking_warden",
+          "sourceName": "'The Waking Warden'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "600",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 600, chance: 1"
+            },
+            {
+              "itemId": "wardens_seal",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": "q_waking_warden",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'wardens_seal', chance: 1, questId: 'q_waking_warden'"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "DRAKELANDS_MOBS",
+      "path": "src/sim/content/drakelands.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "emberwing_drake",
+          "sourceName": "'Emberwing Drake'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "emberwing_scale",
+              "copper": null,
+              "chance": "0.7",
+              "rollGroup": null,
+              "questId": "q_dk_scales_of_the_maw",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'emberwing_scale', chance: 0.7, questId: 'q_dk_scales_of_the_maw'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "dragonkin_egg",
+          "sourceName": "'Dragonkin Egg'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "dragonkin_whelp",
+          "sourceName": "'Dragonkin Whelp'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 15, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "dragonkin_broodguard",
+          "sourceName": "'Dragonkin Broodguard'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "90",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 90, chance: 1"
+            },
+            {
+              "itemId": "emberwing_scale",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": "q_dk_scales_of_the_maw",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'emberwing_scale', chance: 0.5, questId: 'q_dk_scales_of_the_maw'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "drakemaw_broodlord",
+          "sourceName": "'Drakemaw Broodlord'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": "true",
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "emberwing_scale",
+              "copper": null,
+              "chance": "0.9",
+              "rollGroup": null,
+              "questId": "q_dk_scales_of_the_maw",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'emberwing_scale', chance: 0.9, questId: 'q_dk_scales_of_the_maw'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "ashbone_raider",
+          "sourceName": "'Ashbone Raider'",
+          "minimumLevel": "17",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "90",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 90, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 0.4"
+            },
+            {
+              "itemId": "ashbone_war_brand",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_dk_marrow_and_ash",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'ashbone_war_brand', chance: 0.6, questId: 'q_dk_marrow_and_ash'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "ashbone_warcaller",
+          "sourceName": "'Ashbone Warcaller'",
+          "minimumLevel": "18",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "95",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 95, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 0.4"
+            },
+            {
+              "itemId": "ashbone_war_brand",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_dk_marrow_and_ash",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'ashbone_war_brand', chance: 0.6, questId: 'q_dk_marrow_and_ash'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "dune_troll",
+          "sourceName": "'Dune Troll'",
+          "minimumLevel": "17",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "90",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 90, chance: 1"
+            },
+            {
+              "itemId": "chipped_tusk",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'chipped_tusk', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "cindraleth_maw_matriarch",
+          "sourceName": "'Cindraleth the Maw Matriarch'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "marrowpoint",
+              "copper": null,
+              "chance": "0.15",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'marrowpoint', chance: 0.15"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "WILDHEART_MOBS",
+      "path": "src/sim/content/wildheart.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "wildheart_stalker",
+          "sourceName": "'Vineclaw Stalker'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "360",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 360, chance: 1"
+            },
+            {
+              "itemId": "chipped_tusk",
+              "copper": null,
+              "chance": "0.35",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'chipped_tusk', chance: 0.35"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wildheart_ravager",
+          "sourceName": "'Bloodmane Ravager'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "450",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 450, chance: 1"
+            },
+            {
+              "itemId": "chipped_tusk",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'chipped_tusk', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wildheart_hexcaller",
+          "sourceName": "'Sunbone Hexcaller'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "430",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 430, chance: 1"
+            },
+            {
+              "itemId": "chipped_tusk",
+              "copper": null,
+              "chance": "0.45",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'chipped_tusk', chance: 0.45"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wildheart_beastmaster",
+          "sourceName": "'Fanglord Beastmaster'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": "true",
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "2500",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 2500, chance: 1"
+            },
+            {
+              "itemId": "chipped_tusk",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'chipped_tusk', chance: 1"
+            },
+            {
+              "itemId": "fanglords_beastspear",
+              "copper": null,
+              "chance": "0.12",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'fanglords_beastspear', chance: 0.12"
+            },
+            {
+              "itemId": "duskwhisper",
+              "copper": null,
+              "chance": "0.12",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'duskwhisper', chance: 0.12"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wildheart_high_priest",
+          "sourceName": "'Zulgar, Voice of the Basin'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "15000",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 15000, heroicCopper: HEROIC_FINALE_COPPER, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "0.8",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 0.8"
+            }
+          ],
+          "leftoverExpressions": [
+            "itemId: 'bloodmane_warleggings',",
+            "chance: 0.34,",
+            "rollGroup: 'zulgar_guaranteed_uncommon',",
+            "normalOnly: true,",
+            "},",
+            "itemId: 'vineclaw_stalking_breeches',",
+            "chance: 0.33,",
+            "rollGroup: 'zulgar_guaranteed_uncommon',",
+            "normalOnly: true,",
+            "},",
+            "itemId: 'sunbone_ritual_sarong',",
+            "chance: 0.33,",
+            "rollGroup: 'zulgar_guaranteed_uncommon',",
+            "normalOnly: true,",
+            "},",
+            "itemId: 'wildheart_tuskblade',",
+            "chance: 0.06,",
+            "rollGroup: 'wildheart_bonus',",
+            "normalOnly: true,",
+            "},",
+            "itemId: 'wildheart_hexwood_staff',",
+            "chance: 0.06,",
+            "rollGroup: 'wildheart_bonus',",
+            "normalOnly: true,",
+            "},",
+            "itemId: 'wildheart_fangknife',",
+            "chance: 0.06,",
+            "rollGroup: 'wildheart_bonus',",
+            "normalOnly: true,",
+            "},"
+          ]
+        }
+      ]
+    },
+    {
+      "symbol": "FROSTVEIL_MOBS",
+      "path": "src/sim/content/frostveil.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "snowdrift_wolf",
+          "sourceName": "'Snowdrift Wolf'",
+          "minimumLevel": "17",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "80",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 80, chance: 1"
+            },
+            {
+              "itemId": "thick_winter_pelt",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_fv_winter_pelts",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'thick_winter_pelt', chance: 0.6, questId: 'q_fv_winter_pelts'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "ice_wisp",
+          "sourceName": "'Ice Wisp'",
+          "minimumLevel": "17",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "90",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 90, chance: 1"
+            },
+            {
+              "itemId": "aurora_mote",
+              "copper": null,
+              "chance": "0.65",
+              "rollGroup": null,
+              "questId": "q_fv_aurora_motes",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'aurora_mote', chance: 0.65, questId: 'q_fv_aurora_motes'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "rime_elemental",
+          "sourceName": "'Rime Elemental'",
+          "minimumLevel": "18",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 95, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "fen_sprite",
+          "sourceName": "'Fen Sprite'",
+          "minimumLevel": "17",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 90, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "terrace_howler",
+          "sourceName": "'Terrace Howler'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "apprentice_wren",
+          "sourceName": "'Apprentice Wren'",
+          "minimumLevel": "18",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "frostmane_yeti",
+          "sourceName": "'Rimemane Yeti'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "AMBERFALL_MOBS",
+      "path": "src/sim/content/amberfall.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "gilded_stag",
+          "sourceName": "'Gilded Stag'",
+          "minimumLevel": "18",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ itemId: 'gilded_sap_clot', chance: 0.6, questId: 'q_af_amber_from_the_herd' }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gloam_fox",
+          "sourceName": "'Gloam Fox'",
+          "minimumLevel": "18",
+          "maximumLevel": "18",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 90, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "orchard_treant",
+          "sourceName": "'Orchard Treant'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "tangled_weed",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'tangled_weed', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "harvest_sprite",
+          "sourceName": "'Gleaning Sprite'",
+          "minimumLevel": "18",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 95, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "mere_lurker",
+          "sourceName": "'Mere Lurker'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "mudfin_scale",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'mudfin_scale', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "the_meredark",
+          "sourceName": "'The Meredark'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "mudfin_scale",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'mudfin_scale', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "WILLOWFEN_MOBS",
+      "path": "src/sim/content/willowfen.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "bogtoad",
+          "sourceName": "'Bogtoad'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "plump_fen_eel",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_wf_eels_for_the_smokehouse",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'plump_fen_eel', chance: 0.6, questId: 'q_wf_eels_for_the_smokehouse'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "drowsy_croaker",
+          "sourceName": "'The Drowsy Croaker'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "lily_wisp",
+          "sourceName": "'Lily Wisp'",
+          "minimumLevel": "19",
+          "maximumLevel": "19",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "95",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 95, chance: 1"
+            },
+            {
+              "itemId": "wisplight_globe",
+              "copper": null,
+              "chance": "0.65",
+              "rollGroup": null,
+              "questId": "q_wf_wisplight_charms",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'wisplight_globe', chance: 0.65, questId: 'q_wf_wisplight_charms'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "willow_sprite",
+          "sourceName": "'Willow Sprite'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "NIGHTBLOOM_MOBS",
+      "path": "src/sim/content/nightbloom.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "moonfleece_grazer",
+          "sourceName": "'Moonfleece Grazer'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "105",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 105, chance: 1"
+            },
+            {
+              "itemId": "moonfleece_tuft",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_nb_wool_by_moonlight",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'moonfleece_tuft', chance: 0.6, questId: 'q_nb_wool_by_moonlight'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gloam_strider",
+          "sourceName": "'Gloam Strider'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "nightkin_stargazer",
+          "sourceName": "'Gloamkin Stargazer'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "barrow_king",
+          "sourceName": "'The Barrow King'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "barrow_wight",
+          "sourceName": "'Barrow Wight'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    }
+  ]
+}
