@@ -30,6 +30,18 @@ export const ITEM_DEFS=Object.freeze({
  ingot_iron:{id:'ingot_iron',name:'Lingote de hierro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: hierro.',max:999},
  ingot_silver:{id:'ingot_silver',name:'Lingote de plata',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: plata.',max:999},
  ingot_gold:{id:'ingot_gold',name:'Lingote de oro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: oro.',max:999},
+ ore_copper:{id:'ore_copper',name:'Mineral de cobre',kind:'Materiales',icon:'ore',rarity:'Común',description:'Cobre extraído de una veta.',max:999},
+ ore_iron:{id:'ore_iron',name:'Mineral de hierro',kind:'Materiales',icon:'ore',rarity:'Común',description:'Hierro bruto extraído.',max:999},
+ coal:{id:'coal',name:'Carbón de forja',kind:'Materiales',icon:'ore',rarity:'Común',description:'Combustible y carbono para acero.',max:999},
+ ore_silver:{id:'ore_silver',name:'Mineral de plata',kind:'Materiales',icon:'ore',rarity:'Común',description:'Plata extraída y sin refinar.',max:999},
+ ore_gold:{id:'ore_gold',name:'Mineral de oro',kind:'Materiales',icon:'ore',rarity:'Común',description:'Oro extraído y sin refinar.',max:999},
+ raw_diamond:{id:'raw_diamond',name:'Diamante en bruto',kind:'Materiales',icon:'ore',rarity:'Común',description:'Cristal sin tallar de veta profunda.',max:999},
+ raw_obsidian:{id:'raw_obsidian',name:'Obsidiana en bruto',kind:'Materiales',icon:'ore',rarity:'Común',description:'Vidrio volcánico de origen natural.',max:999},
+ ore_mithril:{id:'ore_mithril',name:'Mineral de mitrilo',kind:'Materiales',icon:'ore',rarity:'Común',description:'Mena fantástica de mitrilo.',max:999},
+ ingot_steel:{id:'ingot_steel',name:'Lingote de acero',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Aleación de hierro con carbono.',max:999},
+ ingot_diamond:{id:'ingot_diamond',name:'Bloque de diamante tallado',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Componente de gemas: no es metal fundido.',max:999},
+ ingot_obsidian:{id:'ingot_obsidian',name:'Placa de obsidiana',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Obsidiana trabajada, no metal.',max:999},
+ ingot_mithril:{id:'ingot_mithril',name:'Lingote de mitrilo',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal fantástico de alta calidad.',max:999},
  upgrade_stone:{id:'upgrade_stone',name:'Piedra de mejora',kind:'Materiales',icon:'ore',rarity:'Raro',description:'Se consume para mejorar equipo de +1 a +9. Éxito garantizado.',max:999},
  ascension_core:{id:'ascension_core',name:'Núcleo de Ascensión',kind:'Especial',icon:'ore',rarity:'Épico',description:'Sube la rareza de un objeto +9, reiniciándolo a +0.',max:99}
 });
@@ -40,10 +52,14 @@ export const RECIPES=Object.freeze({
  training_sword:{item:'training_sword',name:'Espada de Aprendiz',ingredients:{ingot:2,wood:1},count:1,profession:'Forja'},
  training_shield:{item:'training_shield',name:'Escudo de Aprendiz',ingredients:{ingot:2,wood:2},count:1,profession:'Forja'},
  training_greatsword:{item:'training_greatsword',name:'Mandoble de Aprendiz',ingredients:{ingot:4,wood:2},count:1,profession:'Forja'},
- ingot_copper:{item:'ingot_copper',name:'Lingote de cobre',ingredients:{ore:2},count:1,profession:'Fundición'},
- ingot_iron:{item:'ingot_iron',name:'Lingote de hierro',ingredients:{ore:3},count:1,profession:'Fundición'},
- ingot_silver:{item:'ingot_silver',name:'Lingote de plata',ingredients:{ore:5},count:1,profession:'Fundición'},
- ingot_gold:{item:'ingot_gold',name:'Lingote de oro',ingredients:{ore:8},count:1,profession:'Fundición'},
+ ingot_copper:{item:'ingot_copper',name:'Lingote de cobre',ingredients:{ore_copper:2},count:1,profession:'Fundición'},
+ ingot_iron:{item:'ingot_iron',name:'Lingote de hierro',ingredients:{ore_iron:3},count:1,profession:'Fundición'},
+ ingot_silver:{item:'ingot_silver',name:'Lingote de plata',ingredients:{ore_silver:3},count:1,profession:'Fundición'},
+ ingot_gold:{item:'ingot_gold',name:'Lingote de oro',ingredients:{ore_gold:4},count:1,profession:'Fundición'},
+ ingot_steel:{item:'ingot_steel',name:'Lingote de acero',ingredients:{ingot_iron:2,coal:2},count:1,profession:'Fundición'},
+ ingot_diamond:{item:'ingot_diamond',name:'Bloque de diamante tallado',ingredients:{raw_diamond:3},count:1,profession:'Tallado'},
+ ingot_obsidian:{item:'ingot_obsidian',name:'Placa de obsidiana',ingredients:{raw_obsidian:3},count:1,profession:'Tallado'},
+ ingot_mithril:{item:'ingot_mithril',name:'Lingote de mitrilo',ingredients:{ore_mithril:5},count:1,profession:'Fundición'},
  upgrade_stone:{item:'upgrade_stone',name:'Piedra de mejora',ingredients:{ore:2,ingot:1},count:1,profession:'Forja'},
  ascension_core:{item:'ascension_core',name:'Núcleo de Ascensión',ingredients:{ore:6,ingot:3},count:1,profession:'Forja'}
 });
@@ -73,7 +89,9 @@ export function consumeBagUpgrade(state){
  return {ok:true,slots:state.slots,remaining:state.items.bag_upgrade};
 }
 export function inventoryRows(state,professionInventory={}){
- const owned={...state?.items,...professionInventory};
+ const owned={...state?.items};
+ for(const [id,n] of Object.entries(professionInventory??{}))
+  if(Number.isInteger(n)&&n>0)owned[id]=(owned[id]??0)+n;
  return Object.entries(owned).filter(([id,n])=>ITEM_DEFS[id]&&Number.isInteger(n)&&n>0)
   .map(([id,n])=>({...ITEM_DEFS[id],count:n})).sort((a,b)=>a.kind.localeCompare(b.kind)||a.name.localeCompare(b.name));
 }
@@ -92,12 +110,18 @@ export function spendPotion(state,player,id){
  state.items[id]--;
  return {ok:true,restored,remaining:state.items[id],resource:life?'Vida':'Maná'};
 }
+export const ownedMaterialCount=(id,professionInventory={},state=null)=>
+ Math.max(0,Number(professionInventory?.[id])||0)+Math.max(0,Number(state?.items?.[id])||0);
 export function canCraft(recipeId,professionInventory={},state){
  const recipe=RECIPES[recipeId];
  if(!recipe)return {ok:false,reason:'Receta desconocida'};
- if((state?.items?.[recipe.item]??0)+recipe.count>ITEM_DEFS[recipe.item].max)
-  return {ok:false,reason:'No queda espacio para esa poción'};
- const missing=Object.entries(recipe.ingredients).filter(([id,n])=>(professionInventory[id]??0)<n);
+ if(!state?.items)return {ok:false,reason:'Bolsa no disponible'};
+ if((state.items[recipe.item]??0)+recipe.count>ITEM_DEFS[recipe.item].max)
+  return {ok:false,reason:'La pila resultante alcanzó su límite'};
+ const occupied=inventoryRows(state,professionInventory).length;
+ const alreadyOwned=ownedMaterialCount(recipe.item,professionInventory,state)>0;
+ if(!alreadyOwned&&occupied>=state.slots)return {ok:false,reason:'Bolsa llena'};
+ const missing=Object.entries(recipe.ingredients).filter(([id,n])=>ownedMaterialCount(id,professionInventory,state)<n);
  return missing.length?{ok:false,reason:'Faltan materiales',missing}:{ok:true};
 }
 export function craftPotion(recipeId,professionState,state){
@@ -106,7 +130,13 @@ export function craftPotion(recipeId,professionState,state){
  const valid=canCraft(recipeId,inventory,state);
  if(!valid.ok)return valid;
  const recipe=RECIPES[recipeId];
- for(const [id,n] of Object.entries(recipe.ingredients))inventory[id]-=n;
+ // Commit exactly once: spend profession stock first, then normal bag stock.
+ for(const [id,n] of Object.entries(recipe.ingredients)){
+  const fromProf=Math.min(n,Math.max(0,inventory[id]??0));
+  if(fromProf)inventory[id]-=fromProf;
+  const fromBag=n-fromProf;
+  if(fromBag)state.items[id]-=fromBag;
+ }
  state.items[recipe.item]=(state.items[recipe.item]??0)+recipe.count;
  registerCraftedGear(state,recipe.item,recipe.count);
  return {ok:true,id:recipe.item,count:recipe.count,remaining:state.items[recipe.item]};
