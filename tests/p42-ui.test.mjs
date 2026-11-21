@@ -53,5 +53,5 @@ test('P4.2: skills HUD are circular and original loading is dark with large logo
  assert.match(touch,/clip-path:circle\(45%/);
  assert.match(touch,/border-radius:50%!important/);
  assert.match(boot,/background:radial-gradient\(ellipse at 50% 48%,#210e2f 0%,#08060d 45%,#010104 86%,#000 100%\)/);
- assert.match(boot,/width:min\(760px,90vw\)/); // P4.3 sharp 1600px SVG
+ assert.match(boot,/width:min\(550px,86vw\)/); // P4.3 sharp 1600px SVG
 });
