@@ -12,8 +12,10 @@ import './premium-f0148-user-icons.css';
 import './phoenix-brand.css';
 import './phoenix-v36-polish.css';
 import './premium-p41.css';
+import './premium-p42.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
+import {p42ItemArt} from './p42-item-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
 import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
@@ -44,6 +46,7 @@ const slot=(meta,equipped,selected=false,gearTraits=null)=>{
 const menuLink=(tab,icon,label,selected=false)=>'<button type="button" class="hf-rpg-side-link '+(selected?'is-selected':'')+'" data-hf-tab="'+tab+'"><span>'+icon+'</span>'+safe(label)+'</button>';
 
 function art(id='stone',large=false){
+ const renewed=p42ItemArt(String(id).replace(/^item_/,''),large);if(renewed)return renewed;
  const premium=premiumArt(id,large);if(premium)return premium;
  // Premium originals from approved asset board; vector fallback for unillustrated assets.
  let interior='';
@@ -143,11 +146,16 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const description=complete?m.outcome:busy?'Canalizando la energía de la forja…':m.description;
   const details=Array.isArray(m.details)&&!complete&&!busy?
    '<div class="hf-system-details">'+m.details.map(d=>'<div><span>'+safe(d.label)+'</span><b>'+safe(d.value)+'</b></div>').join('')+'</div>':'';
-  const selector=choice?'<div class="hf-system-choice-list">'+m.slots.map(d=>
+  const selector=m.type==='equipment-choice'?'<div class="hf-p42-equipment-actions">'+
+  button('⚒ MEJORAR +1','data-hf-system-gear="upgrade"')+
+  (m.plus===9?button('✦ ASCENDER','data-hf-system-gear="ascend"'):'')+
+  button('↶ DESEQUIPAR','data-hf-system-gear="unequip"')+'</div>':
+  choice?'<div class="hf-system-choice-list">'+m.slots.map(d=>
    '<button type="button" data-hf-system-slot="'+safe(d.id)+'">'+safe(d.label)+'</button>').join('')+'</div>':'';
   const actions=busy?'<div class="hf-system-loading"><div class="hf-system-progress"><i></i></div><small>PROCESO PHOENIX · RECETA REAL</small></div>':
    complete?'<div class="hf-system-actions">'+button('ACEPTAR','data-hf-system="dismiss" data-hf-system-focus','is-primary')+
       (m.success&&m.type==='craft'?button('VER EN BOLSA','data-hf-system="bag"'):'')+'</div>':
+   m.type==='equipment-choice'?'<div class="hf-system-actions">'+button('CERRAR','data-hf-system="cancel"','is-primary')+'</div>':
    '<div class="hf-system-actions">'+button('CANCELAR','data-hf-system="cancel"')+
      (!choice?button('SÍ, '+safe(m.verb),'data-hf-system="confirm" data-hf-system-focus','is-primary'):'')+'</div>';
   return '<div class="hf-system-shade" data-stage="'+safe(m.phase)+'"><section class="hf-system-card" role="alertdialog" aria-modal="true" aria-label="Mensaje del Sistema HIGHFLY">'+
@@ -158,7 +166,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  };
  function showSystem(type,payload={}){
   const intent=describeSystemIntent(type,payload,bag,prof().inventory,p());
-  if(!intent.ok){message(intent.reason);return false;}
+  if(!intent.ok){local.system={type,phase:'result',success:false,outcome:intent.reason};render();return false;}
   local.system={...intent,phase:type==='equip-choose'?'choose':'confirm'};
   render();return true;
  }
@@ -211,24 +219,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  };
  function character(){
   const eq=bag.equipped;
-  const selected=EQUIP_SLOTS.find(v=>v.id===local.selectedEquipSlot);
-  const chosen=selected&&ITEM_DEFS[eq?.[selected.id]];
-   const trait=selected?gearTraitAt(bag,'equipped',selected.id):null;
-  const detail=selected?
-   '<div class="hf-rpg-equip-selected"><b title="'+safe(chosen?.name??selected.label)+'">'+safe(chosen?traitLabel(chosen.name,trait)+' · '+(trait?.rarity??'Común'):selected.label+' libre')+'</b>'+
-   (chosen?button('MEJORAR +1','data-hf-action="gear:upgrade:equipped:'+selected.id+':0"')+
-    (trait?.plus===9?button('ASCENDER','data-hf-action="gear:ascend:equipped:'+selected.id+':0"'):'')+
-    button('DESEQUIPAR','data-hf-action="ask-unequip:'+selected.id+'"','is-primary'):
-    button('VER BOLSA','data-hf-tab="bolsa"'))+'</div>':
-   '<div class="hf-rpg-equip-selected"><b>Equipo real · '+safe(weapon().label)+'</b></div>';
-  return '<div class="hf-rpg-character-layout">'+
-   panel(title('Equipo','Mano derecha · equipo')+
+  return '<div class="hf-rpg-character-layout hf-p42-character">'+
+   panel(title('Equipo','Tocá una pieza para abrir el Sistema')+
     '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-left-panel')+
    preview()+
-   panel(title('Equipamiento','Mano izquierda · accesorios')+
-    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-right-panel')+
-   '<div class="hf-rpg-equip-footer">'+button('◈ ABRIR BOLSA','data-hf-tab="bolsa"','is-primary')+
-   detail+button('ATRIBUTOS →','data-hf-tab="atributos"')+'</div></div>';
+   panel(title('Equipamiento','Protección y accesorios')+
+    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function refreshPortrait(){
   if(local.tab!=='personaje'||!local.opened)return;
@@ -245,15 +241,15 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   }
  }
  function attributes(){
-  const a=attrs(),rows=a.rows.map(r=>'<div class="hf-rpg-stat-row"><span><b>'+r.id+'</b> <small>'+r.name+'</small></span>'+
-    '<span>'+r.level+'</span><span>'+r.training+'</span><span class="is-green">+'+r.equipment+'</span><strong>'+r.total+'</strong></div>').join('');
-  return '<div class="hf-rpg-two">'+panel(title('Atributos','Atributos principales · Nivel '+a.level)+
-   '<div class="hf-rpg-stat-head"><span>ATRIBUTO</span><span>NIVEL 80%</span><span>ENTRENAMIENTO 20%</span><span>EQUIPO</span><span>TOTAL</span></div>'+rows+
-   '<div class="hf-rpg-rule"></div><p class="hf-rpg-info">Los puntos base nuevos se distribuyen hasta un <b>80% por nivel</b> y hasta un <b>20% por entrenamiento real verificado</b>. Las bonificaciones de equipo se suman por separado.</p>'+
-   '<div class="hf-rpg-split">'+panel('<b>PROGRESIÓN</b><p>Nivel real registrado: '+a.level+'</p><small>Puntos por nivel: '+a.levelPoints+'</small>')+
-   panel('<b>ENTRENAMIENTO REAL</b><p>'+a.trainingPoints+' / '+a.trainingCap+' puntos</p><small>No se otorgan puntos simulados.</small>')+'</div>')+
-   panel(title('Estadísticas derivadas','Combate y recursos del personaje')+
-   '<div class="hf-rpg-stats-aside">'+[['HP máximo',health().max],['Maná máximo',mana().max],['Energía máxima',p()?.staminaMax],['Oxígeno máximo',p()?._hfOxygenMax??100],['Ataque',p()?.power?'×'+Number(p().power).toFixed(2):'—'],['Defensa',p()?._hfDefense??'—'],['Ataque extra de equipo',bonuses().physicalAttack],['Defensa extra de equipo',bonuses().defense],['Crítico',p()?._hfCritical??'—'],['Esquiva',p()?._hfEvasion??'—']].map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>','hf-rpg-right-panel')+'</div>';
+  const a=attrs(),rows=a.rows.map(r=>'<div class="hf-rpg-stat-row"><span><b>'+r.id+'</b> <small>'+safe(r.name)+'</small></span>'+
+    '<span>'+numeric(r.level+r.training)+'</span><span class="is-green">+'+numeric(r.equipment)+'</span><strong>'+numeric(r.total)+'</strong></div>').join('');
+  const derived=[['HP máximo',health().max],['Maná máximo',mana().max],['Energía máxima',p()?.staminaMax],
+   ['Ataque físico',p()?.power?'×'+Number(p().power).toFixed(2):'—'],['Ataque mágico',bonuses().magicalAttack??0],
+   ['Defensa de equipo',bonuses().defense??0],['Crítico',p()?._hfCritical??'—'],['Esquiva',p()?._hfEvasion??'—']];
+  return '<div class="hf-rpg-two hf-p42-attributes">'+panel(title('Atributos','Nivel '+a.level+' · Valores del Cazador')+
+   '<div class="hf-rpg-stat-head"><span>ATRIBUTO</span><span>BASE</span><span>EQUIPO</span><span>TOTAL</span></div>'+rows,'hf-rpg-left-panel')+
+   panel(title('Estadísticas derivadas','Combate y recursos')+
+   '<div class="hf-rpg-stats-aside">'+derived.map(([k,v])=>'<div><span>'+safe(k)+'</span><b>'+safe(v??'—')+'</b></div>').join('')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function bagView(){
   const categories=['Todo','Consumibles','Materiales','Equipamiento','Accesorios','Otros'];
@@ -278,17 +274,17 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
     categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat,local.category===cat)).join('')+
     '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+ 
-     '<div class="hf-p41-loot-lab"><b>✦ P4.1 · BOTÍN DE PRUEBA</b><small>Simulaciones reales de inventario; todavía no son drops automáticos.</small>'+ 
+     '<div class="hf-p41-loot-lab"><b>✦ DEPURACIÓN TEMPORAL · BOTÍN</b><small>Para pruebas internas. También podés recoger drops reales en el mundo.</small>'+ 
      button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+'</div>'+ 
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
     '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
-   panel(title('Inventario','Objetos y consumibles reales')+
+   panel(title('Inventario','6 columnas · rareza por marco')+
     '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,0)):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
-    (chosen?'<div class="hf-rpg-detail-art">'+art('item_'+chosen.id,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
+    (chosen?'<div class="hf-rpg-detail-art" data-hf-rarity="'+safe(trait?.rarity??chosen.rarity)+'">'+art('item_'+chosen.id,true)+'</div><h3>'+safe(chosen.name)+'</h3>'+
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
@@ -455,6 +451,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const b=e.target?.closest?.('button');if(!b)return;
   if(local.system){
    const sys=b.dataset.hfSystem;
+   if(b.dataset.hfSystemGear){
+    const chosen=b.dataset.hfSystemGear,slotId=local.system.slotId;
+    if(chosen==='unequip')showSystem('unequip',{slotId});
+    else showSystem('gear-upgrade',{kind:chosen==='ascend'?'ascend':'upgrade',place:'equipped',id:slotId,index:0});
+    return;
+   }
    if(b.dataset.hfSystemSlot){
     showSystem('equip',{itemId:local.system.itemId,slotId:b.dataset.hfSystemSlot,variantIndex:local.system.variantIndex??0});return;
    }
@@ -469,8 +471,19 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}
   if(b.dataset.hfEquipSlot){
    const chosen=b.dataset.hfEquipSlot;
-   if(local.selectedEquipSlot===chosen&&bag.equipped[chosen]){showSystem('unequip',{slotId:chosen});return;}
-   local.selectedEquipSlot=chosen;render();return;
+   local.selectedEquipSlot=chosen;
+   const itemId=bag.equipped[chosen],trait=gearTraitAt(bag,'equipped',chosen);
+   if(itemId){
+    local.system={type:'equipment-choice',phase:'choose',slotId:chosen,icon:'item_'+itemId,
+     title:'EQUIPO · '+ITEM_DEFS[itemId].name,
+     description:'Elegí qué acción querés realizar con esta pieza.',
+     plus:trait?.plus??0,
+     details:[{label:'Calidad',value:trait?.rarity??'Común'},
+      {label:'Mejora',value:'+'+(trait?.plus??0)},
+      {label:'Atributos',value:Object.entries(ITEM_DEFS[itemId].stats??{}).map(([k,v])=>k+' +'+v).join(' · ')||'—'}]};
+    render();return;
+   }
+   message('Ranura vacía. Elegí un objeto de la Bolsa para equiparlo.');return;
   }
   if(b.dataset.hfSkillSlot!==undefined){
    const index=Number(b.dataset.hfSkillSlot);
