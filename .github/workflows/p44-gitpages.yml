@@ -27,6 +27,8 @@ jobs:
       - name: Internal simulation / original gameplay regression
         run: |
           npm run qa:static
+          node --check src/highfly/premium-rpg.mjs
+          node --check src/highfly/premium-assets.mjs
           npm run qa:gameplay
           node --test tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs tests/itemization.test.mjs tests/system-dialog.test.mjs tests/p41-bag-loot.test.mjs tests/p42-ui.test.mjs tests/p43-fidelity.test.mjs tests/p44-ui.test.mjs
       - name: Build REAL Unsung P4.4 game at separate GitHub Pages subpath
