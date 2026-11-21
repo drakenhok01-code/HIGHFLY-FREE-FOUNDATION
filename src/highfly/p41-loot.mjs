@@ -3,7 +3,7 @@
  * Rewards are physical inventory transactions; no equipment drops above +0.
  */
 import {ITEM_DEFS,inventoryRows} from './rpg-core.mjs';
-import {registerCraftedGear} from './rpg-itemization.mjs';
+import {registerCraftedGear,RARITIES,GEAR_IDS} from './rpg-itemization.mjs';
 export const MATERIAL_ORDER=Object.freeze(['cobre','hierro','acero','plata','oro','diamante','obsidiana','mitrilo']);
 export const P41_TEST_DROPS=Object.freeze({
  lobo:Object.freeze({label:'Botín de prueba · lobo',bag:Object.freeze({hp_potion:1}),resources:Object.freeze({herb:2})}),
@@ -28,4 +28,26 @@ export function grantP41TestLoot(state,profession,source){
  Object.assign(resources,stock);
  for(const [item,amount] of Object.entries(drop.bag))registerCraftedGear(state,item,amount);
  return {ok:true,source,label:drop.label,awarded:Object.entries(all).map(([id,count])=>({id,count,name:ITEM_DEFS[id].name}))};
+}
+
+/** Native kill -> physical world pickup. Not a simulation; the player must press
+ * USAR/interact by the actual fallen enemy. The item always drops +0. */
+export function receiveP41WorldPickup(state,profession,{id,count=1,rarity='Común'}={}){
+ const def=ITEM_DEFS[id],stock=profession?.inventory;
+ if(!state?.items||!stock||!def||!Number.isInteger(count)||count<1||count>5||!RARITIES.includes(rarity))
+  return {ok:false,reason:'Botín inválido'};
+ const newCount=(state.items[id]??0)+(stock[id]??0)+count;
+ if(newCount>def.max)return {ok:false,reason:'Pila completa'};
+ if(!(state.items[id]??0)&&!(stock[id]??0) && inventoryRows(state,stock).length>=state.slots)
+  return {ok:false,reason:'Bolsa llena'};
+ state.items[id]=(state.items[id]??0)+count;
+ if(GEAR_IDS.includes(id)){
+  registerCraftedGear(state,id,count);
+  const traits=state.gearTraits.bag[id];
+  for(let i=traits.length-count;i<traits.length;i++){
+   traits[i].rarity=rarity;
+   traits[i].plus=0;
+  }
+ }
+ return {ok:true,id,count,rarity,name:def.name};
 }
