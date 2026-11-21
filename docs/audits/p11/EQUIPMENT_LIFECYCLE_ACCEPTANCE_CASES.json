@@ -1,0 +1,192 @@
+{
+  "schema": "highfly-p11-acceptance-v1",
+  "status": "SPEC_CASES_NOT_GAMEPLAY_TESTS",
+  "cases": [
+    {
+      "id": "rare_chest_drops_at_plus_zero",
+      "given": {
+        "action": "BOSS_DROP",
+        "rarity": "Raro",
+        "item": "hf_iron_chest"
+      },
+      "expected": {
+        "rarity": "Raro",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "legendary_chest_drops_at_plus_zero",
+      "given": {
+        "action": "BOSS_DROP",
+        "rarity": "Legendario",
+        "item": "hf_iron_chest"
+      },
+      "expected": {
+        "rarity": "Legendario",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "mythic_weapon_drops_at_plus_zero",
+      "given": {
+        "action": "MONSTER_DROP",
+        "rarity": "Mítico",
+        "item": "training_sword"
+      },
+      "expected": {
+        "rarity": "Mítico",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "crafted_epic_starts_zero",
+      "given": {
+        "action": "CRAFT",
+        "rarity": "Épico",
+        "item": "hf_iron_chest"
+      },
+      "expected": {
+        "rarity": "Épico",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "shop_rare_starts_zero",
+      "given": {
+        "action": "NPC_SHOP",
+        "rarity": "Raro",
+        "item": "hf_iron_chest"
+      },
+      "expected": {
+        "rarity": "Raro",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "quest_legendary_starts_zero",
+      "given": {
+        "action": "QUEST_REWARD",
+        "rarity": "Legendario",
+        "item": "hf_iron_chest"
+      },
+      "expected": {
+        "rarity": "Legendario",
+        "plus": 0,
+        "newInstance": true
+      }
+    },
+    {
+      "id": "existing_player_upgrade_can_reach_three",
+      "given": {
+        "action": "PLAYER_UPGRADE",
+        "itemInstance": {
+          "instanceId": "example-001",
+          "templateId": "hf_iron_chest",
+          "rarity": "Raro",
+          "plus": 2
+        }
+      },
+      "expected": {
+        "instanceId": "example-001",
+        "rarity": "Raro",
+        "plus": 3,
+        "noNewInstance": true
+      }
+    },
+    {
+      "id": "trade_retains_existing_plus",
+      "given": {
+        "action": "PLAYER_TO_PLAYER_TRADE",
+        "seller": "A",
+        "buyer": "B",
+        "itemInstance": {
+          "instanceId": "example-001",
+          "templateId": "hf_iron_chest",
+          "rarity": "Raro",
+          "plus": 3
+        }
+      },
+      "expected": {
+        "sellerOwnsInstance": false,
+        "buyerOwnsInstance": true,
+        "instanceId": "example-001",
+        "rarity": "Raro",
+        "plus": 3,
+        "createdNewItem": false
+      }
+    },
+    {
+      "id": "stat_only_chest_no_visual_change",
+      "given": {
+        "action": "EQUIP",
+        "slot": "chest",
+        "itemInstance": {
+          "instanceId": "example-001",
+          "templateId": "hf_iron_chest",
+          "rarity": "Raro",
+          "plus": 3
+        }
+      },
+      "expected": {
+        "equipped": true,
+        "bonusesShown": true,
+        "bonusesAppliedToCombat": true,
+        "characterVisualArmorMeshUnchanged": true,
+        "characterCount": 1
+      }
+    },
+    {
+      "id": "unequip_restores_item_and_stats",
+      "given": {
+        "action": "UNEQUIP",
+        "slot": "chest",
+        "itemInstance": {
+          "instanceId": "example-001",
+          "templateId": "hf_iron_chest",
+          "rarity": "Raro",
+          "plus": 3
+        }
+      },
+      "expected": {
+        "inBag": true,
+        "plus": 3,
+        "bonusRemoved": true,
+        "noNewInstance": true
+      }
+    },
+    {
+      "id": "saving_loading_does_not_reset_plus",
+      "given": {
+        "action": "SAVE_LOAD",
+        "itemInstance": {
+          "instanceId": "example-001",
+          "templateId": "hf_iron_chest",
+          "rarity": "Raro",
+          "plus": 3
+        }
+      },
+      "expected": {
+        "instanceId": "example-001",
+        "rarity": "Raro",
+        "plus": 3
+      }
+    },
+    {
+      "id": "character_is_always_universal",
+      "given": {
+        "action": "EQUIP",
+        "item": "hf_iron_chest",
+        "character": "hunter_universal"
+      },
+      "expected": {
+        "noClassRestriction": true,
+        "noCharacterSwitch": true
+      }
+    }
+  ]
+}
