@@ -155,7 +155,7 @@ try{
  assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'Some dynamic objects still point to legacy images');
  assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'All raster items remain approved user assets; P4.2 potions are inline original vectors.');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
- const gridCols=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\\s+/).length);
+ const gridCols=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).length);
  assert.equal(gridCols,6,'P4.2 inventory must have exactly six visible columns');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
