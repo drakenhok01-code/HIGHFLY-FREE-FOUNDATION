@@ -37,7 +37,7 @@ Migración propuesta P4 (debe hacerse de forma **atómica y testeada**):
 |---|---|---:|---:|---:|
 | Pechera de hierro | Raro | +0 | 12.40 | 2.48 |
 | Pechera de hierro | Legendario | +0 | 14.80 | 2.96 |
-| Pechera de hierro (mejorada por jugador) | Raro | +3 | 15.55 | 2.69 |
+| Pechera de hierro (mejorada por jugador) | Raro | +3 | 13.45 | 2.69 |
 
 Los valores P2 utilizan la función actual `enhancedStats`: factor `1 + indiceRareza*0.12 + mejora*0.035`. Para el atributo VIT, `attributeBreakdown` actual trunca el bono. En P3/P4 deberemos decidir formato de visualización (bonos decimales vs total entero) sin mentirle al jugador. **Todavía no están activas esas estadísticas**.
 
