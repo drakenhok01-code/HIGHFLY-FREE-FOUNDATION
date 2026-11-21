@@ -352,9 +352,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     button('VER BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function forge(){
-  const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(recipe.item,prof().inventory,bag);
-  const recipes=Object.values(RECIPES).map(r=>
-   '<button type="button" data-hf-recipe="'+r.item+'" class="hf-rpg-recipe '+(r.item===recipe.item?'is-selected':'')+'">'+
+  const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(local.recipe,prof().inventory,bag);
+  const recipes=Object.entries(RECIPES).map(([recipeId,r])=>
+   '<button type="button" data-hf-recipe="'+recipeId+'" class="hf-rpg-recipe '+(recipeId===local.recipe?'is-selected':'')+'">'+
    art('item_'+r.item)+'<b>'+safe(r.name)+'</b></button>').join('');
   const ingredients=Object.entries(recipe.ingredients).map(([id,n])=>
    '<div class="hf-rpg-ingredient">'+art('item_'+id)+
@@ -371,7 +371,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-forge-materials"><div class="hf-rpg-subtitle">RECETA · MATERIALES NECESARIOS</div>'+
     '<div class="hf-rpg-ingredients">'+ingredients+'</div></div>'+
     '<div class="hf-rpg-forge-actions">'+button(ok.ok?'⚒ INICIAR FABRICACIÓN':'FALTAN MATERIALES',
-    'data-hf-action="craft:'+recipe.item+'" '+(ok.ok?'':'disabled'),'is-primary')+
+    'data-hf-action="craft:'+local.recipe+'" '+(ok.ok?'':'disabled'),'is-primary')+
     button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>'+
    '</div>','hf-rpg-forge-main')+'</div>';
  }
