@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {normalizeRpgState,inventoryRows,ITEM_DEFS,RECIPES,ownedMaterialCount,canCraft,craftPotion,spendPotion,saveRpgState,loadRpgState} from '../src/highfly/rpg-core.mjs';
-import {grantP41TestLoot,MATERIAL_ORDER} from '../src/highfly/p41-loot.mjs';
+import {grantP41TestLoot,receiveP41WorldPickup,MATERIAL_ORDER} from '../src/highfly/p41-loot.mjs';
 import {equipFromBag,unequipToBag,equipmentBonuses,equippedMode} from '../src/highfly/rpg-equipment.mjs';
 import {RARITIES} from '../src/highfly/rpg-itemization.mjs';
 const fixture=()=>({bag:normalizeRpgState(null),prof:{inventory:{},tools:new Set(),completed:0}});
@@ -99,4 +99,20 @@ test('P4.1: real armor and accessory slots grant persistent defense and attribut
  assert.equal(unequipToBag(bag,'chest').ok,true);
  assert.equal(bag.items.hf_iron_chest,1);
  assert.equal(bag.gearTraits.bag.hf_iron_chest[0].plus,0);
+});
+
+test('P4.1: real native kill pickup enters bag and stops at capacity',()=>{
+ const {bag,prof}=fixture();
+ const first=receiveP41WorldPickup(bag,prof,{id:'leather',count:1,rarity:'Común'});
+ assert.equal(first.ok,true);
+ assert.equal(bag.items.leather,1);
+ const rare=receiveP41WorldPickup(bag,prof,{id:'training_shield',count:1,rarity:'Raro'});
+ assert.equal(rare.ok,true);
+ assert.equal(bag.gearTraits.bag.training_shield[0].rarity,'Raro');
+ assert.equal(bag.gearTraits.bag.training_shield[0].plus,0);
+ assert.equal(equipFromBag(bag,'left_hand','training_shield').ok,true);
+ assert.equal(bag.gearTraits.equipped.left_hand.plus,0);
+ const before=JSON.stringify(bag);
+ assert.equal(receiveP41WorldPickup(bag,prof,{id:'fake_item',count:1}).ok,false);
+ assert.equal(JSON.stringify(bag),before);
 });
