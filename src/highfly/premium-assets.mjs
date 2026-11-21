@@ -50,6 +50,8 @@ const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala',
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
 export const questArtUrl=(id,title='')=>{
  if(!id||id==='primary')return assetUrl('premium/quest_primary');
+ if(id==='scales')return assetUrl('premium/quest_voices'); // Grave, medio, agudo: arte musical propio; distinto de Cuatro nombres
+ if(id==='names')return assetUrl('premium/quest_names');
  if(QUESTS.has(id))return assetUrl('premium/quest_'+id);
  const text=String(title).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const hints=[['names',/cuatro nombres/],['vellum',/pergamino|cartogra/],['count',/cuenta del guardian|notas/],['scales',/campanillas/],['amber',/ambar/],['kept',/relicario/],['seeds',/semillas/],['stair',/escalera/]];
