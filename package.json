@@ -7,7 +7,8 @@
     "qa:static": "node scripts/qa-static.mjs",
     "qa:gameplay": "node --test tests/mechanics.test.mjs tests/synthetic-touch.test.mjs tests/context-actions.test.mjs tests/flow-combat.test.mjs tests/unified-systems.test.mjs tests/localization.test.mjs tests/professions.test.mjs tests/profession-yard.test.mjs",
     "build": "node scripts/f0-build.mjs",
-    "qa:dist": "node scripts/qa-dist.mjs"
+    "qa:dist": "node scripts/qa-dist.mjs",
+    "qa:catalog:p2": "node --test tests/catalog-p2.test.mjs"
   },
   "engines": {
     "node": ">=22"
