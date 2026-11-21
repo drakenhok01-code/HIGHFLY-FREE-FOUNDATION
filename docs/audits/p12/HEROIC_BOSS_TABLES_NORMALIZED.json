@@ -6,13 +6,15 @@
   "verifiedAlgorithm": "src/sim/loot/weighted_loot_group.ts computes normalized weights with one roll per exclusive group; ungrouped chance independent",
   "sourceFiles": [
     "src/sim/content/heroic_loot.ts",
-    "src/sim/loot/weighted_loot_group.ts"
+    "src/sim/loot/weighted_loot_group.ts",
+    "src/sim/content/trinkets.ts"
   ],
   "counts": {
     "bossTables": 14,
     "rows": 171,
     "distinctItems": 141,
-    "unresolvedSourceItemIds": 13
+    "unresolvedSourceItemIds": 0,
+    "resolvedDynamicTrinketReferences": 13
   },
   "constants": {
     "HEROIC_GREEN_MOUNT_CHANCE": 0.005,
@@ -275,60 +277,7 @@
     }
   ],
   "unresolved": [],
-  "missingItemRefs": [
-    {
-      "itemId": "bastion_sigil",
-      "bossId": "morthen"
-    },
-    {
-      "itemId": "stormjar",
-      "bossId": "vael_the_mistcaller"
-    },
-    {
-      "itemId": "menders_hourglass",
-      "bossId": "ysolei"
-    },
-    {
-      "itemId": "paired_talons",
-      "bossId": "wildheart_high_priest"
-    },
-    {
-      "itemId": "mooring_stone",
-      "bossId": "nythraxis_scourge_of_thornpeak"
-    },
-    {
-      "itemId": "wellspring_seed",
-      "bossId": "nythraxis_scourge_of_thornpeak"
-    },
-    {
-      "itemId": "hunters_tally",
-      "bossId": "nythraxis_scourge_of_thornpeak"
-    },
-    {
-      "itemId": "echoing_lens",
-      "bossId": "nythraxis_scourge_of_thornpeak"
-    },
-    {
-      "itemId": "kindling_orb",
-      "bossId": "ignivar_herald_of_the_last_flame"
-    },
-    {
-      "itemId": "molten_fletching",
-      "bossId": "ignivar_herald_of_the_last_flame"
-    },
-    {
-      "itemId": "last_flame_lantern",
-      "bossId": "ignivar_herald_of_the_last_flame"
-    },
-    {
-      "itemId": "forgefathers_temper",
-      "bossId": "varkhul_forgefather_of_the_last_flame"
-    },
-    {
-      "itemId": "heart_of_the_crucible",
-      "bossId": "varkhul_forgefather_of_the_last_flame"
-    }
-  ],
+  "missingItemRefs": [],
   "rows": [
     {
       "bossId": "sexton_marrow",
@@ -999,8 +948,9 @@
       "guaranteedGroup": true,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "morthen",
@@ -1303,8 +1253,9 @@
       "guaranteedGroup": true,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "vael_the_mistcaller",
@@ -1523,8 +1474,9 @@
       "guaranteedGroup": true,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "ysolei",
@@ -2173,8 +2125,9 @@
       "guaranteedGroup": true,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "wildheart_high_priest",
@@ -2281,8 +2234,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "nythraxis_scourge_of_thornpeak",
@@ -2295,8 +2249,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "nythraxis_scourge_of_thornpeak",
@@ -2309,8 +2264,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "nythraxis_scourge_of_thornpeak",
@@ -2323,8 +2279,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "nythraxis_scourge_of_thornpeak",
@@ -2449,8 +2406,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "ignivar_herald_of_the_last_flame",
@@ -2463,8 +2421,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "ignivar_herald_of_the_last_flame",
@@ -2477,8 +2436,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "ignivar_herald_of_the_last_flame",
@@ -2645,8 +2605,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "varkhul_forgefather_of_the_last_flame",
@@ -2659,8 +2620,9 @@
       "guaranteedGroup": false,
       "preserveSourceTier": false,
       "isGeneratedHeroic": false,
-      "sourceItemPresent": false,
-      "birthPlusHIGHFLY": 0
+      "sourceItemPresent": true,
+      "birthPlusHIGHFLY": 0,
+      "resolvedVia": "TRINKET_ITEMS function-built registry"
     },
     {
       "bossId": "varkhul_forgefather_of_the_last_flame",
@@ -2711,6 +2673,7 @@
     "The source's game can roll grouped and independent items; groups with sum less than one may drop nothing.",
     "Do not use upstream drop rates directly as HIGHFLY balance.",
     "Some preserver markers use mapping and need downstream runtime parity verification.",
-    "Every HIGHFLY acquired gear piece, whatever heroic rarity, is born plus 0."
+    "Every HIGHFLY acquired gear piece, whatever heroic rarity, is born plus 0.",
+    "The 13 missing table references are resolved from TRINKET_ITEMS, built by trinket(...) and omitted by prior literal-only source inventory."
   ]
 }
