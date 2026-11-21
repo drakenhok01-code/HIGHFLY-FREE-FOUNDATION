@@ -38,7 +38,7 @@ test('P4.2: 15 professions listed; unknown icon art not misrepresented as Recole
  assert.equal((job.match(/\{id:'/g)||[]).length,15);
  assert.match(job,/PRÓXIMAMENTE/);
  assert.match(job,/hf-p42-prof-frame/);
- assert.match(job,/job\.mark\?/);
+ assert.match(job,/art\(professionIcon\(job\.id\),large\)/); // P4.3 real profession paintings
 });
 test('P4.2: character actions only through System, no duplicate lower toolbar',()=>{
  const src=read('src/highfly/premium-rpg.mjs');
@@ -53,5 +53,5 @@ test('P4.2: skills HUD are circular and original loading is dark with large logo
  assert.match(touch,/clip-path:circle\(45%/);
  assert.match(touch,/border-radius:50%!important/);
  assert.match(boot,/background:radial-gradient\(ellipse at 50% 48%,#210e2f 0%,#08060d 45%,#010104 86%,#000 100%\)/);
- assert.match(boot,/width:min\(500px,76vw\)/);
+ assert.match(boot,/width:min\(760px,90vw\)/); // P4.3 sharp 1600px SVG
 });
