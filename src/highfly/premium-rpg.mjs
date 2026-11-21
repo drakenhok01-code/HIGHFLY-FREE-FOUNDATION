@@ -229,6 +229,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.tab!=='personaje'||!local.opened)return;
   const canvas=root.querySelector('[data-hf-hero]'),status=root.querySelector('[data-hf-hero-status]');
   if(!canvas||!canvas.isConnected)return;
+  canvas.dataset.p43Turn=String(local.heroTurn); // inspectable orientation, no visible debug UI
   const result=paintLiveHero(game,canvas,local.heroTurn);
   if(status){status.textContent=result.ok?'':result.reason||'No se pudo mostrar el personaje';
    status.hidden=!!result.ok;status.dataset.ready=String(result.ok);}
