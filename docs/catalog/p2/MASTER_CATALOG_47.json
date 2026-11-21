@@ -1,0 +1,3305 @@
+{
+  "schema": "highfly-master-catalog-p2-v1",
+  "date": "2026-11-21",
+  "status": "DATA_AND_PROTOTYPE_ONLY_NOT_IMPORTED_IN_LIVE_GAME",
+  "baseGitCommit": "bf88ecdcef64337083146caad2390a6d147f30cf",
+  "sourceAuditBranch": "audit-rpg-items-ancient-v36-20261121",
+  "character": {
+    "count": 1,
+    "archetype": "UNIVERSAL_HUNTER",
+    "allowedSkillSources": [
+      "physical_energy",
+      "magical_mana"
+    ],
+    "classSystem": false
+  },
+  "equipmentPolicy": {
+    "spawnEnhancement": 0,
+    "rarityIndependentOfEnhancement": true,
+    "maxEnhancement": 9,
+    "instanceIdentityRequired": true,
+    "upgradeIsExplicitPlayerAction": true,
+    "tradingPreservesInstanceIdentity": true,
+    "armorAndAccessoriesStatsOnly": true,
+    "onlyWeaponsCanChangeCharacterAppearance": true
+  },
+  "rarities": [
+    "Común",
+    "Poco común",
+    "Raro",
+    "Épico",
+    "Legendario",
+    "Mítico"
+  ],
+  "slotIds": [
+    "helmet",
+    "chest",
+    "gloves",
+    "right_hand",
+    "necklace",
+    "shoulders",
+    "pants",
+    "boots",
+    "left_hand",
+    "ring"
+  ],
+  "proposedItemTemplateCount": 47,
+  "actualExistingItemCount": 19,
+  "newlySpecifiedNotLive": 28,
+  "gearTemplateCount": 20,
+  "icons": {
+    "source": "src/highfly/premium-assets.mjs",
+    "existingUiBindingsPreserved": true,
+    "filesVerifiedInGitTree": 0,
+    "referenceMode": "DO_NOT_USE_RESERVED_ICON_AS_REAL_UNTIL_FILE_PRESENT",
+    "notes": "Approved game code claims user icon pack, but Git tree inspected had no public directory. Existing visual app may obtain assets by another deployment process. Do not rewrite UI."
+  },
+  "items": [
+    {
+      "id": "training_sword",
+      "nameEs": "Espada de Aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand",
+          "left_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "physicalAttack": 4
+        },
+        "baseStatsStatus": "VERIFIED_APPROVED_V36",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_1handed.gltf",
+            "blobSha": "ea5115c52ee9c07b2128105c0701fe706add7593",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_training_sword",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "weapons/sword",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "worn_sword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "eastbrook_arming_sword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [
+          {
+            "id": "fire-sword",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_1handed.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Espada KayKit FREE real del Cazador Universal. Equipada al comenzar.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "training_shield",
+      "nameEs": "Escudo de Aprendiz",
+      "category": "escudo",
+      "kind": "shield",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "left_hand",
+        "compatibleSlots": [
+          "left_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "defense": 3,
+          "blockChance": 2
+        },
+        "baseStatsStatus": "VERIFIED_APPROVED_V36",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/shield_round.gltf",
+            "blobSha": "d1a20d3ce24239a540236806c4ce424e137439ea",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_training_shield",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "armor/shield",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "eastbrook_buckler",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/shield_round.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Escudo redondo compatible con la mano izquierda del Knight FREE.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "training_greatsword",
+      "nameEs": "Mandoble de Aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "physicalAttack": 9
+        },
+        "baseStatsStatus": "VERIFIED_APPROVED_V36",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_2handed.gltf",
+            "blobSha": "593016769c491c37ce4705bc76f80e2a042ccaee",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_training_greatsword",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "weapons/greatsword",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "eastbrook_greatsword",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "duskforged_warblade",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [
+          {
+            "id": "fire-greatsword",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/sword_2handed.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Mandoble a dos manos ya incluido en el Knight FREE.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hp_potion",
+      "nameEs": "Poción de Vida",
+      "category": "consumible",
+      "kind": "consumable",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 99,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Poco común",
+      "icon": {
+        "id": "item_hp_potion",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/hp_potion",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "minor_healing_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "healing_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recupera el 35% de la Vida máxima.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "mp_potion",
+      "nameEs": "Poción de Maná",
+      "category": "consumible",
+      "kind": "consumable",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 99,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Poco común",
+      "icon": {
+        "id": "item_mp_potion",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/mp_potion",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "mana_potion",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recupera el 40% del Maná máximo.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "herb",
+      "nameEs": "Hierbas recolectadas",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_herb",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/herb",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Hierbas obtenidas mediante recolección real.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ore",
+      "nameEs": "Mineral",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ore",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ore",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [
+          {
+            "id": "copper_ore",
+            "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+          },
+          {
+            "id": "iron_ore",
+            "relation": "GENERIC_TO_SPECIFIC_NOT_SAME_ITEM"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Mineral conseguido de una veta real.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "wood",
+      "nameEs": "Madera",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_wood",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/wood",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Madera talada en el mundo.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "fish",
+      "nameEs": "Pescado",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_fish",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/fish",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Captura obtenida con caña.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ingot",
+      "nameEs": "Lingote sin clasificar",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ingot",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ingot",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Aleación genérica producida por la fundición original.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "blade_blank",
+      "nameEs": "Hoja sin terminar",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_blade_blank",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/blade_blank",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Pieza forjada, todavía no equipable.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "seed",
+      "nameEs": "Semillas",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_seed",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/seed",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Semillas para plantar.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "bag_upgrade",
+      "nameEs": "Sello de Expansión",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 3,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Raro",
+      "icon": {
+        "id": "item_bag_upgrade",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/bag_upgrade",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ingot_copper",
+      "nameEs": "Lingote de cobre",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ingot_copper",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ingot_copper",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Metal refinado: cobre.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ingot_iron",
+      "nameEs": "Lingote de hierro",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ingot_iron",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ingot_iron",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Metal refinado: hierro.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ingot_silver",
+      "nameEs": "Lingote de plata",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ingot_silver",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ingot_silver",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Metal refinado: plata.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ingot_gold",
+      "nameEs": "Lingote de oro",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_ingot_gold",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ingot_gold",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Metal refinado: oro.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "upgrade_stone",
+      "nameEs": "Piedra de mejora",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Raro",
+      "icon": {
+        "id": "item_upgrade_stone",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ore",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Se consume para mejorar equipo de +1 a +9. Éxito garantizado.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "ascension_core",
+      "nameEs": "Núcleo de Ascensión",
+      "category": "material",
+      "kind": "material",
+      "status": "V36_EXISTING",
+      "phase": "KEEP_V36",
+      "oneUniversalCharacter": true,
+      "stackMax": 99,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Épico",
+      "icon": {
+        "id": "item_ascension_core",
+        "approvedBinding": "APPROVED_CODE_PATH_PRESERVED",
+        "relativeUserIconPath": "items/ore",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "CODE_BINDING_PRESENT_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "APPROVED_HIGHFLY_V36",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "LEGACY_WORLD_OR_RECIPE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Sube la rareza de un objeto +9, reiniciándolo a +0.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": true,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": false,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_dagger_basic",
+      "nameEs": "Daga de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "physicalAttack": 3,
+          "AGI": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/dagger.gltf",
+            "blobSha": "f090037e4ecdd0e6e891a412b2c4a9409226825e",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_dagger_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/dual_daggers",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "rusty_dagger",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "keen_dirk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/dagger.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_axe_basic",
+      "nameEs": "Hacha de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "physicalAttack": 6,
+          "STR": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/axe_1handed.gltf",
+            "blobSha": "b367258502ed8f8b172d18c72c71d81befbb39f4",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_axe_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/axe",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "rusty_hatchet",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "copper_bearded_axe",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/axe_1handed.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_spear_basic",
+      "nameEs": "Lanza de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "UNVERIFIED_WEAPON_VISUAL",
+        "baseStats": {
+          "physicalAttack": 5,
+          "PER": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_spear_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/spear",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "ironbark_boar_spear",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [
+          {
+            "id": "lightning-spear",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_bow_basic",
+      "nameEs": "Arco de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "UNVERIFIED_WEAPON_VISUAL",
+        "baseStats": {
+          "physicalAttack": 5,
+          "PER": 2
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_bow_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/bow",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_staff_basic",
+      "nameEs": "Bastón de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "magicalAttack": 5,
+          "INT": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/staff.gltf",
+            "blobSha": "d8bbebc6f3f6fb59e152d6b45de52add254f0697",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_staff_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/staff",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "gnarled_staff",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "apprentice_staff",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [
+          {
+            "id": "water-staff",
+            "relation": "WEAPON_STYLE_ANALOGUE"
+          }
+        ],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/staff.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_wand_basic",
+      "nameEs": "Vara de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+        "baseStats": {
+          "magicalAttack": 3,
+          "INT": 2
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": [
+          {
+            "repo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/wand.gltf",
+            "blobSha": "67f272fb273bdeb403674509464d7948a3aeb826",
+            "license": "CC0_1_0",
+            "status": "ASSET_EXISTS_ATTACHMENT_NOT_VERIFIED"
+          }
+        ]
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_wand_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/wand_orb",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "wand_of_quenched_sparks",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [
+          {
+            "sourcePath": "addons/kaykit_character_pack_adventures/Assets/gltf/wand.gltf",
+            "sourceRepo": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+            "claimedLicense": "CC0"
+          }
+        ],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_mace_basic",
+      "nameEs": "Maza de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "right_hand",
+        "compatibleSlots": [
+          "right_hand"
+        ],
+        "appearance": "UNVERIFIED_WEAPON_VISUAL",
+        "baseStats": {
+          "physicalAttack": 7,
+          "VIT": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_mace_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "training_mace",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          },
+          {
+            "id": "copper_flanged_mace",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_orb_basic",
+      "nameEs": "Orbe de aprendiz",
+      "category": "arma",
+      "kind": "weapon",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "left_hand",
+        "compatibleSlots": [
+          "left_hand"
+        ],
+        "appearance": "UNVERIFIED_WEAPON_VISUAL",
+        "baseStats": {
+          "magicalAttack": 2,
+          "INT": 2
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_orb_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "weapons/wand_orb",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_helmet",
+      "nameEs": "Casco de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "helmet",
+        "compatibleSlots": [
+          "helmet"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 5,
+          "PER": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_helmet",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/helmet",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "roadwardens_helm",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_chest",
+      "nameEs": "Pechera de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "chest",
+        "compatibleSlots": [
+          "chest"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 10,
+          "VIT": 2
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_chest",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/chest",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "ironlink_hauberk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_gloves",
+      "nameEs": "Guantes de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "gloves",
+        "compatibleSlots": [
+          "gloves"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 3,
+          "AGI": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_gloves",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/gloves",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "acolyte_chain_grips",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_shoulders",
+      "nameEs": "Hombreras de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "shoulders",
+        "compatibleSlots": [
+          "shoulders"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 5,
+          "STR": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_shoulders",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/shoulders",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "ironlink_spaulders",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_pants",
+      "nameEs": "Pantalones de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "pants",
+        "compatibleSlots": [
+          "pants"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 6,
+          "VIT": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_pants",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "ironlink_legguards",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_iron_boots",
+      "nameEs": "Botas de hierro",
+      "category": "armadura",
+      "kind": "armor",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "boots",
+        "compatibleSlots": [
+          "boots"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "defense": 4,
+          "AGI": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_iron_boots",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/boots",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "hobnail_boots",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_copper_ring",
+      "nameEs": "Anillo de cobre",
+      "category": "accesorio",
+      "kind": "accessory",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "ring",
+        "compatibleSlots": [
+          "ring"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "STR": 1,
+          "PER": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_copper_ring",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/ring",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "hammered_copper_band",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_silver_necklace",
+      "nameEs": "Collar de plata",
+      "category": "accesorio",
+      "kind": "accessory",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_PILOT",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": "necklace",
+        "compatibleSlots": [
+          "necklace"
+        ],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "INT": 2
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_silver_necklace",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": "armor/necklace",
+        "expectedExtension": "webp",
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "RESERVED_STYLE_PATH_NOT_ACTIVE_FILE_NOT_VERIFIED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "wyrmfall_pendant",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_amulet_basic",
+      "nameEs": "Amuleto del viajero",
+      "category": "accesorio",
+      "kind": "accessory",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "FUTURE_SLOT_REVIEW",
+      "oneUniversalCharacter": true,
+      "stackMax": 1,
+      "equipment": {
+        "slot": null,
+        "compatibleSlots": [],
+        "appearance": "STATS_ONLY_NO_3D",
+        "baseStats": {
+          "VIT": 1,
+          "INT": 1
+        },
+        "baseStatsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+        "rarityOnAcquisition": [
+          "Común",
+          "Poco común",
+          "Raro",
+          "Épico",
+          "Legendario",
+          "Mítico"
+        ],
+        "enhancementAtCreation": 0,
+        "improvedOnlyByPlayer": true,
+        "instanceIdRequired": true,
+        "marketMetadata": "TRANSFER_SAME_INSTANCE_WITH_RARITY_PLUS_STATS_WHEN_TRADING_IS_IMPLEMENTED",
+        "levelRequirementDraft": null,
+        "classRestrictions": [],
+        "rigSourceCandidates": []
+      },
+      "fixedRarityForNonEquipment": null,
+      "icon": {
+        "id": "item_hf_amulet_basic",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "heartspring_amulet",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MONSTER_DROP",
+          "BOSS_DROP",
+          "CRAFT",
+          "QUEST_REWARD",
+          "NPC_SHOP"
+        ],
+        "rarityCanRoll": true,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Equipo original de HIGHFLY, reservado para integrar en el Cazador Universal.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": true,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_ore_copper",
+      "nameEs": "Mineral de cobre",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_ore_copper",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "copper_ore",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MINING_NODE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_ore_iron",
+      "nameEs": "Mineral de hierro",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_ore_iron",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "iron_ore",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MINING_NODE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_ore_silver",
+      "nameEs": "Mineral de plata",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_ore_silver",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MINING_NODE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_ore_gold",
+      "nameEs": "Mineral de oro",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_ore_gold",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "MINING_NODE"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_rough_hide",
+      "nameEs": "Cuero en bruto",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_rough_hide",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "rough_hide",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "BEAST_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_wolf_fang",
+      "nameEs": "Colmillo de lobo",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_wolf_fang",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "wolf_fang",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "FOREST_WOLF_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_spider_silk",
+      "nameEs": "Seda de araña",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_spider_silk",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "spider_silk",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "SPIDER_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_bone_fragments",
+      "nameEs": "Fragmentos de hueso",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_bone_fragments",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "bone_fragments",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "SKELETON_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_homespun_cloth",
+      "nameEs": "Tela rústica",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_homespun_cloth",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "homespun_cloth",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "TAILORING_OR_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_spool_of_thread",
+      "nameEs": "Carrete de hilo",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_spool_of_thread",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "spool_of_thread",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "CRAFTING_VENDOR_OR_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    },
+    {
+      "id": "hf_smithing_flux",
+      "nameEs": "Fundente de herrería",
+      "category": "material",
+      "kind": "material",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "phase": "P4_MATERIALS",
+      "oneUniversalCharacter": true,
+      "stackMax": 999,
+      "equipment": null,
+      "fixedRarityForNonEquipment": "Común",
+      "icon": {
+        "id": "item_hf_smithing_flux",
+        "approvedBinding": "NOT_REGISTERED_IN_RUNTIME",
+        "relativeUserIconPath": null,
+        "expectedExtension": null,
+        "sourceFileExistsInRepo": false,
+        "pathStatus": "NEW_ARTWORK_REQUIRED",
+        "generatedAsset": false
+      },
+      "source": {
+        "ownership": "ORIGINAL_HIGHFLY_P2_PROPOSAL",
+        "sourceAnalogues": [
+          {
+            "id": "smithing_flux",
+            "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL"
+          }
+        ],
+        "emberfallAnalogues": [],
+        "modelCandidates": [],
+        "mediaImported": false
+      },
+      "obtaining": {
+        "status": "NOT_COMMITTED_P4_P5",
+        "sources": [
+          "SMITH_VENDOR_OR_LOOT"
+        ],
+        "rarityCanRoll": false,
+        "dropRatesHIGHFLY": null,
+        "dropRarityTableHIGHFLY": null
+      },
+      "description": "Recurso de HIGHFLY para recolección, fabricación o loot.",
+      "provenance": {
+        "p2": "HIGHFLY_DEFINED",
+        "upstreamSourceOnly": true,
+        "redistributableMediaStatus": "NONE_IMPORTED"
+      },
+      "flags": {
+        "legacySaveCompatibility": false,
+        "requiresSourceIconCheck": true,
+        "requiresP4RuntimeIntegration": true,
+        "requiresSlotDecision": false,
+        "notAncient": true
+      }
+    }
+  ]
+}
