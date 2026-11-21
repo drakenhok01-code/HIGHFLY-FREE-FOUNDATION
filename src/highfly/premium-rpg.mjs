@@ -320,35 +320,39 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  }
  function professions(){
   const jobs=[
-   {id:'Recolección',icon:'herb',desc:'Plantas, raíces y semillas',resource:'herb',ready:true},
-   {id:'Minería',icon:'ore',desc:'Minerales en vetas verificadas',resource:'ore',ready:true},
-   {id:'Tala',icon:'wood',desc:'Madera obtenida de árboles',resource:'wood',ready:true},
-   {id:'Pesca',icon:'fish',desc:'Capturas en zonas habilitadas',resource:'fish',ready:true},
-   {id:'Cocina',icon:'food',desc:'Comidas y recetas',resource:'fish',ready:false},
-   {id:'Alquimia',icon:'mana',desc:'Pociones y elixires',resource:'herb',ready:true},
-   {id:'Fundición',icon:'ingot',desc:'Lingotes refinados en horno',resource:'ingot',ready:true},
-   {id:'Forja',icon:'forge',desc:'Armas y equipo del Cazador',resource:'blade_blank',ready:true}
+   {id:'Recolección',desc:'Plantas, raíces y semillas',resource:'herb',ready:true},
+   {id:'Minería',desc:'Minerales y vetas',resource:'ore',ready:true},
+   {id:'Tala',desc:'Maderas y troncos',resource:'wood',ready:true},
+   {id:'Pesca',desc:'Capturas en el agua',resource:'fish',ready:true},
+   {id:'Cocina',desc:'Alimentos y recetas',resource:'fish',ready:false},
+   {id:'Alquimia',desc:'Pociones y elixires',resource:'herb',ready:true},
+   {id:'Fundición',desc:'Metalurgia y lingotes',resource:'ingot',ready:true},
+   {id:'Forja',desc:'Armas y equipamiento',resource:'blade_blank',ready:true},
+   {id:'Marroquinería',desc:'Bolsas y trabajos en cuero',resource:'leather',ready:false,mark:'◈'},
+   {id:'Sastrería',desc:'Prendas y confección',resource:'leather',ready:false,mark:'✂'},
+   {id:'Joyería',desc:'Anillos y collares',resource:'ingot_gold',ready:false,mark:'◇'},
+   {id:'Ingeniería',desc:'Mecanismos y herramientas',resource:'ingot_steel',ready:false,mark:'⚙'},
+   {id:'Encantamiento',desc:'Magia en equipamiento',resource:'ore_mithril',ready:false,mark:'✧'},
+   {id:'Inscripción',desc:'Runas y escrituras',resource:'wood',ready:false,mark:'✎'},
+   {id:'Desuello',desc:'Pieles y materiales de criaturas',resource:'leather',ready:false,mark:'✥'}
   ];
   const profession=prof(),selected=jobs.find(j=>j.id===local.selectedProfession)??jobs[0];
-  const owned=profession.inventory?.[selected.resource]??0;
-  return '<div class="hf-rpg-two">'+panel(title('Oficios','Ocho profesiones · materiales compartidos con Bolsa')+
+  const owned=ownedMaterialCount(selected.resource,profession.inventory,bag);
+  const picture=(job,large=false)=>job.mark?'<span class="hf-p42-prof-mark" aria-hidden="true">'+job.mark+'</span>':art(professionIcon(job.id),large);
+  return '<div class="hf-rpg-two hf-p42-professions">'+panel(title('Oficios','15 disciplinas · iconos exclusivos')+
    '<div class="hf-rpg-prof-grid">'+jobs.map(job=>
     '<button type="button" class="hf-rpg-prof-card '+(job.id===selected.id?'is-selected':'')+'" data-hf-prof="'+safe(job.id)+'">'+
-    '<span class="hf-rpg-prof-icon">'+art(professionIcon(job.id))+'</span><div><b>'+job.id+'</b>'+
-    '<small>'+safe(job.desc)+'</small><span class="hf-rpg-prof-chip">'+(job.ready?'DISPONIBLE':'EN DESARROLLO')+'</span></div>'+
-    '<span class="hf-rpg-prof-chevron">›</span></button>').join('')+'</div>')+
-   panel(title(selected.id,'Ficha de oficio · progreso auténtico')+
-    '<div class="hf-rpg-prof-feature"><span class="hf-rpg-prof-feature-art">'+art(professionIcon(selected.id),true)+'</span>'+
+    '<span class="hf-rpg-prof-icon hf-p42-prof-frame">'+picture(job)+'</span><div><b>'+job.id+'</b>'+
+    '<small>'+safe(job.desc)+'</small><span class="hf-rpg-prof-chip">'+(job.ready?'DISPONIBLE':'PRÓXIMAMENTE')+'</span></div>'+
+    '<span class="hf-rpg-prof-chevron">›</span></button>').join('')+'</div>','hf-rpg-left-panel')+
+   panel(title(selected.id,'Ficha de oficio HIGHFLY')+
+    '<div class="hf-rpg-prof-feature"><span class="hf-rpg-prof-feature-art hf-p42-prof-frame">'+picture(selected,true)+'</span>'+
     '<div><b>'+safe(selected.id)+'</b><small>'+safe(selected.desc)+'</small></div></div>'+
-    '<div class="hf-rpg-stat-panel"><b>Nivel del oficio</b><span>Sin nivel registrado</span></div>'+
-    '<div class="hf-rpg-stat-panel"><b>Materiales disponibles</b><strong>'+numeric(owned)+'</strong></div>'+
-    '<div class="hf-rpg-stat-panel"><b>Acciones completadas en total</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
-    '<div class="hf-rpg-stat-panel"><b>Herramientas disponibles</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
-    '<p class="hf-rpg-info">'+(selected.ready?
-     'Los recursos se obtienen del mundo real. Las recetas los consumen y muestran el resultado en Bolsa.':
-     'Este oficio tendrá sus recetas y progresión propias cuando implementemos la mecánica.')+'</p>'+
-    '<div class="hf-rpg-mini-actions">'+button('IR A FABRICACIÓN','data-hf-tab="forja"','is-primary')+
-    button('VER BOLSA','data-hf-tab="bolsa"')+'</div>','hf-rpg-right-panel')+'</div>';
+    '<div class="hf-rpg-stat-panel"><b>Estado</b><strong>'+(selected.ready?'DISPONIBLE':'PRÓXIMAMENTE')+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Materiales asociados</b><strong>'+numeric(owned)+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Acciones completadas</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Herramientas</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
+    '<div class="hf-rpg-mini-actions">'+button('VER RECETAS','data-hf-tab="forja"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(local.recipe,prof().inventory,bag);
