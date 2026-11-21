@@ -128,6 +128,15 @@
       "station": "mesa_inscripcion",
       "v36Icon": false,
       "activeGameplay": "FUTURE_NOT_VISIBLE"
+    },
+    {
+      "id": "desuello",
+      "nameEs": "Desuello",
+      "kind": "gathering",
+      "station": "criatura_derrotada",
+      "v36Icon": false,
+      "activeGameplay": "P2_SPEC_NOT_VISIBLE",
+      "notes": "Proposed hide-gathering discipline; not claimed to be running in v3.6"
     }
   ],
   "recipes": [
