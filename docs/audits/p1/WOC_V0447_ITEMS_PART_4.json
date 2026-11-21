@@ -1,0 +1,464 @@
+{
+  "schema": "woc-v0447-audit-part4",
+  "ref": "v0.44.7",
+  "sha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "status": "STATIC_EXTRACTION_NOT_RUNTIME_REGISTRY",
+  "registries": [
+    {
+      "symbol": "WRAITHWOOD_ITEMS",
+      "path": "src/sim/content/wraithwood.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "widowsilk_skein",
+          "name": "'Widowsilk Skein',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WRAITHWOOD_ITEMS",
+          "sourcePath": "src/sim/content/wraithwood.ts"
+        },
+        {
+          "id": "gallowmere_grave_candle",
+          "name": "'Grave-Candle',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WRAITHWOOD_ITEMS",
+          "sourcePath": "src/sim/content/wraithwood.ts"
+        },
+        {
+          "id": "silkbound_remains",
+          "name": "'Silkbound Remains',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WRAITHWOOD_ITEMS",
+          "sourcePath": "src/sim/content/wraithwood.ts"
+        },
+        {
+          "id": "gravebound_silk_wraps",
+          "name": "'Gravebound Silk Wraps',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WRAITHWOOD_ITEMS",
+          "sourcePath": "src/sim/content/wraithwood.ts"
+        },
+        {
+          "id": "mantle_of_the_unhorsed",
+          "name": "'Mantle of the Unhorsed',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WRAITHWOOD_ITEMS",
+          "sourcePath": "src/sim/content/wraithwood.ts"
+        }
+      ],
+      "declaredEntries": 5
+    },
+    {
+      "symbol": "PALMREACH_ITEMS",
+      "path": "src/sim/content/palmreach.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "pearlwake_cargo_crate",
+          "name": "'Pearlwake Cargo Crate',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PALMREACH_ITEMS",
+          "sourcePath": "src/sim/content/palmreach.ts"
+        },
+        {
+          "id": "canopy_silk_hank",
+          "name": "'Canopy Silk Hank',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PALMREACH_ITEMS",
+          "sourcePath": "src/sim/content/palmreach.ts"
+        },
+        {
+          "id": "sunken_offering_bowl",
+          "name": "'Refilled Offering Bowl',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PALMREACH_ITEMS",
+          "sourcePath": "src/sim/content/palmreach.ts"
+        },
+        {
+          "id": "saltwalker_sandals",
+          "name": "'Saltwalker Sandals',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "PALMREACH_ITEMS",
+          "sourcePath": "src/sim/content/palmreach.ts"
+        },
+        {
+          "id": "sunken_idol_mantle",
+          "name": "'Mantle of the Sunken Idol',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "PALMREACH_ITEMS",
+          "sourcePath": "src/sim/content/palmreach.ts"
+        }
+      ],
+      "declaredEntries": 5
+    },
+    {
+      "symbol": "EVERGARDEN_ITEMS",
+      "path": "src/sim/content/evergarden.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "hedgewick_shears",
+          "name": "'Stolen Hedgewick Shears',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        },
+        {
+          "id": "evergarden_bloom_clipping",
+          "name": "'Pruned Bloom Clipping',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        },
+        {
+          "id": "hedgewick_tool_cart",
+          "name": "'Spilled Tool Cart',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        },
+        {
+          "id": "evergarden_statue_rubbing",
+          "name": "'Statue Rubbing',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        },
+        {
+          "id": "shearkeeper_gloves",
+          "name": "'Shearkeeper Gloves',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        },
+        {
+          "id": "fountain_court_mantle",
+          "name": "'Mantle of the Fountain Court',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "EVERGARDEN_ITEMS",
+          "sourcePath": "src/sim/content/evergarden.ts"
+        }
+      ],
+      "declaredEntries": 6
+    },
+    {
+      "symbol": "GALECREST_ITEMS",
+      "path": "src/sim/content/galecrest.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "galecrest_ram_wool",
+          "name": "'Greasy Ram Wool',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "GALECREST_ITEMS",
+          "sourcePath": "src/sim/content/galecrest.ts"
+        },
+        {
+          "id": "shear_storm_lantern",
+          "name": "'Doused Storm-Lantern',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "GALECREST_ITEMS",
+          "sourcePath": "src/sim/content/galecrest.ts"
+        },
+        {
+          "id": "wreckfield_flotsam_crate",
+          "name": "'Flotsam Crate',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "GALECREST_ITEMS",
+          "sourcePath": "src/sim/content/galecrest.ts"
+        },
+        {
+          "id": "wickspun_treads",
+          "name": "'Wickspun Treads',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "GALECREST_ITEMS",
+          "sourcePath": "src/sim/content/galecrest.ts"
+        },
+        {
+          "id": "wreck_wardens_mantle",
+          "name": "'Mantle of the Wreck Warden',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "GALECREST_ITEMS",
+          "sourcePath": "src/sim/content/galecrest.ts"
+        }
+      ],
+      "declaredEntries": 5
+    },
+    {
+      "symbol": "FARSHORE_ITEMS",
+      "path": "src/sim/content/farshore.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "breakscarred_steel",
+          "name": "'Break-Scarred Steel',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FARSHORE_ITEMS",
+          "sourcePath": "src/sim/content/farshore.ts"
+        },
+        {
+          "id": "farshore_salt_moss",
+          "name": "'Farshore Salt Moss',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FARSHORE_ITEMS",
+          "sourcePath": "src/sim/content/farshore.ts"
+        },
+        {
+          "id": "gullhaven_watchbell",
+          "name": "'Coastal Watchbell',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FARSHORE_ITEMS",
+          "sourcePath": "src/sim/content/farshore.ts"
+        },
+        {
+          "id": "saltforged_grips",
+          "name": "'Saltforged Grips',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "FARSHORE_ITEMS",
+          "sourcePath": "src/sim/content/farshore.ts"
+        },
+        {
+          "id": "mantle_of_the_unbroken_shore",
+          "name": "'Mantle of the Unbroken Shore',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "FARSHORE_ITEMS",
+          "sourcePath": "src/sim/content/farshore.ts"
+        }
+      ],
+      "declaredEntries": 5
+    },
+    {
+      "symbol": "WILDHEART_ITEMS",
+      "path": "src/sim/content/wildheart.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "duskwhisper",
+          "name": "'Duskwhisper',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "wildheart_tuskblade",
+          "name": "'Wildheart Tuskblade',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "wildheart_hexwood_staff",
+          "name": "'Hexwood Staff of the Basin',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "wildheart_fangknife",
+          "name": "'Fangknife of Zulgar',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "fanglords_beastspear",
+          "name": "\"Fanglord's Beastspear\",",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "bloodmane_warleggings",
+          "name": "'Bloodmane Warleggings',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "vineclaw_stalking_breeches",
+          "name": "'Vineclaw Stalking Breeches',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        },
+        {
+          "id": "sunbone_ritual_sarong",
+          "name": "'Sunbone Ritual Sarong',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WILDHEART_ITEMS",
+          "sourcePath": "src/sim/content/wildheart.ts"
+        }
+      ],
+      "declaredEntries": 8
+    },
+    {
+      "symbol": "PROVING_SHORE_ITEMS",
+      "path": "src/sim/content/proving_shore.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "ps_castaway_crate",
+          "name": "'Castaway Crate',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        },
+        {
+          "id": "ps_ferry_bell",
+          "name": "'Ferry Bell',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        },
+        {
+          "id": "ps_passing_stone",
+          "name": "'Passing Stone',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        },
+        {
+          "id": "ps_briny_lure",
+          "name": "'Briny Lure',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        },
+        {
+          "id": "ps_lustrous_pearl",
+          "name": "'Lustrous Pearl',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        },
+        {
+          "id": "mother_of_pearl",
+          "name": "'Mother of Pearl',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "PROVING_SHORE_ITEMS",
+          "sourcePath": "src/sim/content/proving_shore.ts"
+        }
+      ],
+      "declaredEntries": 6
+    }
+  ]
+}
