@@ -24,17 +24,46 @@ gold=(r>75)&(r>g*1.06)&(g>b*1.18)&(g>48)
 weight=(inside*gold).astype('float32')
 for material,ratios in {
  'copper':(.98,.61,.47),'iron':(.55,.66,.77),
- 'silver':(.9,1.0,1.15),'gold':(1,1,1)
+ 'silver':(.9,1.0,1.15),'gold':(1,1,1),
+ 'steel':(.62,.77,.94),'diamond':(.65,1.12,1.40),
+ 'obsidian':(.35,.38,.57),'mithril':(.50,1.08,1.30)
 }.items():
  result=src.copy()
  for i,mul in enumerate(ratios):
   result[:,:,i]=src[:,:,i]*(1-weight)+np.clip(src[:,:,i]*mul,0,255)*weight
- if material in ('iron','silver'):
+ if material in ('iron','silver','steel','diamond'):
   neutral=(r*.299+g*.587+b*.114)
-  factor=.54 if material=='iron' else .84
+  factor={'iron':.54,'silver':.84,'steel':.75,'diamond':.88}[material]
   for i in range(3):result[:,:,i]=result[:,:,i]*(1-weight*factor)+neutral*weight*factor
  output=root/'items'/('ingot_'+material+'.webp')
  Image.fromarray(np.uint8(np.clip(result,0,255)),'RGBA').save(output,format='WEBP',quality=95,method=5)
  check=Image.open(output)
  if check.size!=(256,256) or check.getpixel((0,0))[3]>15:raise SystemExit("Bad metal art "+str(output))
  print("[HIGHFLY METALS]",material,output.stat().st_size,"bytes")
+
+# P4.1: original ore painting with unique named mineral colors. The same
+# gold/black/purple painted item background is deliberately preserved.
+ore=Image.open(root/'items'/'ore.webp').convert('RGBA')
+if ore.size!=(256,256):raise SystemExit('Unexpected original mineral size')
+a=np.asarray(ore).astype('float32')
+yy,xx=np.mgrid[0:256,0:256]
+center=np.clip(1-((xx-130)**2+(yy-125)**2)/(97*97),0,1)
+center=Image.fromarray(np.uint8(center*255),'L').filter(ImageFilter.GaussianBlur(10))
+w=(np.asarray(center)/255).astype('float32')[:,:,None]
+lum=np.max(a[:,:,:3],axis=2,keepdims=True)/255
+palette={
+ 'ore_copper':(230,119,61),'ore_iron':(113,139,172),
+ 'coal':(78,79,99),'ore_silver':(206,226,243),
+ 'ore_gold':(255,194,70),'raw_diamond':(152,238,255),
+ 'raw_obsidian':(77,50,111),'ore_mithril':(76,238,212)
+}
+for item,(red,green,blue) in palette.items():
+ out=a.copy()
+ for i,color in enumerate([red,green,blue]):
+  tone=np.clip(color*(.35+.82*lum[:,:,0]),0,255)
+  out[:,:,i]=a[:,:,i]*(1-w[:,:,0]*.87)+tone*w[:,:,0]*.87
+ dest=root/'items'/(item+'.webp')
+ Image.fromarray(np.uint8(np.clip(out,0,255)),'RGBA').save(dest,format='WEBP',quality=95,method=5)
+ check=Image.open(dest)
+ if check.size!=(256,256) or check.getpixel((0,0))[3]>15:raise SystemExit('Bad ore art '+str(dest))
+ print('[HIGHFLY MATERIAL]',item,dest.stat().st_size,'bytes')
