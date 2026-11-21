@@ -1,11 +1,16 @@
-#boot{background:radial-gradient(ellipse at 50% 38%,#6827a0 0%,#2a1549 44%,#0c071c 77%,#060411 100%)!important;color:#f7eaff!important}
-#boot::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 38% 50% at 50% 38%,#b557ee29,transparent 90%)}
-#boot>div{display:flex!important;flex-direction:column;align-items:center;text-align:center;width:min(390px,86vw)!important;z-index:1;gap:10px}
-#boot>div::before{content:"";display:block;flex:none;width:min(148px,32vw);height:min(148px,40vh);background:url("__HF_BASE__highfly/brand/highfly-official.avif") center/contain no-repeat;filter:drop-shadow(0 0 16px #c85cf15d)}
+/* P4.2: official Phoenix emblem dominates the TRUE native load, no separate intro. */
+#boot{background:radial-gradient(ellipse at 50% 48%,#210e2f 0%,#08060d 45%,#010104 86%,#000 100%)!important;color:#f5e7ff!important}
+#boot::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 44% 37% at 50% 42%,#9430ce23,transparent 90%);animation:hf42BootGlow 3.7s ease-in-out infinite alternate}
+#boot>div{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(610px,94vw)!important;max-height:94vh!important;z-index:1;gap:8px!important}
+#boot>div::before{content:"";display:block;flex:none;width:min(500px,76vw);height:min(260px,54vh);background:url("__HF_BASE__highfly/brand/highfly-official.avif") center/contain no-repeat;filter:drop-shadow(0 0 14px #bf48ef86) drop-shadow(0 0 32px #f6ad465a);animation:hf42LogoEnter .65s ease-out both}
+#boot>div::after{content:"ASCEND ✦ TRAIN ✦ CONQUER";display:block;color:#f3d99e;letter-spacing:.28em;font:700 clamp(8px,1.1vw,13px) Georgia,serif;text-shadow:0 0 13px #aa61e5}
 #boot svg,#boot h1{display:none!important}
-#boot .bar{margin:2px 0 0!important;width:min(320px,74vw);height:7px!important;border-radius:8px;background:#402060!important;border:1px solid #e697ff5e;overflow:hidden;box-shadow:inset 0 0 5px #10051c,0 0 12px #9229d16b}
+#boot .bar{width:min(425px,78vw)!important;height:9px!important;border-radius:9px!important;border:1px solid #daae78!important;background:#10091c!important;box-shadow:0 0 12px #7e398c99,inset 0 0 9px #05020b!important;overflow:hidden!important}
 #boot .bar::before{display:none!important}
-#boot .bar i{background:linear-gradient(90deg,#7c48ee,#df6fff,#ffe8b5)!important;border-radius:8px;box-shadow:0 0 12px #b857ff}
-#boot p{margin:0!important;font-size:clamp(11px,2vw,14px)!important;color:#f1e3ff!important}
-#boot p.tip{margin:0!important;color:#c7ade1!important;font-size:11px!important;line-height:1.3}
-@media(max-height:450px){#boot>div::before{width:min(120px,25vw);height:min(120px,37vh)}#boot>div{gap:7px}}
+#boot .bar i{background:linear-gradient(90deg,#6037b4,#af63fd 44%,#ffe4a2)!important;border-radius:9px!important;box-shadow:0 0 10px #ffdb91!important}
+#boot p{margin:0!important;font:650 clamp(11px,1.2vw,15px) system-ui,sans-serif!important;color:#ebdff5!important}
+#boot p.tip{font:500 10px system-ui,sans-serif!important;color:#b9a2c6!important;line-height:1.2}
+@keyframes hf42LogoEnter{from{opacity:.2;transform:translateY(9px) scale(.92)}to{opacity:1;transform:none}}
+@keyframes hf42BootGlow{from{opacity:.5}to{opacity:1}}
+@media(max-height:450px){#boot>div{gap:4px!important}#boot>div::before{height:min(210px,49vh);width:min(440px,70vw)}#boot>div::after{letter-spacing:.15em;font-size:9px}#boot .bar{height:7px!important}}
+@media(prefers-reduced-motion:reduce){#boot::before,#boot>div::before{animation:none!important}}
