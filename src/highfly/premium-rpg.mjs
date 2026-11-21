@@ -18,6 +18,7 @@ import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
+import {gearTraitAt,enhanceGear,traitLabel,enhancedStats} from './rpg-itemization.mjs';
 import {translateHighfly} from './es-localization.mjs';
 import {describeSystemIntent} from './system-dialog.mjs';
 
@@ -104,7 +105,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
+ const local={selectedGearIndex:0,tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('premium/character_sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
@@ -117,7 +118,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const p=()=>game.player,prof=()=>p()?._hfProfession??{inventory:{},tools:new Set()};
  const allItems=()=>inventoryRows(bag,prof().inventory);
  const attrs=()=>attributeBreakdown(p()?._hfLevel??1,p()?._hfTrainingScore??0);
- const bonuses=()=>equipmentBonuses(bag.equipped);
+ const bonuses=()=>equipmentBonuses(bag.equipped,bag.gearTraits);
  const syncEquipment=()=>{
   if(!p())return;
   const index=equippedMode(bag.equipped);p()._hfGearCycle=index;p()._hfEquipmentLocked=true;
@@ -176,13 +177,15 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    return;
   }
   let result={ok:false,reason:'Acción no compatible'};
-  if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
-  else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
+  if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId,m.variantIndex??0);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
+  else if(m.type==='gear-upgrade'){result=enhanceGear(bag,{place:m.place,id:m.id,index:m.index},m.kind);if(result.ok)save();}
+   else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
   else if(m.type==='assign-skill'){result=assignSkillSlot(bag,m.slotIndex,m.skillId,p());if(result.ok){save();syncSkills();local.pickSkill=null;}}
   else if(m.type==='expand'){result=consumeBagUpgrade(bag);if(result.ok)save();}
   let output=result.reason;
   if(result.ok){
-   if(m.type==='equip')output='¡'+ITEM_DEFS[m.itemId].name+' equipado correctamente!';
+   if(m.type==='gear-upgrade')output='¡'+(m.kind==='ascend'?'Nueva calidad '+result.trait.rarity:'Mejora +'+result.trait.plus+' completada')+'!';
+    else if(m.type==='equip')output='¡'+ITEM_DEFS[m.itemId].name+' equipado correctamente!';
    else if(m.type==='unequip')output='¡Objeto devuelto a tu Bolsa!';
    else if(m.type==='assign-skill')output='¡Habilidad asignada a la ranura '+(m.slotIndex+1)+'!';
    else if(m.type==='expand')output='¡Tu Bolsa ahora tiene '+result.slots+' espacios!';
@@ -436,7 +439,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.system){
    const sys=b.dataset.hfSystem;
    if(b.dataset.hfSystemSlot){
-    showSystem('equip',{itemId:local.system.itemId,slotId:b.dataset.hfSystemSlot});return;
+    showSystem('equip',{itemId:local.system.itemId,slotId:b.dataset.hfSystemSlot,variantIndex:local.system.variantIndex??0});return;
    }
    if(sys==='cancel'||sys==='dismiss'){local.system=null;render();return;}
    if(sys==='bag'){local.system=null;local.tab='bolsa';local.category='Todo';render();return;}
@@ -461,7 +464,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     else message('Ranura libre: elegí una habilidad y tocá EQUIPAR');
    }return;
   }
-  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.pickEquipItem=null;render();return;}
+  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.selectedGearIndex=0;local.pickEquipItem=null;render();return;}
+   if(b.dataset.hfGearIndex!==undefined){local.selectedGearIndex=Number(b.dataset.hfGearIndex);render();return;}
   if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
   if(b.dataset.hfProf){local.selectedProfession=b.dataset.hfProf;render();return;}
@@ -483,7 +487,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(action.startsWith('unequip:')){showSystem('unequip',{slotId:action.slice('unequip:'.length)});return;}
   if(action.startsWith('pick-equip:')){
    const id=action.slice('pick-equip:'.length),slots=EQUIP_ITEM_DEFS[id]?.slots??[];
-   showSystem(slots.length===1?'equip':'equip-choose',slots.length===1?{itemId:id,slotId:slots[0]}:{itemId:id});return;
+   showSystem(slots.length===1?'equip':'equip-choose',slots.length===1?{itemId:id,slotId:slots[0],variantIndex:local.selectedGearIndex}:{itemId:id,variantIndex:local.selectedGearIndex});return;
   }
   if(action.startsWith('equip:')){
    const [,slotId,itemId]=action.split(':');showSystem('equip',{itemId,slotId});return;
@@ -499,6 +503,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    message(result.ok?'Ranura liberada':result.reason);return;
   }
   if(action==='expand'){showSystem('expand');return;}
+   if(action.startsWith('gear:')){const [,kind,place,id,index]=action.split(':');showSystem('gear-upgrade',{kind,place,id,index:Number(index)||0});return;}
   if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
   // Gear is changed ONLY through real Bag <-> Character equip transactions.
   if(action.startsWith('use:')){
