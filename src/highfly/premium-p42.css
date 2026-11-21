@@ -9,6 +9,7 @@
 }
 #hf-rpg .hf-rpg-grid{
  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ grid-template-rows:none!important;grid-auto-rows:max-content!important;
  gap:5px!important;flex:1 1 auto;min-height:0;align-content:start;
  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
  scrollbar-width:thin;scrollbar-color:#ab75d5 #120a22;
@@ -172,3 +173,8 @@
 @media(prefers-reduced-motion:reduce){
  #hf-rpg .hf-rpg-item{transition:none}
 }
+
+/* Critical P4.2 QA: grid tracks MUST take square item height; never compress
+ * six rows to the viewport and overlap clickable first-row items. */
+#hf-rpg .hf-rpg-grid>.hf-rpg-item,#hf-rpg .hf-rpg-grid>.hf-rpg-empty-slot{height:auto!important;min-height:0;align-self:start;justify-self:stretch;aspect-ratio:1!important}
+#hf-rpg .hf-rpg-grid>.hf-rpg-empty-slot{pointer-events:none!important}
