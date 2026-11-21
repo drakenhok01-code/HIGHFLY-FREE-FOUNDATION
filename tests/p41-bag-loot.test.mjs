@@ -74,3 +74,29 @@ test('P4.1: repeated chest cannot overflow an equipment stack (atomic rollback)'
  assert.equal(grantP41TestLoot(bag,prof,'cofre').ok,false);
  assert.equal(JSON.stringify([bag.items,prof.inventory]),snap);
 });
+
+test('P4.1: real armor and accessory slots grant persistent defense and attribute points',()=>{
+ const {bag,prof}=fixture();
+ assert.equal(grantP41TestLoot(bag,prof,'cofre').ok,true);
+ assert.equal(bag.items.hf_iron_chest,1);
+ assert.equal(bag.items.hf_copper_ring,1);
+ assert.equal(bag.gearTraits.bag.hf_iron_chest[0].plus,0);
+ assert.equal(bag.gearTraits.bag.hf_copper_ring[0].plus,0);
+ assert.equal(equipFromBag(bag,'chest','hf_iron_chest').ok,true);
+ assert.equal(equipFromBag(bag,'ring','hf_copper_ring').ok,true);
+ assert.equal(bag.items.hf_iron_chest,0);
+ assert.equal(bag.items.hf_copper_ring,0);
+ const bonus=equipmentBonuses(bag.equipped,bag.gearTraits);
+ assert.equal(bonus.defense,5);
+ assert.equal(bonus.VIT,2);
+ assert.equal(bonus.INT,1);
+ const storage={v:null,setItem(_k,v){this.v=v},getItem(){return this.v}};
+ assert.equal(saveRpgState(bag,storage),true);
+ const restored=loadRpgState(storage);
+ assert.equal(restored.equipped.chest,'hf_iron_chest');
+ assert.equal(restored.equipped.ring,'hf_copper_ring');
+ assert.equal(equipmentBonuses(restored.equipped,restored.gearTraits).defense,5);
+ assert.equal(unequipToBag(bag,'chest').ok,true);
+ assert.equal(bag.items.hf_iron_chest,1);
+ assert.equal(bag.gearTraits.bag.hf_iron_chest[0].plus,0);
+});
