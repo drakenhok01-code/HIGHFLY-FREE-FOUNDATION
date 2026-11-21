@@ -1,0 +1,4061 @@
+{
+  "schema": "HIGHFLY_P1_MATERIAL_GRAPH",
+  "source": "ClaudeCraft v0.44.7 upstream, not imported",
+  "counts": {
+    "materialTypes": 106,
+    "recipes": 175,
+    "outputsPresentInSource": 175,
+    "inputsPresentInSource": 106
+  },
+  "materials": [
+    {
+      "id": "thorium_ore",
+      "sourceName": "Osmium Ore",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_duskhide_wraps",
+          "quantity": 6,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_sootscale_mantle",
+          "quantity": 7,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbound_warplate_helm",
+          "quantity": 5,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgeguard_bulwark_gauntlets",
+          "quantity": 6,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_thorium_warblade",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_arcanite_war_axe",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_elderwood_battle_staff",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_greathelm",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_cuirass",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_leggings",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_mirewarden_jerkin",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_leggings",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_treads",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_weighted_thorium_band",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gleaming_thorium_loop",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_burnished_thorium_amulet",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_billet",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_plating",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_prismglass_setting",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_precision_chassis",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_spiritweld_girdle",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_legguards",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wardspeaker_sabatons",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_warblade",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ridgebreaker",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_bulwark",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_wyrmfall_pendant",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_warhewn_signet",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_prismglass_loop",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gyrelens_array",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_masters_field_forge",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_makers_charm",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_gravewyrm_bone_quiver",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_wildgrove_cinch",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_cragprowl_belt",
+          "quantity": 1,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 115
+    },
+    {
+      "id": "smithing_flux",
+      "sourceName": "Smithing Flux",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_arming_sword",
+          "quantity": 6,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_eastbrook_chain_vest",
+          "quantity": 9,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_eastbrook_warded_leggings",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_sootscale_mantle",
+          "quantity": 5,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbound_warplate_helm",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgeguard_bulwark_gauntlets",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_copper_bearded_axe",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_copper_flanged_mace",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbark_boar_spear",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironedge_longsword",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironshod_maul",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_whetted_iron_dirk",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_thorium_warblade",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_arcanite_war_axe",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_elderwood_battle_staff",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_riveted_copper_girdle",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_sabatons",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_hauberk",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_legguards",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_spaulders",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_greathelm",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_cuirass",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_leggings",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_hammered_copper_band",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_polished_copper_loop",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_coiled_copper_torc",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_riveted_iron_signet",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_etched_iron_loop",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_iron_link_choker",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_weighted_thorium_band",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gleaming_thorium_loop",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_burnished_thorium_amulet",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_cogwheel_blank",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_fenshadow_maul",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 66
+    },
+    {
+      "id": "sunpetal_herb",
+      "sourceName": "Sunpetal Herb",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wardweave_cowl",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkbinders_raiment",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_mantle",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_treads",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_anglers_feast_platter",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sunpetal_healing_draught",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_mana_draught",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_serpent",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_duskweave_bag",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_resonant_weave_bag",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_loombound_reagent_satchel",
+          "quantity": 5,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunpetal_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_deed_of_making",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_quickening_catalyst",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunspun_bolt",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sablewax_vellum",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_voidbound_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 4,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_roast_hollowgill_sturgeon",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 58
+    },
+    {
+      "id": "cooking_salt",
+      "sourceName": "Cooking Salt",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_pan_seared_perch",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_hunters_game_skewer",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_herbed_marsh_pike",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_ashwood_smoked_eel",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_goldleaf_game_stew",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_frostgill_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_silvered_carp_supper",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_anglers_feast_platter",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_peppered_deepbarb_catfish",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_roast_hollowgill_sturgeon",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_vale_hearth_loaf",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_rice_bowl",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_barley_bannock",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_gourd_soup",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_harvest_platter",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_glazed_carrots",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_rice_pudding",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_barley_porridge",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_braised_greens",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_harvest_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 43
+    },
+    {
+      "id": "glass_vial",
+      "sourceName": "Glass Vial",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_volatile_flux_elixir",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverleaf_healing_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverleaf_mana_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_boar",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_goldleaf_healing_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_goldleaf_mana_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_venomfire_elixir",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_healing_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_mana_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_serpent",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverleaf_primer",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_silverleaf_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_goldleaf_folio",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_goldleaf_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_grimoire",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_deed_of_making",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_quickening_catalyst",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sablewax_vellum",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_voidbound_grimoire",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_growth_tonic",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_lesser_healing_potion",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_mana_regeneration",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_potion_of_invisibility",
+          "quantity": 1,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 27
+    },
+    {
+      "id": "iron_ore",
+      "sourceName": "Iron Ore",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_forgeguard_bulwark_gauntlets",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironedge_longsword",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironshod_maul",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_whetted_iron_dirk",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_thorium_warblade",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_hauberk",
+          "quantity": 5,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_legguards",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_spaulders",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_cuirass",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_riveted_iron_signet",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_etched_iron_loop",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_iron_link_choker",
+          "quantity": 5,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_weighted_thorium_band",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gleaming_thorium_loop",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_burnished_thorium_amulet",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_billet",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_plating",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_spiritweld_girdle",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_legguards",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wardspeaker_sabatons",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_warblade",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ridgebreaker",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_bulwark",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "pattern_reinforced_armor_kit",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "schematic_clockwork_shock_bomb",
+          "quantity": 3,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "plans_dense_sharpening_stone",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 75
+    },
+    {
+      "id": "rough_hide",
+      "sourceName": "Rough Hide",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_tanned_leather_jerkin",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_druids_hide",
+          "quantity": 5,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_duskhide_wraps",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_ironedge_longsword",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_elderwood_battle_staff",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_sabatons",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_gauntlets",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_hauberk",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_spaulders",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_greathelm",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_leggings",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_boots",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_belt",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_jerkin",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_hood",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_spaulders",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_jerkin",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_leggings",
+          "quantity": 5,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_treads",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_forgefold_plating",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wyrmhide_cording",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_briarstep_jerkin",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbloom_breeches",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_barksong_handguards",
+          "quantity": 4,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_oiled_boots",
+          "quantity": 6,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "pattern_reinforced_armor_kit",
+          "quantity": 5,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 81
+    },
+    {
+      "id": "wyrmfall_core",
+      "sourceName": "Wyrmfall Core",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_deed_of_making",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_spiritweld_girdle",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_legguards",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wardspeaker_sabatons",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_briarstep_jerkin",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbloom_breeches",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_barksong_handguards",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_sunspun_vestments",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_leggings",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_handwraps",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_haversack",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_duskforged_warblade",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ridgebreaker",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_bulwark",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_wyrmfall_pendant",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_warhewn_signet",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_prismglass_loop",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gyrelens_array",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_masters_field_forge",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_makers_charm",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_voidbound_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 48
+    },
+    {
+      "id": "arcane_essence",
+      "sourceName": "Chime Essence",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_gatherers_cache",
+          "quantity": 14,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_artisans_eye",
+          "quantity": 14,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_riveted_iron_signet",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_etched_iron_loop",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_iron_link_choker",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_weighted_thorium_band",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_gleaming_thorium_loop",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_burnished_thorium_amulet",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_goldleaf_folio",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_goldleaf_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_scroll",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_deed_of_making",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_prismglass_setting",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_lucent_reagent",
+          "quantity": 3,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_sablewax_vellum",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_wyrmfall_pendant",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_warhewn_signet",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_prismglass_loop",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_voidbound_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        }
+      ],
+      "totalPerSingleCraftBatch": 62
+    },
+    {
+      "id": "goldleaf_herb",
+      "sourceName": "Goldleaf Herb",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wardweave_cowl",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_robe",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_leggings",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkspun_satchel",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_treads",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldleaf_game_stew",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_silvered_carp_supper",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_goldleaf_healing_draught",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_goldleaf_mana_draught",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_venomfire_elixir",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_mana_draught",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_foragers_haversack",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldleaf_folio",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_goldleaf_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_grimoire",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_quickening_catalyst",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_peppered_deepbarb_catfish",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_lesser_healing_potion",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_potion_of_invisibility",
+          "quantity": 3,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 36
+    },
+    {
+      "id": "spool_of_thread",
+      "sourceName": "Spool of Thread",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_wool_trousers",
+          "quantity": 9,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_tanned_leather_jerkin",
+          "quantity": 5,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_ritual_vestments",
+          "quantity": 5,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_eastbrook_druids_hide",
+          "quantity": 5,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_wardweave_cowl",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_homespun_hood",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_homespun_mitts",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silverthread_slippers",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_robe",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_leggings",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkspun_satchel",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkbinders_raiment",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_mantle",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_treads",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_foragers_haversack",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_duskweave_bag",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_resonant_weave_bag",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_loombound_reagent_satchel",
+          "quantity": 6,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_linen_pouch",
+          "quantity": 4,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 59
+    },
+    {
+      "id": "spider_silk",
+      "sourceName": "Spider Silk",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wardweave_cowl",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_robe",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkspun_satchel",
+          "quantity": 6,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkbinders_raiment",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_treads",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_marshstalker_jerkin",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_treads",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_foragers_haversack",
+          "quantity": 8,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_duskweave_bag",
+          "quantity": 6,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_wyrmhide_cording",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_sunspun_bolt",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_vestments",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_leggings",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_handwraps",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_haversack",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_oiled_boots",
+          "quantity": 2,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 63
+    },
+    {
+      "id": "copper_ore",
+      "sourceName": "Copper Ore",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_chain_vest",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_eastbrook_warded_leggings",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_copper_bearded_axe",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_copper_flanged_mace",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbark_boar_spear",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_riveted_copper_girdle",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_sabatons",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_gauntlets",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_hammered_copper_band",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_polished_copper_loop",
+          "quantity": 4,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_coiled_copper_torc",
+          "quantity": 5,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_cogwheel_blank",
+          "quantity": 4,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_copperlens_ocular",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "schematic_clockwork_shock_bomb",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 51
+    },
+    {
+      "id": "silverleaf_herb",
+      "sourceName": "Sheenleaf Herb",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_minor_healing_potion",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverthread_slippers",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_herbed_marsh_pike",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_frostgill_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_silverleaf_healing_draught",
+          "quantity": 4,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverleaf_mana_draught",
+          "quantity": 3,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_boar",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_goldleaf_healing_draught",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_healing_draught",
+          "quantity": 3,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_silverleaf_primer",
+          "quantity": 3,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_silverleaf_scroll",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_growth_tonic",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_mana_regeneration",
+          "quantity": 3,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_potion_of_invisibility",
+          "quantity": 3,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 34
+    },
+    {
+      "id": "quickening_catalyst",
+      "sourceName": "Quickening Catalyst",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_duskforged_billet",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_plating",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wyrmhide_cording",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_sunspun_bolt",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_prismglass_setting",
+          "quantity": 1,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_precision_chassis",
+          "quantity": 1,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_lucent_reagent",
+          "quantity": 1,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_sablewax_vellum",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 3,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 15
+    },
+    {
+      "id": "tanning_agent",
+      "sourceName": "Tanning Agent",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_duskhide_wraps",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_leggings",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_boots",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_belt",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_jerkin",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_hood",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_spaulders",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_jerkin",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_leggings",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_oiled_boots",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_gravewyrm_bone_quiver",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_wildgrove_cinch",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_cragprowl_belt",
+          "quantity": 1,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 15
+    },
+    {
+      "id": "arcane_dust",
+      "sourceName": "Chime Dust",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_gatherers_cache",
+          "quantity": 10,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_artisans_eye",
+          "quantity": 10,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_hammered_copper_band",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_polished_copper_loop",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_coiled_copper_torc",
+          "quantity": 2,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_silverleaf_primer",
+          "quantity": 2,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_silverleaf_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_sunpetal_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_lucent_reagent",
+          "quantity": 4,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_copperlens_ocular",
+          "quantity": 3,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 38
+    },
+    {
+      "id": "pristine_silk",
+      "sourceName": "Pristine Silk",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wardweave_cowl",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silkbinders_raiment",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_duskweave_bag",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_resonant_weave_bag",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_loombound_reagent_satchel",
+          "quantity": 6,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_bolt",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_vestments",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_leggings",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_handwraps",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_haversack",
+          "quantity": 1,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 20
+    },
+    {
+      "id": "bone_fragments",
+      "sourceName": "Bone Fragments",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_arming_sword",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_eastbrook_warded_leggings",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_copper_flanged_mace",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_whetted_iron_dirk",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_arcanite_war_axe",
+          "quantity": 4,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_riveted_copper_girdle",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_coppermail_gauntlets",
+          "quantity": 2,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_ironlink_legguards",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_leggings",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 26
+    },
+    {
+      "id": "pristine_hide",
+      "sourceName": "Pristine Hide",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_duskhide_wraps",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_mirewarden_jerkin",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_wyrmhide_cording",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_briarstep_jerkin",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbloom_breeches",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_barksong_handguards",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_gravewyrm_bone_quiver",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_wildgrove_cinch",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_cragprowl_belt",
+          "quantity": 3,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 16
+    },
+    {
+      "id": "raw_deepbarb_catfish",
+      "sourceName": "Raw Deepbarb Catfish",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_peppered_deepbarb_catfish",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_roast_hollowgill_sturgeon",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 34
+    },
+    {
+      "id": "spider_leg",
+      "sourceName": "Twitching Spider Leg",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_tanned_leather_jerkin",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_tough_jerky",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_minor_healing_potion",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_eastbrook_ritual_vestments",
+          "quantity": 1,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_eastbrook_druids_hide",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_volatile_flux_elixir",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_leggings",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_hide_belt",
+          "quantity": 1,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_marshstalker_hood",
+          "quantity": 2,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 14
+    },
+    {
+      "id": "game_meat",
+      "sourceName": "Game Meat",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_hunters_game_skewer",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_goldleaf_game_stew",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 28
+    },
+    {
+      "id": "homespun_cloth",
+      "sourceName": "Homespun Cloth",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_wool_trousers",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_eastbrook_ritual_vestments",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_homespun_hood",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_homespun_mitts",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_goldweave_leggings",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunweave_mantle",
+          "quantity": 4,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_marshstalker_spaulders",
+          "quantity": 2,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_loombound_reagent_satchel",
+          "quantity": 8,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 31
+    },
+    {
+      "id": "venom_gland",
+      "sourceName": "Venom Gland",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_volatile_flux_elixir",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_boar",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_venomfire_elixir",
+          "quantity": 3,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_serpent",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_quickening_catalyst",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 2,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 17
+    },
+    {
+      "id": "evergarden_greens",
+      "sourceName": "Evergarden Greens",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_harvest_platter",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_braised_greens",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_harvest_feast",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 16
+    },
+    {
+      "id": "highland_barley",
+      "sourceName": "Highland Barley",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_barley_bannock",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_barley_porridge",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 15
+    },
+    {
+      "id": "seasoned_stock",
+      "sourceName": "Seasoned Stock",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 15
+    },
+    {
+      "id": "vale_wheat",
+      "sourceName": "Vale Wheat",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_hunters_game_skewer",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_goldleaf_game_stew",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_boar",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_vale_hearth_loaf",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_root_pottage",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_sunmelon_tart",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_glazed_carrots",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 11
+    },
+    {
+      "id": "arcanite_bar",
+      "sourceName": "Glyphsteel Bar",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_arcanite_mining_pick",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_ironbound_warplate_helm",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_arcanite_war_axe",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_greathelm",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_cuirass",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_thoriumscale_leggings",
+          "quantity": 1,
+          "profession": "armorcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 7
+    },
+    {
+      "id": "ashwood_log",
+      "sourceName": "Ashwood Log",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_ironshod_maul",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ashwood_smoked_eel",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_precision_chassis",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_gyrelens_array",
+          "quantity": 4,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_masters_field_forge",
+          "quantity": 4,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_makers_charm",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 16
+    },
+    {
+      "id": "linen_scrap",
+      "sourceName": "Linen Scrap",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_minor_healing_potion",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_eastbrook_ritual_vestments",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_volatile_flux_elixir",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_homespun_hood",
+          "quantity": 2,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_silverthread_slippers",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_linen_pouch",
+          "quantity": 4,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 15
+    },
+    {
+      "id": "prime_cut",
+      "sourceName": "Prime Cut",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_skewers",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 12
+    },
+    {
+      "id": "frost_gourd",
+      "sourceName": "Frost Gourd",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_marlows_grand_roast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_elixir_of_the_serpent",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_sunpetal_scroll",
+          "quantity": 1,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_stonepot_stew",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_gourd_soup",
+          "quantity": 3,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "raw_hollowgill_sturgeon",
+      "sourceName": "Raw Hollowgill Sturgeon",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_clockreel_fishing_rod",
+          "quantity": 10,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_roast_hollowgill_sturgeon",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 3,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 23
+    },
+    {
+      "id": "bog_beet",
+      "sourceName": "Bog Beet",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_goldleaf_game_stew",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_venomfire_elixir",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_beet_braise",
+          "quantity": 3,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 8
+    },
+    {
+      "id": "marsh_rice",
+      "sourceName": "Marsh Rice",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_silvered_carp_supper",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_seasoned_stock",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_rice_bowl",
+          "quantity": 4,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_fenbridge_rice_pudding",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 12
+    },
+    {
+      "id": "pristine_venom_gland",
+      "sourceName": "Pristine Venom Gland",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_elixir_of_the_serpent",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_ironhusk_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_warboar_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_runewater_flask",
+          "quantity": 1,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "sunspun_bolt",
+      "sourceName": "Sunspun Bolt",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_sunspun_vestments",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_leggings",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_handwraps",
+          "quantity": 3,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_sunspun_haversack",
+          "quantity": 3,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 12
+    },
+    {
+      "id": "brook_carrot",
+      "sourceName": "Brook Carrot",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_frostgill_chowder",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_root_pottage",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_eastbrook_glazed_carrots",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 7
+    },
+    {
+      "id": "duskforged_billet",
+      "sourceName": "Duskforged Billet",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_duskforged_warblade",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ridgebreaker",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_duskforged_bulwark",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "fine_evergarden_greens",
+      "sourceName": "Fine Evergarden Greens",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_laden_hearth",
+          "quantity": 1,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_evergarden_hoe",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_evergarden_harvest_platter",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "forgefold_plating",
+      "sourceName": "Forgefold Plating",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_spiritweld_girdle",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_forgefold_legguards",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        },
+        {
+          "recipeId": "recipe_wardspeaker_sabatons",
+          "quantity": 3,
+          "profession": "armorcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "gilded_sunmelon",
+      "sourceName": "Gilded Sunmelon",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 2,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_evergarden_sunmelon_tart",
+          "quantity": 3,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_harvest_feast",
+          "quantity": 4,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "glimmerfin_koi",
+      "sourceName": "Sunglint Koi",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_stormreel_fishing_rod",
+          "quantity": 4,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_tidewrought_fishing_rod",
+          "quantity": 2,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_clockreel_fishing_rod",
+          "quantity": 2,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 8
+    },
+    {
+      "id": "precision_chassis",
+      "sourceName": "Precision Chassis",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_gyrelens_array",
+          "quantity": 3,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_masters_field_forge",
+          "quantity": 3,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_makers_charm",
+          "quantity": 3,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "prismglass_setting",
+      "sourceName": "Prismglass Setting",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wyrmfall_pendant",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_warhewn_signet",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        },
+        {
+          "recipeId": "recipe_prismglass_loop",
+          "quantity": 3,
+          "profession": "jewelcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "raw_stillmere_salmon",
+      "sourceName": "Raw Stillmere Salmon",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_stonepot_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_warspice_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_sageleaf_feast",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 6
+    },
+    {
+      "id": "wyrmhide_cording",
+      "sourceName": "Wyrmhide Cording",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_briarstep_jerkin",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_fenbloom_breeches",
+          "quantity": 3,
+          "profession": "leatherworking"
+        },
+        {
+          "recipeId": "recipe_barksong_handguards",
+          "quantity": 3,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 9
+    },
+    {
+      "id": "arcane_shard",
+      "sourceName": "Chime Shard",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_gatherers_cache",
+          "quantity": 1,
+          "profession": "enchanting"
+        },
+        {
+          "recipeId": "recipe_artisans_eye",
+          "quantity": 1,
+          "profession": "enchanting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "cogwheel_blank",
+      "sourceName": "Cogwheel Blank",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_precision_chassis",
+          "quantity": 1,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_copperlens_ocular",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "elderwood_log",
+      "sourceName": "Highpine Log",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_elderwood_battle_staff",
+          "quantity": 1,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_fenshadow_maul",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 3
+    },
+    {
+      "id": "fine_gilded_sunmelon",
+      "sourceName": "Fine Gilded Sunmelon",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_grand_cauldron",
+          "quantity": 1,
+          "profession": "alchemy"
+        },
+        {
+          "recipeId": "recipe_evergarden_sunmelon_tart",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "ironbark_log",
+      "sourceName": "Ironbark Log",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_copper_bearded_axe",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbark_boar_spear",
+          "quantity": 3,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 5
+    },
+    {
+      "id": "raw_bog_eel",
+      "sourceName": "Raw Bog Eel",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_ashwood_smoked_eel",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_anglers_feast_platter",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "raw_frostgill_trout",
+      "sourceName": "Raw Frostgill Trout",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_frostgill_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_anglers_feast_platter",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "raw_stonescale_carp",
+      "sourceName": "Raw Slatefin Carp",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_tidewrought_fishing_rod",
+          "quantity": 8,
+          "profession": "engineering"
+        },
+        {
+          "recipeId": "recipe_silvered_carp_supper",
+          "quantity": 3,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 11
+    },
+    {
+      "id": "resonant_thread",
+      "sourceName": "Resonant Thread",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_resonant_weave_bag",
+          "quantity": 8,
+          "profession": "tailoring"
+        },
+        {
+          "recipeId": "recipe_loombound_reagent_satchel",
+          "quantity": 12,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 20
+    },
+    {
+      "id": "sablewax_vellum",
+      "sourceName": "Sablewax Vellum",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_deed_of_making",
+          "quantity": 3,
+          "profession": "inscription"
+        },
+        {
+          "recipeId": "recipe_voidbound_grimoire",
+          "quantity": 3,
+          "profession": "inscription"
+        }
+      ],
+      "totalPerSingleCraftBatch": 6
+    },
+    {
+      "id": "thornpeak_cabbage",
+      "sourceName": "Thornpeak Cabbage",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_sageleaf_chowder",
+          "quantity": 2,
+          "profession": "cooking"
+        },
+        {
+          "recipeId": "recipe_highwatch_barley_bannock",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "wolf_fang",
+      "sourceName": "Cracked Wolf Fang",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_arming_sword",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        },
+        {
+          "recipeId": "recipe_ironbound_warplate_helm",
+          "quantity": 4,
+          "profession": "armorcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 6
+    },
+    {
+      "id": "ashwood_axe",
+      "sourceName": "Ashwood Axe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_elderwood_axe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "bandit_bandana",
+      "sourceName": "Red Bandana",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_linen_pouch",
+          "quantity": 2,
+          "profession": "tailoring"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "bronze_hoe",
+      "sourceName": "Bronze Hoe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_skysilver_hoe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "cracked_ogre_tusk",
+      "sourceName": "Cracked Ogre Tusk",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_fenshadow_maul",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "cracked_wyrm_scale",
+      "sourceName": "Cracked Wyrm Scale",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_gravewyrm_bone_quiver",
+          "quantity": 3,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 3
+    },
+    {
+      "id": "curved_tusk",
+      "sourceName": "Curved Tusk",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_ironbark_boar_spear",
+          "quantity": 2,
+          "profession": "weaponcrafting"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "emberwing_cinderscale",
+      "sourceName": "Emberwing Cinderscale",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_cragprowl_belt",
+          "quantity": 1,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "evergarden_pumpkin",
+      "sourceName": "Evergarden Pumpkin",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_evergarden_harvest_platter",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "fine_ashwood_log",
+      "sourceName": "Fine Ashwood Log",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_ashwood_axe",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "fine_bog_beet",
+      "sourceName": "Fine Bog Beet",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_fenbridge_beet_braise",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_brook_carrot",
+      "sourceName": "Fine Brook Carrot",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_eastbrook_root_pottage",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_elderwood_log",
+      "sourceName": "Fine Highpine Log",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_elderwood_axe",
+          "quantity": 2,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "fine_evergarden_pumpkin",
+      "sourceName": "Fine Evergarden Pumpkin",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_evergarden_harvest_platter",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_frost_gourd",
+      "sourceName": "Fine Frost Gourd",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_highwatch_gourd_soup",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_frost_lentils",
+      "sourceName": "Fine Frost Lentils",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_highwatch_gourd_soup",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_gilded_yam",
+      "sourceName": "Fine Gilded Yam",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_evergarden_sunmelon_tart",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_goldleaf_herb",
+      "sourceName": "Fine Goldleaf Herb",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_goldleaf_sickle",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "fine_highland_barley",
+      "sourceName": "Fine Highland Barley",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_osmium_hoe",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "fine_iron_ore",
+      "sourceName": "Fine Iron Ore",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_thorium_mining_pick",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "fine_marsh_rice",
+      "sourceName": "Fine Marsh Rice",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_skysilver_hoe",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "fine_sunpetal_herb",
+      "sourceName": "Fine Sunpetal Herb",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_sunpetal_sickle",
+          "quantity": 2,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "fine_thorium_ore",
+      "sourceName": "Fine Osmium Ore",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_arcanite_mining_pick",
+          "quantity": 2,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "fine_thornpeak_cabbage",
+      "sourceName": "Fine Thornpeak Cabbage",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_highwatch_barley_bannock",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "fine_vale_wheat",
+      "sourceName": "Fine Vale Wheat",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_bronze_hoe",
+          "quantity": 4,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "frost_lentils",
+      "sourceName": "Frost Lentils",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_highwatch_gourd_soup",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "garden_hoe",
+      "sourceName": "Garden Hoe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_bronze_hoe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "gilded_yam",
+      "sourceName": "Gilded Yam",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_evergarden_sunmelon_tart",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "goldleaf_sickle",
+      "sourceName": "Goldleaf Sickle",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_sunpetal_sickle",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "ironbark_axe",
+      "sourceName": "Ironbark Axe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_ashwood_axe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "mithril_mining_pick",
+      "sourceName": "Skysilver Mining Pick",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_thorium_mining_pick",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "mudfin_scale",
+      "sourceName": "Slimy Mudfin Scale",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_oiled_boots",
+          "quantity": 4,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 4
+    },
+    {
+      "id": "old_cragmaws_pelt",
+      "sourceName": "Old Cragmaw's Pelt",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_wildgrove_cinch",
+          "quantity": 1,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "osmium_hoe",
+      "sourceName": "Osmium Hoe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_evergarden_hoe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "pristine_claw",
+      "sourceName": "Pristine Claw",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_mirewarden_treads",
+          "quantity": 1,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "raw_marsh_pike",
+      "sourceName": "Raw Marsh Pike",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_herbed_marsh_pike",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "raw_mirror_trout",
+      "sourceName": "Raw Mirror Trout",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_silvered_carp_supper",
+          "quantity": 1,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "raw_river_perch",
+      "sourceName": "Raw River Perch",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_pan_seared_perch",
+          "quantity": 2,
+          "profession": "cooking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "sharp_claw",
+      "sourceName": "Sharp Claw",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_mirewarden_treads",
+          "quantity": 2,
+          "profession": "leatherworking"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "silverleaf_sickle",
+      "sourceName": "Sheenleaf Sickle",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_goldleaf_sickle",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "silverstream_fishing_rod",
+      "sourceName": "Silverstream Fishing Rod",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_stormreel_fishing_rod",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "skysilver_hoe",
+      "sourceName": "Skysilver Hoe",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_osmium_hoe",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "stormreel_fishing_rod",
+      "sourceName": "Stormreel Fishing Rod",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_tidewrought_fishing_rod",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "tallow_candle",
+      "sourceName": "Greasy Tallow Lump",
+      "sourceKind": "junk",
+      "sourceCategory": "materiales_y_botin_sin_clasificar",
+      "consumers": [
+        {
+          "recipeId": "recipe_lesser_healing_potion",
+          "quantity": 2,
+          "profession": "alchemy"
+        }
+      ],
+      "totalPerSingleCraftBatch": 2
+    },
+    {
+      "id": "thorium_mining_pick",
+      "sourceName": "Osmium Mining Pick",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_arcanite_mining_pick",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    },
+    {
+      "id": "tidewrought_fishing_rod",
+      "sourceName": "Tidewrought Fishing Rod",
+      "sourceKind": "tool",
+      "sourceCategory": "herramientas",
+      "consumers": [
+        {
+          "recipeId": "recipe_clockreel_fishing_rod",
+          "quantity": 1,
+          "profession": "engineering"
+        }
+      ],
+      "totalPerSingleCraftBatch": 1
+    }
+  ]
+}
