@@ -19,6 +19,7 @@ import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {grantP41TestLoot,MATERIAL_ORDER} from './p41-loot.mjs';
+import {installP41WorldLoot} from './p41-world-loot.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {gearTraitAt,enhanceGear,traitLabel,enhancedStats} from './rpg-itemization.mjs';
 import {translateHighfly} from './es-localization.mjs';
@@ -132,6 +133,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  const weapon=()=>weaponMode(equippedMode(bag.equipped));
  const message=(s)=>{local.toast=String(s);render();};
  const save=()=>saveRpgState(bag);
+  // Real enemy kills now create physical loot; mobile USAR collects it.
+  installP41WorldLoot(game,bag,prof,()=>{if(local.opened)render();});
  const systemLayer=()=>{
   const m=local.system;if(!m)return '';
   const busy=m.phase==='working',complete=m.phase==='result',choice=m.phase==='choose';
