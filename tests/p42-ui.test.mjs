@@ -22,7 +22,7 @@ test('P4.2: eight metals have exact human-readable ingot names, without unclassi
   ingot_obsidian:'Lingote de obsidiana',ingot_mithril:'Lingote de mitrilo'})){
   assert.equal(ITEM_DEFS[id].name,name);
  }
- assert.equal(ITEM_DEFS.ingot.name,'Lingote básico');
+ assert.equal(ITEM_DEFS.ingot.name,'Lingote de hierro'); // P4.3 saved generic stock is now displayed as a typed metal
  assert.ok(RECIPES.refine_copper&&RECIPES.ingot_copper,'Original crafting compatibility preserved');
 });
 test('P4.2: six-slot wide inventory with ornate *colored* metal frames instead of aura',()=>{
