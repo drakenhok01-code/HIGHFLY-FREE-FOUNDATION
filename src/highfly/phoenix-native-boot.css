@@ -2,8 +2,8 @@
 #boot{background:radial-gradient(ellipse at 50% 48%,#210e2f 0%,#08060d 45%,#010104 86%,#000 100%)!important;color:#f5e7ff!important}
 #boot::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 44% 37% at 50% 42%,#9430ce23,transparent 90%);animation:hf42BootGlow 3.7s ease-in-out infinite alternate}
 #boot>div{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(610px,94vw)!important;max-height:94vh!important;z-index:1;gap:8px!important}
-#boot>div::before{content:"";display:block;flex:none;width:min(760px,90vw);height:min(260px,52vh);background:url("__HF_BASE__highfly/premium/logo_highfly.svg") center/contain no-repeat;filter:drop-shadow(0 0 14px #bf48ef86) drop-shadow(0 0 32px #f6ad465a);animation:hf42LogoEnter .65s ease-out both}
-#boot>div::after{content:"ASCEND ✦ TRAIN ✦ CONQUER";display:block;color:#f3d99e;letter-spacing:.28em;font:700 clamp(8px,1.1vw,13px) Georgia,serif;text-shadow:0 0 13px #aa61e5}
+#boot>div::before{content:"";display:block;flex:none;width:min(550px,86vw);height:min(276px,62vh);background:url("__HF_BASE__highfly/brand/official-rpg-fitness.webp") center/contain no-repeat;filter:drop-shadow(0 0 14px #bf48ef86) drop-shadow(0 0 32px #f6ad465a);animation:hf42LogoEnter .65s ease-out both}
+#boot>div::after{content:"";display:none;color:#f3d99e;letter-spacing:.28em;font:700 clamp(8px,1.1vw,13px) Georgia,serif;text-shadow:0 0 13px #aa61e5}
 #boot svg,#boot h1{display:none!important}
 #boot .bar{width:min(425px,78vw)!important;height:9px!important;border-radius:9px!important;border:1px solid #daae78!important;background:#10091c!important;box-shadow:0 0 12px #7e398c99,inset 0 0 9px #05020b!important;overflow:hidden!important}
 #boot .bar::before{display:none!important}
@@ -12,5 +12,5 @@
 #boot p.tip{font:500 10px system-ui,sans-serif!important;color:#b9a2c6!important;line-height:1.2}
 @keyframes hf42LogoEnter{from{opacity:.2;transform:translateY(9px) scale(.92)}to{opacity:1;transform:none}}
 @keyframes hf42BootGlow{from{opacity:.5}to{opacity:1}}
-@media(max-height:450px){#boot>div{gap:4px!important}#boot>div::before{height:min(210px,49vh);width:min(670px,84vw)}#boot>div::after{letter-spacing:.15em;font-size:9px}#boot .bar{height:7px!important}}
+@media(max-height:450px){#boot>div{gap:4px!important}#boot>div::before{height:min(210px,49vh);width:min(520px,86vw)}#boot>div::after{letter-spacing:.15em;font-size:9px}#boot .bar{height:7px!important}}
 @media(prefers-reduced-motion:reduce){#boot::before,#boot>div::before{animation:none!important}}
