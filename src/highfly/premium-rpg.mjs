@@ -424,7 +424,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<header class="hf-rpg-top"><div class="hf-rpg-logo hf-rpg-brand" aria-label="HIGHFLY RPG FITNESS"><img class="hf-rpg-approved-logo hf-rpg-brand-mark" src="'+officialLogoUrl()+'" alt="HIGHFLY RPG FITNESS" draggable="false"/><span class="hf-rpg-brand-text"><strong>HIGHFLY</strong><small>RPG FITNESS</small></span></div>'+
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><img class="hf-rpg-nav-icon hf-user-nav-icon" alt="" aria-hidden="true" src="'+assetUrl('user-icons/navigation/'+id)+'"/><span>'+name+'</span></button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
-   '<div class="hf-rpg-content">'+body()+'</div>'+
+   '<div class="hf-rpg-content">'+body()+'</div>'+ (local.toast?'<div class="hf-p41-toast" role="status" aria-live="polite">'+safe(local.toast)+'</div>':'')+
    '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer();
   if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
