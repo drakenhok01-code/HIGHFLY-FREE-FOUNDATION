@@ -1,0 +1,663 @@
+{
+  "schema": "HIGHFLY_P12_NYTHRAAXIS_DYNAMIC_WEIGHTED_LOOT",
+  "sourceTag": "v0.44.7",
+  "sourceFile": "src/sim/content/nythraxis_loot.ts",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "sourceAlgorithm": "weightedLootGroup with 2 reserved legendary entries and independent normal-only second group",
+  "counts": {
+    "epicWeightedSlots": 28,
+    "legendaryReserved": 2,
+    "weightSum": 575,
+    "firstGroupReservedProbability": 0.06,
+    "firstGroupEpicProbability": 0.94,
+    "normalOnlySecondGroupProbability": 1,
+    "missingSourceItems": 0,
+    "generatedHeroicBaseCandidates": 30,
+    "notInPriorHeroicManifest": 30
+  },
+  "normalLootSlotsPerKill": 2,
+  "heroicLootSlotsPerKill": 2,
+  "raidBossId": "nythraxis_scourge_of_thornpeak",
+  "groups": [
+    {
+      "name": "nythraxis_drop_1",
+      "alwaysRolls": true,
+      "reserved": [
+        {
+          "id": "deathless_heartwood",
+          "chance": 0.03
+        },
+        {
+          "id": "kingsbane_last_oath",
+          "chance": 0.03
+        }
+      ],
+      "epics": [
+        {
+          "id": "bonewrought_greatsword",
+          "weight": 13,
+          "chance": 0.021252173913043477
+        },
+        {
+          "id": "crownforged_dreadhelm",
+          "weight": 54,
+          "chance": 0.08827826086956521
+        },
+        {
+          "id": "nighttalon_crown",
+          "weight": 54,
+          "chance": 0.08827826086956521
+        },
+        {
+          "id": "soulflame_cowl",
+          "weight": 26,
+          "chance": 0.042504347826086954
+        },
+        {
+          "id": "stormcallers_crown",
+          "weight": 26,
+          "chance": 0.042504347826086954
+        },
+        {
+          "id": "nighttalon_shoulderguards",
+          "weight": 54,
+          "chance": 0.08827826086956521
+        },
+        {
+          "id": "soulflame_mantle",
+          "weight": 54,
+          "chance": 0.08827826086956521
+        },
+        {
+          "id": "bonewrought_bulwark",
+          "weight": 13,
+          "chance": 0.021252173913043477
+        },
+        {
+          "id": "crownforged_warspaulders",
+          "weight": 28,
+          "chance": 0.04577391304347826
+        },
+        {
+          "id": "stormcallers_spaulders",
+          "weight": 28,
+          "chance": 0.04577391304347826
+        },
+        {
+          "id": "wraithfire_orb",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "direfang_quiver",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "direfang_greatblade",
+          "weight": 16,
+          "chance": 0.026156521739130432
+        },
+        {
+          "id": "maul_of_the_scourged_wilds",
+          "weight": 25,
+          "chance": 0.0408695652173913
+        },
+        {
+          "id": "bramblehide_crown",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_mantle",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_harness",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_cinch",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_legguards",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_grips",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "bramblehide_treads",
+          "weight": 8,
+          "chance": 0.013078260869565216
+        },
+        {
+          "id": "courtiers_bonefang",
+          "weight": 15,
+          "chance": 0.024521739130434782
+        },
+        {
+          "id": "thornpeak_wardblade",
+          "weight": 15,
+          "chance": 0.024521739130434782
+        },
+        {
+          "id": "gravecourt_hewer",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "votive_ward_of_the_deathless_court",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "thornpeak_moonhide_cowl",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "stormhymn_chain_grips",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        },
+        {
+          "id": "stormhymn_chain_treads",
+          "weight": 14,
+          "chance": 0.02288695652173913
+        }
+      ]
+    },
+    {
+      "name": "nythraxis_drop_2",
+      "normalOnly": true,
+      "epics": [
+        {
+          "id": "bonewrought_greatsword",
+          "weight": 13,
+          "chance": 0.022608695652173914
+        },
+        {
+          "id": "crownforged_dreadhelm",
+          "weight": 54,
+          "chance": 0.09391304347826086
+        },
+        {
+          "id": "nighttalon_crown",
+          "weight": 54,
+          "chance": 0.09391304347826086
+        },
+        {
+          "id": "soulflame_cowl",
+          "weight": 26,
+          "chance": 0.04521739130434783
+        },
+        {
+          "id": "stormcallers_crown",
+          "weight": 26,
+          "chance": 0.04521739130434783
+        },
+        {
+          "id": "nighttalon_shoulderguards",
+          "weight": 54,
+          "chance": 0.09391304347826086
+        },
+        {
+          "id": "soulflame_mantle",
+          "weight": 54,
+          "chance": 0.09391304347826086
+        },
+        {
+          "id": "bonewrought_bulwark",
+          "weight": 13,
+          "chance": 0.022608695652173914
+        },
+        {
+          "id": "crownforged_warspaulders",
+          "weight": 28,
+          "chance": 0.04869565217391304
+        },
+        {
+          "id": "stormcallers_spaulders",
+          "weight": 28,
+          "chance": 0.04869565217391304
+        },
+        {
+          "id": "wraithfire_orb",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "direfang_quiver",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "direfang_greatblade",
+          "weight": 16,
+          "chance": 0.02782608695652174
+        },
+        {
+          "id": "maul_of_the_scourged_wilds",
+          "weight": 25,
+          "chance": 0.043478260869565216
+        },
+        {
+          "id": "bramblehide_crown",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_mantle",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_harness",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_cinch",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_legguards",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_grips",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "bramblehide_treads",
+          "weight": 8,
+          "chance": 0.01391304347826087
+        },
+        {
+          "id": "courtiers_bonefang",
+          "weight": 15,
+          "chance": 0.02608695652173913
+        },
+        {
+          "id": "thornpeak_wardblade",
+          "weight": 15,
+          "chance": 0.02608695652173913
+        },
+        {
+          "id": "gravecourt_hewer",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "votive_ward_of_the_deathless_court",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "thornpeak_moonhide_cowl",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "stormhymn_chain_grips",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        },
+        {
+          "id": "stormhymn_chain_treads",
+          "weight": 14,
+          "chance": 0.02434782608695652
+        }
+      ]
+    },
+    {
+      "name": "nythraxis_heroic_weapon",
+      "heroicOnly": true,
+      "sourceFile": "src/sim/content/heroic_loot.ts",
+      "rows": [
+        {
+          "itemId": "deathless_greatblade",
+          "chance": 0.17
+        },
+        {
+          "itemId": "scepter_of_the_deathless_court",
+          "chance": 0.17
+        },
+        {
+          "itemId": "stormcallers_focus",
+          "chance": 0.16
+        },
+        {
+          "itemId": "mooring_stone",
+          "chance": 0.125
+        },
+        {
+          "itemId": "wellspring_seed",
+          "chance": 0.125
+        },
+        {
+          "itemId": "hunters_tally",
+          "chance": 0.125
+        },
+        {
+          "itemId": "echoing_lens",
+          "chance": 0.125
+        }
+      ]
+    }
+  ],
+  "epicRows": [
+    {
+      "id": "bonewrought_greatsword",
+      "weight": 13,
+      "firstSharedGroupChance": 0.021252173913043477,
+      "normalOnlySecondGroupChance": 0.022608695652173914,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "crownforged_dreadhelm",
+      "weight": 54,
+      "firstSharedGroupChance": 0.08827826086956521,
+      "normalOnlySecondGroupChance": 0.09391304347826086,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "nighttalon_crown",
+      "weight": 54,
+      "firstSharedGroupChance": 0.08827826086956521,
+      "normalOnlySecondGroupChance": 0.09391304347826086,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "soulflame_cowl",
+      "weight": 26,
+      "firstSharedGroupChance": 0.042504347826086954,
+      "normalOnlySecondGroupChance": 0.04521739130434783,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "stormcallers_crown",
+      "weight": 26,
+      "firstSharedGroupChance": 0.042504347826086954,
+      "normalOnlySecondGroupChance": 0.04521739130434783,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "nighttalon_shoulderguards",
+      "weight": 54,
+      "firstSharedGroupChance": 0.08827826086956521,
+      "normalOnlySecondGroupChance": 0.09391304347826086,
+      "sourceQuality": "epic",
+      "slot": "shoulder",
+      "kind": "armor"
+    },
+    {
+      "id": "soulflame_mantle",
+      "weight": 54,
+      "firstSharedGroupChance": 0.08827826086956521,
+      "normalOnlySecondGroupChance": 0.09391304347826086,
+      "sourceQuality": "epic",
+      "slot": "shoulder",
+      "kind": "armor"
+    },
+    {
+      "id": "bonewrought_bulwark",
+      "weight": 13,
+      "firstSharedGroupChance": 0.021252173913043477,
+      "normalOnlySecondGroupChance": 0.022608695652173914,
+      "sourceQuality": "epic",
+      "slot": "offhand",
+      "kind": "armor"
+    },
+    {
+      "id": "crownforged_warspaulders",
+      "weight": 28,
+      "firstSharedGroupChance": 0.04577391304347826,
+      "normalOnlySecondGroupChance": 0.04869565217391304,
+      "sourceQuality": "epic",
+      "slot": "shoulder",
+      "kind": "armor"
+    },
+    {
+      "id": "stormcallers_spaulders",
+      "weight": 28,
+      "firstSharedGroupChance": 0.04577391304347826,
+      "normalOnlySecondGroupChance": 0.04869565217391304,
+      "sourceQuality": "epic",
+      "slot": "shoulder",
+      "kind": "armor"
+    },
+    {
+      "id": "wraithfire_orb",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "offhand",
+      "kind": "held_offhand"
+    },
+    {
+      "id": "direfang_quiver",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "offhand",
+      "kind": "held_offhand"
+    },
+    {
+      "id": "direfang_greatblade",
+      "weight": 16,
+      "firstSharedGroupChance": 0.026156521739130432,
+      "normalOnlySecondGroupChance": 0.02782608695652174,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "maul_of_the_scourged_wilds",
+      "weight": 25,
+      "firstSharedGroupChance": 0.0408695652173913,
+      "normalOnlySecondGroupChance": 0.043478260869565216,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "bramblehide_crown",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_mantle",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "shoulder",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_harness",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "chest",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_cinch",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "waist",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_legguards",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "legs",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_grips",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "gloves",
+      "kind": "armor"
+    },
+    {
+      "id": "bramblehide_treads",
+      "weight": 8,
+      "firstSharedGroupChance": 0.013078260869565216,
+      "normalOnlySecondGroupChance": 0.01391304347826087,
+      "sourceQuality": "epic",
+      "slot": "feet",
+      "kind": "armor"
+    },
+    {
+      "id": "courtiers_bonefang",
+      "weight": 15,
+      "firstSharedGroupChance": 0.024521739130434782,
+      "normalOnlySecondGroupChance": 0.02608695652173913,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "thornpeak_wardblade",
+      "weight": 15,
+      "firstSharedGroupChance": 0.024521739130434782,
+      "normalOnlySecondGroupChance": 0.02608695652173913,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "gravecourt_hewer",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "mainhand",
+      "kind": "weapon"
+    },
+    {
+      "id": "votive_ward_of_the_deathless_court",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "offhand",
+      "kind": "armor"
+    },
+    {
+      "id": "thornpeak_moonhide_cowl",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "helmet",
+      "kind": "armor"
+    },
+    {
+      "id": "stormhymn_chain_grips",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "gloves",
+      "kind": "armor"
+    },
+    {
+      "id": "stormhymn_chain_treads",
+      "weight": 14,
+      "firstSharedGroupChance": 0.02288695652173913,
+      "normalOnlySecondGroupChance": 0.02434782608695652,
+      "sourceQuality": "epic",
+      "slot": "feet",
+      "kind": "armor"
+    }
+  ],
+  "legendary": [
+    {
+      "id": "deathless_heartwood",
+      "chance": 0.03
+    },
+    {
+      "id": "kingsbane_last_oath",
+      "chance": 0.03
+    }
+  ],
+  "eligibleBaseIds": [
+    "bonewrought_greatsword",
+    "crownforged_dreadhelm",
+    "nighttalon_crown",
+    "soulflame_cowl",
+    "stormcallers_crown",
+    "nighttalon_shoulderguards",
+    "soulflame_mantle",
+    "bonewrought_bulwark",
+    "crownforged_warspaulders",
+    "stormcallers_spaulders",
+    "wraithfire_orb",
+    "direfang_quiver",
+    "direfang_greatblade",
+    "maul_of_the_scourged_wilds",
+    "bramblehide_crown",
+    "bramblehide_mantle",
+    "bramblehide_harness",
+    "bramblehide_cinch",
+    "bramblehide_legguards",
+    "bramblehide_grips",
+    "bramblehide_treads",
+    "courtiers_bonefang",
+    "thornpeak_wardblade",
+    "gravecourt_hewer",
+    "votive_ward_of_the_deathless_court",
+    "thornpeak_moonhide_cowl",
+    "stormhymn_chain_grips",
+    "stormhymn_chain_treads",
+    "deathless_heartwood",
+    "kingsbane_last_oath"
+  ],
+  "missing": [],
+  "notes": [
+    "In heroic kill normalOnly group is skipped and replaced by heroic append; do not treat heroic claim as three equipment slots.",
+    "Generated 'heroic_' variants carry adjusted source-level stats and NEVER map to HIGHFLY enhancement +N.",
+    "Regular epic weights may NOT directly equal percentage chances; source first group reserves two 3% legendaries.",
+    "Nythraxis item IDs were hidden behind `...NYTHRAXIS_EQUIPMENT_LOOT` and absent from previous literal monster-loot parser."
+  ]
+}
