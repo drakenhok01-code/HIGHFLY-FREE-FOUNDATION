@@ -3,6 +3,7 @@
  * 80/20 applies to earned BASE points; equipped item bonuses are independent.
  */
 import {EQUIP_ITEM_DEFS,normalizeEquipped} from './rpg-equipment.mjs';
+import {normalizeGearTraits,registerCraftedGear} from './rpg-itemization.mjs';
 export const SAVE_KEY='highfly-rpg-f014-v1';
 export const SKILL_SLOT_COUNT=6;
 export const DEFAULT_SKILL_SLOTS=Object.freeze(['pulse','heavy','heal',null,null,null]);
@@ -21,10 +22,16 @@ export const ITEM_DEFS=Object.freeze({
  ore:{id:'ore',name:'Mineral',kind:'Materiales',icon:'ore',rarity:'Común',description:'Mineral conseguido de una veta real.',max:999},
  wood:{id:'wood',name:'Madera',kind:'Materiales',icon:'wood',rarity:'Común',description:'Madera talada en el mundo.',max:999},
  fish:{id:'fish',name:'Pescado',kind:'Materiales',icon:'fish',rarity:'Común',description:'Captura obtenida con caña.',max:999},
- ingot:{id:'ingot',name:'Lingote',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Lingote fundido con minerales reales.',max:999},
+ ingot:{id:'ingot',name:'Lingote sin clasificar',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Aleación genérica producida por la fundición original.',max:999},
  blade_blank:{id:'blade_blank',name:'Hoja sin terminar',kind:'Materiales',icon:'blade',rarity:'Común',description:'Pieza forjada, todavía no equipable.',max:999},
  seed:{id:'seed',name:'Semillas',kind:'Materiales',icon:'herb',rarity:'Común',description:'Semillas para plantar.',max:999},
- bag_upgrade:{id:'bag_upgrade',name:'Sello de Expansión',kind:'Especial',icon:'expansion',rarity:'Raro',description:'Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.',max:3}
+ bag_upgrade:{id:'bag_upgrade',name:'Sello de Expansión',kind:'Especial',icon:'expansion',rarity:'Raro',description:'Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.',max:3},
+ ingot_copper:{id:'ingot_copper',name:'Lingote de cobre',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: cobre.',max:999},
+ ingot_iron:{id:'ingot_iron',name:'Lingote de hierro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: hierro.',max:999},
+ ingot_silver:{id:'ingot_silver',name:'Lingote de plata',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: plata.',max:999},
+ ingot_gold:{id:'ingot_gold',name:'Lingote de oro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal refinado: oro.',max:999},
+ upgrade_stone:{id:'upgrade_stone',name:'Piedra de mejora',kind:'Materiales',icon:'ore',rarity:'Raro',description:'Se consume para mejorar equipo de +1 a +9. Éxito garantizado.',max:999},
+ ascension_core:{id:'ascension_core',name:'Núcleo de Ascensión',kind:'Especial',icon:'ore',rarity:'Épico',description:'Sube la rareza de un objeto +9, reiniciándolo a +0.',max:99}
 });
 export const RECIPES=Object.freeze({
  hp_potion:{item:'hp_potion',name:'Poción de Vida',ingredients:{herb:2},count:1,profession:'Alquimia'},
@@ -32,7 +39,13 @@ export const RECIPES=Object.freeze({
  bag_upgrade:{item:'bag_upgrade',name:'Sello de Expansión',ingredients:{wood:8,ore:8},count:1,profession:'Marroquinería'},
  training_sword:{item:'training_sword',name:'Espada de Aprendiz',ingredients:{ingot:2,wood:1},count:1,profession:'Forja'},
  training_shield:{item:'training_shield',name:'Escudo de Aprendiz',ingredients:{ingot:2,wood:2},count:1,profession:'Forja'},
- training_greatsword:{item:'training_greatsword',name:'Mandoble de Aprendiz',ingredients:{ingot:4,wood:2},count:1,profession:'Forja'}
+ training_greatsword:{item:'training_greatsword',name:'Mandoble de Aprendiz',ingredients:{ingot:4,wood:2},count:1,profession:'Forja'},
+ ingot_copper:{item:'ingot_copper',name:'Lingote de cobre',ingredients:{ore:2},count:1,profession:'Fundición'},
+ ingot_iron:{item:'ingot_iron',name:'Lingote de hierro',ingredients:{ore:3},count:1,profession:'Fundición'},
+ ingot_silver:{item:'ingot_silver',name:'Lingote de plata',ingredients:{ore:5},count:1,profession:'Fundición'},
+ ingot_gold:{item:'ingot_gold',name:'Lingote de oro',ingredients:{ore:8},count:1,profession:'Fundición'},
+ upgrade_stone:{item:'upgrade_stone',name:'Piedra de mejora',ingredients:{ore:2,ingot:1},count:1,profession:'Forja'},
+ ascension_core:{item:'ascension_core',name:'Núcleo de Ascensión',ingredients:{ore:6,ingot:3},count:1,profession:'Forja'}
 });
 const bounded=(n,max=999)=>Number.isInteger(n)?Math.max(0,Math.min(max,n)):0;
 export function normalizeRpgState(raw){
@@ -44,7 +57,7 @@ export function normalizeRpgState(raw){
  const equipped=normalizeEquipped(raw?.equipped,true);
  const skills=Array.isArray(raw?.skillSlots)?raw.skillSlots:DEFAULT_SKILL_SLOTS;
  const skillSlots=Array.from({length:SKILL_SLOT_COUNT},(_,i)=>typeof skills[i]==='string'&&SKILL_IDS.includes(skills[i])?skills[i]:null);
- return {schema:3,items,slots,equipped,skillSlots};
+ return {schema:4,items,slots,equipped,skillSlots,gearTraits:normalizeGearTraits(raw?.gearTraits,items,equipped)};
 }
 export function loadRpgState(store=globalThis.localStorage){
  try{return normalizeRpgState(JSON.parse(store?.getItem(SAVE_KEY)||'null'));}catch{return normalizeRpgState(null);}
@@ -95,6 +108,7 @@ export function craftPotion(recipeId,professionState,state){
  const recipe=RECIPES[recipeId];
  for(const [id,n] of Object.entries(recipe.ingredients))inventory[id]-=n;
  state.items[recipe.item]=(state.items[recipe.item]??0)+recipe.count;
+ registerCraftedGear(state,recipe.item,recipe.count);
  return {ok:true,id:recipe.item,count:recipe.count,remaining:state.items[recipe.item]};
 }
 export const SKILL_IDS=Object.freeze(['attack','dash','roll','heavy','pulse','heal']);

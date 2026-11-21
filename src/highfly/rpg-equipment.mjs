@@ -1,3 +1,4 @@
+import {moveTraitsOnEquip,moveTraitsOnUnequip,enhancedStats} from './rpg-itemization.mjs';
 /** HIGHFLY PHOENIX PREMIUM: real, persistent equip/unequip transactions.
  * No fake armor is equipped. Only supported KayKit Knight FREE weapon meshes
  * are exposed; future rigs/armour must provide verified visible adapters.
@@ -60,16 +61,16 @@ export function equippedMode(equipped){
  }
  return 4; // existing unarmed KayKit animations and invisible weapon meshes
 }
-export function equipmentBonuses(equipped){
+export function equipmentBonuses(equipped,gearTraits=null){
  const stats={physicalAttack:0,magicalAttack:0,defense:0,blockChance:0};
- for(const id of Object.values(equipped??{})){
+ for(const [slot,id] of Object.entries(equipped??{})){
   const modifiers=EQUIP_ITEM_DEFS[id]?.stats;
-  if(modifiers)for(const [key,val] of Object.entries(modifiers))
-   stats[key]=(stats[key]??0)+val;
+  if(modifiers)for(const [key,val] of Object.entries(enhancedStats(modifiers,gearTraits?.equipped?.[slot])))
+   stats[key]=+(stats[key]+val).toFixed(2);
  }
  return stats;
 }
-export function equipFromBag(state,slotId,itemId){
+export function equipFromBag(state,slotId,itemId,variantIndex=0){
  if(!state?.items||!state?.equipped)return {ok:false,reason:'Inventario no disponible'};
  const def=EQUIP_ITEM_DEFS[itemId];
  if(!EQUIP_SLOTS.some(s=>s.id===slotId)||!def?.slots.includes(slotId))
@@ -92,6 +93,7 @@ export function equipFromBag(state,slotId,itemId){
   nextItems[previous]=(nextItems[previous]??0)+1;
   nextEquipped[slot]=null;
  }
+ moveTraitsOnEquip(state,slotId,itemId,affected,variantIndex);
  nextItems[itemId]-=1;
  nextEquipped[slotId]=itemId;
  state.items=nextItems;state.equipped=nextEquipped;
@@ -114,6 +116,7 @@ export function unequipToBag(state,slotId){
   if((next[equippedId]??0)>=limit)return {ok:false,reason:'No hay espacio en la Bolsa'};
   next[equippedId]=(next[equippedId]??0)+1;
  }
+ moveTraitsOnUnequip(state,affected);
  state.items=next;
  for(const slot of affected)state.equipped[slot]=null;
  return {ok:true,item:id,slot:slotId,mode:equippedMode(state.equipped)};
