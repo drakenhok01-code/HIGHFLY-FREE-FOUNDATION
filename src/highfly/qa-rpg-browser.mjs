@@ -41,7 +41,7 @@ try{
   document.body.appendChild(boot);
   return {image:getComputedStyle(boot.firstElementChild,'::before').backgroundImage,progress:getComputedStyle(boot.querySelector('.bar')).height};
  });
- assert.match(bootState.image,/premium\/logo_highfly\.svg/,'Native loading needs lossless scalable Phoenix SVG');
+ assert.match(bootState.image,/brand\/official-rpg-fitness\.webp/,'The OFFICIAL RPG FITNESS logo must appear during native loading');
  assert.notEqual(bootState.progress,'1px','Old yellow hairline loader remains');
  await page.screenshot({path:'qa-rpg-intro.png'});
  await page.evaluate(()=>document.getElementById('boot')?.remove());
