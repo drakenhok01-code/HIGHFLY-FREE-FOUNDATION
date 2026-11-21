@@ -1,0 +1,174 @@
+/* HIGHFLY P4.2 · UI POLISH — isolated, landscape-first.
+   Target Samsung S23 Ultra 915x412 CSS; all menus stay live and interactive. */
+#hf-rpg .hf-rpg-three{
+ grid-template-columns:minmax(150px,.78fr) minmax(338px,1.95fr) minmax(184px,1fr);
+ gap:7px;
+}
+#hf-rpg .hf-rpg-three>.hf-rpg-panel:nth-child(2){
+ display:flex;flex-direction:column;overflow:hidden!important;
+}
+#hf-rpg .hf-rpg-grid{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ gap:5px!important;flex:1 1 auto;min-height:0;align-content:start;
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+ scrollbar-width:thin;scrollbar-color:#ab75d5 #120a22;
+ padding:3px 3px 7px;
+}
+#hf-rpg .hf-rpg-inventory-counter{flex:none;margin-top:4px}
+#hf-rpg .hf-rpg-three>.hf-rpg-panel:first-child{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin}
+#hf-rpg .hf-rpg-three>.hf-rpg-panel:last-child{overflow-y:auto;scrollbar-width:thin}
+#hf-rpg .hf-rpg-item,#hf-rpg .hf-rpg-empty-slot{
+ width:100%;min-width:0;aspect-ratio:1;border-radius:10px;
+ box-sizing:border-box;
+}
+#hf-rpg [data-hf-rarity="Común"]{--hf-grade:#e9edf8;--hf-edge:#9da6b8}
+#hf-rpg [data-hf-rarity="Poco común"]{--hf-grade:#31ff78;--hf-edge:#087d48}
+#hf-rpg [data-hf-rarity="Raro"]{--hf-grade:#2c9cff;--hf-edge:#0a408a}
+#hf-rpg [data-hf-rarity="Épico"]{--hf-grade:#bd57ff;--hf-edge:#6d2196}
+#hf-rpg [data-hf-rarity="Legendario"]{--hf-grade:#ffc34d;--hf-edge:#a75310}
+#hf-rpg [data-hf-rarity="Mítico"]{--hf-grade:#ff3752;--hf-edge:#940f27}
+/* Actual ornamental metallic frame — main rarity indicator, not an aura. */
+#hf-rpg .hf-rpg-item[data-hf-rarity]{
+ position:relative;isolation:isolate;border:3px solid transparent!important;
+ outline:none!important;
+ background:linear-gradient(145deg,#130d25,#19142b 67%,#090a17) padding-box,
+ linear-gradient(142deg,#fff9df 0%,var(--hf-grade) 17%,var(--hf-edge) 39%,var(--hf-grade) 57%,#fff3cd 76%,var(--hf-edge) 100%) border-box!important;
+ box-shadow:inset 0 0 0 1px var(--hf-edge),inset 0 0 12px #05040cba,0 1px 2px #0006!important;
+ overflow:hidden;
+}
+#hf-rpg .hf-rpg-item[data-hf-rarity]::before{
+ content:"";display:block;position:absolute;z-index:3;inset:0;
+ border-radius:6px;pointer-events:none;
+ background:linear-gradient(135deg,var(--hf-grade),transparent 24%) left top/14px 14px no-repeat,
+ linear-gradient(225deg,var(--hf-grade),transparent 24%) right top/14px 14px no-repeat,
+ linear-gradient(45deg,var(--hf-grade),transparent 24%) left bottom/14px 14px no-repeat,
+ linear-gradient(315deg,var(--hf-grade),transparent 24%) right bottom/14px 14px no-repeat;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--hf-grade),transparent 46%);
+}
+#hf-rpg .hf-rpg-item[data-hf-rarity].is-selected{
+ outline:2px solid #fff7d1!important;outline-offset:0!important;
+ box-shadow:inset 0 0 0 1px #ffffffa0,0 0 0 1px var(--hf-grade),0 0 7px var(--hf-grade)!important;
+}
+#hf-rpg .hf-rpg-item .hf-rpg-art{
+ width:100%!important;height:100%!important;display:block;margin:auto;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center!important;
+ transform:none!important;filter:none!important;
+}
+#hf-rpg .hf-rpg-item .hf-p42-icon{padding:3px}
+#hf-rpg .hf-rpg-item b{font-size:10px;z-index:5;bottom:2px;right:2px;padding:1px 3px}
+#hf-rpg .hf-rpg-detail-art[data-hf-rarity]{
+ position:relative;margin:0 auto 4px;width:min(138px,75%);height:125px;
+ border:3px solid var(--hf-grade);border-radius:14px;
+ background:radial-gradient(circle at 50% 43%,#4d257fbb,#130e28 74%);
+ box-shadow:inset 0 0 0 1px #f7eaff73,0 0 4px var(--hf-grade);
+}
+#hf-rpg .hf-rpg-detail-art .hf-rpg-art{max-width:112px;max-height:112px;width:100%;height:100%;object-fit:contain;transform:none!important}
+#hf-rpg .hf-rpg-quality{background:#160d29dd;border-width:2px;box-shadow:inset 0 0 5px var(--hf-grade)}
+#hf-rpg .hf-rpg-equip-slot.is-active[data-hf-rarity]{
+ border:1px solid var(--hf-grade)!important;outline:none!important;
+ box-shadow:inset 0 0 5px var(--hf-edge),0 0 3px var(--hf-grade)!important;
+}
+#hf-rpg .hf-rpg-equip-slot.is-active .hf-rpg-slot-art{
+ border:2px solid var(--hf-grade);border-radius:8px;
+ box-shadow:inset 0 0 5px var(--hf-edge);
+}
+#hf-rpg .hf-rpg-equip-slot.is-active .hf-rpg-slot-art .hf-rpg-art{width:100%!important;height:100%!important}
+#hf-rpg .hf-p41-loot-lab{margin:6px 0 5px;padding:6px 5px;gap:3px}
+#hf-rpg .hf-p41-loot-lab small{font-size:8px}
+#hf-rpg .hf-rpg-side-link{min-height:31px;padding:5px 8px;margin:3px 0}
+#hf-rpg .hf-rpg-space{margin-top:7px;padding-top:5px}
+#hf-rpg .hf-rpg-mini-actions{gap:4px;margin-top:6px}
+#hf-rpg .hf-rpg-bag-capacity{margin-top:3px}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_steel"]::after{content:"Ac"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_diamond"]::after{content:"Di"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_obsidian"]::after{content:"Ob"}
+#hf-rpg .hf-rpg-item[data-hf-item="ingot_mithril"]::after{content:"Mi"}
+#hf-rpg .hf-rpg-item[data-hf-item^="ingot_"]::after{
+ position:absolute;z-index:6;left:3px;top:3px;
+ font:800 10px Georgia,serif;border-radius:3px;
+ background:#100c21e7;color:#ffefc7;padding:1px 3px;pointer-events:none;
+}
+/* Character: no footer or duplicate tab buttons. Item slots get the visual priority. */
+#hf-rpg .hf-p42-character{
+ grid-template-columns:minmax(163px,1.1fr) minmax(235px,1.67fr) minmax(163px,1.1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;height:100%!important;gap:6px;
+}
+#hf-rpg .hf-p42-character>.hf-rpg-panel{min-height:0;overflow:hidden!important}
+#hf-rpg .hf-p42-character .hf-rpg-slot-list{display:grid;grid-template-rows:repeat(5,minmax(0,1fr));gap:5px;height:calc(100% - 49px);margin:0}
+#hf-rpg .hf-p42-character .hf-rpg-equip-slot{min-height:0;height:100%;padding:2px 6px;gap:6px}
+#hf-rpg .hf-p42-character .hf-rpg-slot-art{width:40px!important;min-width:40px!important;height:40px!important}
+#hf-rpg .hf-p42-character .hf-rpg-equip-slot b{font-size:11px}
+#hf-rpg .hf-p42-character .hf-rpg-hero-canvas{
+ transform:translateY(9px) scale(.98)!important;transform-origin:center bottom;
+}
+#hf-rpg .hf-p42-character .hf-rpg-stage-ring{bottom:2px}
+#hf-rpg .hf-p42-character .hf-rpg-hero-panel{overflow:hidden!important}
+#hf-rpg .hf-p42-character .hf-rpg-character-title{font-size:14px}
+#hf-rpg .hf-p42-character .hf-rpg-weapon-tag{min-height:27px;flex:none}
+/* Clean Base / Equipment / Total, no explanatory filler. */
+#hf-rpg .hf-p42-attributes .hf-rpg-stat-head,
+#hf-rpg .hf-p42-attributes .hf-rpg-stat-row{
+ grid-template-columns:minmax(116px,1.7fr) repeat(3,minmax(48px,1fr))!important;
+}
+#hf-rpg .hf-p42-attributes>.hf-rpg-panel{overflow:hidden!important}
+#hf-rpg .hf-p42-attributes .hf-rpg-stat-row{padding-block:8px}
+#hf-rpg .hf-p42-attributes .hf-rpg-stats-aside>div{padding:6px 0}
+/* Skill catalogue + details: no nested scroll; 6 HUD buttons visible. */
+#hf-rpg .hf-rpg-two:has(.hf-rpg-skill-list)>.hf-rpg-panel{overflow:hidden!important}
+#hf-rpg .hf-rpg-skill-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:5px;height:calc(100% - 49px);min-height:0}
+#hf-rpg .hf-rpg-skill{min-height:0!important;height:100%;padding:3px 5px!important}
+#hf-rpg .hf-rpg-skill-glyph{width:39px!important;height:39px!important;min-width:39px!important;flex-basis:39px!important}
+#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon{width:39px!important;height:39px!important;max-width:39px!important;max-height:39px!important;transform:none!important}
+#hf-rpg .hf-rpg-skill-feature{max-height:76px;min-height:65px;gap:7px;overflow:hidden}
+#hf-rpg .hf-rpg-skill-feature>span{width:66px;height:66px;min-width:66px}
+#hf-rpg .hf-rpg-skill-feature .hf-premium-icon{width:65px!important;height:65px!important;transform:none!important}
+#hf-rpg .hf-rpg-skill-feature p{font-size:10px;line-height:1.22;max-height:65px;overflow:hidden}
+#hf-rpg .hf-rpg-skill-slots{display:flex;flex-wrap:nowrap;gap:3px}
+#hf-rpg .hf-rpg-skill-equip-slot{min-width:0;flex:1;padding:3px}
+#hf-rpg .hf-rpg-skill-equip-slot .hf-premium-icon{transform:none!important}
+/* 15 professions, only the list scrolls. Distinct from loot rarity frames. */
+#hf-rpg .hf-p42-professions>.hf-rpg-panel:first-child{overflow-y:auto!important;scrollbar-width:thin}
+#hf-rpg .hf-p42-professions>.hf-rpg-panel:last-child{overflow:hidden!important}
+#hf-rpg .hf-rpg-prof-grid{gap:5px}
+#hf-rpg .hf-rpg-prof-card{min-height:55px;padding:4px 5px}
+#hf-rpg .hf-p42-prof-frame{
+ display:grid!important;place-items:center;overflow:hidden;
+ border:2px solid #f1c98c!important;border-radius:9px!important;
+ background:linear-gradient(145deg,#35214d,#0c1221)!important;
+ box-shadow:inset 0 0 0 1px #f9e9c45c,0 0 4px #e1b9836f!important;
+}
+#hf-rpg .hf-rpg-prof-icon.hf-p42-prof-frame{width:44px!important;height:44px!important;min-width:44px!important;flex:0 0 44px}
+#hf-rpg .hf-rpg-prof-feature-art.hf-p42-prof-frame{width:78px!important;height:78px!important;min-width:78px!important;flex:0 0 78px}
+#hf-rpg .hf-p42-prof-frame .hf-premium-icon{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;transform:none!important;object-fit:contain}
+#hf-rpg .hf-p42-prof-mark{display:grid;place-items:center;color:#fff0bb;text-shadow:0 0 8px #e0a4ff;font:800 27px Georgia,serif}
+#hf-rpg .hf-rpg-prof-feature-art .hf-p42-prof-mark{font-size:48px}
+#hf-rpg .hf-p42-professions .hf-rpg-stat-panel{padding:6px 3px}
+#hf-rpg .hf-p42-professions .hf-rpg-stat-panel strong{font-size:13px}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature{min-height:85px}
+/* System selection instead of hard-coded buttons below character. */
+#hf-rpg .hf-p42-equipment-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+ margin-top:7px;
+}
+#hf-rpg .hf-p42-equipment-actions .hf-rpg-button{min-height:36px;font-size:11px}
+#hf-rpg .hf-p42-equipment-actions .hf-rpg-button:first-child{grid-column:1/-1}
+@media(max-width:980px){
+ #hf-rpg .hf-rpg-three{grid-template-columns:minmax(148px,.8fr) minmax(318px,1.95fr) minmax(172px,1fr);gap:5px}
+ #hf-rpg .hf-p42-character{grid-template-columns:minmax(155px,1.1fr) minmax(225px,1.64fr) minmax(155px,1.1fr)!important;gap:4px}
+ #hf-rpg .hf-p42-character .hf-rpg-slot-art{width:35px!important;min-width:35px!important;height:35px!important}
+ #hf-rpg .hf-p42-character .hf-rpg-equip-slot b{font-size:10px}
+ #hf-rpg .hf-rpg-item b{font-size:9px}
+}
+@media(max-height:430px){
+ #hf-rpg .hf-rpg-grid{gap:4px!important}
+ #hf-rpg .hf-rpg-side-link{padding:3px 6px;min-height:28px;margin:2px 0}
+ #hf-rpg .hf-rpg-skill-feature{max-height:60px;min-height:58px}
+ #hf-rpg .hf-rpg-skill-feature>span{height:54px;width:54px;min-width:54px}
+ #hf-rpg .hf-rpg-skill-feature .hf-premium-icon{height:54px!important;width:54px!important}
+ #hf-rpg .hf-rpg-skill-slots .hf-rpg-skill-equip-slot{font-size:8px}
+ #hf-rpg .hf-rpg-prof-grid{gap:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ #hf-rpg .hf-rpg-item{transition:none}
+}
