@@ -1,0 +1,4948 @@
+{
+  "schema": "HIGHFLY_P1_WOC_RECIPES_V1",
+  "source": "levy-street/world-of-claudecraft",
+  "ref": "v0.44.7",
+  "scope": "Source data only. Fields extracted by static inspection; station, training gates and cross-file links require runtime verification; no actual import.",
+  "count": 175,
+  "professions": {
+    "cooking": 33,
+    "tailoring": 22,
+    "leatherworking": 21,
+    "alchemy": 20,
+    "engineering": 20,
+    "weaponcrafting": 17,
+    "armorcrafting": 17,
+    "jewelcrafting": 13,
+    "inscription": 9,
+    "enchanting": 3
+  },
+  "unresolved": [],
+  "recipes": [
+    {
+      "id": "recipe_eastbrook_arming_sword",
+      "profession": "weaponcrafting",
+      "outputId": "eastbrook_arming_sword",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "wolf_fang",
+          "count": 2
+        },
+        {
+          "id": "bone_fragments",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 6
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_chain_vest",
+      "profession": "armorcrafting",
+      "outputId": "eastbrook_chain_vest",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 9
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_wool_trousers",
+      "profession": "tailoring",
+      "outputId": "eastbrook_wool_trousers",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "homespun_cloth",
+          "count": 3
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 9
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_tanned_leather_jerkin",
+      "profession": "leatherworking",
+      "outputId": "tanned_leather_jerkin",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 5
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_tough_jerky",
+      "profession": "cooking",
+      "outputId": "tough_jerky",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "spider_leg",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_minor_healing_potion",
+      "profession": "alchemy",
+      "outputId": "minor_healing_potion",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "linen_scrap",
+          "count": 1
+        },
+        {
+          "id": "spider_leg",
+          "count": 1
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_ritual_vestments",
+      "profession": "tailoring",
+      "outputId": "eastbrook_ritual_vestments",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "linen_scrap",
+          "count": 3
+        },
+        {
+          "id": "spider_leg",
+          "count": 1
+        },
+        {
+          "id": "homespun_cloth",
+          "count": 3
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 5
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_druids_hide",
+      "profession": "leatherworking",
+      "outputId": "eastbrook_druids_hide",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 5
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 5
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_warded_leggings",
+      "profession": "armorcrafting",
+      "outputId": "eastbrook_warded_leggings",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "bone_fragments",
+          "count": 3
+        },
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_thorium_mining_pick",
+      "profession": "engineering",
+      "outputId": "thorium_mining_pick",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_iron_ore",
+          "count": 4
+        },
+        {
+          "id": "mithril_mining_pick",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_arcanite_mining_pick",
+      "profession": "engineering",
+      "outputId": "arcanite_mining_pick",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "arcanite_bar",
+          "count": 2
+        },
+        {
+          "id": "fine_thorium_ore",
+          "count": 2
+        },
+        {
+          "id": "thorium_mining_pick",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ashwood_axe",
+      "profession": "engineering",
+      "outputId": "ashwood_axe",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_ashwood_log",
+          "count": 4
+        },
+        {
+          "id": "ironbark_axe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_elderwood_axe",
+      "profession": "engineering",
+      "outputId": "elderwood_axe",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_elderwood_log",
+          "count": 2
+        },
+        {
+          "id": "ashwood_axe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_sickle",
+      "profession": "engineering",
+      "outputId": "goldleaf_sickle",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_goldleaf_herb",
+          "count": 4
+        },
+        {
+          "id": "silverleaf_sickle",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunpetal_sickle",
+      "profession": "engineering",
+      "outputId": "sunpetal_sickle",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_sickle",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_stormreel_fishing_rod",
+      "profession": "engineering",
+      "outputId": "stormreel_fishing_rod",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "glimmerfin_koi",
+          "count": 4
+        },
+        {
+          "id": "silverstream_fishing_rod",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_tidewrought_fishing_rod",
+      "profession": "engineering",
+      "outputId": "tidewrought_fishing_rod",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "glimmerfin_koi",
+          "count": 2
+        },
+        {
+          "id": "raw_stonescale_carp",
+          "count": 8
+        },
+        {
+          "id": "stormreel_fishing_rod",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_clockreel_fishing_rod",
+      "profession": "engineering",
+      "outputId": "clockreel_fishing_rod",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "glimmerfin_koi",
+          "count": 2
+        },
+        {
+          "id": "raw_hollowgill_sturgeon",
+          "count": 10
+        },
+        {
+          "id": "tidewrought_fishing_rod",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_gatherers_cache",
+      "profession": "enchanting",
+      "outputId": "gatherers_cache",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "arcane_shard",
+          "count": 1
+        },
+        {
+          "id": "arcane_essence",
+          "count": 14
+        },
+        {
+          "id": "arcane_dust",
+          "count": 10
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_artisans_eye",
+      "profession": "enchanting",
+      "outputId": "artisans_eye",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "arcane_shard",
+          "count": 1
+        },
+        {
+          "id": "arcane_essence",
+          "count": 14
+        },
+        {
+          "id": "arcane_dust",
+          "count": 10
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_wardweave_cowl",
+      "profession": "tailoring",
+      "outputId": "wardweave_cowl",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "pristine_silk",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_duskhide_wraps",
+      "profession": "leatherworking",
+      "outputId": "duskhide_wraps",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 6
+        },
+        {
+          "id": "pristine_hide",
+          "count": 3
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sootscale_mantle",
+      "profession": "armorcrafting",
+      "outputId": "sootscale_mantle",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 7
+        },
+        {
+          "id": "smithing_flux",
+          "count": 5
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironbound_warplate_helm",
+      "profession": "armorcrafting",
+      "outputId": "boundstone_helm",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "arcanite_bar",
+          "count": 1
+        },
+        {
+          "id": "thorium_ore",
+          "count": 5
+        },
+        {
+          "id": "wolf_fang",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_forgeguard_bulwark_gauntlets",
+      "profession": "weaponcrafting",
+      "outputId": "gravewyrm_gauntlets",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 6
+        },
+        {
+          "id": "iron_ore",
+          "count": 3
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_volatile_flux_elixir",
+      "profession": "alchemy",
+      "outputId": "elixir_of_the_bear",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": null,
+      "materials": [
+        {
+          "id": "linen_scrap",
+          "count": 2
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_copper_bearded_axe",
+      "profession": "weaponcrafting",
+      "outputId": "copper_bearded_axe",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "ironbark_log",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_copper_flanged_mace",
+      "profession": "weaponcrafting",
+      "outputId": "copper_flanged_mace",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 3
+        },
+        {
+          "id": "bone_fragments",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironbark_boar_spear",
+      "profession": "weaponcrafting",
+      "outputId": "ironbark_boar_spear",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "curved_tusk",
+          "count": 2
+        },
+        {
+          "id": "ironbark_log",
+          "count": 3
+        },
+        {
+          "id": "copper_ore",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironedge_longsword",
+      "profession": "weaponcrafting",
+      "outputId": "ironedge_longsword",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 4
+        },
+        {
+          "id": "rough_hide",
+          "count": 1
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironshod_maul",
+      "profession": "weaponcrafting",
+      "outputId": "ironshod_maul",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 3
+        },
+        {
+          "id": "ashwood_log",
+          "count": 1
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_whetted_iron_dirk",
+      "profession": "weaponcrafting",
+      "outputId": "whetted_iron_dirk",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 2
+        },
+        {
+          "id": "bone_fragments",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_thorium_warblade",
+      "profession": "weaponcrafting",
+      "outputId": "thorium_warblade",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_arcanite_war_axe",
+      "profession": "weaponcrafting",
+      "outputId": "arcanite_war_axe",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "arcanite_bar",
+          "count": 1
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        },
+        {
+          "id": "bone_fragments",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_elderwood_battle_staff",
+      "profession": "weaponcrafting",
+      "outputId": "elderwood_battle_staff",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "elderwood_log",
+          "count": 1
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_riveted_copper_girdle",
+      "profession": "armorcrafting",
+      "outputId": "riveted_copper_girdle",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "bone_fragments",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_coppermail_sabatons",
+      "profession": "armorcrafting",
+      "outputId": "coppermail_sabatons",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_coppermail_gauntlets",
+      "profession": "armorcrafting",
+      "outputId": "coppermail_gauntlets",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 3
+        },
+        {
+          "id": "bone_fragments",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironlink_hauberk",
+      "profession": "armorcrafting",
+      "outputId": "ironlink_hauberk",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 5
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironlink_legguards",
+      "profession": "armorcrafting",
+      "outputId": "ironlink_legguards",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 4
+        },
+        {
+          "id": "bone_fragments",
+          "count": 3
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironlink_spaulders",
+      "profession": "armorcrafting",
+      "outputId": "ironlink_spaulders",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 4
+        },
+        {
+          "id": "rough_hide",
+          "count": 1
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_thoriumscale_greathelm",
+      "profession": "armorcrafting",
+      "outputId": "thoriumscale_greathelm",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 3
+        },
+        {
+          "id": "arcanite_bar",
+          "count": 1
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_thoriumscale_cuirass",
+      "profession": "armorcrafting",
+      "outputId": "thoriumscale_cuirass",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcanite_bar",
+          "count": 1
+        },
+        {
+          "id": "iron_ore",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_thoriumscale_leggings",
+      "profession": "armorcrafting",
+      "outputId": "thoriumscale_leggings",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 3
+        },
+        {
+          "id": "arcanite_bar",
+          "count": 1
+        },
+        {
+          "id": "bone_fragments",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_homespun_hood",
+      "profession": "tailoring",
+      "outputId": "homespun_hood",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "homespun_cloth",
+          "count": 4
+        },
+        {
+          "id": "linen_scrap",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_homespun_mitts",
+      "profession": "tailoring",
+      "outputId": "homespun_mitts",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "homespun_cloth",
+          "count": 3
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silverthread_slippers",
+      "profession": "tailoring",
+      "outputId": "silverthread_slippers",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "linen_scrap",
+          "count": 3
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldweave_robe",
+      "profession": "tailoring",
+      "outputId": "goldweave_robe",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldweave_leggings",
+      "profession": "tailoring",
+      "outputId": "goldweave_leggings",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "homespun_cloth",
+          "count": 4
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silkspun_satchel",
+      "profession": "tailoring",
+      "outputId": "silkspun_satchel",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "spider_silk",
+          "count": 6
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silkbinders_raiment",
+      "profession": "tailoring",
+      "outputId": "silkbinders_raiment",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "pristine_silk",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunweave_mantle",
+      "profession": "tailoring",
+      "outputId": "sunweave_mantle",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "homespun_cloth",
+          "count": 4
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunweave_treads",
+      "profession": "tailoring",
+      "outputId": "sunweave_treads",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 3
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_hide_leggings",
+      "profession": "leatherworking",
+      "outputId": "fenbridge_hide_leggings",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 3
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_hide_boots",
+      "profession": "leatherworking",
+      "outputId": "fenbridge_hide_boots",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_hide_belt",
+      "profession": "leatherworking",
+      "outputId": "fenbridge_hide_belt",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "spider_leg",
+          "count": 1
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_marshstalker_jerkin",
+      "profession": "leatherworking",
+      "outputId": "marshstalker_jerkin",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "spider_silk",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_marshstalker_hood",
+      "profession": "leatherworking",
+      "outputId": "marshstalker_hood",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 3
+        },
+        {
+          "id": "spider_leg",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_marshstalker_spaulders",
+      "profession": "leatherworking",
+      "outputId": "marshstalker_spaulders",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 3
+        },
+        {
+          "id": "homespun_cloth",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_mirewarden_jerkin",
+      "profession": "leatherworking",
+      "outputId": "mirewarden_jerkin",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "pristine_hide",
+          "count": 1
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "thorium_ore",
+          "count": 1
+        },
+        {
+          "id": "tanning_agent",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_mirewarden_leggings",
+      "profession": "leatherworking",
+      "outputId": "mirewarden_leggings",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 5
+        },
+        {
+          "id": "thorium_ore",
+          "count": 1
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_mirewarden_treads",
+      "profession": "leatherworking",
+      "outputId": "mirewarden_treads",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "pristine_claw",
+          "count": 1
+        },
+        {
+          "id": "sharp_claw",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "spider_silk",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_pan_seared_perch",
+      "profession": "cooking",
+      "outputId": "pan_seared_perch",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_river_perch",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_hunters_game_skewer",
+      "profession": "cooking",
+      "outputId": "hunters_game_skewer",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "game_meat",
+          "count": 2
+        },
+        {
+          "id": "vale_wheat",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_herbed_marsh_pike",
+      "profession": "cooking",
+      "outputId": "herbed_marsh_pike",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_marsh_pike",
+          "count": 2
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ashwood_smoked_eel",
+      "profession": "cooking",
+      "outputId": "ashwood_smoked_eel",
+      "outputCount": 2,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_bog_eel",
+          "count": 2
+        },
+        {
+          "id": "ashwood_log",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_game_stew",
+      "profession": "cooking",
+      "outputId": "goldleaf_game_stew",
+      "outputCount": 2,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "game_meat",
+          "count": 3
+        },
+        {
+          "id": "vale_wheat",
+          "count": 2
+        },
+        {
+          "id": "bog_beet",
+          "count": 1
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_frostgill_chowder",
+      "profession": "cooking",
+      "outputId": "frostgill_chowder",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_frostgill_trout",
+          "count": 2
+        },
+        {
+          "id": "brook_carrot",
+          "count": 1
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silvered_carp_supper",
+      "profession": "cooking",
+      "outputId": "silvered_carp_supper",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_stonescale_carp",
+          "count": 3
+        },
+        {
+          "id": "raw_mirror_trout",
+          "count": 1
+        },
+        {
+          "id": "marsh_rice",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_anglers_feast_platter",
+      "profession": "cooking",
+      "outputId": "anglers_feast_platter",
+      "outputCount": 3,
+      "skillReq": 50,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_frostgill_trout",
+          "count": 2
+        },
+        {
+          "id": "raw_bog_eel",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_marlows_grand_roast",
+      "profession": "cooking",
+      "outputId": "marlows_grand_roast",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "prime_cut",
+          "count": 1
+        },
+        {
+          "id": "game_meat",
+          "count": 4
+        },
+        {
+          "id": "highland_barley",
+          "count": 2
+        },
+        {
+          "id": "frost_gourd",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silverleaf_healing_draught",
+      "profession": "alchemy",
+      "outputId": "silverleaf_healing_draught",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 4
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silverleaf_mana_draught",
+      "profession": "alchemy",
+      "outputId": "silverleaf_mana_draught",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_elixir_of_the_boar",
+      "profession": "alchemy",
+      "outputId": "elixir_of_the_boar",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "vale_wheat",
+          "count": 1
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_healing_draught",
+      "profession": "alchemy",
+      "outputId": "goldleaf_healing_draught",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_mana_draught",
+      "profession": "alchemy",
+      "outputId": "goldleaf_mana_draught",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_venomfire_elixir",
+      "profession": "alchemy",
+      "outputId": "venomfire_elixir",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "venom_gland",
+          "count": 3
+        },
+        {
+          "id": "bog_beet",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunpetal_healing_draught",
+      "profession": "alchemy",
+      "outputId": "sunpetal_healing_draught",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunpetal_mana_draught",
+      "profession": "alchemy",
+      "outputId": "sunpetal_mana_draught",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_elixir_of_the_serpent",
+      "profession": "alchemy",
+      "outputId": "elixir_of_the_serpent",
+      "outputCount": 2,
+      "skillReq": 50,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "pristine_venom_gland",
+          "count": 1
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "frost_gourd",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_foragers_haversack",
+      "profession": "tailoring",
+      "outputId": "foragers_haversack",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "spider_silk",
+          "count": 8
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 3
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_duskweave_bag",
+      "profession": "tailoring",
+      "outputId": "duskweave_bag",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "pristine_silk",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 3
+        },
+        {
+          "id": "spider_silk",
+          "count": 6
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 3
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_resonant_weave_bag",
+      "profession": "tailoring",
+      "outputId": "resonant_weave_bag",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "resonant_thread",
+          "count": 8
+        },
+        {
+          "id": "pristine_silk",
+          "count": 4
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 4
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_loombound_reagent_satchel",
+      "profession": "tailoring",
+      "outputId": "loombound_reagent_satchel",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "resonant_thread",
+          "count": 12
+        },
+        {
+          "id": "pristine_silk",
+          "count": 6
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 5
+        },
+        {
+          "id": "homespun_cloth",
+          "count": 8
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 6
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_hammered_copper_band",
+      "profession": "jewelcrafting",
+      "outputId": "hammered_copper_band",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_dust",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_polished_copper_loop",
+      "profession": "jewelcrafting",
+      "outputId": "polished_copper_loop",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_dust",
+          "count": 3
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_coiled_copper_torc",
+      "profession": "jewelcrafting",
+      "outputId": "coiled_copper_torc",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 5
+        },
+        {
+          "id": "arcane_dust",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_riveted_iron_signet",
+      "profession": "jewelcrafting",
+      "outputId": "riveted_iron_signet",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 1
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_etched_iron_loop",
+      "profession": "jewelcrafting",
+      "outputId": "etched_iron_loop",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 3
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_iron_link_choker",
+      "profession": "jewelcrafting",
+      "outputId": "iron_link_choker",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 5
+        },
+        {
+          "id": "arcane_essence",
+          "count": 1
+        },
+        {
+          "id": "smithing_flux",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_weighted_thorium_band",
+      "profession": "jewelcrafting",
+      "outputId": "weighted_thorium_band",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_gleaming_thorium_loop",
+      "profession": "jewelcrafting",
+      "outputId": "gleaming_thorium_loop",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 3
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_burnished_thorium_amulet",
+      "profession": "jewelcrafting",
+      "outputId": "burnished_thorium_amulet",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silverleaf_primer",
+      "profession": "inscription",
+      "outputId": "silverleaf_primer",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "arcane_dust",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_silverleaf_scroll",
+      "profession": "inscription",
+      "outputId": "silverleaf_scroll",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "arcane_dust",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_folio",
+      "profession": "inscription",
+      "outputId": "goldleaf_folio",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "arcane_essence",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_goldleaf_scroll",
+      "profession": "inscription",
+      "outputId": "goldleaf_scroll",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "arcane_essence",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunpetal_grimoire",
+      "profession": "inscription",
+      "outputId": "sunpetal_grimoire",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunpetal_scroll",
+      "profession": "inscription",
+      "outputId": "sunpetal_scroll",
+      "outputCount": 2,
+      "skillReq": 50,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "frost_gourd",
+          "count": 1
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        },
+        {
+          "id": "arcane_dust",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_deed_of_making",
+      "profession": "inscription",
+      "outputId": "deed_of_making",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sablewax_vellum",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_quickening_catalyst",
+      "profession": "alchemy",
+      "outputId": "quickening_catalyst",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_duskforged_billet",
+      "profession": "weaponcrafting",
+      "outputId": "duskforged_billet",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 3
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_forgefold_plating",
+      "profession": "armorcrafting",
+      "outputId": "forgefold_plating",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 3
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_wyrmhide_cording",
+      "profession": "leatherworking",
+      "outputId": "wyrmhide_cording",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "pristine_hide",
+          "count": 1
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "spider_silk",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunspun_bolt",
+      "profession": "tailoring",
+      "outputId": "sunspun_bolt",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "pristine_silk",
+          "count": 1
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_prismglass_setting",
+      "profession": "jewelcrafting",
+      "outputId": "prismglass_setting",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "thorium_ore",
+          "count": 2
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_precision_chassis",
+      "profession": "engineering",
+      "outputId": "precision_chassis",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "ashwood_log",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        },
+        {
+          "id": "cogwheel_blank",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_seasoned_stock",
+      "profession": "cooking",
+      "outputId": "seasoned_stock",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "prime_cut",
+          "count": 1
+        },
+        {
+          "id": "game_meat",
+          "count": 3
+        },
+        {
+          "id": "marsh_rice",
+          "count": 2
+        },
+        {
+          "id": "bog_beet",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_lucent_reagent",
+      "profession": "enchanting",
+      "outputId": "lucent_reagent",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "arcane_essence",
+          "count": 3
+        },
+        {
+          "id": "arcane_dust",
+          "count": 4
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sablewax_vellum",
+      "profession": "inscription",
+      "outputId": "sablewax_vellum",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        },
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_spiritweld_girdle",
+      "profession": "armorcrafting",
+      "outputId": "spiritweld_girdle",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "forgefold_plating",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_forgefold_legguards",
+      "profession": "armorcrafting",
+      "outputId": "forgefold_legguards",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "forgefold_plating",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_wardspeaker_sabatons",
+      "profession": "armorcrafting",
+      "outputId": "wardspeaker_sabatons",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "forgefold_plating",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_briarstep_jerkin",
+      "profession": "leatherworking",
+      "outputId": "briarstep_jerkin",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "wyrmhide_cording",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "pristine_hide",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbloom_breeches",
+      "profession": "leatherworking",
+      "outputId": "fenbloom_breeches",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "wyrmhide_cording",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "pristine_hide",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_barksong_handguards",
+      "profession": "leatherworking",
+      "outputId": "barksong_handguards",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "wyrmhide_cording",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "rough_hide",
+          "count": 4
+        },
+        {
+          "id": "pristine_hide",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunspun_vestments",
+      "profession": "tailoring",
+      "outputId": "sunspun_vestments",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunspun_bolt",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "pristine_silk",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunspun_leggings",
+      "profession": "tailoring",
+      "outputId": "sunspun_leggings",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunspun_bolt",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "pristine_silk",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunspun_handwraps",
+      "profession": "tailoring",
+      "outputId": "sunspun_handwraps",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunspun_bolt",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "pristine_silk",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sunspun_haversack",
+      "profession": "tailoring",
+      "outputId": "sunspun_haversack",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "sunspun_bolt",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "spider_silk",
+          "count": 4
+        },
+        {
+          "id": "pristine_silk",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_duskforged_warblade",
+      "profession": "weaponcrafting",
+      "outputId": "duskforged_warblade",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "duskforged_billet",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ridgebreaker",
+      "profession": "weaponcrafting",
+      "outputId": "ridgebreaker",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "duskforged_billet",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_duskforged_bulwark",
+      "profession": "weaponcrafting",
+      "outputId": "duskforged_bulwark",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "duskforged_billet",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "iron_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_wyrmfall_pendant",
+      "profession": "jewelcrafting",
+      "outputId": "wyrmfall_pendant",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "prismglass_setting",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_warhewn_signet",
+      "profession": "jewelcrafting",
+      "outputId": "warhewn_signet",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "prismglass_setting",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_prismglass_loop",
+      "profession": "jewelcrafting",
+      "outputId": "prismglass_loop",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "prismglass_setting",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_gyrelens_array",
+      "profession": "engineering",
+      "outputId": "gyrelens_array",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "precision_chassis",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "ashwood_log",
+          "count": 4
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_masters_field_forge",
+      "profession": "engineering",
+      "outputId": "masters_field_forge",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "precision_chassis",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "ashwood_log",
+          "count": 4
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_makers_charm",
+      "profession": "engineering",
+      "outputId": "makers_charm",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "precision_chassis",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "ashwood_log",
+          "count": 4
+        },
+        {
+          "id": "thorium_ore",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_voidbound_grimoire",
+      "profession": "inscription",
+      "outputId": "voidbound_grimoire",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "sablewax_vellum",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "arcane_essence",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_ironhusk_flask",
+      "profession": "alchemy",
+      "outputId": "ironhusk_flask",
+      "outputCount": 2,
+      "skillReq": 100,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        },
+        {
+          "id": "pristine_venom_gland",
+          "count": 1
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "highland_barley",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_warboar_flask",
+      "profession": "alchemy",
+      "outputId": "warboar_flask",
+      "outputCount": 2,
+      "skillReq": 100,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        },
+        {
+          "id": "pristine_venom_gland",
+          "count": 1
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "highland_barley",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_runewater_flask",
+      "profession": "alchemy",
+      "outputId": "runewater_flask",
+      "outputCount": 2,
+      "skillReq": 100,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "quickening_catalyst",
+          "count": 1
+        },
+        {
+          "id": "pristine_venom_gland",
+          "count": 1
+        },
+        {
+          "id": "venom_gland",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "highland_barley",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_stonepot_stew",
+      "profession": "cooking",
+      "outputId": "stonepot_stew",
+      "outputCount": 4,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 1
+        },
+        {
+          "id": "prime_cut",
+          "count": 2
+        },
+        {
+          "id": "game_meat",
+          "count": 4
+        },
+        {
+          "id": "frost_gourd",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_warspice_skewers",
+      "profession": "cooking",
+      "outputId": "warspice_skewers",
+      "outputCount": 4,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 1
+        },
+        {
+          "id": "prime_cut",
+          "count": 2
+        },
+        {
+          "id": "game_meat",
+          "count": 4
+        },
+        {
+          "id": "highland_barley",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sageleaf_chowder",
+      "profession": "cooking",
+      "outputId": "sageleaf_chowder",
+      "outputCount": 4,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 1
+        },
+        {
+          "id": "prime_cut",
+          "count": 2
+        },
+        {
+          "id": "game_meat",
+          "count": 4
+        },
+        {
+          "id": "thornpeak_cabbage",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_grand_cauldron",
+      "profession": "alchemy",
+      "outputId": "grand_cauldron",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "quickening_catalyst",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "gilded_sunmelon",
+          "count": 2
+        },
+        {
+          "id": "fine_gilded_sunmelon",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 4
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_laden_hearth",
+      "profession": "cooking",
+      "outputId": "laden_hearth",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 2
+        },
+        {
+          "id": "prime_cut",
+          "count": 4
+        },
+        {
+          "id": "game_meat",
+          "count": 4
+        },
+        {
+          "id": "evergarden_greens",
+          "count": 2
+        },
+        {
+          "id": "fine_evergarden_greens",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_peppered_deepbarb_catfish",
+      "profession": "cooking",
+      "outputId": "peppered_deepbarb_catfish",
+      "outputCount": 2,
+      "skillReq": 75,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_roast_hollowgill_sturgeon",
+      "profession": "cooking",
+      "outputId": "roast_hollowgill_sturgeon",
+      "outputCount": 2,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "raw_hollowgill_sturgeon",
+          "count": 4
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 2
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 2
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_stonepot_feast",
+      "profession": "cooking",
+      "outputId": "stonepot_feast",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 1
+        },
+        {
+          "id": "evergarden_greens",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        },
+        {
+          "id": "raw_hollowgill_sturgeon",
+          "count": 3
+        },
+        {
+          "id": "raw_stillmere_salmon",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_warspice_feast",
+      "profession": "cooking",
+      "outputId": "warspice_feast",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 1
+        },
+        {
+          "id": "evergarden_greens",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        },
+        {
+          "id": "raw_hollowgill_sturgeon",
+          "count": 3
+        },
+        {
+          "id": "raw_stillmere_salmon",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_sageleaf_feast",
+      "profession": "cooking",
+      "outputId": "sageleaf_feast",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "seasoned_stock",
+          "count": 3
+        },
+        {
+          "id": "wyrmfall_core",
+          "count": 1
+        },
+        {
+          "id": "evergarden_greens",
+          "count": 1
+        },
+        {
+          "id": "sunpetal_herb",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        },
+        {
+          "id": "raw_deepbarb_catfish",
+          "count": 4
+        },
+        {
+          "id": "raw_hollowgill_sturgeon",
+          "count": 3
+        },
+        {
+          "id": "raw_stillmere_salmon",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_bronze_hoe",
+      "profession": "engineering",
+      "outputId": "bronze_hoe",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_vale_wheat",
+          "count": 4
+        },
+        {
+          "id": "garden_hoe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_skysilver_hoe",
+      "profession": "engineering",
+      "outputId": "skysilver_hoe",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_marsh_rice",
+          "count": 4
+        },
+        {
+          "id": "bronze_hoe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_osmium_hoe",
+      "profession": "engineering",
+      "outputId": "osmium_hoe",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_highland_barley",
+          "count": 4
+        },
+        {
+          "id": "skysilver_hoe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_evergarden_hoe",
+      "profession": "engineering",
+      "outputId": "evergarden_hoe",
+      "outputCount": 1,
+      "skillReq": 125,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "fine_evergarden_greens",
+          "count": 2
+        },
+        {
+          "id": "osmium_hoe",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_cogwheel_blank",
+      "profession": "engineering",
+      "outputId": "cogwheel_blank",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "copper_ore",
+          "count": 4
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_copperlens_ocular",
+      "profession": "engineering",
+      "outputId": "copperlens_ocular",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "cogwheel_blank",
+          "count": 1
+        },
+        {
+          "id": "copper_ore",
+          "count": 2
+        },
+        {
+          "id": "arcane_dust",
+          "count": 3
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_vale_hearth_loaf",
+      "profession": "cooking",
+      "outputId": "vale_hearth_loaf",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "vale_wheat",
+          "count": 3
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_root_pottage",
+      "profession": "cooking",
+      "outputId": "eastbrook_root_pottage",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "brook_carrot",
+          "count": 2
+        },
+        {
+          "id": "fine_brook_carrot",
+          "count": 1
+        },
+        {
+          "id": "vale_wheat",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_rice_bowl",
+      "profession": "cooking",
+      "outputId": "fenbridge_rice_bowl",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "marsh_rice",
+          "count": 4
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_beet_braise",
+      "profession": "cooking",
+      "outputId": "fenbridge_beet_braise",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "bog_beet",
+          "count": 3
+        },
+        {
+          "id": "fine_bog_beet",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_highwatch_barley_bannock",
+      "profession": "cooking",
+      "outputId": "highwatch_barley_bannock",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "highland_barley",
+          "count": 4
+        },
+        {
+          "id": "thornpeak_cabbage",
+          "count": 2
+        },
+        {
+          "id": "fine_thornpeak_cabbage",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_highwatch_gourd_soup",
+      "profession": "cooking",
+      "outputId": "highwatch_gourd_soup",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "frost_gourd",
+          "count": 3
+        },
+        {
+          "id": "fine_frost_gourd",
+          "count": 1
+        },
+        {
+          "id": "frost_lentils",
+          "count": 2
+        },
+        {
+          "id": "fine_frost_lentils",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_evergarden_sunmelon_tart",
+      "profession": "cooking",
+      "outputId": "evergarden_sunmelon_tart",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "gilded_sunmelon",
+          "count": 3
+        },
+        {
+          "id": "fine_gilded_sunmelon",
+          "count": 1
+        },
+        {
+          "id": "gilded_yam",
+          "count": 2
+        },
+        {
+          "id": "fine_gilded_yam",
+          "count": 1
+        },
+        {
+          "id": "vale_wheat",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_evergarden_harvest_platter",
+      "profession": "cooking",
+      "outputId": "evergarden_harvest_platter",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "evergarden_greens",
+          "count": 3
+        },
+        {
+          "id": "fine_evergarden_greens",
+          "count": 1
+        },
+        {
+          "id": "evergarden_pumpkin",
+          "count": 2
+        },
+        {
+          "id": "fine_evergarden_pumpkin",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_eastbrook_glazed_carrots",
+      "profession": "cooking",
+      "outputId": "eastbrook_glazed_carrots",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "brook_carrot",
+          "count": 4
+        },
+        {
+          "id": "vale_wheat",
+          "count": 1
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenbridge_rice_pudding",
+      "profession": "cooking",
+      "outputId": "fenbridge_rice_pudding",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "marsh_rice",
+          "count": 4
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_highwatch_barley_porridge",
+      "profession": "cooking",
+      "outputId": "highwatch_barley_porridge",
+      "outputCount": 1,
+      "skillReq": 75,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "highland_barley",
+          "count": 4
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_evergarden_braised_greens",
+      "profession": "cooking",
+      "outputId": "evergarden_braised_greens",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "evergarden_greens",
+          "count": 4
+        },
+        {
+          "id": "cooking_salt",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_harvest_feast",
+      "profession": "cooking",
+      "outputId": "harvest_feast",
+      "outputCount": 1,
+      "skillReq": 100,
+      "stationType": "kitchens",
+      "materials": [
+        {
+          "id": "evergarden_greens",
+          "count": 4
+        },
+        {
+          "id": "gilded_sunmelon",
+          "count": 4
+        },
+        {
+          "id": "cooking_salt",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_growth_tonic",
+      "profession": "alchemy",
+      "outputId": "growth_tonic",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 2
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_oiled_boots",
+      "profession": "leatherworking",
+      "outputId": "oiled_boots",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "mudfin_scale",
+          "count": 4
+        },
+        {
+          "id": "rough_hide",
+          "count": 6
+        },
+        {
+          "id": "spider_silk",
+          "count": 2
+        },
+        {
+          "id": "tanning_agent",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_gravewyrm_bone_quiver",
+      "profession": "leatherworking",
+      "outputId": "gravewyrm_bone_quiver",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "cracked_wyrm_scale",
+          "count": 3
+        },
+        {
+          "id": "pristine_hide",
+          "count": 2
+        },
+        {
+          "id": "thorium_ore",
+          "count": 4
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_fenshadow_maul",
+      "profession": "weaponcrafting",
+      "outputId": "fenshadow_maul",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "cracked_ogre_tusk",
+          "count": 2
+        },
+        {
+          "id": "elderwood_log",
+          "count": 2
+        },
+        {
+          "id": "smithing_flux",
+          "count": 2
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_lesser_healing_potion",
+      "profession": "alchemy",
+      "outputId": "lesser_healing_potion",
+      "outputCount": 1,
+      "skillReq": 25,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "tallow_candle",
+          "count": 2
+        },
+        {
+          "id": "goldleaf_herb",
+          "count": 1
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_linen_pouch",
+      "profession": "tailoring",
+      "outputId": "linen_pouch",
+      "outputCount": 1,
+      "skillReq": 0,
+      "stationType": "loom",
+      "materials": [
+        {
+          "id": "bandit_bandana",
+          "count": 2
+        },
+        {
+          "id": "linen_scrap",
+          "count": 4
+        },
+        {
+          "id": "spool_of_thread",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_wildgrove_cinch",
+      "profession": "leatherworking",
+      "outputId": "wildgrove_cinch",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "old_cragmaws_pelt",
+          "count": 1
+        },
+        {
+          "id": "pristine_hide",
+          "count": 3
+        },
+        {
+          "id": "thorium_ore",
+          "count": 1
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_cragprowl_belt",
+      "profession": "leatherworking",
+      "outputId": "cragprowl_belt",
+      "outputCount": 1,
+      "skillReq": 50,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "emberwing_cinderscale",
+          "count": 1
+        },
+        {
+          "id": "pristine_hide",
+          "count": 3
+        },
+        {
+          "id": "thorium_ore",
+          "count": 1
+        },
+        {
+          "id": "tanning_agent",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_elixir_of_mana_regeneration",
+      "profession": "alchemy",
+      "outputId": "elixir_of_mana_regeneration",
+      "outputCount": 1,
+      "skillReq": 40,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "silverleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "recipe_potion_of_invisibility",
+      "profession": "alchemy",
+      "outputId": "potion_of_invisibility",
+      "outputCount": 1,
+      "skillReq": 40,
+      "stationType": "apothecary",
+      "materials": [
+        {
+          "id": "goldleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "silverleaf_herb",
+          "count": 3
+        },
+        {
+          "id": "glass_vial",
+          "count": 1
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "pattern_reinforced_armor_kit",
+      "profession": "leatherworking",
+      "outputId": "reinforced_armor_kit",
+      "outputCount": 1,
+      "skillReq": 40,
+      "stationType": "tannery",
+      "materials": [
+        {
+          "id": "rough_hide",
+          "count": 5
+        },
+        {
+          "id": "iron_ore",
+          "count": 3
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "schematic_clockwork_shock_bomb",
+      "profession": "engineering",
+      "outputId": "clockwork_shock_bomb",
+      "outputCount": 1,
+      "skillReq": 40,
+      "stationType": "toolworks",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 3
+        },
+        {
+          "id": "copper_ore",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    },
+    {
+      "id": "plans_dense_sharpening_stone",
+      "profession": "weaponcrafting",
+      "outputId": "dense_sharpening_stone",
+      "outputCount": 1,
+      "skillReq": 40,
+      "stationType": "forge",
+      "materials": [
+        {
+          "id": "iron_ore",
+          "count": 4
+        }
+      ],
+      "rawReagentsPresent": true,
+      "sourceFile": "src/sim/content/recipes.ts",
+      "sourceRef": "v0.44.7",
+      "status": "AUDITED_ONLY_NOT_IMPORTED"
+    }
+  ]
+}
