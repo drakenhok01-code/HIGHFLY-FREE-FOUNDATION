@@ -29,11 +29,13 @@ try{
   // injected into /index.html, not the QA fixture. Import its real rules.
   const html=await fetch('./index.html').then(r=>r.text());
   const doc=new DOMParser().parseFromString(html,'text/html');
-  const native=[...doc.querySelectorAll('style')].map(x=>x.textContent).find(x=>x.includes('highfly-official.avif'));
-  if(!native)return {image:'missing native loading stylesheet',progress:'0'};
-  const style=document.createElement('style');
-  style.textContent=native.replaceAll('/HIGHFLY-FREE-FOUNDATION/preview-v3/','/');
-  document.head.appendChild(style);
+  const native=[...doc.querySelectorAll('style')].map(x=>x.textContent);
+  if(!native.some(x=>x.includes('highfly-official.avif')))return {image:'missing native loading stylesheet',progress:'0'};
+  for(const original of native){
+   const style=document.createElement('style');
+   style.textContent=original.replaceAll('/HIGHFLY-FREE-FOUNDATION/preview-v3/','/');
+   document.head.appendChild(style);
+  }
   const boot=document.createElement('div');boot.id='boot';
   boot.innerHTML='<div><div class="bar"><i style="transform:scaleX(.52)"></i></div><p>Preparando Aetheria</p><p class="tip">Cargando el mundo…</p></div>';
   document.body.appendChild(boot);
