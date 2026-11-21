@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Four material grades from ONE original 256px ingot item icon.
+"""Eight visually distinct metal grades from ONE original 256px ingot item icon.
 The purchased/user drawing and its original gold frame are never replaced.
 Recolor only the ingots at their known image coordinates; keep transparent alpha.
 """
@@ -20,26 +20,26 @@ mask=mask.filter(ImageFilter.GaussianBlur(4))
 src=np.asarray(im).astype('float32')
 r,g,b=src[:,:,0],src[:,:,1],src[:,:,2]
 inside=(np.asarray(mask)/255).astype('float32')
-gold=(r>75)&(r>g*1.06)&(g>b*1.18)&(g>48)
-weight=(inside*gold).astype('float32')
-for material,ratios in {
- 'copper':(.98,.61,.47),'iron':(.55,.66,.77),
- 'silver':(.9,1.0,1.15),'gold':(1,1,1),
- 'steel':(.62,.77,.94),'diamond':(.65,1.12,1.40),
- 'obsidian':(.35,.38,.57),'mithril':(.50,1.08,1.30)
-}.items():
+# Preserve gold outer artwork and brighten ONLY the two hand-masked ingot faces.
+# Prior P4.1 was subtle because it recolored only already-gold pixels.
+palette={
+ 'copper':(226,116,62), 'iron':(148,163,178),
+ 'steel':(115,148,190), 'silver':(222,233,247),
+ 'gold':(255,189,64), 'diamond':(115,218,253),
+ 'obsidian':(94,71,141), 'mithril':(62,230,190)
+}
+light=np.clip((.299*r+.587*g+.114*b)/139,.32,1.48)
+weight=inside*.90
+for material,rgb in palette.items():
  result=src.copy()
- for i,mul in enumerate(ratios):
-  result[:,:,i]=src[:,:,i]*(1-weight)+np.clip(src[:,:,i]*mul,0,255)*weight
- if material in ('iron','silver','steel','diamond'):
-  neutral=(r*.299+g*.587+b*.114)
-  factor={'iron':.54,'silver':.84,'steel':.75,'diamond':.88}[material]
-  for i in range(3):result[:,:,i]=result[:,:,i]*(1-weight*factor)+neutral*weight*factor
+ for i,color in enumerate(rgb):
+  target=np.clip(color*light,0,255)
+  result[:,:,i]=src[:,:,i]*(1-weight)+target*weight
  output=root/'items'/('ingot_'+material+'.webp')
- Image.fromarray(np.uint8(np.clip(result,0,255)),'RGBA').save(output,format='WEBP',quality=95,method=5)
+ Image.fromarray(np.uint8(np.clip(result,0,255)),'RGBA').save(output,format='WEBP',quality=96,method=5)
  check=Image.open(output)
- if check.size!=(256,256) or check.getpixel((0,0))[3]>15:raise SystemExit("Bad metal art "+str(output))
- print("[HIGHFLY METALS]",material,output.stat().st_size,"bytes")
+ if check.size!=(256,256) or check.getpixel((0,0))[3]>15:raise SystemExit('Bad metal art '+str(output))
+ print('[HIGHFLY P4.2 METALS]',material,output.stat().st_size,'bytes')
 
 # P4.1: original ore painting with unique named mineral colors. The same
 # gold/black/purple painted item background is deliberately preserved.
