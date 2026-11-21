@@ -30,7 +30,7 @@ try{
   const html=await fetch('./index.html').then(r=>r.text());
   const doc=new DOMParser().parseFromString(html,'text/html');
   const native=[...doc.querySelectorAll('style')].map(x=>x.textContent);
-  if(!native.some(x=>x.includes('premium/logo_highfly.svg')))return {image:'missing native loading stylesheet',progress:'0'};
+  if(!native.some(x=>x.includes('brand/official-rpg-fitness.webp')))return {image:'missing native loading stylesheet',progress:'0'};
   for(const original of native){
    const style=document.createElement('style');
    style.textContent=original.replaceAll('/HIGHFLY-FREE-FOUNDATION/preview-v3/','/');
