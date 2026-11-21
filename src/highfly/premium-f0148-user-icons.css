@@ -84,3 +84,14 @@
  #hf-rpg .hf-rpg-skill-glyph>.hf-user-icon{width:42px!important;height:42px!important;max-width:42px!important;max-height:42px!important}
  #hf-rpg .hf-rpg-forge-recipes .hf-rpg-recipe>.hf-user-icon{width:44px!important;height:44px!important;max-width:44px!important;max-height:44px!important}
 }
+
+/* Override old 3.45x/4.15x magnifications at the exact same or higher
+   specificity. User files already fill their 256px canvas with their frame. */
+#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon.hf-user-icon,
+#hf-rpg .hf-rpg-skill-feature>span .hf-premium-icon.hf-user-icon,
+#hf-rpg .hf-rpg-skill-equip-slot .hf-premium-icon.hf-user-icon,
+#hf-rpg .hf-rpg-prof-icon .hf-premium-icon.hf-user-icon,
+#hf-rpg .hf-rpg-prof-feature-art .hf-premium-icon.hf-user-icon {
+ transform:none!important;
+ transform-origin:center!important;
+}
