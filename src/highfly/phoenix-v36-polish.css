@@ -1,0 +1,4 @@
+/* HIGHFLY v3.6: no fake image panel below skills. */
+#hf-rpg .hf-rpg-skill-list::after{content:none!important;display:none!important;background:none!important;height:0!important;box-shadow:none!important}
+#hf-rpg .hf-rpg-skill-list{align-content:start}
+#hf-rpg .hf-rpg-skill-feature>span:has(.hf-user-icon){border:0!important;background:transparent!important;box-shadow:none!important}

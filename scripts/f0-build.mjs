@@ -89,6 +89,7 @@ patch("index.html","<html lang=\"en\">","<html lang=\"es\">");
 patch("index.html","<title>Unsung Vale</title>","<title>HIGHFLY: PHOENIX ASCENSIÓN | MMORPG Fitness</title>");
 patch("index.html","<h1>Unsung Vale</h1>","<h1>HIGHFLY: PHOENIX ASCENSIÓN</h1>");
 patch("index.html","Preparing the valley","Preparando Aetheria");
+patch('index.html','</style>\n  </head>','</style>\n    <style>'+fs.readFileSync('src/highfly/phoenix-native-boot.css','utf8').replaceAll('__HF_BASE__',pagesBase)+'</style>\n  </head>');
 patch("index.html","Unsung Vale: an original third-person fantasy RPG, generated entirely by code and rendered in your browser.","HIGHFLY: PHOENIX ASCENSIÓN. Entrená en la realidad. Ascendé en Aetheria. MMORPG fitness en tercera persona.");
 patch("src/main.js","boot.querySelector('p').textContent = text;","boot.querySelector('p').textContent = translateHighfly(text);");
 patch("src/main.js","tip.textContent = TIPS[tipN++ % TIPS.length];","tip.textContent = translateHighfly(TIPS[tipN++ % TIPS.length]);");
@@ -270,7 +271,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['rpg-core.mjs','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
