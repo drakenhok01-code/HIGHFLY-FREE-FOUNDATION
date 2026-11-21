@@ -212,8 +212,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-hero-stage" aria-label="Vista 3D del personaje actual">'+
    '<div class="hf-rpg-stage-halo"></div><div class="hf-rpg-stage-arch" aria-hidden="true">'+PHOENIX+'</div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
    '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
-   '</div>'+
-   ''
+   '</div>',
    'hf-rpg-hero-panel');
  };
  function character(){
