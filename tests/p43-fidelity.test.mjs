@@ -7,7 +7,7 @@ test('P4.3 original painted item artwork supersedes flat P4.2 SVG',()=>{
  const ui=source('src/highfly/premium-rpg.mjs');
  const manifest=source('src/highfly/premium-assets.mjs');
  assert.doesNotMatch(ui,/p42ItemArt\(/);
- assert.match(manifest,/rarity\/['+]\+rel\+['+]__?/);
+ assert.ok(manifest.includes("assetUrl('rarity/'+rel+'__'+"),'P4.3 rarity images must be resolved through generated WebP paths');
  assert.match(manifest,/data-hf-frame-art/);
  for(const id of ['hp_potion','mp_potion','upgrade_stone','ascension_core'])
   assert.match(manifest,new RegExp('item_'+id+'|'+id+':'));
