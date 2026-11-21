@@ -33,6 +33,7 @@
 7. [Plan de migración y prevención de pérdidas de partidas](INTEGRATION_AND_SAVE_MIGRATION.md)
 8. [Motor de dominio aislado](../../../src/highfly/p2/catalog-domain.mjs)
 9. [Suite de tests Node](../../../tests/catalog-p2.test.mjs)
+10. [Registro de las 31 pruebas aisladas](ISOLATED_TEST_RESULTS_31.json)
 
 ## Un ejemplo REAL del contrato (todavía no es gameplay)
 
@@ -54,7 +55,7 @@ La misma separación existe para minerales de cobre/plata/oro. No se convierte e
 
 ## Comprobación ejecutada en esta conversación
 
-Se cargó directamente el **código JS nuevo** junto al catálogo JSON y las recetas que ahora están en GitHub, y **15 casos de consistencia y comportamiento pasaron**: 47 IDs/32 recetas, seis rarezas, inyección +9 bloqueada, valores de stats, dos dagas distintas, equipamiento repetido rechazado, mineral específico obligatorio, recetas legacy intactas, transferencia preservando identidad y +3, amuleto fuera del HUD y otras reglas de P2.
+Se cargó directamente el **código JS nuevo** junto al catálogo JSON y las recetas que ahora están en GitHub, y se ejecutaron **31 casos de la suite P2: 31 PASS, 0 FAIL**, en V8 con funciones de aserción equivalentes a las del test Node (NO es una ejecución del runner Node): 47 IDs/32 recetas, seis rarezas, inyección +9 bloqueada, valores de stats, dos dagas distintas, equipamiento repetido rechazado, mineral específico obligatorio, recetas legacy intactas, transferencia preservando identidad y +3, amuleto fuera del HUD y otras reglas de P2.
 
 **No se ejecutaron en Codespaces** el comando Node, el build ni pruebas Android/navegador. Por eso la suite [`tests/catalog-p2.test.mjs`](../../../tests/catalog-p2.test.mjs) queda lista como test de regresión reproducible, pero sin atribuirle resultados que todavía no tiene.
 
