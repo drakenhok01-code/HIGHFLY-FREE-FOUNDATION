@@ -23,7 +23,7 @@ export const ITEM_DEFS=Object.freeze({
  leather:{id:'leather',name:'Cuero de criatura',kind:'Materiales',icon:'leather',rarity:'Común',description:'Material obtenido de criaturas derrotadas.',max:999},
  wood:{id:'wood',name:'Madera',kind:'Materiales',icon:'wood',rarity:'Común',description:'Madera talada en el mundo.',max:999},
  fish:{id:'fish',name:'Pescado',kind:'Materiales',icon:'fish',rarity:'Común',description:'Captura obtenida con caña.',max:999},
- ingot:{id:'ingot',name:'Lingote básico',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Lingote básico compatible con recetas iniciales. Los metales especiales tienen sus lingotes propios.',max:999},
+ ingot:{id:'ingot',name:'Lingote de hierro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Lingote básico compatible con recetas iniciales. Los metales especiales tienen sus lingotes propios.',max:999},
  blade_blank:{id:'blade_blank',name:'Hoja sin terminar',kind:'Materiales',icon:'blade',rarity:'Común',description:'Pieza forjada, todavía no equipable.',max:999},
  seed:{id:'seed',name:'Semillas',kind:'Materiales',icon:'herb',rarity:'Común',description:'Semillas para plantar.',max:999},
  bag_upgrade:{id:'bag_upgrade',name:'Sello de Expansión',kind:'Especial',icon:'expansion',rarity:'Raro',description:'Amplía la capacidad permanente de la Bolsa en 12 casillas, hasta un máximo de 72.',max:3},
@@ -118,9 +118,12 @@ export function spendPotion(state,player,id){
  state.items[id]--;
  return {ok:true,restored,remaining:state.items[id],resource:life?'Vida':'Maná'};
 }
-export const ownedMaterialCount=(id,professionInventory={},state=null)=>
- Math.max(0,Number(professionInventory?.[id])||0)+Math.max(0,Number(state?.items?.[id])||0)+
- (id==='ingot_iron'?Math.max(0,Number(professionInventory?.ingot)||0)+Math.max(0,Number(state?.items?.ingot)||0):0);
+// 'ingot' is a hidden save-compatible alias of iron; both pools can be used
+// without losing old profession progress or duplicating the displayed item.
+export const ownedMaterialCount=(id,professionInventory={},state=null)=>{
+ const keys=id==='ingot'||id==='ingot_iron'?['ingot','ingot_iron']:[id];
+ return keys.reduce((sum,key)=>sum+Math.max(0,Number(professionInventory?.[key])||0)+Math.max(0,Number(state?.items?.[key])||0),0);
+};
 export function canCraft(recipeId,professionInventory={},state){
  const recipe=RECIPES[recipeId];
  if(!recipe)return {ok:false,reason:'Receta desconocida'};
@@ -141,15 +144,11 @@ export function craftPotion(recipeId,professionState,state){
  const recipe=RECIPES[recipeId];
  // Commit exactly once: spend profession stock first, then normal bag stock.
  for(const [id,n] of Object.entries(recipe.ingredients)){
-  const fromProf=Math.min(n,Math.max(0,inventory[id]??0));
-  if(fromProf)inventory[id]-=fromProf;
-  const fromBag=Math.min(n-fromProf,Math.max(0,state.items[id]??0));
-  if(fromBag)state.items[id]-=fromBag;
-  let legacy=n-fromProf-fromBag;
-  if(legacy&&id==='ingot_iron'){
-   const source=Math.min(legacy,Math.max(0,inventory.ingot??0));inventory.ingot-=source;legacy-=source;
-   if(legacy){state.items.ingot=(state.items.ingot??0)-legacy;}
-  }
+  let due=n;
+  const keys=id==='ingot'||id==='ingot_iron'?[id,id==='ingot'?'ingot_iron':'ingot']:[id];
+  for(const key of keys){const fromProf=Math.min(due,Math.max(0,inventory[key]??0));if(fromProf){inventory[key]-=fromProf;due-=fromProf;}}
+  for(const key of keys){const fromBag=Math.min(due,Math.max(0,state.items[key]??0));if(fromBag){state.items[key]-=fromBag;due-=fromBag;}}
+  if(due)throw Error('HIGHFLY crafting atomicity: missing confirmed '+id);
  }
  state.items[recipe.item]=(state.items[recipe.item]??0)+recipe.count;
  registerCraftedGear(state,recipe.item,recipe.count);
