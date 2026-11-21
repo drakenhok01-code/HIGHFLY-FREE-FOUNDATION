@@ -1,0 +1,21 @@
+/* P4.1 · Highfly approved rarity brightness. Only the border signals rarity.
+ * Común / Verde / Azul / Violeta / Dorado / Rojo. Relic remains disabled.
+ * The item artwork is not recolored and there is no new square underlay.
+ */
+#hf-rpg [data-hf-rarity="Común"]{--hf-grade:#f4f5ff;--hf-halo:#aab6da}
+#hf-rpg [data-hf-rarity="Poco común"]{--hf-grade:#37ff78;--hf-halo:#00c951}
+#hf-rpg [data-hf-rarity="Raro"]{--hf-grade:#2597ff;--hf-halo:#006dff}
+#hf-rpg [data-hf-rarity="Épico"]{--hf-grade:#c050ff;--hf-halo:#860dff}
+#hf-rpg [data-hf-rarity="Legendario"]{--hf-grade:#ffbf36;--hf-halo:#ff8100}
+#hf-rpg [data-hf-rarity="Mítico"]{--hf-grade:#ff4050;--hf-halo:#ff071b}
+#hf-rpg .hf-rpg-item[data-hf-rarity],
+#hf-rpg .hf-rpg-equip-slot.is-active[data-hf-rarity]{
+ position:relative;outline:1px solid var(--hf-grade);outline-offset:-2px;
+ box-shadow:inset 0 0 4px var(--hf-grade),0 0 5px var(--hf-halo),0 0 12px color-mix(in srgb,var(--hf-halo),transparent 58%);
+}
+#hf-rpg .hf-rpg-item[data-hf-rarity].is-selected{outline:2px solid #fff7d6;box-shadow:0 0 0 1px var(--hf-grade),0 0 8px var(--hf-grade),0 0 16px var(--hf-halo)}
+#hf-rpg .hf-p41-loot-lab{margin:7px 0 5px;border:1px solid #8a57c980;border-radius:9px;background:linear-gradient(130deg,#291d46d9,#120d24ed);padding:8px 7px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+#hf-rpg .hf-p41-loot-lab>b{color:#efddff;display:block;flex-basis:100%;font-size:10px;letter-spacing:.06em}
+#hf-rpg .hf-p41-loot-lab>small{color:#b9a9ca;display:block;flex-basis:100%;font-size:9px;line-height:1.35}
+#hf-rpg .hf-p41-loot-lab .hf-rpg-button{font-size:9px;letter-spacing:0;padding:5px 6px;flex:1 1 auto;min-width:46px}
+@media(max-width:980px){#hf-rpg .hf-p41-loot-lab{padding:5px 4px;gap:3px}#hf-rpg .hf-p41-loot-lab .hf-rpg-button{font-size:8px;padding:4px 3px}}
