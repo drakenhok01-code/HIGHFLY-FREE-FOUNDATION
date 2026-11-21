@@ -1,0 +1,1039 @@
+{
+  "schema": "HIGHFLY_P2_CRAFT_GRAPH_V1",
+  "date": "2026-11-21",
+  "status": "12 legacy source recipes remain active in V36; 20 proposed recipes NOT IN GAME",
+  "origin": "APPROVED_HIGHFLY_AND_ORIGINAL_P2",
+  "character": "ONE_UNIVERSAL_HUNTER",
+  "gearBirthPlus": 0,
+  "professionRules": {
+    "visibleIconCountV36": 8,
+    "legacyRecipeMarroquineriaNoVisibleIcon": true,
+    "noClasses": true
+  },
+  "migration": {
+    "legacyOreAndIngotMustRemainAccessible": true,
+    "newSpecificOreRecipesMustNotReplaceLegacyOnDiskBeforeMigration": true,
+    "dontDeductMaterialsWithoutValidTransaction": true,
+    "newRecipeIdsDistinctFromLegacy": true
+  },
+  "professions": [
+    {
+      "id": "recoleccion",
+      "nameEs": "Recolección",
+      "kind": "gathering",
+      "station": "campo",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "mineria",
+      "nameEs": "Minería",
+      "kind": "gathering",
+      "station": "veta",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "tala",
+      "nameEs": "Tala",
+      "kind": "gathering",
+      "station": "árbol",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "pesca",
+      "nameEs": "Pesca",
+      "kind": "gathering",
+      "station": "agua",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "cocina",
+      "nameEs": "Cocina",
+      "kind": "crafting",
+      "station": "cocina",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "alquimia",
+      "nameEs": "Alquimia",
+      "kind": "crafting",
+      "station": "mesa_alquimia",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "fundicion",
+      "nameEs": "Fundición",
+      "kind": "crafting",
+      "station": "horno_fundicion",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "forja",
+      "nameEs": "Forja",
+      "kind": "crafting",
+      "station": "yunque",
+      "v36Icon": true,
+      "activeGameplay": "V36_VISIBLE"
+    },
+    {
+      "id": "marroquineria",
+      "nameEs": "Marroquinería",
+      "kind": "crafting",
+      "station": "curtiduria",
+      "v36Icon": false,
+      "activeGameplay": "V36_LEGACY_RECIPE_NO_PROFESSION_ICON"
+    },
+    {
+      "id": "sastreria",
+      "nameEs": "Sastrería",
+      "kind": "crafting",
+      "station": "telar",
+      "v36Icon": false,
+      "activeGameplay": "P2_SPEC_NOT_VISIBLE"
+    },
+    {
+      "id": "joyeria",
+      "nameEs": "Joyería",
+      "kind": "crafting",
+      "station": "mesa_joyeria",
+      "v36Icon": false,
+      "activeGameplay": "P2_SPEC_NOT_VISIBLE"
+    },
+    {
+      "id": "ingenieria",
+      "nameEs": "Ingeniería",
+      "kind": "crafting",
+      "station": "taller",
+      "v36Icon": false,
+      "activeGameplay": "FUTURE_NOT_VISIBLE"
+    },
+    {
+      "id": "encantamiento",
+      "nameEs": "Encantamiento",
+      "kind": "crafting",
+      "station": "mesa_encantamiento",
+      "v36Icon": false,
+      "activeGameplay": "FUTURE_NOT_VISIBLE"
+    },
+    {
+      "id": "inscripcion",
+      "nameEs": "Inscripción",
+      "kind": "crafting",
+      "station": "mesa_inscripcion",
+      "v36Icon": false,
+      "activeGameplay": "FUTURE_NOT_VISIBLE"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "hp_potion",
+      "nameEs": "Receta de Poción de Vida",
+      "output": {
+        "templateId": "hp_potion",
+        "count": 1
+      },
+      "professionId": "alquimia",
+      "ingredients": [
+        {
+          "templateId": "herb",
+          "count": 2
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "mp_potion",
+      "nameEs": "Receta de Poción de Maná",
+      "output": {
+        "templateId": "mp_potion",
+        "count": 1
+      },
+      "professionId": "alquimia",
+      "ingredients": [
+        {
+          "templateId": "herb",
+          "count": 1
+        },
+        {
+          "templateId": "ore",
+          "count": 1
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "bag_upgrade",
+      "nameEs": "Receta de Sello de Expansión",
+      "output": {
+        "templateId": "bag_upgrade",
+        "count": 1
+      },
+      "professionId": "marroquineria",
+      "ingredients": [
+        {
+          "templateId": "wood",
+          "count": 8
+        },
+        {
+          "templateId": "ore",
+          "count": 8
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "training_sword",
+      "nameEs": "Receta de Espada de Aprendiz",
+      "output": {
+        "templateId": "training_sword",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot",
+          "count": 2
+        },
+        {
+          "templateId": "wood",
+          "count": 1
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "training_shield",
+      "nameEs": "Receta de Escudo de Aprendiz",
+      "output": {
+        "templateId": "training_shield",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot",
+          "count": 2
+        },
+        {
+          "templateId": "wood",
+          "count": 2
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "training_greatsword",
+      "nameEs": "Receta de Mandoble de Aprendiz",
+      "output": {
+        "templateId": "training_greatsword",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot",
+          "count": 4
+        },
+        {
+          "templateId": "wood",
+          "count": 2
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "ingot_copper",
+      "nameEs": "Receta de Lingote de cobre",
+      "output": {
+        "templateId": "ingot_copper",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 2
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": "This legacy recipe uses generic ore; preserve for old saves and introduce specific-ore P2 proposal separately"
+    },
+    {
+      "id": "ingot_iron",
+      "nameEs": "Receta de Lingote de hierro",
+      "output": {
+        "templateId": "ingot_iron",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 3
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": "This legacy recipe uses generic ore; preserve for old saves and introduce specific-ore P2 proposal separately"
+    },
+    {
+      "id": "ingot_silver",
+      "nameEs": "Receta de Lingote de plata",
+      "output": {
+        "templateId": "ingot_silver",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 5
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": "This legacy recipe uses generic ore; preserve for old saves and introduce specific-ore P2 proposal separately"
+    },
+    {
+      "id": "ingot_gold",
+      "nameEs": "Receta de Lingote de oro",
+      "output": {
+        "templateId": "ingot_gold",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 8
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": "This legacy recipe uses generic ore; preserve for old saves and introduce specific-ore P2 proposal separately"
+    },
+    {
+      "id": "upgrade_stone",
+      "nameEs": "Receta de Piedra de mejora",
+      "output": {
+        "templateId": "upgrade_stone",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 2
+        },
+        {
+          "templateId": "ingot",
+          "count": 1
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "ascension_core",
+      "nameEs": "Receta de Núcleo de Ascensión",
+      "output": {
+        "templateId": "ascension_core",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ore",
+          "count": 6
+        },
+        {
+          "templateId": "ingot",
+          "count": 3
+        }
+      ],
+      "status": "V36_EXISTING_DO_NOT_MUTATE",
+      "replacesLegacyRecipeId": null,
+      "station": null,
+      "requiresLevel": 0,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL_ADDED_BY_P2",
+      "source": "HIGHFLY_V36_APPROVED",
+      "notes": null
+    },
+    {
+      "id": "p2_smelt_copper",
+      "nameEs": "Fundir lingote de cobre",
+      "output": {
+        "templateId": "ingot_copper",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "hf_ore_copper",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": "ingot_copper",
+      "station": "horno_fundicion",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only activate after node yields, inventory migration and profession tests are implemented."
+    },
+    {
+      "id": "p2_smelt_iron",
+      "nameEs": "Fundir lingote de hierro",
+      "output": {
+        "templateId": "ingot_iron",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "hf_ore_iron",
+          "count": 3
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": "ingot_iron",
+      "station": "horno_fundicion",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only activate after node yields, inventory migration and profession tests are implemented."
+    },
+    {
+      "id": "p2_smelt_silver",
+      "nameEs": "Fundir lingote de plata",
+      "output": {
+        "templateId": "ingot_silver",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "hf_ore_silver",
+          "count": 5
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": "ingot_silver",
+      "station": "horno_fundicion",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only activate after node yields, inventory migration and profession tests are implemented."
+    },
+    {
+      "id": "p2_smelt_gold",
+      "nameEs": "Fundir lingote de oro",
+      "output": {
+        "templateId": "ingot_gold",
+        "count": 1
+      },
+      "professionId": "fundicion",
+      "ingredients": [
+        {
+          "templateId": "hf_ore_gold",
+          "count": 8
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": "ingot_gold",
+      "station": "horno_fundicion",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": false,
+      "definesRarity": false,
+      "randomRarityRule": "NO_RARITY_ROLL",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only activate after node yields, inventory migration and profession tests are implemented."
+    },
+    {
+      "id": "p2_forge_dagger",
+      "nameEs": "Forjar daga de aprendiz",
+      "output": {
+        "templateId": "hf_dagger_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_copper",
+          "count": 2
+        },
+        {
+          "templateId": "wood",
+          "count": 1
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    },
+    {
+      "id": "p2_forge_axe",
+      "nameEs": "Forjar hacha de aprendiz",
+      "output": {
+        "templateId": "hf_axe_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 2
+        },
+        {
+          "templateId": "wood",
+          "count": 2
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    },
+    {
+      "id": "p2_forge_spear",
+      "nameEs": "Forjar lanza de aprendiz",
+      "output": {
+        "templateId": "hf_spear_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 3
+        },
+        {
+          "templateId": "wood",
+          "count": 2
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Must not expose visually before spear rig+mesh verified."
+    },
+    {
+      "id": "p2_craft_bow",
+      "nameEs": "Fabricar arco de aprendiz",
+      "output": {
+        "templateId": "hf_bow_basic",
+        "count": 1
+      },
+      "professionId": "marroquineria",
+      "ingredients": [
+        {
+          "templateId": "wood",
+          "count": 3
+        },
+        {
+          "templateId": "hf_spool_of_thread",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "curtiduria",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Requires verified bow rig/mesh; do not use crossbow as fake bow."
+    },
+    {
+      "id": "p2_craft_staff",
+      "nameEs": "Fabricar bastón de aprendiz",
+      "output": {
+        "templateId": "hf_staff_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "wood",
+          "count": 3
+        },
+        {
+          "templateId": "herb",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    },
+    {
+      "id": "p2_craft_wand",
+      "nameEs": "Fabricar vara de aprendiz",
+      "output": {
+        "templateId": "hf_wand_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "wood",
+          "count": 2
+        },
+        {
+          "templateId": "ingot_silver",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    },
+    {
+      "id": "p2_forge_mace",
+      "nameEs": "Forjar maza de aprendiz",
+      "output": {
+        "templateId": "hf_mace_basic",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 3
+        },
+        {
+          "templateId": "wood",
+          "count": 1
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Weapon model not yet verified."
+    },
+    {
+      "id": "p2_craft_orb",
+      "nameEs": "Fabricar orbe de aprendiz",
+      "output": {
+        "templateId": "hf_orb_basic",
+        "count": 1
+      },
+      "professionId": "joyeria",
+      "ingredients": [
+        {
+          "templateId": "ingot_silver",
+          "count": 2
+        },
+        {
+          "templateId": "herb",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "mesa_joyeria",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Offhand system and model pending. Amulet slot not added."
+    },
+    {
+      "id": "p2_armor_iron_helmet",
+      "nameEs": "Forjar casco de hierro",
+      "output": {
+        "templateId": "hf_iron_helmet",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 2
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_armor_iron_chest",
+      "nameEs": "Forjar pechera de hierro",
+      "output": {
+        "templateId": "hf_iron_chest",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 6
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_armor_iron_gloves",
+      "nameEs": "Forjar guantes de hierro",
+      "output": {
+        "templateId": "hf_iron_gloves",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 2
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_armor_iron_shoulders",
+      "nameEs": "Forjar hombreras de hierro",
+      "output": {
+        "templateId": "hf_iron_shoulders",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 3
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_armor_iron_pants",
+      "nameEs": "Forjar pantalones de hierro",
+      "output": {
+        "templateId": "hf_iron_pants",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 4
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_armor_iron_boots",
+      "nameEs": "Forjar botas de hierro",
+      "output": {
+        "templateId": "hf_iron_boots",
+        "count": 1
+      },
+      "professionId": "forja",
+      "ingredients": [
+        {
+          "templateId": "ingot_iron",
+          "count": 3
+        },
+        {
+          "templateId": "hf_smithing_flux",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "yunque",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": "Only stat+icon equip, never swap character armor mesh"
+    },
+    {
+      "id": "p2_jewel_copper_ring",
+      "nameEs": "Crear anillo de cobre",
+      "output": {
+        "templateId": "hf_copper_ring",
+        "count": 1
+      },
+      "professionId": "joyeria",
+      "ingredients": [
+        {
+          "templateId": "ingot_copper",
+          "count": 2
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "mesa_joyeria",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    },
+    {
+      "id": "p2_jewel_silver_necklace",
+      "nameEs": "Crear collar de plata",
+      "output": {
+        "templateId": "hf_silver_necklace",
+        "count": 1
+      },
+      "professionId": "joyeria",
+      "ingredients": [
+        {
+          "templateId": "ingot_silver",
+          "count": 2
+        },
+        {
+          "templateId": "hf_spool_of_thread",
+          "count": 1
+        }
+      ],
+      "status": "P2_CANDIDATE_NOT_LIVE",
+      "replacesLegacyRecipeId": null,
+      "station": "mesa_joyeria",
+      "requiresLevel": 1,
+      "requiresProfessionSkill": null,
+      "producesGearAtPlus0": true,
+      "definesRarity": false,
+      "randomRarityRule": "RARITY_ROLL_SAME_FOR_EVERY_GEAR_ACQUISITION_WITH_PLUS_ZERO",
+      "source": "ORIGINAL_HIGHFLY_PROPOSED_RECIPE",
+      "notes": null
+    }
+  ]
+}
