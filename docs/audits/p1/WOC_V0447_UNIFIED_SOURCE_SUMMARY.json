@@ -1,0 +1,37 @@
+{
+  "schema": "HIGHFLY-P1-CANDIDATES",
+  "source": "levy-street/world-of-claudecraft",
+  "version": "v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "scope": "Source-only static + deterministic hoard; excludes dynamically derived heroic variants; not imported into HIGHFLY",
+  "counts": {
+    "totalRows": 1488,
+    "literalRows": 1392,
+    "ignivar": 201,
+    "hoard": 96,
+    "duplicateIds": 0,
+    "missingSourceNames": 98,
+    "byCategory": {
+      "armaduras": 668,
+      "materiales_y_botin_sin_clasificar": 147,
+      "armas": 146,
+      "misiones": 114,
+      "armaduras_y_accesorios": 96,
+      "herramientas": 81,
+      "consumibles": 72,
+      "accesorios": 67,
+      "patrones": 53,
+      "bolsas": 17,
+      "accesorios_mano_secundaria": 14,
+      "monturas": 11,
+      "otros": 2
+    }
+  },
+  "notes": [
+    "Metadata is a lightweight static audit of code, not a live runtime reconciliation.",
+    "Original source names are audit-only and must be translated/replaced with original HIGHFLY names before gameplay.",
+    "Any source art/audio/model requires independent file-specific license verification; all marked blocked by default.",
+    "No record implies the object is equipable, craftable, droppable or visually available in HIGHFLY.",
+    "Generated heroic item variants are not counted."
+  ]
+}
