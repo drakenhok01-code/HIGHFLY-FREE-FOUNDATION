@@ -1,0 +1,886 @@
+{
+  "schema": "HIGHFLY_P12_RESOLVED_SPREAD_LOOT",
+  "tag": "v0.44.7",
+  "count": 82,
+  "raidEntries": 58,
+  "cruciblePatternEntries": 24,
+  "sourceFiles": [
+    "src/sim/content/dungeons.ts",
+    "src/sim/content/nythraxis_loot.ts",
+    "src/sim/content/crucible_collections.ts"
+  ],
+  "priorUnresolvedExpressions": [
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...CRUCIBLE_PROFESSION_PATTERN_LOOT,"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...CRUCIBLE_PROFESSION_PATTERN_LOOT,"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...NYTHRAXIS_EQUIPMENT_LOOT,"
+    },
+    {
+      "mobId": "emberkin",
+      "source": "src/sim/content/warlock_pets.ts",
+      "expression": "scale: 0.55,"
+    },
+    {
+      "mobId": "emberkin",
+      "source": "src/sim/content/warlock_pets.ts",
+      "expression": "petScaleRanks: ["
+    }
+  ],
+  "disposition": [
+    {
+      "expression": "...NYTHRAXIS_EQUIPMENT_LOOT",
+      "status": "RESOLVED",
+      "rows": 58
+    },
+    {
+      "expression": "...CRUCIBLE_PROFESSION_PATTERN_LOOT",
+      "status": "RESOLVED",
+      "rows": 24
+    },
+    {
+      "expression": "emberkin petScaleRanks",
+      "status": "P1_PARSER_FALSE_POSITIVE_NOT_LOOT",
+      "rows": 0
+    }
+  ],
+  "remainingFromTheseParsedCases": [],
+  "notes": [
+    "Source group probabilities must be read by rollGroup and exclusive draw, not as independent loot events.",
+    "Crucible pattern source has 12 options each 0.025, sum 0.30 per raid boss.",
+    "Nythraxis first pool has 28 epic weights with 6% reserved legend chance; second pool is normal-only and replaced on heroic claim.",
+    "These are upstream mechanics only; HIGHFLY probabilities and economy not integrated.",
+    "All future generated HIGHFLY gear begins plus zero."
+  ],
+  "rows": [
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bonewrought_greatsword",
+      "chance": 0.021252173913043477,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "crownforged_dreadhelm",
+      "chance": 0.08827826086956521,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "nighttalon_crown",
+      "chance": 0.08827826086956521,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "soulflame_cowl",
+      "chance": 0.042504347826086954,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "stormcallers_crown",
+      "chance": 0.042504347826086954,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "nighttalon_shoulderguards",
+      "chance": 0.08827826086956521,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "soulflame_mantle",
+      "chance": 0.08827826086956521,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bonewrought_bulwark",
+      "chance": 0.021252173913043477,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "crownforged_warspaulders",
+      "chance": 0.04577391304347826,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "stormcallers_spaulders",
+      "chance": 0.04577391304347826,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "wraithfire_orb",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "direfang_quiver",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "direfang_greatblade",
+      "chance": 0.026156521739130432,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "maul_of_the_scourged_wilds",
+      "chance": 0.0408695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_crown",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_mantle",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_harness",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_cinch",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_legguards",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_grips",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "bramblehide_treads",
+      "chance": 0.013078260869565216,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "courtiers_bonefang",
+      "chance": 0.024521739130434782,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "thornpeak_wardblade",
+      "chance": 0.024521739130434782,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "gravecourt_hewer",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "votive_ward_of_the_deathless_court",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "thornpeak_moonhide_cowl",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "stormhymn_chain_grips",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_1",
+      "itemId": "stormhymn_chain_treads",
+      "chance": 0.02288695652173913,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bonewrought_greatsword",
+      "chance": 0.022608695652173914,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "crownforged_dreadhelm",
+      "chance": 0.09391304347826086,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "nighttalon_crown",
+      "chance": 0.09391304347826086,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "soulflame_cowl",
+      "chance": 0.04521739130434783,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "stormcallers_crown",
+      "chance": 0.04521739130434783,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "nighttalon_shoulderguards",
+      "chance": 0.09391304347826086,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "soulflame_mantle",
+      "chance": 0.09391304347826086,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bonewrought_bulwark",
+      "chance": 0.022608695652173914,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "crownforged_warspaulders",
+      "chance": 0.04869565217391304,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "stormcallers_spaulders",
+      "chance": 0.04869565217391304,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "wraithfire_orb",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "direfang_quiver",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "direfang_greatblade",
+      "chance": 0.02782608695652174,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "maul_of_the_scourged_wilds",
+      "chance": 0.043478260869565216,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_crown",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_mantle",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_harness",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_cinch",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_legguards",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_grips",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "bramblehide_treads",
+      "chance": 0.01391304347826087,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "courtiers_bonefang",
+      "chance": 0.02608695652173913,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "thornpeak_wardblade",
+      "chance": 0.02608695652173913,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "gravecourt_hewer",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "votive_ward_of_the_deathless_court",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "thornpeak_moonhide_cowl",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "stormhymn_chain_grips",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_weighted_nythraxis_drop_2",
+      "itemId": "stormhymn_chain_treads",
+      "chance": 0.02434782608695652,
+      "rollGroup": "nythraxis_drop_2",
+      "normalOnly": true,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_reserved_legendary",
+      "itemId": "deathless_heartwood",
+      "chance": 0.03,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/nythraxis_loot.ts",
+      "origin": "nythraxis_reserved_legendary",
+      "itemId": "kingsbane_last_oath",
+      "chance": 0.03,
+      "rollGroup": "nythraxis_drop_1",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_str_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_tank_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_agi_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_str_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_tank_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "formula_lastflame_zeal",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_str_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_tank_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_agi_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_str_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_tank_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_caster_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "pattern_crucible_healer_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    },
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/crucible_collections.ts",
+      "origin": "crucible_profession_pattern_spread",
+      "itemId": "formula_lastflame_zeal",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "normalOnly": false,
+      "sourceGroupRule": "EXCLUSIVE_ONE_DRAW"
+    }
+  ]
+}
