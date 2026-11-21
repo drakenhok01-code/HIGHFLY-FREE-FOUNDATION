@@ -106,7 +106,7 @@ try{
 
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),0,'Attributes must NOT appear inside Character');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-hero-canvas').count(),1,'Real 3D portrait canvas must exist');
- assert.equal(await page.locator('#hf-rpg .hf-rpg-weapon-tag').first().evaluate(el=>el.textContent.includes('Espada')),false,'Redundant weapon caption remains in 3D stage');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-weapon-tag').count(),0,'P4.4 removes the redundant weapon caption entirely');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-turn-buttons button').count(),0,'Remove character rotation arrows; touch-drag only');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano derecha'}).count()>0);
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano izquierda'}).count()>0);
