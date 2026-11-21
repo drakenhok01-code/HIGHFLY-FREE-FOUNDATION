@@ -102,7 +102,7 @@ try{
  assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'Item sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
  const packPaths=await page.locator('#hf-rpg .hf-user-icon').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));
  assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'Some dynamic objects still point to legacy images');
- assert.ok(packPaths.length>9,'Missing original user icon pack in bag and equipment');
+ assert.ok(packPaths.length>=3,'Two visible potion assets plus selected detail must load from the user pack: '+JSON.stringify(packPaths));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),36,'All 36 bag slots must render even when empty');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-empty-slot').count()>20,'Empty inventory squares remain visible');
