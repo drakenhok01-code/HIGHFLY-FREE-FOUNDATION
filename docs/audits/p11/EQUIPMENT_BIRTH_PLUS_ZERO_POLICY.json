@@ -1,0 +1,108 @@
+{
+  "schema": "highfly-p11-equipment-policy-v1",
+  "status": "DESIGN_APPROVED_NOT_YET_GAMEPLAY",
+  "date": "2026-11-21",
+  "identity": {
+    "characterCount": 1,
+    "characterMode": "UNIVERSAL_HUNTER",
+    "classRestriction": "NONE",
+    "partyCharacterSwitching": false,
+    "magicalResource": "Maná",
+    "physicalResource": "Energía"
+  },
+  "rarity": {
+    "allowed": [
+      "Común",
+      "Poco común",
+      "Raro",
+      "Épico",
+      "Legendario",
+      "Mítico"
+    ],
+    "randomOnDrop": true,
+    "independentOfEnhancement": true,
+    "sourceQualityNotAutomaticallyEquivalent": true
+  },
+  "enhancement": {
+    "min": 0,
+    "max": 9,
+    "birthValue": 0,
+    "appliesTo": [
+      "weapon",
+      "armor",
+      "shield",
+      "accessory"
+    ],
+    "rule": "ALL_NEW_INSTANCES_START_AT_PLUS_0",
+    "acquisitionMethods": [
+      "monster_drop",
+      "boss_drop",
+      "craft",
+      "quest_reward",
+      "event_reward",
+      "npc_shop",
+      "starter"
+    ],
+    "noPreEnhancedLoot": true,
+    "noPreEnhancedCrafting": true,
+    "noPreEnhancedMerchantStock": true,
+    "noPreEnhancedQuestReward": true,
+    "onlyMutationAction": "EXPLICIT_PLAYER_UPGRADE",
+    "upgradeCostTable": "NOT_FINALIZED",
+    "enhancementResultBoundToInstanceId": true
+  },
+  "creation": {
+    "requiredFields": [
+      "instanceId",
+      "templateId",
+      "rarity",
+      "plus",
+      "source"
+    ],
+    "uniqueInstanceId": true,
+    "newItemPlusAlways": 0,
+    "plusNotFromDropTable": true,
+    "rarityCanBeAnyAllowed": true,
+    "generatedStatsFrom": "baseTemplate + rarity + explicitPlayerEnhancement",
+    "serverSeedPolicy": "PENDING",
+    "persistenceRequired": true
+  },
+  "transfer": {
+    "tradeDoesNotMintNewItem": true,
+    "preserveFields": [
+      "instanceId",
+      "templateId",
+      "rarity",
+      "plus",
+      "statRoll",
+      "craftedBy"
+    ],
+    "sellerRemovesOnce": true,
+    "buyerReceivesOnce": true,
+    "playerToPlayerTrading": "FUTURE_FEATURE_NOT_PRESENT",
+    "merchantBuybackOfExactInstance": "PENDING",
+    "tradeableByDefault": "TO_BE_DESIGNED_PER_ITEM",
+    "userCanSellEnhancedItems": true
+  },
+  "visuals": {
+    "heroCount": 1,
+    "weaponMeshChangeOnlyWhenVerified": true,
+    "armorMeshChange": false,
+    "jewelryMeshChange": false,
+    "armorStatOnly": true,
+    "equipmentIconStatus": "REUSE_APPROVED_PREMIUM_ART_FIRST"
+  },
+  "runtime": {
+    "gearBonusesAppliedToCombat": true,
+    "gearBonusesShownInAttributeScreen": true,
+    "unequipRevertsBonus": true,
+    "abilityUnlockIndependentOfClass": true,
+    "saveMigrationFromV36Required": true
+  },
+  "boundaries": {
+    "currentApp": "19 item templates / 12 recipes / 3 equip definitions",
+    "scope": "P1.1 AUDIT + DESIGN; no newly spawned gear or trade implementation",
+    "ancient": "OUT_OF_SCOPE_P6",
+    "kaykitSource": "PRIVATE_ONLY"
+  }
+}
