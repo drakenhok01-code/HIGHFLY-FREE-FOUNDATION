@@ -46,3 +46,22 @@
 6. Después P3: 12 correcciones de menús/HUD, con pruebas aisladas. Después P4 objetos jugables. Después P5 loot/oficios/economía. **Ancient P6, no antes.**
 
 **No cambiar la v3.6 aprobada, la F0.14.8 estable ni el backup.**
+
+## Ampliación de P1: loot y contrato de personaje universal
+
+**Decisión de implementación aprobada:** [un personaje universal, armas visibles y armaduras exclusivamente como equipamiento de atributos](UNIVERSAL_CHARACTER_STAT_ONLY_ARMOR_CONTRACT.md). No colocar mallas de casco/pechera/guantes sobre el avatar hasta una expansión futura voluntaria. El único mesh que cambia por equipo es el de armas con adaptadores verificados. El aumento de stats debe persistir y reflejarse en personaje, atributos y combate.
+
+**Botín de ClaudeCraft v0.44.7:**
+- [Tabla maestra preliminar: 587 filas con ID de monstruo/objeto y probabilidades por fuente](CLAUDECRAFT_V0447_LOOT_EVIDENCE_MASTER.csv)
+- [Resumen de cobertura, referencias de ítems y limitaciones](CLAUDECRAFT_V0447_LOOT_EVIDENCE_MASTER_SUMMARY.json)
+- [Detalle directo de 501 drops literales](CLAUDECRAFT_V0447_LOOT_LITERAL_ROWS.csv) y [recuento parcial de definiciones de monstruos](CLAUDECRAFT_V0447_LOOT_SCOPE_SUMMARY.json)
+- [86 drops derivados por funciones de rift](CLAUDECRAFT_V0447_RIFT_LOOT_EXPANDED.json)
+- [Fuentes de monstruos: parte 1](CLAUDECRAFT_V0447_MOB_LOOT_PART_1.json), [2](CLAUDECRAFT_V0447_MOB_LOOT_PART_2.json), [3](CLAUDECRAFT_V0447_MOB_LOOT_PART_3.json), [4](CLAUDECRAFT_V0447_MOB_LOOT_PART_4.json), [5](CLAUDECRAFT_V0447_MOB_LOOT_PART_5.json)
+
+**Botín de Emberfall:** [verificación de drops de XP, oro, pociones y armas élite, y de su recogida](EMBERFALL_LOOT_REVIEW.json). Las armaduras/reliquias de Emberfall son equipos de configuración comprables, no evidencia de monstruos que las dropeen.
+
+**Datos importantes:** el resumen parcial de mobs incluye una entrada `DELVE_MOBS` marcada como FETCH_ERROR en parte 1; quedó resuelta al inspeccionar `src/sim/content/delves/mobs.ts` en **parte 5**. `RIFT_MOBS` es un spread de `ADDS`, `TRASH`, `BOSSES`; también están desglosados en parte 5. Las filas 587 son las EXTRAÍDAS, no un censo completo de loot dinámico; todavía hay tablas heroicas y casos inline por reconciliar.
+
+**Control legal:** P1 no importa medios de ClaudeCraft ni SOURCE privado. Los modelos y los iconos premium sólo se utilizan tras verificaciones específicas. Las probabilidades de fuentes ajenas no son balance definitivo HIGHFLY.
+
+**Orden conservado:** completar P1 (dinámicos/heroico + duplicados semánticos) → P2 catálogo traducido y clasificado → P3 12 mejoras de UI/HUD → P4 armaduras *stat-only*, armas y materiales jugables → P5 economía, loot y oficios → P6 Ancient.
