@@ -1,0 +1,801 @@
+{
+  "scope": "ClaudeCraft v0.44.7 Rift TRASH/BOSSES helper expansion only; not HIGHFLY drops",
+  "source_sha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "source_files": [
+    "src/sim/content/rift/mobs.ts",
+    "src/sim/content/rift/items.ts"
+  ],
+  "notes": [
+    "Derived by applying trashLoot / bossLoot helper exact source probabilities, not Monte Carlo runtime",
+    "Rift Essence ID resolved from RIFT_ESSENCE_ITEM_ID = 'rift_essence'",
+    "The helper's two boss essence entries are two independent rolls, not one combined 1.5 probability"
+  ],
+  "rows": [
+    {
+      "mob": "rift_frost_revenant",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 120,
+      "chance": 1
+    },
+    {
+      "mob": "rift_frost_revenant",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "hoarfrost_edge",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_frost_revenant",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_rime_elemental",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_rime_elemental",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "hoarfrost_edge",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_rime_elemental",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_ember_fiend",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_ember_fiend",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "emberforge_gauntlets",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_ember_fiend",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_magma_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 150,
+      "chance": 1
+    },
+    {
+      "mob": "rift_magma_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "emberforge_gauntlets",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_magma_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_venom_weaver",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 120,
+      "chance": 1
+    },
+    {
+      "mob": "rift_venom_weaver",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "broodmother_carapace",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_venom_weaver",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_thornback",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_thornback",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "broodmother_carapace",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_thornback",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_boneclad",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 140,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boneclad",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "bonelord_mantle",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_boneclad",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_marrow_troll",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 160,
+      "chance": 1
+    },
+    {
+      "mob": "rift_marrow_troll",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "bonelord_mantle",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_marrow_troll",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_marrow_golem",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 160,
+      "chance": 1
+    },
+    {
+      "mob": "rift_marrow_golem",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "bonelord_mantle",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_marrow_golem",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_void_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_void_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "voidscar_handwraps",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_void_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_dread_stalker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 140,
+      "chance": 1
+    },
+    {
+      "mob": "rift_dread_stalker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "voidscar_handwraps",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_dread_stalker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_storm_caller",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 140,
+      "chance": 1
+    },
+    {
+      "mob": "rift_storm_caller",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "stormscale_treads",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_storm_caller",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_stormscale",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 160,
+      "chance": 1
+    },
+    {
+      "mob": "rift_stormscale",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "stormscale_treads",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_stormscale",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_tide_thrall",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_tide_thrall",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "abyssal_loop",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_tide_thrall",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_deep_lurker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 130,
+      "chance": 1
+    },
+    {
+      "mob": "rift_deep_lurker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "abyssal_loop",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_deep_lurker",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_stone_ogre",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 170,
+      "chance": 1
+    },
+    {
+      "mob": "rift_stone_ogre",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "graskbreaker_girdle",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_stone_ogre",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_hellguard",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 160,
+      "chance": 1
+    },
+    {
+      "mob": "rift_hellguard",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "pactbound_vestments",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_hellguard",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_pact_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 140,
+      "chance": 1
+    },
+    {
+      "mob": "rift_pact_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "pactbound_vestments",
+      "copper": 0,
+      "chance": 0.02
+    },
+    {
+      "mob": "rift_pact_acolyte",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "trash",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.05
+    },
+    {
+      "mob": "rift_boss_frost",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_frost",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "hoarfrost_edge",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_frost",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_frost",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_ember",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_ember",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "emberforge_gauntlets",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_ember",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_ember",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_venom",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_venom",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "broodmother_carapace",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_venom",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_venom",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_necro",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_necro",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "bonelord_mantle",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_necro",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_necro",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "graskbreaker_girdle",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_brute",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_arcane",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_arcane",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "voidscar_handwraps",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_arcane",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_arcane",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_storm",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_storm",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "stormscale_treads",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_storm",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_storm",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    },
+    {
+      "mob": "rift_boss_tide",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "copper",
+      "itemId": "",
+      "copper": 5000,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_tide",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "abyssal_loop",
+      "copper": 0,
+      "chance": 0.35
+    },
+    {
+      "mob": "rift_boss_tide",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 1
+    },
+    {
+      "mob": "rift_boss_tide",
+      "source": "src/sim/content/rift/mobs.ts",
+      "type": "boss",
+      "kind": "item",
+      "itemId": "rift_essence",
+      "copper": 0,
+      "chance": 0.5
+    }
+  ],
+  "unexpanded": [
+    {
+      "id": "rift_boss_ritualist",
+      "expr": "",
+      "hasLiterals": 4
+    },
+    {
+      "id": "rift_boss_pitlord",
+      "expr": "",
+      "hasLiterals": 5
+    }
+  ]
+}
