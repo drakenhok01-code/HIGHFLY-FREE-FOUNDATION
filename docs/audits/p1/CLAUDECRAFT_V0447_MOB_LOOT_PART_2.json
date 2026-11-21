@@ -1,0 +1,662 @@
+{
+  "sourceRef": "v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "dataType": "STATIC SOURCE DROP EVIDENCE NOT HIGHFLY IMPLEMENTATION",
+  "registries": [
+    {
+      "symbol": "PRACTICE_DUMMY_MOBS",
+      "path": "src/sim/content/practice_dummies.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "[FRIENDLY_PLAYER_DUMMY_ID]",
+          "sourceName": "'Friendly Player Dummy'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[NORMAL_BOSS_DUMMY_ID]",
+          "sourceName": "'Normal Boss Dummy'",
+          "minimumLevel": "NYTHRAXIS.minLevel",
+          "maximumLevel": "NYTHRAXIS.maxLevel",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HEROIC_BOSS_DUMMY_ID]",
+          "sourceName": "'Heroic Boss Dummy'",
+          "minimumLevel": "NYTHRAXIS_HEROIC.level",
+          "maximumLevel": "NYTHRAXIS_HEROIC.level",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HUB_HEALING_DUMMY_ID]",
+          "sourceName": "'Healing Dummy'",
+          "minimumLevel": "5",
+          "maximumLevel": "5",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HUB_TRAINING_DUMMY_ID]",
+          "sourceName": "'Training Dummy'",
+          "minimumLevel": "5",
+          "maximumLevel": "5",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "HEALING_TRAINING_MOBS",
+      "path": "src/sim/content/healing_training.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "[HEALING_DUMMY_TANK_ID]",
+          "sourceName": "'Injured Vanguard Dummy'",
+          "minimumLevel": null,
+          "maximumLevel": null,
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HEALING_DUMMY_SOLDIER_ID]",
+          "sourceName": "'Injured Soldier Dummy'",
+          "minimumLevel": null,
+          "maximumLevel": null,
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HEALING_DUMMY_SCOUT_ID]",
+          "sourceName": "'Critical Scout Dummy'",
+          "minimumLevel": null,
+          "maximumLevel": null,
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HEALING_DUMMY_CASTER_ID]",
+          "sourceName": "'Wounded Spellcaster Dummy'",
+          "minimumLevel": null,
+          "maximumLevel": null,
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[HEALING_DUMMY_RANGER_ID]",
+          "sourceName": "'Battered Ranger Dummy'",
+          "minimumLevel": null,
+          "maximumLevel": null,
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "not-defined",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "WARLOCK_PET_MOBS",
+      "path": "src/sim/content/warlock_pets.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "emberkin",
+          "sourceName": "'Emberkin'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": null,
+              "chance": null,
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "rank: 2, level: 8, scale: 0.65"
+            },
+            {
+              "itemId": null,
+              "copper": null,
+              "chance": null,
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "rank: 3, level: 14, scale: 0.75"
+            },
+            {
+              "itemId": null,
+              "copper": null,
+              "chance": null,
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "rank: 4, level: 20, scale: 0.85"
+            }
+          ],
+          "leftoverExpressions": [
+            "scale: 0.55,",
+            "petScaleRanks: ["
+          ]
+        },
+        {
+          "id": "gloomshade",
+          "sourceName": "'Duskmurk'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "pyre_colossus",
+          "sourceName": "'Pyre Colossus'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "NECROMANCY_MOBS",
+      "path": "src/sim/content/necromancy.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "graveguard",
+          "sourceName": "'Graveguard'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "necromancy_skeletal_warrior",
+          "sourceName": "'Skeletal Warrior'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "necromancy_bone_mage",
+          "sourceName": "'Bone Mage'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "necromancy_gravewing",
+          "sourceName": "'Gravewing'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "MAGE_PET_MOBS",
+      "path": "src/sim/content/mage_pets.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "water_elemental",
+          "sourceName": "'Water Elemental'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "RIFT_MOBS",
+      "path": "src/sim/content/rift/mobs.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": []
+    },
+    {
+      "symbol": "HOARD_MOBS",
+      "path": "src/sim/content/rift/mobs.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "hoard_brood_egg",
+          "sourceName": "'Brood Clutch'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_brood_hatchling",
+          "sourceName": "\"Vysska's Hatchling\"",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_healing_tide_totem",
+          "sourceName": "'Healing Tide Totem'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_bound_pulsar",
+          "sourceName": "'Bound Pulsar'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_abyssal_tentacle",
+          "sourceName": "'Tentacle of the Maw'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_silk_cocoon",
+          "sourceName": "'Silk Cocoon'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_brood_cocoon",
+          "sourceName": "'Brood Cocoon'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_coinsack_scurrier",
+          "sourceName": "'Coinsack Scurrier'",
+          "minimumLevel": "16",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_boss_mushroom",
+          "sourceName": "'Mother of Mushrooms'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "5000",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 5000, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_sporeling",
+          "sourceName": "'Sporeling'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_bloat_cap",
+          "sourceName": "'Bloated Cap'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_boss_mole",
+          "sourceName": "'Deeprake'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "5000",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 5000, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_boss_bat",
+          "sourceName": "'Colossal Bat'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "5000",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 5000, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_boss_mimic",
+          "sourceName": "'Voracious Chest'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": "true",
+          "boss": "true",
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "5000",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 5000, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 1"
+            },
+            {
+              "itemId": "RIFT_ESSENCE_ITEM_ID",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: RIFT_ESSENCE_ITEM_ID, chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hoard_bat_swarmling",
+          "sourceName": "'Cave Swarmer'",
+          "minimumLevel": "18",
+          "maximumLevel": "23",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "YUMI_MOBS",
+      "path": "src/sim/content/yumi.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "[YUMI_TEMPLATE_ID]",
+          "sourceName": "'Yumi'",
+          "minimumLevel": "1",
+          "maximumLevel": "60",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    }
+  ]
+}
