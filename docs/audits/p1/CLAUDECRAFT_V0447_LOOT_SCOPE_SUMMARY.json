@@ -1,0 +1,119 @@
+{
+  "source": "ClaudeCraft v0.44.7 source",
+  "version": "0.44.7",
+  "scope": "Partial literal-only drop extraction from 29 MOBS spread source tables + generated sub-tables; no HIGHFLY loot integration and no runtime truth claim",
+  "registries": 33,
+  "totalMobDefinitionRows": 269,
+  "extractedLiteralDropRows": 501,
+  "uniqueDirectDropItems": 249,
+  "uniqueRollGroups": 28,
+  "questGatedDropEntries": 56,
+  "computedOrComplexMobLootTables": 67,
+  "literalArraysWithUnparsedExpressions": 12,
+  "emptyOrNoLoot": 10,
+  "examples": [
+    {
+      "mobId": "gorrak",
+      "itemId": "bandit_bandana",
+      "chance": "1",
+      "rollGroup": null
+    },
+    {
+      "mobId": "gorrak",
+      "itemId": "oiled_boots",
+      "chance": "0.5",
+      "rollGroup": null
+    },
+    {
+      "mobId": "gorrak",
+      "itemId": "quilted_trousers",
+      "chance": "0.5",
+      "rollGroup": null
+    },
+    {
+      "mobId": "gorrak",
+      "itemId": "gorraks_cruel_chopper",
+      "chance": "0.25",
+      "rollGroup": null
+    },
+    {
+      "mobId": "gorrak",
+      "itemId": "gorraks_cleaver",
+      "chance": "0.3",
+      "rollGroup": null
+    },
+    {
+      "mobId": "gorrak",
+      "itemId": "votive_chain_belt",
+      "chance": "0.3",
+      "rollGroup": null
+    },
+    {
+      "mobId": "mirefen_broodmother",
+      "itemId": "marshstrider_boots",
+      "chance": "0.4",
+      "rollGroup": null
+    },
+    {
+      "mobId": "mirefen_broodmother",
+      "itemId": "broodmother_silk_robe",
+      "chance": "0.25",
+      "rollGroup": null
+    },
+    {
+      "mobId": "mirefen_broodmother",
+      "itemId": "spider_leg",
+      "chance": "1",
+      "rollGroup": null
+    },
+    {
+      "mobId": "mirefen_broodmother",
+      "itemId": "fenwarden_sabatons",
+      "chance": "0.3",
+      "rollGroup": null
+    },
+    {
+      "mobId": "deacon_voss",
+      "itemId": "tallow_candle",
+      "chance": "1",
+      "rollGroup": null
+    },
+    {
+      "mobId": "deacon_voss",
+      "itemId": "voss_sanctified_mace",
+      "chance": "0.25",
+      "rollGroup": null
+    },
+    {
+      "mobId": "deacon_voss",
+      "itemId": "fenshadow_maul",
+      "chance": "0.25",
+      "rollGroup": null
+    },
+    {
+      "mobId": "warlord_drogmar",
+      "itemId": "drogmar_warboots",
+      "chance": "0.3",
+      "rollGroup": null
+    },
+    {
+      "mobId": "warlord_drogmar",
+      "itemId": "drogmars_skullcleaver",
+      "chance": "0.25",
+      "rollGroup": null
+    }
+  ],
+  "unresolvedRegistries": [
+    {
+      "symbol": "DELVE_MOBS",
+      "status": "FETCH_ERROR"
+    }
+  ],
+  "notes": [
+    "Some loot: [] inline expressions are grouped as empty and require exact array parsing.",
+    "Rift and Delve loot often reference functions or same-line arrays, requiring runtime/parser reconciliation.",
+    "LootEntry.chance has different semantics inside rollGroup (exclusive) versus separate independent entries. Quest drops need matching active quest.",
+    "Heroic bosses append separate difficulty tables; those are not included in this literal extraction.",
+    "Counts are raw evidence, do not map 1:1 to named enemies or HIGHFLY monster catalogue."
+  ]
+}
