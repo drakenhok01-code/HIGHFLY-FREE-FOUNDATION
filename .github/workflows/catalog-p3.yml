@@ -1,0 +1,17 @@
+name: HIGHFLY P3.0 - rarity and inventory presentation contract (no deployment)
+on:
+  push:
+    branches: [p3-highfly-rarity-equipment-ui-lab-20261121]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  p3-domain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate P2, P2.1, P2.2 and P3.0
+        run: node --test tests/catalog-p2.test.mjs tests/catalog-p21.test.mjs tests/catalog-p22-contract.test.mjs tests/catalog-p3.test.mjs

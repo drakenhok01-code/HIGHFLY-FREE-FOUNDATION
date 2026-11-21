@@ -1,0 +1,27 @@
+/* P3.0: an OUTER CSS ring, never a recolor of the original WebP. */
+.hf-p3-icon {
+ --hf-p3-size:clamp(48px,6vw,76px);
+ --hf-p3-rarity:#A9B2C2;
+ width:var(--hf-p3-size);height:var(--hf-p3-size);aspect-ratio:1;position:relative;
+ border:2px solid var(--hf-p3-rarity);border-radius:12px;
+ box-shadow:0 0 8px color-mix(in srgb,var(--hf-p3-rarity),transparent 48%);
+ isolation:isolate;display:inline-flex;align-items:center;justify-content:center;
+ background:#171123;
+}
+.hf-p3-icon img {display:block;width:100%;height:100%;object-fit:contain;border-radius:10px;filter:none}
+.hf-p3-icon::after {content:'';position:absolute;inset:-4px;border-radius:15px;pointer-events:none;
+ border:1px solid var(--hf-p3-rarity);opacity:.45}
+.hf-p3-icon--large{--hf-p3-size:112px}
+.hf-p3-icon--small{--hf-p3-size:52px}
+.hf-p3-rarity-comun{--hf-p3-rarity:#A9B2C2}
+.hf-p3-rarity-poco-comun{--hf-p3-rarity:#56D99B}
+.hf-p3-rarity-raro{--hf-p3-rarity:#55B0FF}
+.hf-p3-rarity-epico{--hf-p3-rarity:#BD7DFF}
+.hf-p3-rarity-legendario{--hf-p3-rarity:#F6C75B}
+.hf-p3-rarity-mitico{--hf-p3-rarity:#FF658A}
+.hf-p3-icon__plus{position:absolute;bottom:2px;right:2px;background:#160e20de;
+ color:#fff1bd;border:1px solid #ae925f;border-radius:5px;padding:1px 4px;
+ font-size:11px;font-weight:700;pointer-events:none}
+.hf-p3-icon__label{color:var(--hf-p3-rarity);font-weight:700}
+@media(max-width:800px) and (orientation:landscape){.hf-p3-icon{--hf-p3-size:clamp(42px,7vh,62px)}}
+@media(prefers-reduced-motion:reduce){.hf-p3-icon{animation:none!important;transition:none!important}}
