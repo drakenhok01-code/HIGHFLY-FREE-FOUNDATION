@@ -1,0 +1,824 @@
+{
+  "schema": "woc-v0447-audit-part3",
+  "ref": "v0.44.7",
+  "sha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "status": "STATIC_EXTRACTION_NOT_RUNTIME_REGISTRY",
+  "registries": [
+    {
+      "symbol": "RIFT_ITEMS",
+      "path": "src/sim/content/rift/items.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "rimefang",
+          "name": "'Rimefang',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "rift_essence",
+          "name": "'Rift Essence',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "rift_gem_crimson",
+          "name": "'Crimson Rift Gem',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "rift_gem_azure",
+          "name": "'Azure Rift Gem',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "rift_gem_verdant",
+          "name": "'Verdant Rift Gem',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "riftbound_band_of_might",
+          "name": "'Riftbound Band of Might',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "riftbound_band_of_insight",
+          "name": "'Riftbound Band of Insight',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "riftbound_band_of_guile",
+          "name": "'Riftbound Band of Guile',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "hoarfrost_edge",
+          "name": "'Hoarfrost Edge',",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "emberforge_gauntlets",
+          "name": "'Emberforge Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "broodmother_carapace",
+          "name": "'Broodmother Carapace',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "bonelord_mantle",
+          "name": "'Bonelord Mantle',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "graskbreaker_girdle",
+          "name": "'Graskbreaker Girdle',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "voidscar_handwraps",
+          "name": "'Voidscar Handwraps',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "stormscale_treads",
+          "name": "'Stormscale Treads',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "abyssal_loop",
+          "name": "'Abyssal Loop',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "pactbound_vestments",
+          "name": "'Pactbound Vestments',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "pitlords_cleaver",
+          "name": "\"Pit Lord's Cleaver\",",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "emberforged_bulwark",
+          "name": "'Emberforged Bulwark',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "stormsunder_hood",
+          "name": "'Stormsunder Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "voidweave_mantle",
+          "name": "'Voidweave Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "abysswrought_band",
+          "name": "'Abysswrought Band',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "heart_of_the_rift",
+          "name": "'Heart of the Rift',",
+          "kind": "'armor',",
+          "quality": "'legendary',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        },
+        {
+          "id": "voidsong_dirk",
+          "name": "'Voidsong, Dirk of the Sundered Veil',",
+          "kind": "'weapon',",
+          "quality": "'legendary',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "RIFT_ITEMS",
+          "sourcePath": "src/sim/content/rift/items.ts"
+        }
+      ],
+      "declaredEntries": 24
+    },
+    {
+      "symbol": "REALM_ITEMS",
+      "path": "src/sim/content/realm.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "duskwisp_essence",
+          "name": "'Duskwisp Essence',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "spore_heart",
+          "name": "'Spore Heart',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "gleaming_antler",
+          "name": "'Gleaming Antler',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "wisp_mote",
+          "name": "'Wisp Mote',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "starfall_shard",
+          "name": "'Starfall Shard',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "elder_bark",
+          "name": "'Elder Bark',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "hollow_sealstone",
+          "name": "'The Hollow Sealstone',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "monument_overlook",
+          "name": "'Weathered Monument',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "monument_court",
+          "name": "'Sunken Monument',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "monument_north",
+          "name": "'Forgotten Monument',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "guardian_core",
+          "name": "'Guardian Core',",
+          "kind": "'junk',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "wardens_seal",
+          "name": "\"The Warden's Seal\",",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "gleamstag_charm",
+          "name": "'Gleamstag Charm',",
+          "kind": "'junk',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "veilsteel_blade",
+          "name": "'Veilsteel Blade',",
+          "kind": "'weapon',",
+          "quality": "'uncommon',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "duskfang_dirk",
+          "name": "'Duskfang Dirk',",
+          "kind": "'weapon',",
+          "quality": "'uncommon',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "gleamwood_stave",
+          "name": "'Gleamwood Stave',",
+          "kind": "'weapon',",
+          "quality": "'uncommon',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "wardens_oathband",
+          "name": "\"Warden's Oathband\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "wardplate_cuirass",
+          "name": "'Wardplate Cuirass',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "nightweave_tunic",
+          "name": "'Nightweave Tunic',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        },
+        {
+          "id": "veilcloth_robe",
+          "name": "'Veilcloth Robe',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "REALM_ITEMS",
+          "sourcePath": "src/sim/content/realm.ts"
+        }
+      ],
+      "declaredEntries": 20
+    },
+    {
+      "symbol": "DRAKELANDS_ITEMS",
+      "path": "src/sim/content/drakelands.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "marrowpoint",
+          "name": "'Marrowpoint',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "last_keep_signet",
+          "name": "'Signet of the Last Keep',",
+          "kind": "'junk',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "ashbone_war_brand",
+          "name": "'Ashbone War-Brand',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "emberwing_scale",
+          "name": "'Emberwing Scale',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "scorched_supply_crate",
+          "name": "'Scorched Supply Crate',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "wyrmwatch_warning_banner",
+          "name": "'Wyrmwatch Warning Banner',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "cinderwalk_treads",
+          "name": "'Cinderwalk Treads',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "mawscale_pauldrons",
+          "name": "'Mawscale Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        },
+        {
+          "id": "reins_drakemaw_raptor",
+          "name": "'Reins of the Drakemaw Raptor',",
+          "kind": "'mount',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DRAKELANDS_ITEMS",
+          "sourcePath": "src/sim/content/drakelands.ts"
+        }
+      ],
+      "declaredEntries": 9
+    },
+    {
+      "symbol": "FROSTVEIL_ITEMS",
+      "path": "src/sim/content/frostveil.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "thick_winter_pelt",
+          "name": "'Thick Winter Pelt',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        },
+        {
+          "id": "aurora_mote",
+          "name": "'Aurora Mote',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        },
+        {
+          "id": "hearth_ember_cache",
+          "name": "'Ember Cache',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        },
+        {
+          "id": "sprung_trap",
+          "name": "'Sprung Fen Trap',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        },
+        {
+          "id": "hearthlined_treads",
+          "name": "'Hearth-Lined Treads',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        },
+        {
+          "id": "frostmane_mantle",
+          "name": "'Mantle of the Rimemane',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "FROSTVEIL_ITEMS",
+          "sourcePath": "src/sim/content/frostveil.ts"
+        }
+      ],
+      "declaredEntries": 6
+    },
+    {
+      "symbol": "AMBERFALL_ITEMS",
+      "path": "src/sim/content/amberfall.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "gilded_sap_clot",
+          "name": "'Gilded Sap Clot',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "AMBERFALL_ITEMS",
+          "sourcePath": "src/sim/content/amberfall.ts"
+        },
+        {
+          "id": "amberfall_sap_bucket",
+          "name": "'Sap-Tap Bucket',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "AMBERFALL_ITEMS",
+          "sourcePath": "src/sim/content/amberfall.ts"
+        },
+        {
+          "id": "mere_ferry_lantern",
+          "name": "'Ferry Lantern',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "AMBERFALL_ITEMS",
+          "sourcePath": "src/sim/content/amberfall.ts"
+        },
+        {
+          "id": "orchard_sapbinder_grips",
+          "name": "'Sapbinder Grips',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "AMBERFALL_ITEMS",
+          "sourcePath": "src/sim/content/amberfall.ts"
+        },
+        {
+          "id": "mantle_of_the_meredark",
+          "name": "'Mantle of the Meredark',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "AMBERFALL_ITEMS",
+          "sourcePath": "src/sim/content/amberfall.ts"
+        }
+      ],
+      "declaredEntries": 5
+    },
+    {
+      "symbol": "WILLOWFEN_ITEMS",
+      "path": "src/sim/content/willowfen.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "plump_fen_eel",
+          "name": "'Plump Fen Eel',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        },
+        {
+          "id": "wisplight_globe",
+          "name": "'Wisplight Globe',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        },
+        {
+          "id": "fenway_mooring_line",
+          "name": "'Cut Mooring Line',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        },
+        {
+          "id": "bridgemere_toll_chest",
+          "name": "'Sunken Toll-Chest',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        },
+        {
+          "id": "eelskin_mudwaders",
+          "name": "'Eelskin Mudwaders',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        },
+        {
+          "id": "lilybed_mantle",
+          "name": "'Mantle of the Lily-Bed',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WILLOWFEN_ITEMS",
+          "sourcePath": "src/sim/content/willowfen.ts"
+        }
+      ],
+      "declaredEntries": 6
+    },
+    {
+      "symbol": "NIGHTBLOOM_ITEMS",
+      "path": "src/sim/content/nightbloom.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "moonfleece_tuft",
+          "name": "'Moonfleece Tuft',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        },
+        {
+          "id": "gloamfield_nightbloom",
+          "name": "'Nightbloom Blossom',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        },
+        {
+          "id": "vigil_star_chart",
+          "name": "'Vigil Star Chart',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        },
+        {
+          "id": "barrow_grave_offering",
+          "name": "'Scattered Grave Offering',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        },
+        {
+          "id": "moonfleece_mitts",
+          "name": "'Moonfleece Mitts',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        },
+        {
+          "id": "barrowshade_mantle",
+          "name": "'Barrowshade Mantle',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "NIGHTBLOOM_ITEMS",
+          "sourcePath": "src/sim/content/nightbloom.ts"
+        }
+      ],
+      "declaredEntries": 6
+    }
+  ]
+}
