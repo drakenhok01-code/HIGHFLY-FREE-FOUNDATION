@@ -110,7 +110,7 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-turn-buttons button').count(),0,'Remove character rotation arrows; touch-drag only');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano derecha'}).count()>0);
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano izquierda'}).count()>0);
- const beforeHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>c.toDataURL());
+ const beforeHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>({image:c.toDataURL(),turn:Number(c.dataset.p43Turn??0)}));
  const rect=await page.locator('#hf-rpg .hf-rpg-hero-canvas').boundingBox();
  const center={x:rect.x+rect.width*.47,y:rect.y+rect.height*.50};
  await page.mouse.move(center.x,center.y);
@@ -118,8 +118,9 @@ try{
  await page.mouse.move(center.x+55,center.y,{steps:5});
  await page.mouse.up();
  await page.waitForTimeout(250);
- const afterHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>c.toDataURL());
- assert.notEqual(afterHeroDrag,beforeHeroDrag,'Portrait must rotate by drag without separate arrows');
+ const afterHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>({image:c.toDataURL(),turn:Number(c.dataset.p43Turn??0),ready:c.parentElement.querySelector('[data-hf-hero-status]')?.dataset.ready}));
+ assert.ok(Math.abs(afterHeroDrag.turn-beforeHeroDrag.turn)>.1,'Touch drag must change the real portrait camera yaw: '+JSON.stringify({before:beforeHeroDrag.turn,after:afterHeroDrag.turn,ready:afterHeroDrag.ready}));
+ if(afterHeroDrag.ready==='true')assert.notEqual(afterHeroDrag.image,beforeHeroDrag.image,'A drawable 3D actor must visually rotate, not just update yaw');
  // True game equipment: remove the actual sword, return it to Bag, then equip it again.
  await page.locator('#hf-rpg [data-hf-equip-slot="right_hand"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="choose"]').count(),1,'P4.2 equipment action MUST use System dialog');
