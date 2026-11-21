@@ -2,7 +2,7 @@
  *  F0.14.8 game/UI state still drives all interactivity. No screenshots used as UI.
  */
 export const officialLogoUrl=()=>import.meta.env.BASE_URL+'highfly/brand/highfly-official.avif';
-export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+((name.startsWith('approved-')||name.startsWith('user-icons/')||/^premium\/(item_|skill_|profession_|quest_|character_sanctuary$|forge_workshop$)/.test(name))?'.webp':'.svg');
+export const assetUrl=name=>import.meta.env.BASE_URL+'highfly/'+name+((name.startsWith('approved-')||name.startsWith('user-icons/')||name.startsWith('rarity/')||/^premium\/(item_|skill_|profession_|quest_|character_sanctuary$|forge_workshop$)/.test(name))?'.webp':'.svg');
 const ITEMS=new Set(['hp_potion','mp_potion','herb','ore','wood','fish','ingot','blade_blank','seed','bag_upgrade','training_sword','training_shield','training_greatsword']);
 const SLOTS=new Set(['helmet','chest','gloves','right_hand','necklace','shoulders','pants','boots','left_hand','ring']);
 const PROFS=new Set(['recoleccion','mineria','tala','pesca','cocina','alquimia','fundicion','forja']);
@@ -21,9 +21,9 @@ const USER_ICONS=Object.freeze({
  item_training_greatsword:'weapons/greatsword',
  item_ingot_copper:'items/ingot_copper',item_ingot_iron:'items/ingot_iron',item_ingot_silver:'items/ingot_silver',item_ingot_gold:'items/ingot_gold',
  ...Object.fromEntries('ingot_steel ingot_diamond ingot_obsidian ingot_mithril ore_copper ore_iron coal ore_silver ore_gold raw_diamond raw_obsidian ore_mithril'.split(' ').map(x=>['item_'+x,'items/'+x])),
- item_upgrade_stone:'items/ore',item_ascension_core:'items/ore',
+ item_upgrade_stone:'items/upgrade_stone',item_ascension_core:'items/ascension_core',
  ...Object.fromEntries('attack dash roll heavy pulse heal'.split(' ').map(x=>['skill_'+x,'skills/'+x])),
- ...Object.fromEntries('recoleccion mineria tala pesca cocina alquimia fundicion forja'.split(' ').map(x=>['profession_'+x,'professions/'+x])),
+ ...Object.fromEntries('recoleccion mineria tala pesca cocina alquimia fundicion forja marroquineria sastreria joyeria ingenieria encantamiento inscripcion desuello'.split(' ').map(x=>['profession_'+x,'professions/'+x])),
  ...Object.fromEntries('personaje atributos bolsa habilidades oficios forja misiones mapa opciones'.split(' ').map(x=>['nav_'+x,'navigation/'+x])),
  // Empty equip slots always render their light, neutral outline SVG.
  // Gold equipment paintings are reserved for inventory and truly equipped objects.
@@ -39,14 +39,21 @@ export const USER_ICON_RESERVED_FILES=Object.freeze([
 export const userIconUrl=id=>USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
 const valid=id=>id.startsWith('item_')?ITEMS.has(id.slice(5)):id.startsWith('slot_')?SLOTS.has(id.slice(5)):id.startsWith('profession_')?PROFS.has(id.slice(11)):id.startsWith('skill_')?SKILLS.has(id.slice(6)):false;
-export function premiumArt(name,large=false){
+export function premiumArt(name,large=false,rarity='Común'){
+ // P4.3 restores approved 256px, painterly icons WITH their integrated metal
+ // frame. Do not add a secondary HTML frame or crop the illustration.
+ const grades={'Común':'comun','Poco común':'poco-comun','Raro':'raro','Épico':'epico','Legendario':'legendario','Mítico':'mitico'};
  const id=ALIAS[name]||name;
  const source=userIconUrl(id);
- if(source)return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" src="'+source+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
+ if(source){
+  const rel=USER_ICONS[id],hasOrnateRarity=id.startsWith('item_')&&/^(items|armor|weapons)\//.test(rel);
+  const framed=hasOrnateRarity?assetUrl('rarity/'+rel+'__'+(grades[rarity]??'comun')):source;
+  return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
+ }
  if(!valid(id))return null;
  return '<img class="hf-rpg-art hf-premium-icon'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" src="'+assetUrl('premium/'+id)+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
 }
-const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja'};
+const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja','Marroquinería':'marroquineria','Sastrería':'sastreria','Joyería':'joyeria','Ingeniería':'ingenieria','Encantamiento':'encantamiento','Inscripción':'inscripcion','Desuello':'desuello'};
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
 export const questArtUrl=(id,title='')=>{
  if(!id||id==='primary')return assetUrl('premium/quest_primary');
