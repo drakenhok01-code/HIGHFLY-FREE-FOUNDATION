@@ -1,0 +1,662 @@
+{
+  "schema": "woc-v0447-audit-part5",
+  "ref": "v0.44.7",
+  "sha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "status": "STATIC_EXTRACTION_NOT_RUNTIME_REGISTRY",
+  "registries": [
+    {
+      "symbol": "DUNGEON_KEEPSAKE_ITEMS",
+      "path": "src/sim/content/dungeons.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "dawnhold_posy",
+          "name": "'Dawnhold Garden Posy',",
+          "kind": "'junk',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "DUNGEON_KEEPSAKE_ITEMS",
+          "sourcePath": "src/sim/content/dungeons.ts"
+        }
+      ],
+      "declaredEntries": 1
+    },
+    {
+      "symbol": "IGNIVAR_DROP_ITEMS",
+      "path": "src/sim/content/ignivar_drops.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "forgefathers_ember",
+          "name": "\"Forgefather's Ember\",",
+          "kind": "'quest',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "IGNIVAR_DROP_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_drops.ts"
+        },
+        {
+          "id": "varkhul_forgebreaker",
+          "name": "'Forgebreaker, Engine of Varkhul',",
+          "kind": "'weapon',",
+          "quality": "'legendary',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "IGNIVAR_DROP_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_drops.ts"
+        },
+        {
+          "id": "varkhul_emberward",
+          "name": "'Emberward, Bulwark of Varkhul',",
+          "kind": "'armor',",
+          "quality": "'legendary',",
+          "slot": "'offhand',",
+          "itemLevel": null,
+          "sourceSymbol": "IGNIVAR_DROP_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_drops.ts"
+        }
+      ],
+      "declaredEntries": 3
+    },
+    {
+      "symbol": "CRUCIBLE_PROFESSION_ITEMS",
+      "path": "src/sim/content/crucible_professions.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "formula_lastflame_zeal",
+          "name": "\"Formula: Last Flame's Zeal\",",
+          "kind": "'recipe',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "CRUCIBLE_PROFESSION_ITEMS",
+          "sourcePath": "src/sim/content/crucible_professions.ts"
+        },
+        {
+          "id": "lastflame_core",
+          "name": "'Core of the Last Flame',",
+          "kind": "'junk',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "CRUCIBLE_PROFESSION_ITEMS",
+          "sourcePath": "src/sim/content/crucible_professions.ts"
+        }
+      ],
+      "declaredEntries": 2
+    },
+    {
+      "symbol": "WORLD_QUEST_ITEMS",
+      "path": "src/sim/content/world_quests.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "eastbrook_freight_crate",
+          "name": "'Eastbrook Freight Crate',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WORLD_QUEST_ITEMS",
+          "sourcePath": "src/sim/content/world_quests.ts"
+        },
+        {
+          "id": "eastbrook_freight_wagon",
+          "name": "'Eastbrook Freight Wagon',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WORLD_QUEST_ITEMS",
+          "sourcePath": "src/sim/content/world_quests.ts"
+        },
+        {
+          "id": "leyline_cache",
+          "name": "'Miniature Ley Cache',",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WORLD_QUEST_ITEMS",
+          "sourcePath": "src/sim/content/world_quests.ts"
+        },
+        {
+          "id": "confection_game_box",
+          "name": "\"Confectioner's Game Box\",",
+          "kind": "'quest',",
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "WORLD_QUEST_ITEMS",
+          "sourcePath": "src/sim/content/world_quests.ts"
+        }
+      ],
+      "declaredEntries": 4
+    },
+    {
+      "symbol": "FACTION_VENDOR_ITEMS",
+      "path": "src/sim/content/faction_vendors.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "tidewatchers_locket",
+          "name": "\"Tidewatcher's Locket\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "rift_watchers_band",
+          "name": "\"Rift Watcher's Band\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "rift_surveyors_satchel",
+          "name": "\"Rift Surveyor's Satchel\",",
+          "kind": "'bag',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "riftwalkers_tunic",
+          "name": "\"Riftwalker's Tunic\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "riftwalkers_cord",
+          "name": "\"Riftwalker's Cord\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "riftwalkers_treads",
+          "name": "\"Riftwalker's Treads\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_riftwalkers_grace",
+          "name": "\"Formula: Riftwalker's Grace\",",
+          "kind": "'recipe',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "riftwarden_voidblade",
+          "name": "\"Riftwarden's Voidblade\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "champion_rift_band",
+          "name": "\"Champion's Rift Band\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "riftwardens_pendant",
+          "name": "\"Riftwarden's Pendant\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "order_prayer_beads",
+          "name": "'Order Prayer Beads',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "acolytes_signet",
+          "name": "\"Acolyte's Signet\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "vestments_of_the_acolyte",
+          "name": "'Vestments of the Acolyte',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "cord_of_the_dawn",
+          "name": "'Cord of the Dawn',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "dawnlit_slippers",
+          "name": "'Dawnlit Slippers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_dawnfire_etching",
+          "name": "'Formula: Dawnfire Etching',",
+          "kind": "'recipe',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_dawns_benediction",
+          "name": "\"Formula: Dawn's Benediction\",",
+          "kind": "'recipe',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "dawnkeeper_consecrated_mace",
+          "name": "\"Dawnkeeper's Consecrated Mace\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "templar_dawn_shield",
+          "name": "\"Templar's Dawn Shield\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'offhand',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "champion_dawn_medallion",
+          "name": "\"Champion's Dawn Medallion\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "champions_dawn_loop",
+          "name": "\"Champion's Dawn Loop\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "dawnkeepers_circle",
+          "name": "\"Dawnkeeper's Circle\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "cogwork_choker",
+          "name": "'Cogwork Choker',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "automaton_cog_ring",
+          "name": "'Automaton Cog Ring',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "clockwork_tinkers_pack",
+          "name": "\"Clockwork Tinker's Pack\",",
+          "kind": "'bag',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "artificers_welding_cowl",
+          "name": "\"Artificer's Welding Cowl\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "forgemasters_girdle",
+          "name": "\"Forgemaster's Girdle\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "forgemasters_sabatons",
+          "name": "\"Forgemaster's Sabatons\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_piston_drive",
+          "name": "'Formula: Piston Drive',",
+          "kind": "'recipe',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "forgemaster_crag_cleaver",
+          "name": "\"Forgemaster's Crag Cleaver\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "champion_forged_loop",
+          "name": "\"Champion's Forged Loop\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "forgewall_gorget",
+          "name": "'Forgewall Gorget',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "rift_feather_glider",
+          "name": "'Rift Feather Glider',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_enchant_feet_shadowstride",
+          "name": "'Formula: Enchant Boots - Shadowstride',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "recipe_potion_of_invisibility",
+          "name": "'Recipe: Potion of Invisibility',",
+          "kind": "'recipe',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "potion_of_invisibility",
+          "name": "'Potion of Invisibility',",
+          "kind": "'potion',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "pattern_reinforced_armor_kit",
+          "name": "'Pattern: Reinforced Armor Kit',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "reinforced_armor_kit",
+          "name": "'Reinforced Armor Kit',",
+          "kind": "'tool',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "dawn_battle_standard",
+          "name": "'Dawn Battle Standard',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_enchant_offhand_spirit",
+          "name": "'Formula: Enchant Off-Hand - Spirit',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "recipe_elixir_of_mana_regeneration",
+          "name": "'Recipe: Elixir of Mana Regeneration',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "elixir_of_mana_regeneration",
+          "name": "'Elixir of Mana Regeneration',",
+          "kind": "'potion',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "clockwork_target_dummy",
+          "name": "'Clockwork Target Dummy',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "schematic_clockwork_shock_bomb",
+          "name": "'Schematic: Clockwork Shock Bomb',",
+          "kind": "'recipe',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "clockwork_shock_bomb",
+          "name": "'Clockwork Shock Bomb',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "plans_dense_sharpening_stone",
+          "name": "'Plans: Dense Sharpening Stone',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "dense_sharpening_stone",
+          "name": "'Dense Sharpening Stone',",
+          "kind": "'tool',",
+          "quality": "'common',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "formula_enchant_gloves_forged_might",
+          "name": "'Formula: Enchant Gloves - Forged Might',",
+          "kind": "'recipe',",
+          "quality": "'uncommon',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "allied_hearthstone",
+          "name": "'Allied Hearthstone',",
+          "kind": "'tool',",
+          "quality": "'rare',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        },
+        {
+          "id": "allied_vanguard_duffel",
+          "name": "'Allied Vanguard Duffel',",
+          "kind": "'bag',",
+          "quality": "'epic',",
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "FACTION_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/faction_vendors.ts"
+        }
+      ],
+      "declaredEntries": 50
+    },
+    {
+      "symbol": "HOARD_ITEMS",
+      "path": "src/sim/content/hoard_loot.ts",
+      "status": "DYNAMIC",
+      "expression": "Object.fromEntries(\n  PIECES.flatMap((piece) =>\n    HOARD_LOOT_TIER_OR",
+      "entries": []
+    },
+    {
+      "symbol": "IGNIVAR_LOOT_ITEMS",
+      "path": "src/sim/content/ignivar_loot.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [],
+      "declaredEntries": 0
+    }
+  ]
+}
