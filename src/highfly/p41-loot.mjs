@@ -8,7 +8,7 @@ export const MATERIAL_ORDER=Object.freeze(['cobre','hierro','acero','plata','oro
 export const P41_TEST_DROPS=Object.freeze({
  lobo:Object.freeze({label:'Botín de prueba · lobo',bag:Object.freeze({hp_potion:1}),resources:Object.freeze({herb:2})}),
  veta:Object.freeze({label:'Botín de prueba · veta minera',bag:Object.freeze({}),resources:Object.freeze({ore:4,ore_copper:5,ore_iron:2,coal:2})}),
- cofre:Object.freeze({label:'Botín de prueba · cofre',bag:Object.freeze({training_shield:1,upgrade_stone:1}),resources:Object.freeze({wood:3})})
+ cofre:Object.freeze({label:'Botín de prueba · cofre',bag:Object.freeze({training_shield:1,hf_iron_chest:1,hf_copper_ring:1,upgrade_stone:1}),resources:Object.freeze({wood:3})})
 });
 export function grantP41TestLoot(state,profession,source){
  const drop=P41_TEST_DROPS[source],resources=profession?.inventory;
