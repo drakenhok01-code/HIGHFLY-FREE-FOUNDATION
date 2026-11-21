@@ -455,10 +455,10 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  // Only repaint the existing original actor in its shared WebGL renderer.
  let portraitDrag=null,portraitRaf=0;
  root.addEventListener('pointerdown',e=>{
-  const canvas=e.target?.closest?.('[data-hf-hero]');
-  if(!canvas||!local.opened||local.tab!=='personaje')return;
+  const stage=e.target?.closest?.('.hf-rpg-hero-stage');
+  if(!stage||!local.opened||local.tab!=='personaje')return;
   portraitDrag={id:e.pointerId,x:e.clientX};
-  canvas.setPointerCapture?.(e.pointerId);
+  stage.setPointerCapture?.(e.pointerId);
   e.preventDefault();
  });
  root.addEventListener('pointermove',e=>{
