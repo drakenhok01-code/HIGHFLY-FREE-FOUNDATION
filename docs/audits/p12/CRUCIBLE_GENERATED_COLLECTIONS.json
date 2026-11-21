@@ -1,0 +1,857 @@
+{
+  "schema": "HIGHFLY_P12_CRUCIBLE_GENERATED_CONTENT",
+  "source": "levy-street/world-of-claudecraft",
+  "tag": "v0.44.7",
+  "sourceFile": "src/sim/content/crucible_collections.ts",
+  "mergedBy": "src/sim/content/crucible_professions.ts",
+  "counts": {
+    "profiles": 11,
+    "gear": 33,
+    "manuals": 11,
+    "recipes": 33,
+    "patternDropEntries": 12,
+    "patternGroupDropChance": 0.3,
+    "itemsMissingInPrior1488": 44
+  },
+  "profiles": [
+    "crucible_str_mail",
+    "crucible_tank_mail",
+    "crucible_caster_mail",
+    "crucible_healer_mail",
+    "crucible_agi_leather",
+    "crucible_str_leather",
+    "crucible_tank_leather",
+    "crucible_caster_leather",
+    "crucible_healer_leather",
+    "crucible_caster_cloth",
+    "crucible_healer_cloth"
+  ],
+  "gear": [
+    {
+      "id": "crucible_str_mail_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_str_mail_chest",
+      "sourceManual": "pattern_crucible_str_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_str_mail_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_str_mail_waist",
+      "sourceManual": "pattern_crucible_str_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_str_mail_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_str_mail_feet",
+      "sourceManual": "pattern_crucible_str_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_mail_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_tank_mail_chest",
+      "sourceManual": "pattern_crucible_tank_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_mail_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_tank_mail_waist",
+      "sourceManual": "pattern_crucible_tank_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_mail_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_tank_mail_feet",
+      "sourceManual": "pattern_crucible_tank_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_mail_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_caster_mail_chest",
+      "sourceManual": "pattern_crucible_caster_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_mail_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_caster_mail_waist",
+      "sourceManual": "pattern_crucible_caster_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_mail_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_caster_mail_feet",
+      "sourceManual": "pattern_crucible_caster_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_mail_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_healer_mail_chest",
+      "sourceManual": "pattern_crucible_healer_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_mail_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_healer_mail_waist",
+      "sourceManual": "pattern_crucible_healer_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_mail_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_healer_mail_feet",
+      "sourceManual": "pattern_crucible_healer_mail",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_agi_leather_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_agi_leather_chest",
+      "sourceManual": "pattern_crucible_agi_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_agi_leather_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_agi_leather_waist",
+      "sourceManual": "pattern_crucible_agi_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_agi_leather_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_agi_leather_feet",
+      "sourceManual": "pattern_crucible_agi_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_str_leather_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_str_leather_chest",
+      "sourceManual": "pattern_crucible_str_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_str_leather_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_str_leather_waist",
+      "sourceManual": "pattern_crucible_str_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_str_leather_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_str_leather_feet",
+      "sourceManual": "pattern_crucible_str_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_leather_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_tank_leather_chest",
+      "sourceManual": "pattern_crucible_tank_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_leather_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_tank_leather_waist",
+      "sourceManual": "pattern_crucible_tank_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_tank_leather_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_tank_leather_feet",
+      "sourceManual": "pattern_crucible_tank_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_leather_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_caster_leather_chest",
+      "sourceManual": "pattern_crucible_caster_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_leather_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_caster_leather_waist",
+      "sourceManual": "pattern_crucible_caster_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_leather_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_caster_leather_feet",
+      "sourceManual": "pattern_crucible_caster_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_leather_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_healer_leather_chest",
+      "sourceManual": "pattern_crucible_healer_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_leather_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_healer_leather_waist",
+      "sourceManual": "pattern_crucible_healer_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_leather_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_healer_leather_feet",
+      "sourceManual": "pattern_crucible_healer_leather",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_cloth_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_caster_cloth_chest",
+      "sourceManual": "pattern_crucible_caster_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_cloth_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_caster_cloth_waist",
+      "sourceManual": "pattern_crucible_caster_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_caster_cloth_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_caster_cloth_feet",
+      "sourceManual": "pattern_crucible_caster_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_cloth_chest",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "chest",
+      "sourceRecipe": "recipe_crucible_healer_cloth_chest",
+      "sourceManual": "pattern_crucible_healer_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_cloth_waist",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "waist",
+      "sourceRecipe": "recipe_crucible_healer_cloth_waist",
+      "sourceManual": "pattern_crucible_healer_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    },
+    {
+      "id": "crucible_healer_cloth_feet",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_ITEMS",
+      "kind": "armor",
+      "quality": "epic",
+      "slot": "feet",
+      "sourceRecipe": "recipe_crucible_healer_cloth_feet",
+      "sourceManual": "pattern_crucible_healer_cloth",
+      "highflyBirthPlus": 0,
+      "presentPrior1488": false
+    }
+  ],
+  "manuals": [
+    {
+      "id": "pattern_crucible_str_mail",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_str_mail_chest",
+        "recipe_crucible_str_mail_waist",
+        "recipe_crucible_str_mail_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_tank_mail",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_tank_mail_chest",
+        "recipe_crucible_tank_mail_waist",
+        "recipe_crucible_tank_mail_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_caster_mail",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_caster_mail_chest",
+        "recipe_crucible_caster_mail_waist",
+        "recipe_crucible_caster_mail_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_healer_mail",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_healer_mail_chest",
+        "recipe_crucible_healer_mail_waist",
+        "recipe_crucible_healer_mail_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_agi_leather",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_agi_leather_chest",
+        "recipe_crucible_agi_leather_waist",
+        "recipe_crucible_agi_leather_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_str_leather",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_str_leather_chest",
+        "recipe_crucible_str_leather_waist",
+        "recipe_crucible_str_leather_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_tank_leather",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_tank_leather_chest",
+        "recipe_crucible_tank_leather_waist",
+        "recipe_crucible_tank_leather_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_caster_leather",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_caster_leather_chest",
+        "recipe_crucible_caster_leather_waist",
+        "recipe_crucible_caster_leather_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_healer_leather",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_healer_leather_chest",
+        "recipe_crucible_healer_leather_waist",
+        "recipe_crucible_healer_leather_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_caster_cloth",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_caster_cloth_chest",
+        "recipe_crucible_caster_cloth_waist",
+        "recipe_crucible_caster_cloth_feet"
+      ],
+      "presentPrior1488": false
+    },
+    {
+      "id": "pattern_crucible_healer_cloth",
+      "sourceRegistry": "CRUCIBLE_COLLECTION_PATTERNS",
+      "teachesRecipes": [
+        "recipe_crucible_healer_cloth_chest",
+        "recipe_crucible_healer_cloth_waist",
+        "recipe_crucible_healer_cloth_feet"
+      ],
+      "presentPrior1488": false
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe_crucible_str_mail_chest",
+      "itemId": "crucible_str_mail_chest",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_str_mail_waist",
+      "itemId": "crucible_str_mail_waist",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_str_mail_feet",
+      "itemId": "crucible_str_mail_feet",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_mail_chest",
+      "itemId": "crucible_tank_mail_chest",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_mail_waist",
+      "itemId": "crucible_tank_mail_waist",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_mail_feet",
+      "itemId": "crucible_tank_mail_feet",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_mail_chest",
+      "itemId": "crucible_caster_mail_chest",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_mail_waist",
+      "itemId": "crucible_caster_mail_waist",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_mail_feet",
+      "itemId": "crucible_caster_mail_feet",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_mail_chest",
+      "itemId": "crucible_healer_mail_chest",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_mail_waist",
+      "itemId": "crucible_healer_mail_waist",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_mail_feet",
+      "itemId": "crucible_healer_mail_feet",
+      "profession": "armorcrafting",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_agi_leather_chest",
+      "itemId": "crucible_agi_leather_chest",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_agi_leather_waist",
+      "itemId": "crucible_agi_leather_waist",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_agi_leather_feet",
+      "itemId": "crucible_agi_leather_feet",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_str_leather_chest",
+      "itemId": "crucible_str_leather_chest",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_str_leather_waist",
+      "itemId": "crucible_str_leather_waist",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_str_leather_feet",
+      "itemId": "crucible_str_leather_feet",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_leather_chest",
+      "itemId": "crucible_tank_leather_chest",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_leather_waist",
+      "itemId": "crucible_tank_leather_waist",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_tank_leather_feet",
+      "itemId": "crucible_tank_leather_feet",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_leather_chest",
+      "itemId": "crucible_caster_leather_chest",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_leather_waist",
+      "itemId": "crucible_caster_leather_waist",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_leather_feet",
+      "itemId": "crucible_caster_leather_feet",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_leather_chest",
+      "itemId": "crucible_healer_leather_chest",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_leather_waist",
+      "itemId": "crucible_healer_leather_waist",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_leather_feet",
+      "itemId": "crucible_healer_leather_feet",
+      "profession": "leatherworking",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_cloth_chest",
+      "itemId": "crucible_caster_cloth_chest",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_cloth_waist",
+      "itemId": "crucible_caster_cloth_waist",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_caster_cloth_feet",
+      "itemId": "crucible_caster_cloth_feet",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_cloth_chest",
+      "itemId": "crucible_healer_cloth_chest",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_cloth_waist",
+      "itemId": "crucible_healer_cloth_waist",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    },
+    {
+      "id": "recipe_crucible_healer_cloth_feet",
+      "itemId": "crucible_healer_cloth_feet",
+      "profession": "tailoring",
+      "requiredSkill": 100,
+      "sourceDefinedVia": "CRUCIBLE_COLLECTION_RECIPES"
+    }
+  ],
+  "loot": [
+    {
+      "itemId": "pattern_crucible_str_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_tank_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_caster_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_healer_mail",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_agi_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_str_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_tank_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_caster_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_healer_leather",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_caster_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "pattern_crucible_healer_cloth",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    },
+    {
+      "itemId": "formula_lastflame_zeal",
+      "chance": 0.025,
+      "rollGroup": "crucible_profession_patterns",
+      "bossIds": [
+        "ignivar_herald_of_the_last_flame",
+        "varkhul_forgefather_of_the_last_flame"
+      ]
+    }
+  ],
+  "notes": [
+    "11 profiles x 3 slots generate 33 epic gear pieces, plus 11 recipe manuals and 33 recipe records.",
+    "12 pattern entries each have 2.5% within one exclusive roll group. Total chance of one pattern is 30% per boss, not twelve independent drops.",
+    "These content entries are generated by functions and omitted by static literal-object-only extraction.",
+    "No class restrictions imported to HIGHFLY; one universal hunter.",
+    "Every piece newly generated in HIGHFLY must start at plus zero, even Legendary.",
+    "No media reused or gameplay changed."
+  ]
+}
