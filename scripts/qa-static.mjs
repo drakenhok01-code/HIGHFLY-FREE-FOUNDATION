@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 const cfg=JSON.parse(fs.readFileSync('foundation.config.json','utf8'));
 assert.equal(cfg.unsungCommit,'9f61b0d80b18c6cf661f72372545b3f9214fb455');
 assert.equal(cfg.allowPrivateAssets,false);assert.equal(cfg.allowKaykitPaid,false);assert.equal(cfg.allowClaudeAssets,false);
@@ -15,6 +16,27 @@ const reviewedPremiumArchives=new Set([
  'assets/highfly/premium/HF_PHOENIX_MISSIONS_B.zip'
 ]);
 for(const archive of reviewedPremiumArchives)assert.ok(fs.existsSync(archive),'Missing reviewed art pack '+archive);
+
+// User expressly provided these 60 original icons for integration in HIGHFLY.
+// Unlike unverified binaries, each archive is pinned by an exact SHA-256 and
+// independently re-verified at build time before extracting .webp files.
+const userIconHashes={
+ 'armor':'5ae833209b0fdffbe6e0d33ab8c58de609f639e0d6142a035e04e3ceb910bc21',
+ 'items':'0861a7fc17ec50ff88403969cca115da8cef1aabffcef9e43b24ce59a07aa774',
+ 'navigation':'01f7f2d60cd598e96557c4f49548f8ab631d556f357f6317be4add418df209b8',
+ 'professions':'2f888665537bc7b96f7bce8d88ca6602395c393500cfa4ca02f9dbcfdff151c0',
+ 'skills':'c0ae669e42610c5e041d91b62c1aa059b814dc85b7d7f5ded9f043bf71b523e1',
+ 'skills-advanced':'5f0c40d5e6034e41dc3b264f6383e340d42bb39aca1289d808cdff2cf6fd935b',
+ 'weapons':'ef5cef4b03b5ad00b74618167b84a5d592e94c42770aa7293786a6fe75fb3173'
+};
+for(const [cat,expected] of Object.entries(userIconHashes)){
+ const rel='assets/highfly/premium/hf_user_icons_'+cat+'.zip';
+ assert.ok(fs.existsSync(rel),'Missing user-approved icon archive '+cat);
+ const actual=crypto.createHash('sha256').update(fs.readFileSync(rel)).digest('hex');
+ assert.equal(actual,expected,'User archive changed unexpectedly: '+cat);
+ reviewedPremiumArchives.add(rel);
+}
+
 const forbidden=files.filter(x=>/private_assets|phoenix-source-|kaykit.*source|upstream\/|\.glb$|\.fbx$|\.ogg$|\.wav$|\.bin$|\.zip$/i.test(x)&&!reviewedPremiumArchives.has(x));
 assert.deepEqual(forbidden,[],'Bootstrap cannot contain private or unaudited binaries');
 for(const name of ['src/highfly/mobile-touch.mjs','src/highfly/fog.mjs','src/highfly/kaykit-free-hero.mjs','scripts/f0-build.mjs','scripts/qa-dist.mjs'])assert.ok(fs.existsSync(name));
