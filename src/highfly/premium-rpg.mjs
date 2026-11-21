@@ -14,6 +14,7 @@ import './phoenix-v36-polish.css';
 import './premium-p41.css';
 import './premium-p42.css';
 import './premium-p43.css';
+import './premium-p44.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -111,7 +112,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={selectedGearIndex:0,tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
+ const local={scrollSaved:{},selectedGearIndex:0,tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('premium/character_sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
@@ -212,8 +213,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-stage-halo"></div><div class="hf-rpg-stage-arch" aria-hidden="true">'+PHOENIX+'</div><canvas class="hf-rpg-hero-canvas" data-hf-hero aria-label="Retrato 3D vivo del personaje"></canvas>'+
    '<div class="hf-rpg-stage-ring"></div><div class="hf-rpg-hero-loading" data-hf-hero-status>Cargando personaje 3D…</div>'+
    '</div>'+
-   '<div class="hf-rpg-weapon-tag" aria-label="Girar vista del personaje">'+
-   '<span class="hf-p43-drag-hint">↔ DESLIZÁ SOBRE EL PERSONAJE PARA GIRAR</span></div>',
+   ''
    'hf-rpg-hero-panel');
  };
  function character(){
@@ -429,6 +429,19 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+ (local.toast?'<div class="hf-p41-toast" role="status" aria-live="polite">'+safe(local.toast)+'</div>':'')+
    '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer();
+  // Restore scroll state across selection/render updates. No inaccessible
+  // information at the end of bag/forge/skills panels.
+  const scrollTargets={
+    bolsa:['.hf-rpg-grid','.hf-rpg-three>.hf-rpg-panel:first-child','.hf-rpg-three>.hf-rpg-panel:last-child'],
+    habilidades:['.hf-rpg-skill-list','.hf-rpg-two>.hf-rpg-panel:last-child'],
+    oficios:['.hf-rpg-prof-grid','.hf-p42-professions>.hf-rpg-panel:first-child','.hf-p42-professions>.hf-rpg-panel:last-child'],
+    forja:['.hf-rpg-forge-recipes','.hf-rpg-forge-main'],
+    misiones:['.hf-rpg-quest-list','.hf-rpg-quest-right']
+  };
+  for(const selector of scrollTargets[local.tab]??[]){
+   const el=root.querySelector(selector);
+   if(el)el.scrollTop=local.scrollSaved[local.tab+selector]??0;
+  }
   if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
@@ -466,7 +479,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const step=e.clientX-portraitDrag.x;
   portraitDrag.x=e.clientX;
   if(!Number.isFinite(step))return;
-  local.heroTurn+=step*.014;
+  local.heroTurn-=step*.014;
   if(!portraitRaf){
    portraitRaf=requestAnimationFrame(()=>{
     portraitRaf=0;
@@ -481,6 +494,19 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  };
  root.addEventListener('pointerup',endPortraitDrag);
  root.addEventListener('pointercancel',endPortraitDrag);
+
+ root.addEventListener('scroll',e=>{
+  const selectors={
+   bolsa:['.hf-rpg-grid','.hf-rpg-three>.hf-rpg-panel:first-child','.hf-rpg-three>.hf-rpg-panel:last-child'],
+   habilidades:['.hf-rpg-skill-list','.hf-rpg-two>.hf-rpg-panel:last-child'],
+   oficios:['.hf-rpg-prof-grid','.hf-p42-professions>.hf-rpg-panel:first-child','.hf-p42-professions>.hf-rpg-panel:last-child'],
+   forja:['.hf-rpg-forge-recipes','.hf-rpg-forge-main'],
+   misiones:['.hf-rpg-quest-list','.hf-rpg-quest-right']
+  };
+  for(const selector of selectors[local.tab]??[]){
+   if(e.target?.matches?.(selector))local.scrollSaved[local.tab+selector]=e.target.scrollTop;
+  }
+ },true);
 
  root.addEventListener('click',e=>{
   const b=e.target?.closest?.('button');if(!b)return;
