@@ -4,7 +4,7 @@ Everything stays 256x256 WebP. Frames remain embedded in the image, never CSS.
 """
 import sys,math
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 import numpy as np
 
 user=Path(sys.argv[1]); rarity=Path(sys.argv[2])
@@ -86,4 +86,14 @@ for file in prof_files:
 assert len(prof_files)>=15,('Missing profession image',len(prof_files))
 check=Image.open(profession/'ingenieria.webp')
 assert check.size==(w,h)
+# Restore the actual approved HIGHFLY RPG FITNESS logo, not P4.3's
+# substitute phoenix SVG. Enhance scaling in the build once, never CSS pixel-art.
+if len(sys.argv)>4:
+ original=Image.open(sys.argv[3]).convert('RGBA')
+ out=Path(sys.argv[4]);out.parent.mkdir(parents=True,exist_ok=True)
+ width=1100
+ enlarged=original.resize((width,round(original.height*width/original.width)),Image.Resampling.LANCZOS)
+ enlarged=enlarged.filter(ImageFilter.UnsharpMask(radius=1.25,percent=115,threshold=2))
+ enlarged.save(out,'WEBP',quality=94,method=5)
+ print('[HIGHFLY P4.4 BRAND] Official original restored',original.size,'enhanced copy',enlarged.size)
 print('[HIGHFLY P4.4] Normalized rarity frames and 15 occupation borders; distinctive Engineering gear art.')
