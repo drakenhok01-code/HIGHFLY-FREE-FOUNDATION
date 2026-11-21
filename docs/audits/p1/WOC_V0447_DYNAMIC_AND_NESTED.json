@@ -1,0 +1,1902 @@
+{
+  "schema": "woc-v0447-audit-generated-registries",
+  "ref": "v0.44.7",
+  "note": "Ignivar nested static sets expand the IGNIVAR_LOOT_ITEMS spread. Hoard has tier-based generated IDs; prototypes not automatically assigned as HIGHFLY items.",
+  "registries": [
+    {
+      "symbol": "IGNIVAR_SET_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "slagbreaker_helmet",
+          "name": "'Slagbreaker Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagbreaker_shoulder",
+          "name": "'Slagbreaker Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagbreaker_chest",
+          "name": "'Slagbreaker Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagbreaker_gloves",
+          "name": "'Slagbreaker Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagbreaker_legs",
+          "name": "'Slagbreaker Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberfury_helmet",
+          "name": "'Emberfury Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberfury_shoulder",
+          "name": "'Emberfury Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberfury_chest",
+          "name": "'Emberfury Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberfury_gloves",
+          "name": "'Emberfury Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberfury_legs",
+          "name": "'Emberfury Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_helmet",
+          "name": "'Forgewall Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_shoulder",
+          "name": "'Forgewall Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_chest",
+          "name": "'Forgewall Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_gloves",
+          "name": "'Forgewall Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_legs",
+          "name": "'Forgewall Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dawnforged_helmet",
+          "name": "'Dawnforged Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dawnforged_shoulder",
+          "name": "'Dawnforged Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dawnforged_chest",
+          "name": "'Dawnforged Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dawnforged_gloves",
+          "name": "'Dawnforged Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dawnforged_legs",
+          "name": "'Dawnforged Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "oathpyre_helmet",
+          "name": "'Oathpyre Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "oathpyre_shoulder",
+          "name": "'Oathpyre Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "oathpyre_chest",
+          "name": "'Oathpyre Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "oathpyre_gloves",
+          "name": "'Oathpyre Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "oathpyre_legs",
+          "name": "'Oathpyre Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "zealfire_helmet",
+          "name": "'Zealfire Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "zealfire_shoulder",
+          "name": "'Zealfire Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "zealfire_chest",
+          "name": "'Zealfire Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "zealfire_gloves",
+          "name": "'Zealfire Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "zealfire_legs",
+          "name": "'Zealfire Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "packlord_emberhide_helmet",
+          "name": "\"Packlord's Cowl\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "packlord_emberhide_shoulder",
+          "name": "\"Packlord's Spaulders\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "packlord_emberhide_chest",
+          "name": "\"Packlord's Tunic\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "packlord_emberhide_gloves",
+          "name": "\"Packlord's Grips\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "packlord_emberhide_legs",
+          "name": "\"Packlord's Breeches\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "coldsight_trackers_helmet",
+          "name": "'Coldsight Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "coldsight_trackers_shoulder",
+          "name": "'Coldsight Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "coldsight_trackers_chest",
+          "name": "'Coldsight Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "coldsight_trackers_gloves",
+          "name": "'Coldsight Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "coldsight_trackers_legs",
+          "name": "'Coldsight Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagsnare_helmet",
+          "name": "'Slagsnare Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagsnare_shoulder",
+          "name": "'Slagsnare Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagsnare_chest",
+          "name": "'Slagsnare Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagsnare_gloves",
+          "name": "'Slagsnare Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagsnare_legs",
+          "name": "'Slagsnare Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_helmet",
+          "name": "'Cinderfang Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_shoulder",
+          "name": "'Cinderfang Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_chest",
+          "name": "'Cinderfang Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_gloves",
+          "name": "'Cinderfang Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_legs",
+          "name": "'Cinderfang Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "smolderstrike_helmet",
+          "name": "'Smolderstrike Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "smolderstrike_shoulder",
+          "name": "'Smolderstrike Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "smolderstrike_chest",
+          "name": "'Smolderstrike Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "smolderstrike_gloves",
+          "name": "'Smolderstrike Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "smolderstrike_legs",
+          "name": "'Smolderstrike Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashveil_helmet",
+          "name": "'Ashveil Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashveil_shoulder",
+          "name": "'Ashveil Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashveil_chest",
+          "name": "'Ashveil Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashveil_gloves",
+          "name": "'Ashveil Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashveil_legs",
+          "name": "'Ashveil Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberscreed_helmet",
+          "name": "'Creed of Embers Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberscreed_shoulder",
+          "name": "'Creed of Embers Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberscreed_chest",
+          "name": "'Creed of Embers Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberscreed_gloves",
+          "name": "'Creed of Embers Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "emberscreed_legs",
+          "name": "'Creed of Embers Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "benison_dawnweave_helmet",
+          "name": "'Dawnweave Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "benison_dawnweave_shoulder",
+          "name": "'Dawnweave Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "benison_dawnweave_chest",
+          "name": "'Dawnweave Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "benison_dawnweave_gloves",
+          "name": "'Dawnweave Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "benison_dawnweave_legs",
+          "name": "'Dawnweave Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "vesperash_helmet",
+          "name": "'Vesperash Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "vesperash_shoulder",
+          "name": "'Vesperash Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "vesperash_chest",
+          "name": "'Vesperash Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "vesperash_gloves",
+          "name": "'Vesperash Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "vesperash_legs",
+          "name": "'Vesperash Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_helmet",
+          "name": "'Stormkindled Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_shoulder",
+          "name": "'Stormkindled Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_chest",
+          "name": "'Stormkindled Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_gloves",
+          "name": "'Stormkindled Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_legs",
+          "name": "'Stormkindled Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warspirit_emberscale_helmet",
+          "name": "'Emberscale Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warspirit_emberscale_shoulder",
+          "name": "'Emberscale Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warspirit_emberscale_chest",
+          "name": "'Emberscale Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warspirit_emberscale_gloves",
+          "name": "'Emberscale Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warspirit_emberscale_legs",
+          "name": "'Emberscale Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stonehearth_helmet",
+          "name": "'Stonehearth Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stonehearth_shoulder",
+          "name": "'Stonehearth Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stonehearth_chest",
+          "name": "'Stonehearth Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stonehearth_gloves",
+          "name": "'Stonehearth Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stonehearth_legs",
+          "name": "'Stonehearth Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springmender_helmet",
+          "name": "'Springmender Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springmender_shoulder",
+          "name": "'Springmender Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springmender_chest",
+          "name": "'Springmender Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springmender_gloves",
+          "name": "'Springmender Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springmender_legs",
+          "name": "'Springmender Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "chronoweave_helmet",
+          "name": "'Aetherweave Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "chronoweave_shoulder",
+          "name": "'Aetherweave Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "chronoweave_chest",
+          "name": "'Aetherweave Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "chronoweave_gloves",
+          "name": "'Aetherweave Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "chronoweave_legs",
+          "name": "'Aetherweave Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "pyroclast_helmet",
+          "name": "'Pyroclast Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "pyroclast_shoulder",
+          "name": "'Pyroclast Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "pyroclast_chest",
+          "name": "'Pyroclast Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "pyroclast_gloves",
+          "name": "'Pyroclast Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "pyroclast_legs",
+          "name": "'Pyroclast Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "frostquench_helmet",
+          "name": "'Frostquench Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "frostquench_shoulder",
+          "name": "'Frostquench Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "frostquench_chest",
+          "name": "'Frostquench Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "frostquench_gloves",
+          "name": "'Frostquench Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "frostquench_legs",
+          "name": "'Frostquench Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "hexthread_helmet",
+          "name": "'Hexthread Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "hexthread_shoulder",
+          "name": "'Hexthread Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "hexthread_chest",
+          "name": "'Hexthread Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "hexthread_gloves",
+          "name": "'Hexthread Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "hexthread_legs",
+          "name": "'Hexthread Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "gravebrand_helmet",
+          "name": "'Gravebrand Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "gravebrand_shoulder",
+          "name": "'Gravebrand Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "gravebrand_chest",
+          "name": "'Gravebrand Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "gravebrand_gloves",
+          "name": "'Gravebrand Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "gravebrand_legs",
+          "name": "'Gravebrand Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ruincaller_helmet",
+          "name": "'Ruincaller Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ruincaller_shoulder",
+          "name": "'Ruincaller Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ruincaller_chest",
+          "name": "'Ruincaller Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ruincaller_gloves",
+          "name": "'Ruincaller Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ruincaller_legs",
+          "name": "'Ruincaller Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_helmet",
+          "name": "'Moonscorch Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_shoulder",
+          "name": "'Moonscorch Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_chest",
+          "name": "'Moonscorch Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_gloves",
+          "name": "'Moonscorch Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_legs",
+          "name": "'Moonscorch Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wildfang_emberhide_helmet",
+          "name": "'Wildfang Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wildfang_emberhide_shoulder",
+          "name": "'Wildfang Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wildfang_emberhide_chest",
+          "name": "'Wildfang Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wildfang_emberhide_gloves",
+          "name": "'Wildfang Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wildfang_emberhide_legs",
+          "name": "'Wildfang Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_helmet",
+          "name": "'Cinderbark Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_shoulder",
+          "name": "'Cinderbark Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_chest",
+          "name": "'Cinderbark Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_gloves",
+          "name": "'Cinderbark Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_legs",
+          "name": "'Cinderbark Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovespring_helmet",
+          "name": "'Grovespring Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovespring_shoulder",
+          "name": "'Grovespring Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovespring_chest",
+          "name": "'Grovespring Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovespring_gloves",
+          "name": "'Grovespring Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovespring_legs",
+          "name": "'Grovespring Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "sourceSymbol": "IGNIVAR_SET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 145
+    },
+    {
+      "symbol": "IGNIVAR_SIGIL_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "sigil_anvil_helmet",
+          "name": "'Helm Sigil of the Anvil',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_ember_helmet",
+          "name": "'Helm Sigil of the Ember',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_tempest_helmet",
+          "name": "'Helm Sigil of the Tempest',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_anvil_shoulder",
+          "name": "'Mantle Sigil of the Anvil',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_ember_shoulder",
+          "name": "'Mantle Sigil of the Ember',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_tempest_shoulder",
+          "name": "'Mantle Sigil of the Tempest',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_anvil_chest",
+          "name": "'Robe Sigil of the Anvil',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_ember_chest",
+          "name": "'Robe Sigil of the Ember',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_tempest_chest",
+          "name": "'Robe Sigil of the Tempest',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_anvil_gloves",
+          "name": "'Grip Sigil of the Anvil',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_ember_gloves",
+          "name": "'Grip Sigil of the Ember',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_tempest_gloves",
+          "name": "'Grip Sigil of the Tempest',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_anvil_legs",
+          "name": "'Legging Sigil of the Anvil',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_ember_legs",
+          "name": "'Legging Sigil of the Ember',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "sigil_tempest_legs",
+          "name": "'Legging Sigil of the Tempest',",
+          "kind": "'tool',",
+          "quality": "'epic',",
+          "slot": null,
+          "sourceSymbol": "IGNIVAR_SIGIL_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 15
+    },
+    {
+      "symbol": "IGNIVAR_OFFSET_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "cord_of_the_last_flame",
+          "name": "'Cord of the Last Flame',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cindersoaked_slippers",
+          "name": "'Cindersoaked Slippers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springbinder_sash",
+          "name": "'Springbinder Sash',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "steps_of_quiet_water",
+          "name": "'Steps of Quiet Water',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderbark_cinch",
+          "name": "'Cinderbark Cinch',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashenbark_treads",
+          "name": "'Ashenbark Treads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagstalker_belt",
+          "name": "'Slagstalker Belt',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ashrunner_boots",
+          "name": "'Ashrunner Boots',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "moonscorch_waistwrap",
+          "name": "'Moonscorch Waistwrap',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "scorchgrove_striders",
+          "name": "'Scorchgrove Striders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "grovetender_belt",
+          "name": "'Grovetender Belt',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "dewfall_moccasins",
+          "name": "'Dewfall Moccasins',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgewall_girdle",
+          "name": "'Forgewall Girdle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "anvilstance_sabatons",
+          "name": "'Anvilstance Sabatons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "warforged_waistguard",
+          "name": "'Warforged Waistguard',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "furnace_march_greaves",
+          "name": "'Furnace March Greaves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "stormkindled_chain",
+          "name": "'Stormkindled Chain',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "thundershock_treads",
+          "name": "'Thundershock Treads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "tidebinder_links",
+          "name": "'Tidebinder Links',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springwarden_sabatons",
+          "name": "'Springwarden Sabatons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "sourceSymbol": "IGNIVAR_OFFSET_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 20
+    },
+    {
+      "symbol": "IGNIVAR_JEWELRY_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "pendant_of_the_first_tempering",
+          "name": "'Pendant of the First Tempering',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ignivars_ember_choker",
+          "name": "\"Ignivar's Ember Choker\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "locket_of_the_last_flame",
+          "name": "'Locket of the Last Flame',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "heartspring_amulet",
+          "name": "'Heartspring Amulet',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "seal_of_the_forgewall",
+          "name": "'Seal of the Forgewall',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "band_of_marked_strikes",
+          "name": "'Band of Marked Strikes',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "circle_of_cinders",
+          "name": "'Circle of Cinders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "loop_of_quiet_springs",
+          "name": "'Loop of Quiet Springs',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "sourceSymbol": "IGNIVAR_JEWELRY_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 8
+    },
+    {
+      "symbol": "IGNIVAR_HELD_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "bulwark_of_the_inner_crucible",
+          "name": "'Bulwark of the Inner Crucible',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'offhand',",
+          "sourceSymbol": "IGNIVAR_HELD_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "ember_wardens_barrier",
+          "name": "\"Ember Warden's Barrier\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'offhand',",
+          "sourceSymbol": "IGNIVAR_HELD_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "orb_of_the_last_spring",
+          "name": "'Orb of the Last Spring',",
+          "kind": "'held_offhand',",
+          "quality": "'epic',",
+          "slot": "'offhand',",
+          "sourceSymbol": "IGNIVAR_HELD_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinder_of_the_first_design",
+          "name": "'Cinder of the First Design',",
+          "kind": "'held_offhand',",
+          "quality": "'epic',",
+          "slot": "'offhand',",
+          "sourceSymbol": "IGNIVAR_HELD_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "symbol": "IGNIVAR_WEAPON_ITEMS",
+      "status": "NESTED_STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "forgefathers_warhammer",
+          "name": "\"Forgefather's Warhammer\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "cinderfang_kris",
+          "name": "'Cinderfang Kris',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "slagrender_cleaver",
+          "name": "'Slagrender Cleaver',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "anvilguard_blade",
+          "name": "'Anvilguard Blade',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "heart_of_the_end_greatblade",
+          "name": "'Heart of the End Greatblade',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "staff_of_the_last_spring",
+          "name": "'Staff of the Last Spring',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "forgefire_spire",
+          "name": "'Forgefire Spire',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "springtouched_crozier",
+          "name": "'Springtouched Crozier',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        },
+        {
+          "id": "wand_of_quenched_sparks",
+          "name": "'Wand of Quenched Sparks',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "sourceSymbol": "IGNIVAR_WEAPON_ITEMS",
+          "sourcePath": "src/sim/content/ignivar_loot.ts"
+        }
+      ],
+      "count": 9
+    }
+  ],
+  "hoard": {
+    "prototypeCount": 32,
+    "tiers": [
+      "epic",
+      "rare",
+      "legendary"
+    ],
+    "prototypeIds": [
+      "collapsar_band_of_nyxaris",
+      "orb_collapsing_void",
+      "cowl_of_event_horizon",
+      "mantle_of_singularity",
+      "glacier_hewn_bulwark",
+      "permafrost_legguards",
+      "frostbitten_rime_slippers",
+      "rime_crusted_grips",
+      "ember_wrought_crown",
+      "cinder_stitched_robes",
+      "chained_ember_choker",
+      "molten_clinker_girdle",
+      "storm_tuned_buckler",
+      "hauberk_tempest_gale",
+      "gale_strider_boots",
+      "tempest_strike_grips",
+      "breastplate_tectonic_might",
+      "band_mountains_weight",
+      "monolithic_shoulderguards",
+      "earthshaker_warboots",
+      "silkstalker_woven_vest",
+      "spun_venom_spaulders",
+      "broodmother_chitin_cowl",
+      "venom_etched_waistcord",
+      "bone_studded_pauldrons",
+      "legguards_of_the_ossuary",
+      "seal_of_the_cryptwalker",
+      "ossuary_bone_crown",
+      "chalice_of_living_tides",
+      "pendant_continuous_flow",
+      "coral_encrusted_girdle",
+      "riptide_handwraps"
+    ],
+    "theoreticalVariantCount": 96,
+    "requiresRuntimeValidation": true
+  }
+}
