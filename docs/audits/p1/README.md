@@ -65,3 +65,11 @@
 **Control legal:** P1 no importa medios de ClaudeCraft ni SOURCE privado. Los modelos y los iconos premium sólo se utilizan tras verificaciones específicas. Las probabilidades de fuentes ajenas no son balance definitivo HIGHFLY.
 
 **Orden conservado:** completar P1 (dinámicos/heroico + duplicados semánticos) → P2 catálogo traducido y clasificado → P3 12 mejoras de UI/HUD → P4 armaduras *stat-only*, armas y materiales jugables → P5 economía, loot y oficios → P6 Ancient.
+
+## Nuevo hito: P1.1 (cazador universal y regla +0)
+
+Se agregó [el informe P1.1 completo](../p11/README.md), con catálogo prioritario de **47** plantillas (19 IDs aprobados + 28 candidatos), **11** estilos de armas, **32** familias de tesoro generadas con **96** variantes revisables, referencias de modelo FREE CC0, primera secuencia de loot/fundición/forja y normas detalladas de equipamiento.
+
+**Decisión de gameplay:** TODO equipo se crea con `plus:0` aunque su rareza sea Legendaria o Mítica. Sólo la mejora explícita de un jugador genera `+1` a `+9`. El comercio debe transferir el MISMO objeto y su mejora. Hay UN único personaje universal. Armadura y joyas suman atributos y ocupan ranuras, pero no cambian el modelo 3D; solo las armas pueden actualizar la apariencia mediante adapter verificado.
+
+**No incorporado todavía al código jugable:** los 28 ítems candidatos, el comercio entre jugadores, el loot P1.1 y las mejoras de UI. Se completó documentación y comprobación estática; los tests de juego permanecen pendientes. P1 global sigue con variantes heroicas/dinámicas y licencias multimedia por verificar.
