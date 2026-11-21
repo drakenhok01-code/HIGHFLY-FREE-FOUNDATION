@@ -1,0 +1,16 @@
+{
+  "sourceTag": "ClaudeCraft v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "totalRows": 587,
+  "literalRows": 501,
+  "derivedRiftRows": 86,
+  "candidateMobIds": 158,
+  "droppedItemIdsNotInSource": [],
+  "cautions": [
+    "Not a complete runtime extraction; multiline source parser skips some inlined/dynamic/hardcoded loot.",
+    "Exclusive roll groups use one draw; quest drops depend on current objective and may be personal.",
+    "Heroic appended tables and generated variants not fully expanded; this source catalogue is not the final HIGHFLY loot table.",
+    "For a unified hunter, never import ClaudeCraft requiredClass or original balance unchanged.",
+    "No gameplay files touched."
+  ]
+}
