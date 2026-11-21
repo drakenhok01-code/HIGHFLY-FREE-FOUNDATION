@@ -30,7 +30,7 @@ try{
   const html=await fetch('./index.html').then(r=>r.text());
   const doc=new DOMParser().parseFromString(html,'text/html');
   const native=[...doc.querySelectorAll('style')].map(x=>x.textContent);
-  if(!native.some(x=>x.includes('highfly-official.avif')))return {image:'missing native loading stylesheet',progress:'0'};
+  if(!native.some(x=>x.includes('premium/logo_highfly.svg')))return {image:'missing native loading stylesheet',progress:'0'};
   for(const original of native){
    const style=document.createElement('style');
    style.textContent=original.replaceAll('/HIGHFLY-FREE-FOUNDATION/preview-v3/','/');
@@ -41,7 +41,7 @@ try{
   document.body.appendChild(boot);
   return {image:getComputedStyle(boot.firstElementChild,'::before').backgroundImage,progress:getComputedStyle(boot.querySelector('.bar')).height};
  });
- assert.match(bootState.image,/highfly-official\.avif/,'Official logo must be used on native loading');
+ assert.match(bootState.image,/premium\/logo_highfly\.svg/,'Native loading needs lossless scalable Phoenix SVG');
  assert.notEqual(bootState.progress,'1px','Old yellow hairline loader remains');
  await page.screenshot({path:'qa-rpg-intro.png'});
  await page.evaluate(()=>document.getElementById('boot')?.remove());
@@ -107,11 +107,19 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-stat-row').count(),0,'Attributes must NOT appear inside Character');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-hero-canvas').count(),1,'Real 3D portrait canvas must exist');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-weapon-tag').first().evaluate(el=>el.textContent.includes('Espada')),false,'Redundant weapon caption remains in 3D stage');
- assert.equal(await page.locator('#hf-rpg .hf-rpg-turn-buttons button').count(),2,'Character rotation buttons must stay functional');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-turn-buttons button').count(),0,'Remove character rotation arrows; touch-drag only');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano derecha'}).count()>0);
  assert.ok(await page.locator('#hf-rpg .hf-rpg-equip-slot').filter({hasText:'Mano izquierda'}).count()>0);
- await page.locator('#hf-rpg [data-hf-action="turn:right"]').click();
- await page.locator('#hf-rpg [data-hf-action="turn:left"]').click();
+ const beforeHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>c.toDataURL());
+ const rect=await page.locator('#hf-rpg .hf-rpg-hero-canvas').boundingBox();
+ const center={x:rect.x+rect.width*.47,y:rect.y+rect.height*.50};
+ await page.mouse.move(center.x,center.y);
+ await page.mouse.down();
+ await page.mouse.move(center.x+55,center.y,{steps:5});
+ await page.mouse.up();
+ await page.waitForTimeout(250);
+ const afterHeroDrag=await page.locator('#hf-rpg .hf-rpg-hero-canvas').evaluate(c=>c.toDataURL());
+ assert.notEqual(afterHeroDrag,beforeHeroDrag,'Portrait must rotate by drag without separate arrows');
  // True game equipment: remove the actual sword, return it to Bag, then equip it again.
  await page.locator('#hf-rpg [data-hf-equip-slot="right_hand"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-system-shade[data-stage="choose"]').count(),1,'P4.2 equipment action MUST use System dialog');
@@ -147,13 +155,16 @@ try{
  assert.deepEqual(restoredSword,{eq:'training_sword',qty:0,mode:0},'Equip must restore visible real sword without duplicating the item');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
  assert.ok(await page.locator('#hf-rpg [data-hf-item="hp_potion"]').count()>0,'Health potion not shown in real bag');
- assert.ok(await page.locator('#hf-rpg .hf-p42-icon[data-hf-art-id="item_hp_potion"]').count()>0,'New premium P4.2 HP potion missing');
- assert.ok(await page.locator('#hf-rpg .hf-p42-icon[data-hf-art-id="item_mp_potion"]').count()>0,'New premium P4.2 mana potion missing');
+ assert.ok(await page.locator('#hf-rpg .hf-rpg-item img[data-hf-art-id="item_hp_potion"][data-hf-frame-art="p43"]').count()>0,'Original approved premium health potion must be restored');
+ assert.ok(await page.locator('#hf-rpg .hf-rpg-item img[data-hf-art-id="item_mp_potion"][data-hf-frame-art="p43"]').count()>0,'Original approved premium mana potion must be restored');
  const iconLoad=await page.locator('#hf-rpg img.hf-premium-icon').evaluateAll(imgs=>({loaded:imgs.filter(x=>x.naturalWidth>0).length,total:imgs.length,allWebp:imgs.every(x=>x.src.endsWith('.webp'))}));
- assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'Item sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
+ assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'P4.3 rarity sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
+ const hpFrame=await page.locator('#hf-rpg .hf-rpg-item[data-hf-item="hp_potion"] img').getAttribute('src');
+ assert.match(hpFrame,/rarity\/items\/hp_potion__poco-comun\.webp$/,'HP item frame must be GREEN and integral to artwork');
+ const fakeVector=await page.locator('#hf-rpg .hf-rpg-grid .hf-p42-icon').count();
+ assert.equal(fakeVector,0,'P4.2 flat SVG potion or upgrade icon must not return');
  const packPaths=await page.locator('#hf-rpg .hf-user-icon').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));
- assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'Some dynamic objects still point to legacy images');
- assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'All raster items remain approved user assets; P4.2 potions are inline original vectors.');
+ assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')||x.includes('/highfly/rarity/')),'All images must come from approved HIGHFLY art or P4.3 derived rarity images');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  const gridCols=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).length);
  assert.equal(gridCols,6,'P4.2 inventory must have exactly six visible columns');
@@ -176,7 +187,7 @@ try{
   assert.equal(await page.locator('#hf-rpg [data-hf-recipe="refine_gold"]').count(),1,'Gold needs its own recipe');
   await page.locator('#hf-rpg [data-hf-recipe="refine_copper"]').click();
   const metalImage=await page.locator('#hf-rpg .hf-rpg-forge-result-art .hf-user-icon').evaluate(async img=>{await img.decode();return {src:img.src,width:img.naturalWidth}});
-  assert.ok(metalImage.src.endsWith('/items/ingot_copper.webp')&&metalImage.width===256,'Copper artwork missing');
+  assert.ok(metalImage.src.endsWith('/rarity/items/ingot_copper__comun.webp')&&metalImage.width===256,'Copper material must use full 256px premium rarity frame');
   await page.locator('#hf-rpg [data-hf-recipe="hp_potion"]').click();
   await page.screenshot({path:'qa-rpg-forge.png'});
  const forgeSizes=await page.evaluate(()=>({recipe:document.querySelector('#hf-rpg .hf-rpg-recipe .hf-premium-icon')?.getBoundingClientRect().width,ingredient:document.querySelector('#hf-rpg .hf-rpg-ingredient .hf-premium-icon')?.getBoundingClientRect().width}));
