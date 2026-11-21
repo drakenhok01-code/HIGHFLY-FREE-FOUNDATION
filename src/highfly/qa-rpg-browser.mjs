@@ -22,10 +22,19 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
  assert.equal(await page.locator('#hf-phoenix-intro').count(),0,'Pixelated CONTINUAR overlay must not exist');
- const bootState=await page.locator('#boot').evaluate(el=>({image:getComputedStyle(el.firstElementChild,'::before').backgroundImage,progress:getComputedStyle(el.querySelector('.bar')).height}));
+ // Original Unsung removes #boot when loading finishes. Recreate its DOM
+ // temporarily for visual testing; the styling itself is production CSS.
+ const bootState=await page.evaluate(()=>{
+  const boot=document.createElement('div');boot.id='boot';
+  boot.innerHTML='<div><div class="bar"><i style="transform:scaleX(.52)"></i></div><p>Preparando Aetheria</p><p class="tip">Cargando el mundo…</p></div>';
+  document.body.appendChild(boot);
+  const result={image:getComputedStyle(boot.firstElementChild,'::before').backgroundImage,progress:getComputedStyle(boot.querySelector('.bar')).height};
+  return result;
+ });
  assert.match(bootState.image,/highfly-official\.avif/,'Official logo must be used on native loading');
  assert.notEqual(bootState.progress,'1px','Old yellow hairline loader remains');
  await page.screenshot({path:'qa-rpg-intro.png'});
+ await page.evaluate(()=>document.getElementById('boot')?.remove());
  await page.waitForFunction('window.__hfRpgTest?.ready && window.__highflyRpg && window.__game',null,{timeout:15000});
  await page.waitForSelector('#hf-rpg-launch',{state:'visible'});
  await page.evaluate(()=>{const g=window.__game;g.input.lockPointer=()=>{};g.start();g.player.health=Math.max(1,g.player.healthMax-60);});

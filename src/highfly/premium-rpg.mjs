@@ -221,7 +221,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(0,5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-left-panel')+
    preview()+
    panel(title('Equipamiento','Mano izquierda · accesorios')+
-    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id)).join('')+'</div>','hf-rpg-right-panel')+
+    '<div class="hf-rpg-slot-list">'+EQUIP_SLOTS.slice(5).map(x=>slot(x,eq,local.selectedEquipSlot===x.id,bag.gearTraits)).join('')+'</div>','hf-rpg-right-panel')+
    '<div class="hf-rpg-equip-footer">'+button('◈ ABRIR BOLSA','data-hf-tab="bolsa"','is-primary')+
    detail+button('ATRIBUTOS →','data-hf-tab="atributos"')+'</div></div>';
  }
