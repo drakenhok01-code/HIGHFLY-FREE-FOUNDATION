@@ -57,9 +57,9 @@ export function describeSystemIntent(type,payload={},bag={},professionInventory=
  if(type==='craft'){
   const recipe=RECIPES[payload.recipeId];
   if(!recipe)return {ok:false,reason:'Receta desconocida'};
-  const valid=canCraft(recipe.item,professionInventory,bag);
+  const valid=canCraft(payload.recipeId,professionInventory,bag);
   if(!valid.ok)return {ok:false,reason:valid.reason};
-  return {ok:true,type,recipeId:recipe.item,itemId:recipe.item,title:'¿INICIAR FABRICACIÓN?',
+  return {ok:true,type,recipeId:payload.recipeId,itemId:recipe.item,title:'¿INICIAR FABRICACIÓN?',
    description:'¿Querés fabricar '+recipe.count+' × '+recipe.name+' usando estos materiales?',
    icon:ITEM_DEFS[recipe.item].icon,verb:'FABRICAR',
    details:Object.entries(recipe.ingredients).map(([id,n])=>({
