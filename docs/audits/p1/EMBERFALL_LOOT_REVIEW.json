@@ -1,0 +1,84 @@
+{
+  "schema": "HIGHFLY_P1_EMBERFALL_LOOT_REPORT",
+  "source": "we1jia/emberfall",
+  "sha": "5d199ab4888e428b0dab80528a37ab8ac0107360",
+  "sourceFile": "src/game.js",
+  "sourceFunction": "_killEnemy, _updateDrops, _grantEquipment",
+  "scope": "Upstream Emberfall source only, not HIGHFLY gameplay",
+  "deathDrops": [
+    {
+      "id": "xp",
+      "policy": "guaranteed",
+      "value": "enemy.xp"
+    },
+    {
+      "id": "gold",
+      "policy": "guaranteed",
+      "value": "elite:18, fodder:1..2, other:3..6",
+      "qualityNote": "simple roguelite reward not class-based RPG economy"
+    },
+    {
+      "id": "potion",
+      "policy": "guaranteed for elite; otherwise RNG",
+      "chance": {
+        "elite": 1,
+        "fodder": 0.015,
+        "other": 0.05
+      },
+      "restrictions": "cannot pick up beyond max potions"
+    },
+    {
+      "id": "equipment",
+      "policy": "conditional elite guaranteed if an unowned tier-2 weapon exists",
+      "chance": "conditional not a flat percent",
+      "selection": "prefer unowned tier-2 matching currently equipped element; otherwise random from unowned tier-2",
+      "ownership": "_grantEquipment rejects duplicate item ID; unlocked weapon is an ID, not a tradeable unique gear instance"
+    }
+  ],
+  "pickup": {
+    "attractWhenRoomClearedOrForced": true,
+    "attractWhenClose": "non-potion under 4.6 distance units",
+    "pickupDistance": 0.95,
+    "forcedCollectionSupported": true
+  },
+  "otherRewardSources": [
+    {
+      "file": "src/profile.js",
+      "kind": "quests",
+      "rewards": "gold, essence, optional weaponId"
+    },
+    {
+      "file": "src/campaign.js",
+      "kind": "story",
+      "rewards": "gold/essence"
+    },
+    {
+      "file": "src/builds.js",
+      "kind": "armor/relic loadouts",
+      "rewards": "purchased with gold/essence, not monster loot tables in source inspected"
+    }
+  ],
+  "fitForHighfly": {
+    "reuseCodePolicy": "MIT program code, reconfirm media by file",
+    "reuseConcepts": [
+      "event-driven death/pickup flow",
+      "pickup attraction with no movement lock",
+      "elite preference for relevant equipment",
+      "conditional reward grants"
+    ],
+    "mustRedesign": [
+      "item instances with rarity and +0..+9",
+      "stat-only armor and accessories",
+      "persist tradeable loot in single HIGHFLY inventory",
+      "no class switch; one universal character",
+      "no hero cosmetic armor equipment",
+      "separate world-region monster/drop definitions"
+    ]
+  },
+  "notVerified": [
+    "End-to-end mobile tests",
+    "Whether every conditional path fires in runtime",
+    "Full asset redistribution permission",
+    "3D model attachment and saved equip UI in HIGHFLY"
+  ]
+}
