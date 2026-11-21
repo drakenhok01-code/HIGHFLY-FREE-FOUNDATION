@@ -1,0 +1,59 @@
+{
+  "schema": "highfly-p2-test-evidence-v1",
+  "recordedDate": "2026-11-21",
+  "sourceCommitBase": "bf88ecdcef64337083146caad2390a6d147f30cf",
+  "sourceBranch": "p2-highfly-master-catalog-20261121",
+  "sourceFiles": [
+    "src/highfly/p2/catalog-domain.mjs",
+    "docs/catalog/p2/MASTER_CATALOG_47.json",
+    "docs/catalog/p2/RECIPES_32_AND_PROFESSIONS.json",
+    "docs/audits/HIGHFLY_V36_BASELINE_ITEMS_RECIPES.json",
+    "tests/catalog-p2.test.mjs"
+  ],
+  "executionMethod": "FETCHED_COMMITTED_TEST_BODY_AND_DOMAIN_CODE; EVALUATED_IN_FRESH_V8_ISOLATE_WITH_EQUIVALENT_ASSERTION_HELPERS; NOT_NODE_TEST_RUNNER",
+  "testCasesExecuted": 31,
+  "testCasesPassed": 31,
+  "testCasesFailed": 0,
+  "testGroups": [
+    {
+      "name": "schema,item counts,baseline",
+      "checks": 3
+    },
+    {
+      "name": "all 6 rarities gear plus-zero",
+      "checks": 6
+    },
+    {
+      "name": "all 7 origins gear plus-zero",
+      "checks": 7
+    },
+    {
+      "name": "injected enhancements, rarity stats, armor visual and no classes",
+      "checks": 4
+    },
+    {
+      "name": "dual hand identity, duplicated instance rejection, amulet slot hold",
+      "checks": 3
+    },
+    {
+      "name": "metal ore discrimination, craft previews, material non-mutation",
+      "checks": 3
+    },
+    {
+      "name": "same-instance +3 transfer, unauthorized seller rejection",
+      "checks": 2
+    },
+    {
+      "name": "profession/icon statuses and legacy stock migration",
+      "checks": 3
+    }
+  ],
+  "limitations": [
+    "Node test suite was authored but NOT executed in Codespaces or CI; use npm run qa:catalog:p2",
+    "No full browser or mobile gameplay/3D validation",
+    "No current HIGHFLY RPG runtime integration or actual player trade",
+    "Test harness used equivalent custom assertion functions rather than node:assert itself",
+    "No game assets, HUD CSS, active menu or legacy save data modified"
+  ],
+  "outcome": "PASS_ISOLATED_P2_SPEC_ONLY"
+}
