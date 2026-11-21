@@ -1,0 +1,1623 @@
+{
+  "schema": "highfly-p2-acquisition-matrix-v1",
+  "created": "2026-11-21",
+  "status": "PLANNING_NOT_GAMEPLAY",
+  "sourceEvidence": "docs/audits/p12/LOOT_SOURCE_EVIDENCE_916.csv",
+  "highflyEntrypoint": "ITEM_DEFS/RECIPES in src/highfly/rpg-core.mjs remain unchanged",
+  "entries": [
+    {
+      "highflyItemId": "training_sword",
+      "nameEs": "Espada de Aprendiz",
+      "status": "V36_EXISTING",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "training_sword",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/sword",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "VERIFIED_APPROVED_V36",
+      "plusAtNewGearCreation": 0,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "training_shield",
+      "nameEs": "Escudo de Aprendiz",
+      "status": "V36_EXISTING",
+      "type": "shield",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "training_shield",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "armor/shield",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "VERIFIED_APPROVED_V36",
+      "plusAtNewGearCreation": 0,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "training_greatsword",
+      "nameEs": "Mandoble de Aprendiz",
+      "status": "V36_EXISTING",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "training_greatsword",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/greatsword",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "VERIFIED_APPROVED_V36",
+      "plusAtNewGearCreation": 0,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "hp_potion",
+      "nameEs": "Poción de Vida",
+      "status": "V36_EXISTING",
+      "type": "consumable",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "healing_potion",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "deeprock_kobold",
+          "upstreamChance": "0.08",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone3.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 1,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "hp_potion",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "alquimia"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/hp_potion",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "mp_potion",
+      "nameEs": "Poción de Maná",
+      "status": "V36_EXISTING",
+      "type": "consumable",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "mp_potion",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "alquimia"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/mp_potion",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "herb",
+      "nameEs": "Hierbas recolectadas",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/herb",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ore",
+      "nameEs": "Mineral",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ore",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "wood",
+      "nameEs": "Madera",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/wood",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "fish",
+      "nameEs": "Pescado",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/fish",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ingot",
+      "nameEs": "Lingote sin clasificar",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ingot",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "blade_blank",
+      "nameEs": "Hoja sin terminar",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/blade_blank",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "seed",
+      "nameEs": "Semillas",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/seed",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "bag_upgrade",
+      "nameEs": "Sello de Expansión",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "bag_upgrade",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "marroquineria"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/bag_upgrade",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ingot_copper",
+      "nameEs": "Lingote de cobre",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "ingot_copper",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "fundicion"
+        },
+        {
+          "recipeId": "p2_smelt_copper",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "fundicion"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ingot_copper",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ingot_iron",
+      "nameEs": "Lingote de hierro",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "ingot_iron",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "fundicion"
+        },
+        {
+          "recipeId": "p2_smelt_iron",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "fundicion"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ingot_iron",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ingot_silver",
+      "nameEs": "Lingote de plata",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "ingot_silver",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "fundicion"
+        },
+        {
+          "recipeId": "p2_smelt_silver",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "fundicion"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ingot_silver",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ingot_gold",
+      "nameEs": "Lingote de oro",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "ingot_gold",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "fundicion"
+        },
+        {
+          "recipeId": "p2_smelt_gold",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "fundicion"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ingot_gold",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "upgrade_stone",
+      "nameEs": "Piedra de mejora",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "upgrade_stone",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ore",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "ascension_core",
+      "nameEs": "Núcleo de Ascensión",
+      "status": "V36_EXISTING",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "LEGACY_RUNTIME_REFERENCE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "ascension_core",
+          "status": "V36_EXISTING_DO_NOT_MUTATE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": "items/ore",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": []
+    },
+    {
+      "highflyItemId": "hf_dagger_basic",
+      "nameEs": "Daga de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_forge_dagger",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/dual_daggers",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_axe_basic",
+      "nameEs": "Hacha de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_forge_axe",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/axe",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_spear_basic",
+      "nameEs": "Lanza de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_forge_spear",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "UNVERIFIED_WEAPON_VISUAL",
+      "iconCandidateRelativePath": "weapons/spear",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "WEAPON_3D_NOT_VERIFIED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_bow_basic",
+      "nameEs": "Arco de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_craft_bow",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "marroquineria"
+        }
+      ],
+      "visualRule": "UNVERIFIED_WEAPON_VISUAL",
+      "iconCandidateRelativePath": "weapons/bow",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "WEAPON_3D_NOT_VERIFIED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_staff_basic",
+      "nameEs": "Bastón de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_craft_staff",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/staff",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_wand_basic",
+      "nameEs": "Vara de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "wand_of_quenched_sparks",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "ignivar_herald_of_the_last_flame",
+          "upstreamChance": "0.15625",
+          "difficulty": "HEROIC_ONLY",
+          "sourceFile": "src/sim/content/heroic_loot.ts",
+          "semantics": "EXCLUSIVE_GROUP"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 1,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_craft_wand",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "WEAPON_VISUAL_ADAPTER_NEEDS_TEST",
+      "iconCandidateRelativePath": "weapons/wand_orb",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_mace_basic",
+      "nameEs": "Maza de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_forge_mace",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "UNVERIFIED_WEAPON_VISUAL",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED",
+        "WEAPON_3D_NOT_VERIFIED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_orb_basic",
+      "nameEs": "Orbe de aprendiz",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "weapon",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_craft_orb",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "joyeria"
+        }
+      ],
+      "visualRule": "UNVERIFIED_WEAPON_VISUAL",
+      "iconCandidateRelativePath": "weapons/wand_orb",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "WEAPON_3D_NOT_VERIFIED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_helmet",
+      "nameEs": "Casco de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_helmet",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/helmet",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_chest",
+      "nameEs": "Pechera de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_chest",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/chest",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_gloves",
+      "nameEs": "Guantes de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "acolyte_chain_grips",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "old_greyjaw",
+          "upstreamChance": "0.25",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 1,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_gloves",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/gloves",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_shoulders",
+      "nameEs": "Hombreras de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_shoulders",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/shoulders",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_pants",
+      "nameEs": "Pantalones de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_pants",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_iron_boots",
+      "nameEs": "Botas de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "armor",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_armor_iron_boots",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "forja"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/boots",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_copper_ring",
+      "nameEs": "Anillo de cobre",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "accessory",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_jewel_copper_ring",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "joyeria"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/ring",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_silver_necklace",
+      "nameEs": "Collar de plata",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "accessory",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [
+        {
+          "recipeId": "p2_jewel_silver_necklace",
+          "status": "P2_CANDIDATE_NOT_LIVE",
+          "profession": "joyeria"
+        }
+      ],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": "armor/necklace",
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS"
+      ]
+    },
+    {
+      "highflyItemId": "hf_amulet_basic",
+      "nameEs": "Amuleto del viajero",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "accessory",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "heartspring_amulet",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "ignivar_herald_of_the_last_flame",
+          "upstreamChance": "0.078125",
+          "difficulty": "NORMAL_ONLY",
+          "sourceFile": "src/sim/content/dungeons.ts",
+          "semantics": "EXCLUSIVE_GROUP"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 1,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "CRAFT",
+        "MONSTER_DROP_CANDIDATE",
+        "BOSS_DROP_CANDIDATE",
+        "QUEST_REWARD_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "STATS_ONLY_NO_3D",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": "HIGHFLY_DRAFT_BALANCE_NOT_ACTIVE",
+      "plusAtNewGearCreation": 0,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED",
+        "SLOT_NOT_APPROVED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_ore_copper",
+      "nameEs": "Mineral de cobre",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "MINING_VEIN_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_ore_iron",
+      "nameEs": "Mineral de hierro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "MINING_VEIN_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_ore_silver",
+      "nameEs": "Mineral de plata",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "MINING_VEIN_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_ore_gold",
+      "nameEs": "Mineral de oro",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "MINING_VEIN_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_rough_hide",
+      "nameEs": "Cuero en bruto",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "BEAST_GATHER_SKINNING_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_wolf_fang",
+      "nameEs": "Colmillo de lobo",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "wolf_fang",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "forest_wolf",
+          "upstreamChance": "0.45",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "wolf_fang",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "old_greyjaw",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 2,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "WOLF_DROP_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_spider_silk",
+      "nameEs": "Seda de araña",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "SPIDER_DROP_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_bone_fragments",
+      "nameEs": "Fragmentos de hueso",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "restless_bones",
+          "upstreamChance": "0.6",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "captain_verlan",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "wraithbinder_maldrec",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone1.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "drowned_dead",
+          "upstreamChance": "0.5",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone2.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "drowned_warlord",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone2.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "boneclad_revenant",
+          "upstreamChance": "0.6",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone3.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "fallen_captain_aldren",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone3.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "deathstalker_voss",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone3.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "marrowlord_varkas",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/zone3.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "crypt_shambler",
+          "upstreamChance": "0.8",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/dungeons.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "bastion_revenant",
+          "upstreamChance": "0.7",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/dungeons.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "sanctum_boneguard",
+          "upstreamChance": "0.6",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/dungeons.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "drowned_templeguard",
+          "upstreamChance": "0.6",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/temple.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "ashbone_raider",
+          "upstreamChance": "0.4",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/drakelands.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "ashbone_warcaller",
+          "upstreamChance": "0.4",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/drakelands.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "wildheart_high_priest",
+          "upstreamChance": "0.8",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/wildheart.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "barrow_king",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/nightbloom.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "barrow_wight",
+          "upstreamChance": "0.5",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/nightbloom.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "pale_huntsman",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/wraithwood.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "the_wreck_warden",
+          "upstreamChance": "1",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/galecrest.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        },
+        {
+          "sourceItemId": "bone_fragments",
+          "relation": "FUNCTIONAL_ANALOGUE_NOT_IDENTICAL",
+          "sourceMobId": "drowned_deckhand",
+          "upstreamChance": "0.5",
+          "difficulty": "BASE_ANY_DIFFICULTY_IF_ELIGIBLE",
+          "sourceFile": "src/sim/content/galecrest.ts",
+          "semantics": "INDEPENDENT_ENTRY"
+        }
+      ],
+      "upstreamReferencedMonsterCount": 21,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "SKELETON_DROP_SPECIFIC"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_homespun_cloth",
+      "nameEs": "Tela rústica",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "TAILORING_OR_DROP_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_spool_of_thread",
+      "nameEs": "Carrete de hilo",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "TAILORING_OR_VENDOR_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    },
+    {
+      "highflyItemId": "hf_smithing_flux",
+      "nameEs": "Fundente de herrería",
+      "status": "P2_DEFINED_NOT_LIVE",
+      "type": "material",
+      "upstreamLootReferences": [],
+      "upstreamReferencedMonsterCount": 0,
+      "sourceDropRatesAreNotHighflyRates": true,
+      "highflyLootChance": null,
+      "highflyRarityDistribution": null,
+      "plannedAcquisition": [
+        "SMITH_VENDOR_OR_CRAFT_CANDIDATE"
+      ],
+      "recipes": [],
+      "visualRule": "ICON_ONLY",
+      "iconCandidateRelativePath": null,
+      "iconFileVerified": false,
+      "modelImported": false,
+      "statsStatus": null,
+      "plusAtNewGearCreation": null,
+      "blockers": [
+        "NOT_IN_LIVE_ITEM_DEFS",
+        "NO_ICON_PATH_ASSIGNED"
+      ]
+    }
+  ],
+  "policy": {
+    "item status": "P2 specs are not integrated, no loot table live",
+    "source drop rates": "Upstream evidence only; never transfer chance to HIGHFLY without balancing",
+    "rarity": "Any rarity allowed for each gear template by design, actual RNG weights not yet determined",
+    "enhancement": "New gear is +0 regardless rarity, origin and reward; +N only explicit player upgrade",
+    "legal": "Use legal media only after exact path and license are verified",
+    "equipment": "Only weapons visually change model when validated, armor and jewelry stats-only",
+    "character": "Only one persistent universal hunter, no class lock",
+    "legacy save": "Cannot delete or remap 'ore' or 'ingot' generic stocks silently"
+  },
+  "notYetAuthorized": [
+    "GAME_DROP_RATE_CHANGES",
+    "NEW_UI_ICONS",
+    "SLOT_ADDITION",
+    "PLAYER_MARKETPLACE",
+    "3D_ARMOR"
+  ]
+}
