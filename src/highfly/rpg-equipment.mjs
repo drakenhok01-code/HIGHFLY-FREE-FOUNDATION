@@ -33,8 +33,16 @@ export const EQUIP_ITEM_DEFS=Object.freeze({
  training_greatsword:{
   id:'training_greatsword',name:'Mandoble de Aprendiz',kind:'Equipamiento',icon:'weapon',
   rarity:'Poco común',max:10,slots:['right_hand'],stats:{physicalAttack:9},
-  description:'Mandoble a dos manos ya incluido en el Knight FREE.'
- }
+  description:'Mandoble a dos manos del Cazador Universal.'
+ },
+ hf_iron_helmet:{id:'hf_iron_helmet',name:'Yelmo de hierro',kind:'Equipamiento',icon:'helmet',rarity:'Común',max:10,slots:['helmet'],stats:{defense:2,VIT:1},description:'Casco de placas HIGHFLY. Bonificación real, modelo 3D de armadura reservado.'},
+ hf_iron_chest:{id:'hf_iron_chest',name:'Pechera de hierro',kind:'Equipamiento',icon:'armor',rarity:'Común',max:10,slots:['chest'],stats:{defense:5,VIT:2},description:'Pechera de hierro HIGHFLY. Se equipa y mejora atributos sin cambiar aún la apariencia 3D.'},
+ hf_iron_gloves:{id:'hf_iron_gloves',name:'Guantes de hierro',kind:'Equipamiento',icon:'gloves',rarity:'Común',max:10,slots:['gloves'],stats:{defense:1,AGI:1},description:'Protección de manos de hierro.'},
+ hf_iron_pants:{id:'hf_iron_pants',name:'Grebas de hierro',kind:'Equipamiento',icon:'armor',rarity:'Común',max:10,slots:['pants'],stats:{defense:3,VIT:1},description:'Protección inferior forjada en hierro.'},
+ hf_iron_boots:{id:'hf_iron_boots',name:'Botas de hierro',kind:'Equipamiento',icon:'boots',rarity:'Común',max:10,slots:['boots'],stats:{defense:2,AGI:1},description:'Botas resistentes para el Cazador.'},
+ hf_iron_shoulders:{id:'hf_iron_shoulders',name:'Hombreras de hierro',kind:'Equipamiento',icon:'armor',rarity:'Común',max:10,slots:['shoulders'],stats:{defense:2,STR:1},description:'Hombreras reforzadas de hierro.'},
+ hf_copper_ring:{id:'hf_copper_ring',name:'Anillo de cobre',kind:'Accesorios',icon:'ring',rarity:'Común',max:10,slots:['ring'],stats:{INT:1},description:'Anillo original HIGHFLY. Aumenta Inteligencia.'},
+ hf_silver_necklace:{id:'hf_silver_necklace',name:'Collar de plata',kind:'Accesorios',icon:'ring',rarity:'Común',max:10,slots:['necklace'],stats:{magicalAttack:2,INT:1},description:'Collar de plata de artesano HIGHFLY.'}
 });
 export function normalizeEquipped(raw,legacyDefault=true){
  const out={...DEFAULT_EQUIPPED};
@@ -66,7 +74,7 @@ export function equipmentBonuses(equipped,gearTraits=null){
  for(const [slot,id] of Object.entries(equipped??{})){
   const modifiers=EQUIP_ITEM_DEFS[id]?.stats;
   if(modifiers)for(const [key,val] of Object.entries(enhancedStats(modifiers,gearTraits?.equipped?.[slot])))
-   stats[key]=+(stats[key]+val).toFixed(2);
+   stats[key]=+((stats[key]??0)+val).toFixed(2);
  }
  return stats;
 }
