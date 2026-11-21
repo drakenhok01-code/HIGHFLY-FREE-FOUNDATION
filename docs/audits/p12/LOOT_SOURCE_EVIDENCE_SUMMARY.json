@@ -1,0 +1,38 @@
+{
+  "schema": "HIGHFLY_P12_LOOT_EVIDENCE_916",
+  "tag": "v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "numbers": {
+    "priorLootEvidence": 587,
+    "recoveredInlineAndNormalOnly": 76,
+    "resolvedDynamicSpread": 82,
+    "heroicBossExtra": 171,
+    "allSourceEvidenceRows": 916,
+    "distinctEnemyIds": 200,
+    "distinctItemIds": 456,
+    "byDifficulty": {
+      "HEROIC_ONLY": 171,
+      "NORMAL_ONLY": 109,
+      "BASE_ANY_DIFFICULTY_IF_ELIGIBLE": 636
+    },
+    "bySemantics": {
+      "EXCLUSIVE_GROUP": 382,
+      "INDEPENDENT_ENTRY": 477,
+      "QUEST_GATED": 57
+    }
+  },
+  "notes": [
+    "Source evidence rows, not unique HIGHFLY items or runtime-dropped items. Different bosses/difficulties may share IDs.",
+    "Some base parsed group entries can be ignored on heroic claim when normalOnly applies.",
+    "The source chance is NOT an approved HIGHFLY drop probability; plan uses its own balancing.",
+    "The source's dynamic heroic base and extra boss drops are separate; do not double-count guaranteed slots.",
+    "This is still not an exhaustive catalog of every runtime loot channel (quests, vendors, hidden world events, profession resource yields etc).",
+    "All NEW HIGHFLY gear is born enhancement +0; that attribute is not encoded in upstream loot chance records."
+  ],
+  "inputFiles": [
+    "docs/audits/p1/CLAUDECRAFT_V0447_LOOT_EVIDENCE_MASTER.csv",
+    "docs/audits/p12/BASE_LOOT_INLINE_AND_NORMAL_ONLY_RECOVERY.csv",
+    "docs/audits/p12/DYNAMIC_SPREAD_LOOT_RESOLVED_82.json",
+    "docs/audits/p12/HEROIC_BOSS_TABLES_NORMALIZED.json"
+  ]
+}
