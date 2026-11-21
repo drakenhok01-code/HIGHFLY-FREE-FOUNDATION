@@ -1,0 +1,2851 @@
+{
+  "schema": "woc-v0447-audit-part2",
+  "ref": "v0.44.7",
+  "sha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "status": "STATIC_EXTRACTION_NOT_RUNTIME_REGISTRY",
+  "registries": [
+    {
+      "symbol": "DELVE_ITEMS",
+      "path": "src/sim/content/delves/items.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "reliquary_plate_chest",
+          "name": "'Reliquary Guard Hauberk',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_leather_chest",
+          "name": "'Dustwarden Jerkin',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_cloth_chest",
+          "name": "'Shroud of the Reliquary',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_legs",
+          "name": "'Vaultbound Legwraps',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_helm",
+          "name": "'Ossuary Watch Helm',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_shoulder",
+          "name": "'Crumbled Spaulders',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reliquary_gloves_rog",
+          "name": "'Bonewarden Grips',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "deacon_reliquary_helm",
+          "name": "\"Deacon's Reliquary Helm\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "varric_shadow_cowl",
+          "name": "\"Vandric's Shadow Cowl\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "siltguard_helm",
+          "name": "'Siltguard Helm',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "bulwark_rusted_pauldrons",
+          "name": "'Bulwark-Rusted Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "nhalias_bell_maul",
+          "name": "\"Nhalia's Bell-Maul\",",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "reedstalker_jerkin",
+          "name": "'Reedstalker Jerkin',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "mirejaw_fang_knife",
+          "name": "'Mirejaw Fang-Knife',",
+          "kind": "'weapon',",
+          "quality": "'uncommon',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "widow_silk_hood",
+          "name": "'Widow-Silk Hood',",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "cantors_drowned_sash",
+          "name": "\"Cantor's Drowned Sash\",",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "corpse_candle_focus",
+          "name": "'Corpse-Candle Focus',",
+          "kind": "'weapon',",
+          "quality": "'uncommon',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "nhalias_litany_rod",
+          "name": "\"Nhalia's Litany Rod\",",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "blackwater_vanguard_chest",
+          "name": "'Blackwater Vanguard Chestguard',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "siltstep_leggings",
+          "name": "'Siltstep Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "sunken_reliquary_hood",
+          "name": "'Sunken Reliquary Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_legs",
+          "name": "'Silt-Walker Greaves',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_shoulder",
+          "name": "'Blackwater Drift Mantle',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_gloves_rog",
+          "name": "'Reed-Bound Handwraps',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_plate_chest",
+          "name": "'Sump-Warden Cuirass',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_leather_chest",
+          "name": "'Silt-Deep Vestment',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_cloth_chest",
+          "name": "'Choir-Drowned Raiment',",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "litany_helm",
+          "name": "\"Reliquant's Drowned Cowl\",",
+          "kind": "'armor',",
+          "quality": "'uncommon',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "sister_nhalia_choir_plate",
+          "name": "\"Sister Nhalia's Choir-Forged Plate\",",
+          "kind": "'armor',",
+          "quality": "'rare',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        },
+        {
+          "id": "drowned_choir_fang",
+          "name": "'Drowned Choir-Fang',",
+          "kind": "'weapon',",
+          "quality": "'rare',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "DELVE_ITEMS",
+          "sourcePath": "src/sim/content/delves/items.ts"
+        }
+      ],
+      "declaredEntries": 30
+    },
+    {
+      "symbol": "HEROIC_VENDOR_ITEMS",
+      "path": "src/sim/content/heroic_vendor.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "seal_of_the_nine_oaths",
+          "name": "'Seal of the Nine Oaths',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "nielas_coldlight_band",
+          "name": "\"Niela's Coldlight Band\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "sutils_gambit",
+          "name": "\"Sutil's Gambit\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "oath_of_the_round_table",
+          "name": "'Oath of the Round Table',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "zyzzs_deathless_signet",
+          "name": "\"Zyzz's Deathless Signet\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "architects_cornerstone",
+          "name": "\"The Architect's Cornerstone\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "yumis_keepsake_locket",
+          "name": "\"Yumi's Keepsake Locket\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "zense_meridian",
+          "name": "'Zense Meridian',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "swiftfang_talisman",
+          "name": "'Swiftfang Talisman',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        },
+        {
+          "id": "medallion_of_endless_profit",
+          "name": "'Medallion of Endless Profit',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_VENDOR_ITEMS",
+          "sourcePath": "src/sim/content/heroic_vendor.ts"
+        }
+      ],
+      "declaredEntries": 10
+    },
+    {
+      "symbol": "TRINKET_ITEMS",
+      "path": "src/sim/content/trinkets.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "medallion_of_defiance",
+          "name": null,
+          "kind": null,
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "TRINKET_ITEMS",
+          "sourcePath": "src/sim/content/trinkets.ts"
+        },
+        {
+          "id": "duelists_brand",
+          "name": null,
+          "kind": null,
+          "quality": null,
+          "slot": null,
+          "itemLevel": null,
+          "sourceSymbol": "TRINKET_ITEMS",
+          "sourcePath": "src/sim/content/trinkets.ts"
+        }
+      ],
+      "declaredEntries": 2
+    },
+    {
+      "symbol": "HEROIC_ITEMS",
+      "path": "src/sim/content/heroic_loot.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "morthens_cryptforged_hauberk",
+          "name": "\"Morthen's Cryptforged Hauberk\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "shadowpulse_handwraps",
+          "name": "'Shadowpulse Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "bonechill_striders",
+          "name": "'Bonechill Striders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "cryptplate_helm",
+          "name": "'Cryptplate Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "shadowpulse_slippers",
+          "name": "'Shadowpulse Slippers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "bonechill_cord",
+          "name": "'Bonechill Cord',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "mistcallers_fang",
+          "name": "\"Mistcaller's Fang\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "tidebound_spaulders",
+          "name": "'Tidebound Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "sash_of_the_sunken_court",
+          "name": "'Sash of the Sunken Court',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "mistforged_pauldrons",
+          "name": "'Fogforged Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "tideguard_faceguard",
+          "name": "'Tideguard Faceguard',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "sunken_court_mantle",
+          "name": "'Sunken Court Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "lunar_tide_greatstaff",
+          "name": "'Lunar Tide Greatstaff',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "tidewoven_trousers",
+          "name": "'Tidewoven Trousers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "choirmothers_casque",
+          "name": "\"Choirmother's Casque\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "lunar_choir_leggings",
+          "name": "'Lunar Choir Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "choir_blessed_spaulders",
+          "name": "'Choir-Blessed Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "tideworn_warboots",
+          "name": "'Tideworn Warboots',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "gravewyrm_cleaver",
+          "name": "'Gravewyrm Cleaver',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "shroud_of_the_gravewyrm",
+          "name": "'Shroud of the Gravewyrm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "sanctum_prowlers_grips",
+          "name": "\"Sanctum Prowler's Grips\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "gravewyrm_claws",
+          "name": "'Gravewyrm Claws',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "gravescale_girdle",
+          "name": "'Gravescale Girdle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "wyrmchoir_handwraps",
+          "name": "'Wyrmchoir Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "lunarward_cinch",
+          "name": "'Lunarward Cinch',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "dreamroot_boots",
+          "name": "'Dreamroot Boots',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "stormbark_mantle",
+          "name": "'Stormbark Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "wildsoul_maul",
+          "name": "'Wildsoul Maul',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "basin_stalkers_tunic",
+          "name": "\"Basin Stalker's Tunic\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "verdant_heart_vestment",
+          "name": "'Verdant-Heart Vestment',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "sunbone_ritual_hauberk",
+          "name": "'Sunbone Ritual Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "greatfang_of_the_basin",
+          "name": "'Greatfang of the Basin',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "sunbone_oracles_crown",
+          "name": "\"Sunbone Oracle's Crown\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "bloodmane_war_legguards",
+          "name": "'Bloodmane War-Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "scepter_of_the_deathless_court",
+          "name": "'Scepter of the Deathless Court',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "deathless_greatblade",
+          "name": "'Deathless Greatblade',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "stormcallers_focus",
+          "name": "\"Stormcaller's Focus\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        }
+      ],
+      "declaredEntries": 37
+    },
+    {
+      "symbol": "RETIRED_HEROIC_ITEMS",
+      "path": "src/sim/content/heroic_loot.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "deathless_warguard_legmail",
+          "name": "'Deathless Warguard Legmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "RETIRED_HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "soulrend_diadem",
+          "name": "'Soulrend Diadem',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "RETIRED_HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "scourgehide_carapace",
+          "name": "'Scourgehide Carapace',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "RETIRED_HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        },
+        {
+          "id": "soulforged_warplate",
+          "name": "'Soulforged Warplate',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "RETIRED_HEROIC_ITEMS",
+          "sourcePath": "src/sim/content/heroic_loot.ts"
+        }
+      ],
+      "declaredEntries": 4
+    },
+    {
+      "symbol": "IGNIVAR_LOOT_ITEMS",
+      "path": "src/sim/content/ignivar_loot.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [],
+      "declaredEntries": 0
+    },
+    {
+      "symbol": "WARFARE_ITEMS",
+      "path": "src/sim/content/pvp_honor.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "furyforged_warhelm",
+          "name": "'Furyforged Warhelm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_warspaulders",
+          "name": "'Furyforged Warspaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_warplate",
+          "name": "'Furyforged Warplate',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_girdle",
+          "name": "'Furyforged Girdle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_legguards",
+          "name": "'Furyforged Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_gauntlets",
+          "name": "'Furyforged Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "furyforged_sabatons",
+          "name": "'Furyforged Sabatons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_crown",
+          "name": "'Stormbound Crown',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_spaulders",
+          "name": "'Stormbound Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_hauberk",
+          "name": "'Stormbound Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_waistguard",
+          "name": "'Stormbound Waistguard',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_legmail",
+          "name": "'Stormbound Legmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_handguards",
+          "name": "'Stormbound Handguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "stormbound_greaves",
+          "name": "'Stormbound Greaves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_cowl",
+          "name": "'Ashstalker Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_shoulderguards",
+          "name": "'Ashstalker Shoulderguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_harness",
+          "name": "'Ashstalker Harness',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_waistband",
+          "name": "'Ashstalker Waistband',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_legguards",
+          "name": "'Ashstalker Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_grips",
+          "name": "'Ashstalker Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashstalker_treads",
+          "name": "'Ashstalker Treads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_cowl",
+          "name": "'Cinderweave Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_mantle",
+          "name": "'Cinderweave Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_raiment",
+          "name": "'Cinderweave Raiment',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_cord",
+          "name": "'Cinderweave Cord',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_legwraps",
+          "name": "'Cinderweave Legwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_handwraps",
+          "name": "'Cinderweave Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinderweave_slippers",
+          "name": "'Cinderweave Slippers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_headdress",
+          "name": "'Thornhide Headdress',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_mantle",
+          "name": "'Thornhide Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_vestment",
+          "name": "'Thornhide Vestment',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_cinch",
+          "name": "'Thornhide Cinch',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'waist',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_leggings",
+          "name": "'Thornhide Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_gloves",
+          "name": "'Thornhide Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "thornhide_boots",
+          "name": "'Thornhide Boots',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'feet',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "final_oath_medallion",
+          "name": "'Medallion of the Final Oath',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "razorwind_torque",
+          "name": "'Razorwind Torque',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "cinder_sigil_pendant",
+          "name": "'Cinder-Sigil Pendant',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "iron_vow_band",
+          "name": "'Iron Vow Band',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "unbroken_circle",
+          "name": "'The Unbroken Circle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "fleetblood_band",
+          "name": "'Fleetblood Band',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "last_step_signet",
+          "name": "'Last-Step Signet',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "ashen_focus_ring",
+          "name": "'Ashen Focus Ring',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "spellbreakers_seal",
+          "name": "\"Spellbreaker's Seal\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "final_argument_greatblade",
+          "name": "'Final Argument Greatblade',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "first_blood_razor",
+          "name": "'First-Blood Razor',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        },
+        {
+          "id": "emberglass_warstaff",
+          "name": "'Emberglass Warstaff',",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "WARFARE_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor.ts"
+        }
+      ],
+      "declaredEntries": 47
+    },
+    {
+      "symbol": "SEASON2_ITEMS",
+      "path": "src/sim/content/pvp_honor_season2.ts",
+      "status": "STATIC_OBJECT",
+      "entries": [
+        {
+          "id": "vanguard_warrior_arms_helmet",
+          "name": "'Bladewake Greathelm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_arms_shoulder",
+          "name": "'Bladewake Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_arms_chest",
+          "name": "'Bladewake Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_arms_legs",
+          "name": "'Bladewake Legplates',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_arms_gloves",
+          "name": "'Bladewake Crushers',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_fury_helmet",
+          "name": "'Bloodmarch Visage',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_fury_shoulder",
+          "name": "'Bloodmarch Shoulderguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_fury_chest",
+          "name": "'Bloodmarch Chainmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_fury_legs",
+          "name": "'Bloodmarch Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_fury_gloves",
+          "name": "'Bloodmarch Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_prot_helmet",
+          "name": "'Ironmarch Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_prot_shoulder",
+          "name": "'Ironmarch Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_prot_chest",
+          "name": "'Ironmarch Chestguard',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_prot_legs",
+          "name": "'Ironmarch Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warrior_prot_gloves",
+          "name": "'Ironmarch Handguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_holy_helmet",
+          "name": "'Sunvigil Circlet',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_holy_shoulder",
+          "name": "'Sunvigil Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_holy_chest",
+          "name": "'Sunvigil Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_holy_legs",
+          "name": "'Sunvigil Legmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_holy_gloves",
+          "name": "'Sunvigil Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_protection_helmet",
+          "name": "'Shieldvow Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_protection_shoulder",
+          "name": "'Shieldvow Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_protection_chest",
+          "name": "'Shieldvow Breastplate',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_protection_legs",
+          "name": "'Shieldvow Legplates',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_protection_gloves",
+          "name": "'Shieldvow Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_retribution_helmet",
+          "name": "'Lightbrand Crown',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_retribution_shoulder",
+          "name": "'Lightbrand Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_retribution_chest",
+          "name": "'Lightbrand Cuirass',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_retribution_legs",
+          "name": "'Lightbrand Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_paladin_retribution_gloves",
+          "name": "'Lightbrand Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_beast_mastery_helmet",
+          "name": "'Packwarden Coif',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_beast_mastery_shoulder",
+          "name": "'Packwarden Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_beast_mastery_chest",
+          "name": "'Packwarden Jerkin',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_beast_mastery_legs",
+          "name": "'Packwarden Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_beast_mastery_gloves",
+          "name": "'Packwarden Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_marksmanship_helmet",
+          "name": "'Farsight Coif',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_marksmanship_shoulder",
+          "name": "'Farsight Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_marksmanship_chest",
+          "name": "'Farsight Jerkin',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_marksmanship_legs",
+          "name": "'Farsight Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_marksmanship_gloves",
+          "name": "'Farsight Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_survival_helmet",
+          "name": "'Snaretooth Coif',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_survival_shoulder",
+          "name": "'Snaretooth Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_survival_chest",
+          "name": "'Snaretooth Jerkin',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_survival_legs",
+          "name": "'Snaretooth Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_hunter_survival_gloves",
+          "name": "'Snaretooth Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_assassination_helmet",
+          "name": "'Nightcut Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_assassination_shoulder",
+          "name": "'Nightcut Shoulderpads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_assassination_chest",
+          "name": "'Nightcut Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_assassination_legs",
+          "name": "'Nightcut Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_assassination_gloves",
+          "name": "'Nightcut Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_combat_helmet",
+          "name": "'Brawlmark Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_combat_shoulder",
+          "name": "'Brawlmark Shoulderpads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_combat_chest",
+          "name": "'Brawlmark Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_combat_legs",
+          "name": "'Brawlmark Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_combat_gloves",
+          "name": "'Brawlmark Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_subtlety_helmet",
+          "name": "'Shadewalk Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_subtlety_shoulder",
+          "name": "'Shadewalk Shoulderpads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_subtlety_chest",
+          "name": "'Shadewalk Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_subtlety_legs",
+          "name": "'Shadewalk Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_rogue_subtlety_gloves",
+          "name": "'Shadewalk Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_discipline_helmet",
+          "name": "'Veilpsalm Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_discipline_shoulder",
+          "name": "'Veilpsalm Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_discipline_chest",
+          "name": "'Veilpsalm Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_discipline_legs",
+          "name": "'Veilpsalm Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_discipline_gloves",
+          "name": "'Veilpsalm Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_holy_helmet",
+          "name": "'Gracewing Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_holy_shoulder",
+          "name": "'Gracewing Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_holy_chest",
+          "name": "'Gracewing Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_holy_legs",
+          "name": "'Gracewing Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_holy_gloves",
+          "name": "'Gracewing Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_shadow_helmet",
+          "name": "'Duskhymn Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_shadow_shoulder",
+          "name": "'Duskhymn Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_shadow_chest",
+          "name": "'Duskhymn Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_shadow_legs",
+          "name": "'Duskhymn Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_priest_shadow_gloves",
+          "name": "'Duskhymn Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_elemental_helmet",
+          "name": "'Tempestwrit Coif',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_elemental_shoulder",
+          "name": "'Tempestwrit Pauldrons',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_elemental_chest",
+          "name": "'Tempestwrit Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_elemental_legs",
+          "name": "'Tempestwrit Legmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_elemental_gloves",
+          "name": "'Tempestwrit Gauntlets',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_enhancement_helmet",
+          "name": "'Galeborn Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_enhancement_shoulder",
+          "name": "'Galeborn Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_enhancement_chest",
+          "name": "'Galeborn Chainmail',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_enhancement_legs",
+          "name": "'Galeborn Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_enhancement_gloves",
+          "name": "'Galeborn Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_restoration_helmet",
+          "name": "'Brineward Circlet',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_restoration_shoulder",
+          "name": "'Brineward Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_restoration_chest",
+          "name": "'Brineward Hauberk',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_restoration_legs",
+          "name": "'Brineward Kilt',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_shaman_restoration_gloves",
+          "name": "'Brineward Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_arcane_helmet",
+          "name": "\"Hourbinder's Hood\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_arcane_shoulder",
+          "name": "\"Hourbinder's Amice\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_arcane_chest",
+          "name": "\"Hourbinder's Robe\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_arcane_legs",
+          "name": "\"Hourbinder's Trousers\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_arcane_gloves",
+          "name": "\"Hourbinder's Gloves\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_fire_helmet",
+          "name": "'Emberlash Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_fire_shoulder",
+          "name": "'Emberlash Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_fire_chest",
+          "name": "'Emberlash Robes',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_fire_legs",
+          "name": "'Emberlash Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_fire_gloves",
+          "name": "'Emberlash Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_frost_helmet",
+          "name": "'Rimewarden Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_frost_shoulder",
+          "name": "'Rimewarden Shoulderpads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_frost_chest",
+          "name": "'Rimewarden Vestment',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_frost_legs",
+          "name": "'Rimewarden Legwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_mage_frost_gloves",
+          "name": "'Rimewarden Mitts',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_affliction_helmet",
+          "name": "'Dreadquill Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_affliction_shoulder",
+          "name": "'Dreadquill Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_affliction_chest",
+          "name": "'Dreadquill Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_affliction_legs",
+          "name": "'Dreadquill Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_affliction_gloves",
+          "name": "'Dreadquill Handwraps',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_demonology_helmet",
+          "name": "'Marrowbound Cowl',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_demonology_shoulder",
+          "name": "'Marrowbound Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_demonology_chest",
+          "name": "'Marrowbound Robe',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_demonology_legs",
+          "name": "'Marrowbound Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_demonology_gloves",
+          "name": "'Marrowbound Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_destruction_helmet",
+          "name": "'Slagcrown Hood',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_destruction_shoulder",
+          "name": "'Slagcrown Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_destruction_chest",
+          "name": "'Slagcrown Robes',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_destruction_legs",
+          "name": "'Slagcrown Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warlock_destruction_gloves",
+          "name": "'Slagcrown Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_balance_helmet",
+          "name": "'Starwarden Headdress',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_balance_shoulder",
+          "name": "'Starwarden Spaulders',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_balance_chest",
+          "name": "'Starwarden Vest',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_balance_legs",
+          "name": "'Starwarden Breeches',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_balance_gloves",
+          "name": "'Starwarden Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_feral_helmet",
+          "name": "'Bloodmane Helm',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_feral_shoulder",
+          "name": "'Bloodmane Shoulderpads',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_feral_chest",
+          "name": "'Bloodmane Tunic',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_feral_legs",
+          "name": "'Bloodmane Legguards',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_feral_gloves",
+          "name": "'Bloodmane Grips',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_restoration_helmet",
+          "name": "'Thistlebloom Crown',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'helmet',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_restoration_shoulder",
+          "name": "'Thistlebloom Mantle',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'shoulder',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_restoration_chest",
+          "name": "'Thistlebloom Vest',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'chest',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_restoration_legs",
+          "name": "'Thistlebloom Leggings',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'legs',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_druid_restoration_gloves",
+          "name": "'Thistlebloom Gloves',",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'gloves',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_verdict_greatsword",
+          "name": "\"Vanguard's Verdict\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_oath_blade",
+          "name": "\"Vanguard's Oath\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_fang_dagger",
+          "name": "\"Vanguard's Fang\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_warstaff",
+          "name": "\"Vanguard's Warstaff\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_feral_staff",
+          "name": "\"Vanguard's Feral Staff\",",
+          "kind": "'weapon',",
+          "quality": "'epic',",
+          "slot": "'mainhand',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_band_of_might",
+          "name": "\"Vanguard's Band of Might\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_band_of_precision",
+          "name": "\"Vanguard's Band of Precision\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_band_of_focus",
+          "name": "\"Vanguard's Band of Focus\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_band_of_mending",
+          "name": "\"Vanguard's Band of Mending\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'ring',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_pendant_of_might",
+          "name": "\"Vanguard's Pendant of Might\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_pendant_of_precision",
+          "name": "\"Vanguard's Pendant of Precision\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_pendant_of_focus",
+          "name": "\"Vanguard's Pendant of Focus\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        },
+        {
+          "id": "vanguard_pendant_of_mending",
+          "name": "\"Vanguard's Pendant of Mending\",",
+          "kind": "'armor',",
+          "quality": "'epic',",
+          "slot": "'neck',",
+          "itemLevel": null,
+          "sourceSymbol": "SEASON2_ITEMS",
+          "sourcePath": "src/sim/content/pvp_honor_season2.ts"
+        }
+      ],
+      "declaredEntries": 148
+    }
+  ]
+}
