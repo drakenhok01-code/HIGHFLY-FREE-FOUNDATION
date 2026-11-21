@@ -1,0 +1,43 @@
+{
+  "schema": "HIGHFLY_P12_INLINED_DROP_RECOVERY",
+  "sourceTag": "v0.44.7",
+  "p1Registries": 33,
+  "p1MobRows": 269,
+  "inlineExpressions": 41,
+  "recoveredInlineRows": 41,
+  "normalOnlyHelperRows": 35,
+  "totalRows": 76,
+  "unresolvedExpressions": [
+    {
+      "mobId": "varkhul_forgefather_of_the_last_flame",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...CRUCIBLE_PROFESSION_PATTERN_LOOT,"
+    },
+    {
+      "mobId": "ignivar_herald_of_the_last_flame",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...CRUCIBLE_PROFESSION_PATTERN_LOOT,"
+    },
+    {
+      "mobId": "nythraxis_scourge_of_thornpeak",
+      "source": "src/sim/content/dungeons.ts",
+      "expression": "...NYTHRAXIS_EQUIPMENT_LOOT,"
+    },
+    {
+      "mobId": "emberkin",
+      "source": "src/sim/content/warlock_pets.ts",
+      "expression": "scale: 0.55,"
+    },
+    {
+      "mobId": "emberkin",
+      "source": "src/sim/content/warlock_pets.ts",
+      "expression": "petScaleRanks: ["
+    }
+  ],
+  "notes": [
+    "All rows came from previously missed source-expressions / helper calls; these are ADDITIONS to the P1 source-only mob loot evidence, not HIGHFLY live drops.",
+    "Normal-only grouped entries are not eligible on heroic claims: one exclusive group does not mean independent chance per row.",
+    "The default +0 adaptation applies only to acquired HIGHFLY equipment, not to copper or materials; this raw evidence table has no object enhancement metadata.",
+    "Nythraxis spread, rift helpers, heroic boss append and Crucible patterns are recorded in their own P1.2 documents."
+  ]
+}
