@@ -1,0 +1,31 @@
+{
+  "schema": "HIGHFLY_P12_MEDIA_LICENSES",
+  "sourceRepo": "levy-street/world-of-claudecraft",
+  "tag": "v0.44.7",
+  "sourceDocument": "CREDITS.md",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "scope": "Media rows as recorded by upstream. GROUP-LEVEL credit rows are not automatic per-file license approval",
+  "rows": 255,
+  "countByRedistribution": {
+    "Yes": 36,
+    "With the project only": 137,
+    "Yes, attribution required": 3,
+    "No, permission required": 69,
+    "Yes, under SIL OFL 1.1": 1,
+    "Non-commercial only, with attribution": 9
+  },
+  "yesLicenseTypes": {
+    "CC0 1.0": 36
+  },
+  "unparsedTables": [],
+  "policies": [
+    "MIT root LICENSE applies to code, not art/audio/fonts/media",
+    "'With the project only' may accompany a WOC fork, but is EXCLUDED from independent HIGHFLY asset reuse",
+    "'No, permission required' excluded",
+    "CC BY-NC noncommercial-only excluded",
+    "Entries missing from CREDITS are NOT free",
+    "Yes/CC0 is a candidate ONLY after verifying exact source asset path and author licence; prefer direct official KayKit/Quaternius/Kenney/Poly Haven originals",
+    "Emberfall authored assets have a different provenance; its MIT original content claim does not license third-party bundles beyond their own licenses",
+    "KayKit SOURCE purchased private assets must not be put on public Pages"
+  ]
+}
