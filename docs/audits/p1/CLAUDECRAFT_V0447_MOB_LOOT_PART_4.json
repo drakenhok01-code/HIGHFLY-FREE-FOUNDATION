@@ -1,0 +1,861 @@
+{
+  "sourceRef": "v0.44.7",
+  "sourceSha": "493c35a108cef6c8aa290e8793107b1cd117886e",
+  "dataType": "STATIC SOURCE DROP EVIDENCE NOT HIGHFLY IMPLEMENTATION",
+  "registries": [
+    {
+      "symbol": "WRAITHWOOD_MOBS",
+      "path": "src/sim/content/wraithwood.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "widowsilk_spinner",
+          "sourceName": "'Widowsilk Spinner'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "105",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 105, chance: 1"
+            },
+            {
+              "itemId": "spider_leg",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'spider_leg', chance: 0.4"
+            },
+            {
+              "itemId": "widowsilk_skein",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_ww_widows_skeins",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'widowsilk_skein', chance: 0.6, questId: 'q_ww_widows_skeins'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wood_wraith",
+          "sourceName": "'Wood Wraith'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gravenbark_shambler",
+          "sourceName": "'Gravenbark Shambler'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "tangled_weed",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'tangled_weed', chance: 0.4"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "pale_huntsman",
+          "sourceName": "'The Pale Huntsman'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gravedigger_mosley",
+          "sourceName": "'Gravedigger Mosley'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "PALMREACH_MOBS",
+      "path": "src/sim/content/palmreach.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "tide_scuttler",
+          "sourceName": "'Tide Scuttler'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "thicket_boar",
+          "sourceName": "'Thicket Boar'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "canopy_weaver",
+          "sourceName": "'Canopy Weaver'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "105",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 105, chance: 1"
+            },
+            {
+              "itemId": "spider_leg",
+              "copper": null,
+              "chance": "0.4",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'spider_leg', chance: 0.4"
+            },
+            {
+              "itemId": "canopy_silk_hank",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_pr_canopy_silk",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'canopy_silk_hank', chance: 0.6, questId: 'q_pr_canopy_silk'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "idol_guardian",
+          "sourceName": "'The Idol Guardian'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "castaway_navigator",
+          "sourceName": "'Navigator Suli'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "EVERGARDEN_MOBS",
+      "path": "src/sim/content/evergarden.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "topiary_stag",
+          "sourceName": "'Topiary Stag'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "evergarden_bloom_clipping",
+              "copper": null,
+              "chance": "0.65",
+              "rollGroup": null,
+              "questId": "q_eg_bloom_clippings",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'evergarden_bloom_clipping', chance: 0.65, questId: 'q_eg_bloom_clippings'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "topiary_wolf",
+          "sourceName": "'Topiary Wolf'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 100, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hedge_knight",
+          "sourceName": "'Dawnhold Knight'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "linen_scrap",
+              "copper": null,
+              "chance": "0.3",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'linen_scrap', chance: 0.3"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "hedge_gnome",
+          "sourceName": "'Hedge Gnome'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "hedgewick_shears",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_eg_stolen_shears",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'hedgewick_shears', chance: 0.6, questId: 'q_eg_stolen_shears'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "the_topiary_bull",
+          "sourceName": "'The Topiary Bull'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "tangled_weed",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'tangled_weed', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "GALECREST_MOBS",
+      "path": "src/sim/content/galecrest.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "moor_ram",
+          "sourceName": "'Moor Ram'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "105",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 105, chance: 1"
+            },
+            {
+              "itemId": "galecrest_ram_wool",
+              "copper": null,
+              "chance": "0.65",
+              "rollGroup": null,
+              "questId": "q_gc_wool_off_the_downs",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'galecrest_ram_wool', chance: 0.65, questId: 'q_gc_wool_off_the_downs'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "gale_wisp",
+          "sourceName": "'Gale Wisp'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "shoal_scuttler",
+          "sourceName": "'Shoal Scuttler'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 105, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "downs_bandit",
+          "sourceName": "'Downs Bandit'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bandit_bandana",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bandit_bandana', chance: 0.5"
+            },
+            {
+              "itemId": "linen_scrap",
+              "copper": null,
+              "chance": "0.3",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'linen_scrap', chance: 0.3"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "wreck_thief",
+          "sourceName": "'Wreckfield Thief'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bandit_bandana",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bandit_bandana', chance: 0.5"
+            },
+            {
+              "itemId": "linen_scrap",
+              "copper": null,
+              "chance": "0.3",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'linen_scrap', chance: 0.3"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "the_wreck_warden",
+          "sourceName": "'The Wreck Warden'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 1"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "drowned_deckhand",
+          "sourceName": "'Drowned Deckhand'",
+          "minimumLevel": "20",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "100",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 100, chance: 1"
+            },
+            {
+              "itemId": "bone_fragments",
+              "copper": null,
+              "chance": "0.5",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'bone_fragments', chance: 0.5"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "FARSHORE_MOBS",
+      "path": "src/sim/content/farshore.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "riftspawn",
+          "sourceName": "'Riftspawn'",
+          "minimumLevel": "3",
+          "maximumLevel": "4",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "20",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 20, chance: 1"
+            },
+            {
+              "itemId": "farshore_salt_moss",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_fs_moss_and_mending",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'farshore_salt_moss', chance: 0.6, questId: 'q_fs_moss_and_mending'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "breach_wretch",
+          "sourceName": "'Breach Wretch'",
+          "minimumLevel": "3",
+          "maximumLevel": "5",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "20",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": null,
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 20, chance: 1"
+            },
+            {
+              "itemId": "breakscarred_steel",
+              "copper": null,
+              "chance": "0.6",
+              "rollGroup": null,
+              "questId": "q_fs_steel_for_the_redoubt",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'breakscarred_steel', chance: 0.6, questId: 'q_fs_steel_for_the_redoubt'"
+            }
+          ],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "void_stalker",
+          "sourceName": "'Void Stalker'",
+          "minimumLevel": "5",
+          "maximumLevel": "6",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 26, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "sundered_horror",
+          "sourceName": "'The Sundered Horror'",
+          "minimumLevel": "7",
+          "maximumLevel": "7",
+          "elite": "true",
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 35, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "fisher_bram",
+          "sourceName": "'Fisher Bram'",
+          "minimumLevel": "5",
+          "maximumLevel": "5",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "PROVING_SHORE_MOBS",
+      "path": "src/sim/content/proving_shore.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "training_effigy",
+          "sourceName": "'Training Effigy'",
+          "minimumLevel": "1",
+          "maximumLevel": "1",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 1, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "shore_scuttler",
+          "sourceName": "'Shore Scuttler'",
+          "minimumLevel": "1",
+          "maximumLevel": "2",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[{ copper: 4, chance: 1 }],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "mister_crabs",
+          "sourceName": "'Mister Crabs'",
+          "minimumLevel": "2",
+          "maximumLevel": "2",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": null,
+          "lootState": "literal-array",
+          "drops": [
+            {
+              "itemId": null,
+              "copper": "30",
+              "chance": "1",
+              "rollGroup": null,
+              "questId": "q_ps_mother_of_pearl",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "copper: 30, chance: 1, questId: 'q_ps_mother_of_pearl'"
+            },
+            {
+              "itemId": "ps_lustrous_pearl",
+              "copper": null,
+              "chance": "1",
+              "rollGroup": null,
+              "questId": "q_ps_mother_of_pearl",
+              "normalOnly": null,
+              "heroicOnly": null,
+              "sourceExpression": "itemId: 'ps_lustrous_pearl', chance: 1, questId: 'q_ps_mother_of_pearl'"
+            }
+          ],
+          "leftoverExpressions": []
+        }
+      ]
+    },
+    {
+      "symbol": "WORLD_QUEST_MOBS",
+      "path": "src/sim/content/world_quests.ts",
+      "status": "PARSED_STATIC_SOURCE",
+      "mobs": [
+        {
+          "id": "[EASTBROOK_FREIGHT_CARAVAN_MOB_ID]",
+          "sourceName": "'Eastbrook Freight Caravan'",
+          "minimumLevel": "WORLD_QUEST_MIN_LEVEL",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[WILLOWFEN_REMEDY_CARAVAN_MOB_ID]",
+          "sourceName": "'Willowfen Remedy Caravan'",
+          "minimumLevel": "19",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        },
+        {
+          "id": "[FROSTVEIL_SUPPLY_CARAVAN_MOB_ID]",
+          "sourceName": "'Frostveil Supply Caravan'",
+          "minimumLevel": "17",
+          "maximumLevel": "20",
+          "elite": null,
+          "boss": null,
+          "rare": null,
+          "lootExpression": "[],",
+          "lootState": "expression",
+          "drops": [],
+          "leftoverExpressions": []
+        }
+      ]
+    }
+  ]
+}
