@@ -153,7 +153,7 @@ try{
  assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'Item sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
  const packPaths=await page.locator('#hf-rpg .hf-user-icon').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));
  assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'Some dynamic objects still point to legacy images');
- assert.ok(packPaths.length>=1,'Existing other items must still load approved user WebP assets: '+JSON.stringify(packPaths));
+ assert.ok(packPaths.every(x=>x.includes('/highfly/user-icons/')),'All raster items remain approved user assets; P4.2 potions are inline original vectors.');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid').getAttribute('data-hf-bag-capacity'),'36');
  const gridCols=await page.locator('#hf-rpg .hf-rpg-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\\s+/).length);
  assert.equal(gridCols,6,'P4.2 inventory must have exactly six visible columns');
