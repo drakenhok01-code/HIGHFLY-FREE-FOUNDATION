@@ -29,7 +29,7 @@ test('P4.6 regression: 14 distinct types with 48 physical slots never falsely in
  const restored=loadRpgState(store);
  assert.equal(restored.items.training_sword,11);
  assert.equal(restored.gearTraits.bag.training_sword.length,11);
- assert.equal(inventoryRows(restored,prof.inventory).filter(x=>x.id==='training_sword').length,11);
+ assert.equal(inventoryRows(restored,prof.inventory).filter(x=>x.id==='training_sword').length,2);
 });
 test('P4.6: equipment swaps are atomic and preserve traits when several copies exist',()=>{
  const {bag,prof}=fixture();bag.slots=48;
@@ -49,7 +49,7 @@ test('P4.6: two-handed/companion unequip fails without losing either item if bag
  bag.equipped.left_hand='training_shield';
  bag.gearTraits.equipped.left_hand={id:'training_shield',rarity:'Raro',plus:3};
  bag.items.hf_iron_chest=34; // 34 gear cells + HP + MP = 36 occupied
- bag.gearTraits.bag.hf_iron_chest=Array.from({length:34},()=>({id:'hf_iron_chest',rarity:'Común',plus:0}));
+ bag.gearTraits.bag.hf_iron_chest=Array.from({length:34},(_,i)=>({id:'hf_iron_chest',rarity:['Común','Poco común','Raro','Épico'][Math.floor(i/10)],plus:i%10}));
  const before=JSON.stringify(bag);
  const fail=unequipToBag(bag,'right_hand',prof.inventory,ITEM_DEFS);
  assert.equal(fail.ok,false);
@@ -62,12 +62,13 @@ test('P4.6: physical stacks use real max-per-stack and split quantities',()=>{
  bag.items.training_shield=3;
  const rows=inventoryRows(bag,prof.inventory);
  assert.deepEqual(rows.filter(r=>r.id==='hp_potion').map(r=>r.count),[99,6]);
- assert.deepEqual(rows.filter(r=>r.id==='training_shield').map(r=>r.count),[1,1,1]);
- assert.equal(occupiedInventorySlots(bag,prof.inventory),2+1+3);
+ assert.deepEqual(rows.filter(r=>r.id==='training_shield').map(r=>r.count),[3]);
+ assert.equal(occupiedInventorySlots(bag,prof.inventory),2+1+1);
 });
 test('P4.6: refining a material in full bag can free a slot before adding result',()=>{
  const {bag,prof}=fixture();
- bag.items.hf_iron_chest=33; // 33 + 2 starting potions + ore_copper = 36
+ bag.items.hf_iron_chest=33; // 33 DISTINCT trait groups + 2 starting potions + ore_copper = 36
+ bag.gearTraits.bag.hf_iron_chest=Array.from({length:33},(_,i)=>({id:'hf_iron_chest',rarity:['Común','Poco común','Raro','Épico'][Math.floor(i/10)],plus:i%10}));
  prof.inventory.ore_copper=2;
  const v=canCraft('refine_copper',prof.inventory,bag);
  assert.equal(v.ok,true,JSON.stringify(v));
