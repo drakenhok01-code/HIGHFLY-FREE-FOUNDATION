@@ -28,7 +28,7 @@ test('P47B: all twelve real item IDs have current premium icon mappings',()=>{
  assert.match(map,/assetUrl\('rarity\/'\+rel/);
 });
 
-test('P47B: all consumables/materials stack; all equipment/accessories are separate',()=>{
+test('P4.8: materials and identical equipment/accessories stack; unique traits remain separate',()=>{
  const state=normalizeRpgState(null);
  state.items={...state.items,ore_copper:16,coal:40,ore_iron:11,ingot_copper:27,
   upgrade_stone:9,upgrade_stone_advanced:6,training_sword:3,
@@ -41,8 +41,8 @@ test('P47B: all consumables/materials stack; all equipment/accessories are separ
  }
  for(const id of ['training_sword','training_shield','hf_copper_ring','hf_iron_chest']){
   const entries=rows.filter(x=>x.id===id);
-  assert.equal(entries.length,state.items[id],'Equipment unexpectedly stacked: '+id);
-  assert.ok(entries.every(x=>x.count===1));
+  assert.equal(entries.length,1,'Identical equipment must appear in one slot: '+id);
+  assert.equal(entries[0].count,state.items[id]);
  }
  assert.equal(occupiedInventorySlots(state),rows.length,'Physical slots must equal rendered rows');
 });
