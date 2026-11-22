@@ -296,6 +296,9 @@ run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p46-material-
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p47b-approved-icons.py',path.join(ROOT,'assets/highfly/p47/source-12-icons.jpg'),iconDest]);
 // P4.8.1: ONLY the copper ingot needs three aligned bars, same original frames.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p481-copper-ingot.py',path.join(ROOT,'assets/highfly/p481/copper-triple.webp.b64'),iconDest]);
+// P4.8.2: the SAME three-bar source, tinted for the other seven metal IDs.
+// All artwork remains inside each previously approved frame; 6 rarities downstream.
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p482-three-ingots.py',path.join(ROOT,'assets/highfly/p481/copper-triple.webp.b64'),iconDest]);
 // Restore the approved P3.2 visual language without embedding 96 base64 images
 // in JavaScript: six real WebP frame variants generated on every deterministic build.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p43-premium-art.py',iconDest,loc('public/highfly/rarity')]);
