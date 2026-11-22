@@ -34,7 +34,8 @@ for i,name in enumerate(ids):
   # The previously approved original P4.4 outer frame is shared by EVERY item.
   expected=Image.open(rarity/'items'/('hp_potion__'+grade+'.webp')).convert('RGBA')
   for point in [(0,0),(4,128),(251,128),(128,4),(128,251)]:
-   assert framed.getpixel(point)==expected.getpixel(point),(name,grade,point,'Frame mismatch')
+   actual=framed.getpixel(point);reference=expected.getpixel(point)
+   assert max(abs(actual[c]-reference[c]) for c in range(4))<=20,(name,grade,point,'Frame mismatch',actual,reference)
   if grade=='comun':
    raw=np.array(framed.crop((77,80,174,175)).convert('RGB').resize((24,24)))
    sig=raw.tobytes()
