@@ -289,6 +289,8 @@ if(userIconCount!==60)throw Error('Expected 60 user icons, got '+userIconCount);
 // preserving the gilded art, and keep URLs/real item IDs exactly the same.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-icon-alpha.py',iconDest]);
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-metal-variants.py',iconDest]);
+// Distinct painterly ore silhouettes and two true enhancement-stone families.
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p46-material-art.py',iconDest]);
 // Restore the approved P3.2 visual language without embedding 96 base64 images
 // in JavaScript: six real WebP frame variants generated on every deterministic build.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p43-premium-art.py',iconDest,loc('public/highfly/rarity')]);
@@ -298,7 +300,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
