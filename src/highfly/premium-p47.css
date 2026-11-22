@@ -1,0 +1,138 @@
+/* HIGHFLY P4.7A · inherited approved P4.6 art and rarity: DO NOT modify assets.
+   Functional placement corrections for 915x412 CSS landscape. */
+
+/* Quest catalog: only list scrolls; its final row must fit completely. */
+#hf-rpg .hf-rpg-quest-layout{
+ display:grid!important;height:100%!important;min-height:0!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1.43fr)!important;
+ gap:7px!important;
+}
+#hf-rpg .hf-rpg-quest-layout>.hf-rpg-panel:first-child{
+ display:flex!important;flex-direction:column!important;
+ min-width:0!important;min-height:0!important;overflow:hidden!important;
+}
+#hf-rpg .hf-rpg-quest-layout>.hf-rpg-panel:first-child>.hf-rpg-heading,
+#hf-rpg .hf-rpg-quest-layout>.hf-rpg-panel:first-child>.hf-rpg-subtitle{
+ flex:none!important;
+}
+#hf-rpg .hf-rpg-quest-list{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ flex:1 1 0!important;min-height:0!important;max-height:none!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ scroll-behavior:auto!important;overscroll-behavior:contain!important;
+ align-content:start!important;gap:5px!important;
+ padding:3px 9px 20px 2px!important;
+ scrollbar-width:thin!important;scrollbar-color:#a879d9 #181028!important;
+ -webkit-overflow-scrolling:touch;
+}
+#hf-rpg .hf-rpg-quest-list>.hf-rpg-quest-row{
+ flex:0 0 auto!important;height:auto!important;min-height:49px!important;
+ align-self:stretch!important;box-sizing:border-box!important;
+ touch-action:pan-y!important;margin:0!important;
+}
+#hf-rpg .hf-rpg-quest-layout>.hf-rpg-panel:last-child{
+ overflow:hidden!important;min-height:0!important;
+}
+
+/* All stackable material/potion/upgrade quantities are shown via xN.
+ * Equipment slots represent one physical gear item and are never stacked. */
+#hf-rpg .hf-rpg-grid>.hf-rpg-item>b{
+ font-variant-numeric:tabular-nums!important;
+ position:absolute!important;z-index:4!important;right:4px!important;bottom:3px!important;
+ background:#100720dc!important;border:1px solid #e4c49e8c!important;
+ padding:1px 3px!important;border-radius:3px!important;
+ font-weight:800!important;font-size:clamp(9px,.9vw,12px)!important;
+}
+
+/* Profession card contains all the information without the one-pixel
+ * phantom scrollbar at right. Preserve full text and four data rows. */
+#hf-rpg .hf-p42-professions>.hf-rpg-panel:last-child{
+ display:flex!important;flex-direction:column!important;
+ min-height:0!important;min-width:0!important;
+ overflow:hidden!important;overflow-y:hidden!important;
+ gap:2px!important;padding:6px 9px 7px!important;
+}
+#hf-rpg .hf-p42-professions>.hf-rpg-panel:last-child>.hf-rpg-heading{
+ flex:0 0 auto!important;margin:0 0 3px!important;padding-bottom:3px!important;
+ min-height:30px!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature{
+ display:grid!important;grid-template-columns:62px minmax(0,1fr)!important;
+ height:65px!important;min-height:65px!important;max-height:65px!important;
+ flex:0 0 65px!important;margin:0 0 3px!important;padding:1px!important;gap:7px!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature-art,
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature-art img{
+ display:block!important;object-fit:contain!important;
+ width:62px!important;height:62px!important;
+ min-width:62px!important;max-width:62px!important;
+ max-height:62px!important;min-height:62px!important;
+ padding:0!important;margin:0!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature>div{
+ min-width:0!important;overflow:hidden!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-stat-panel{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:23px!important;max-height:23px!important;height:23px!important;
+ flex:0 0 23px!important;padding:3px 7px!important;
+ margin:1px 0!important;font-size:9px!important;line-height:1.05!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-stat-panel>b,
+#hf-rpg .hf-p42-professions .hf-rpg-stat-panel>strong{
+ font-size:9px!important;line-height:1.05!important;
+}
+#hf-rpg .hf-p42-professions .hf-p47-prof-note{
+ flex:0 0 auto!important;font-size:9px!important;line-height:1.1!important;
+ margin:2px 0!important;padding:2px 3px!important;color:#d7c0f0!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-mini-actions{
+ flex:none!important;min-height:28px!important;margin:2px 0 0!important;padding:0!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-mini-actions .hf-rpg-button{
+ height:28px!important;min-height:28px!important;padding:2px 9px!important;font-size:9px!important;
+}
+#hf-rpg .hf-p47-prof-pending{
+ display:inline-flex;align-items:center;justify-content:center;
+ width:100%;min-height:26px;box-sizing:border-box;
+ font:700 9px system-ui,sans-serif;letter-spacing:.11em;
+ background:#291b3dcc;border:1px solid #8e75a5;color:#d9c1ee;
+ border-radius:5px;
+}
+/* Forge: moving light runs ONLY while a craft transaction is actually working.
+ * The system modal's own progress remains synced by the same state flag. */
+#hf-rpg .hf-p47-forge-channel{
+ flex:none;height:5px;margin:1px 2px 3px;border-radius:8px;
+ border:1px solid #9678b564;background:linear-gradient(90deg,#170e2a,#28133c);
+ overflow:hidden;position:relative;box-sizing:border-box;
+}
+#hf-rpg .hf-p47-forge-channel>i{
+ display:block;width:100%;height:100%;border-radius:6px;
+ background:linear-gradient(90deg,#6035a5,#b56aff 45%,#f5ce85);
+ opacity:.30;transform:scaleX(.15);transform-origin:left center;
+ transition:none;
+}
+#hf-rpg .hf-rpg-forge-workshop[data-hf-forge-working="true"] .hf-p47-forge-channel>i{
+ opacity:1;animation:hf-p47-real-forge-progress .85s linear forwards;
+ box-shadow:0 0 9px #ffc47dd0;
+}
+@keyframes hf-p47-real-forge-progress{
+ from{transform:scaleX(.02)}to{transform:scaleX(1)}
+}
+@media(max-height:395px){
+ #hf-rpg .hf-p42-professions .hf-rpg-prof-feature{height:55px!important;max-height:55px!important;min-height:55px!important;flex-basis:55px!important}
+ #hf-rpg .hf-p42-professions .hf-rpg-prof-feature-art,
+ #hf-rpg .hf-p42-professions .hf-rpg-prof-feature-art img{
+  width:52px!important;height:52px!important;min-width:52px!important;max-width:52px!important;
+  min-height:52px!important;max-height:52px!important
+ }
+ #hf-rpg .hf-p42-professions .hf-rpg-stat-panel{
+  height:20px!important;min-height:20px!important;max-height:20px!important;flex-basis:20px!important;
+ }
+ #hf-rpg .hf-p42-professions .hf-p47-prof-note{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #hf-rpg .hf-rpg-forge-workshop[data-hf-forge-working="true"] .hf-p47-forge-channel>i{
+  animation:none!important;transform:scaleX(1)!important
+ }
+}
