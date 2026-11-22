@@ -50,7 +50,7 @@ export function inventoryStackRows(items={},professionInventory={},defs={},gearT
   for(let i=0;i<Math.ceil(count/max);i++)
    rows.push({...def,count:Math.min(max,count-i*max),stackIndex:i,variantIndex:0});
   return rows;
- }).sort((a,b)=>a.kind.localeCompare(b.kind)||a.name.localeCompare(b.name)||a.stackIndex-b.stackIndex);
+ }).sort((a,b)=>String(a.kind??'').localeCompare(String(b.kind??''))||String(a.name??a.id).localeCompare(String(b.name??b.id))||a.stackIndex-b.stackIndex);
 }
 export function occupiedBagSlots(items={},stock={},defs={},gearTraits={}){
  return inventoryStackRows(items,stock,defs,gearTraits).length;
