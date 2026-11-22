@@ -14,6 +14,7 @@ test('P4.6 regression: 14 distinct types with 48 physical slots never falsely in
   'raw_obsidian','ore_mithril','coal','herb','wood','leather'];
  for(const id of materials)prof.inventory[id]=12;
  bag.items.training_sword=10;
+ bag.gearTraits.bag.training_sword=Array.from({length:10},()=>({id:'training_sword',rarity:'Común',plus:0}));
  assert.equal(distinctInventoryItems(bag,prof.inventory),15);
  assert.ok(occupiedInventorySlots(bag,prof.inventory)<48);
  const before=occupiedInventorySlots(bag,prof.inventory);
