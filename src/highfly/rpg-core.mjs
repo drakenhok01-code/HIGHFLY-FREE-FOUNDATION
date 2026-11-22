@@ -99,16 +99,16 @@ export function consumeBagUpgrade(state){
  return {ok:true,slots:state.slots,remaining:state.items.bag_upgrade};
 }
 export function inventoryRows(state,professionInventory={}){
- return inventoryStackRows(state?.items,professionInventory,ITEM_DEFS);
+ return inventoryStackRows(state?.items,professionInventory,ITEM_DEFS,state?.gearTraits?.bag);
 }
 export function occupiedInventorySlots(state,professionInventory={}){
- return occupiedBagSlots(state?.items,professionInventory,ITEM_DEFS);
+ return occupiedBagSlots(state?.items,professionInventory,ITEM_DEFS,state?.gearTraits?.bag);
 }
 export function distinctInventoryItems(state,professionInventory={}){
  return Object.keys(combinedCounts(state?.items,professionInventory)).filter(id=>ITEM_DEFS[id]).length;
 }
 export function inventoryCapacity(state,professionInventory={}){
- return bagCapacityStatus(state?.items,professionInventory,ITEM_DEFS,Number(state?.slots)||MAX_BAG_SLOTS);
+ return bagCapacityStatus(state?.items,professionInventory,ITEM_DEFS,Number(state?.slots)||MAX_BAG_SLOTS,state?.gearTraits?.bag);
 }
 export function spendPotion(state,player,id){
  const item=ITEM_DEFS[id];
@@ -152,7 +152,7 @@ export function canCraft(recipeId,professionInventory={},state){
   if(due)throw Error('HIGHFLY craft validation drift on '+id);
  }
  next[recipe.item]=(next[recipe.item]??0)+recipe.count;
- const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots);
+ const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots,state?.gearTraits?.bag);
  return capacity.ok?{ok:true,used:capacity.used,free:capacity.free}:{ok:false,reason:'Bolsa llena',used:capacity.used,capacity:capacity.capacity};
 }
 export function craftPotion(recipeId,professionState,state){
