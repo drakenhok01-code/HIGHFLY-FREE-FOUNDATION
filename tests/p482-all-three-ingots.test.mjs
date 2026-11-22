@@ -9,7 +9,7 @@ test('P4.8.2: every active HIGHFLY ingot uses a single 3-bar painted source',()=
   const generator=source('scripts/highfly-p482-three-ingots.py');
   const approved=source('scripts/highfly-p481-copper-ingot.py');
   const build=source('scripts/f0-build.mjs');
-  assert.match(approved,/copper-triple|three-copper-ingot|three aligned bars/i);
+  assert.match(approved,/three reddish copper bars|three aligned bars/i);
   assert.match(generator,/copper-triple|three-bar|THREE-bar/i);
   for(const metal of metals){
     assert.ok(ITEM_DEFS['ingot_'+metal],metal);
