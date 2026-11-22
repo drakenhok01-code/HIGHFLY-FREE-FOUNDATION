@@ -85,6 +85,13 @@
  white-space:normal!important;overflow-wrap:anywhere!important;
 }
 
+/* Override P4.4's more-specific :has() rule that still forced overflow:auto.
+ * P4.5 is a true no-scroll detail: no missing controls, no hidden second pane. */
+#hf-rpg .hf-rpg-two:has(.hf-rpg-skill-list)>.hf-rpg-panel.hf-p45-skill-detail:last-child{
+ overflow:hidden!important;overflow-y:hidden!important;overflow-x:hidden!important;
+ scrollbar-width:none!important;
+}
+
 /* HABILIDADES right panel: entire detail fits together, NO vertical
  * scrolling. Layout compacted instead of clipping away long text. */
 #hf-rpg .hf-rpg-two>.hf-p45-skill-detail{
