@@ -105,8 +105,13 @@ export function equipFromBag(state,slotId,itemId,variantIndex=0,professionInvent
  }
  nextItems[itemId]-=1;
  nextEquipped[slotId]=itemId;
+ // Preview gear-trait movement without touching the saved state. The same
+ // ID, rarity and + can merge into one stack; different traits remain separate.
+ const preview={equipped:{...state.equipped},
+  gearTraits:JSON.parse(JSON.stringify(state.gearTraits??{bag:{},equipped:{}}))};
+ moveTraitsOnEquip(preview,slotId,itemId,affected,variantIndex);
  const projection=bagCapacityStatus(nextItems,professionInventory,
-  equipmentBagDefs(nextItems,professionInventory,itemDefinitions),state.slots);
+  equipmentBagDefs(nextItems,professionInventory,itemDefinitions),state.slots,preview.gearTraits.bag);
  if(!projection.ok)
   return {ok:false,reason:'Bolsa llena: '+projection.used+' / '+projection.capacity+' casillas ocupadas'};
  // Commit together, not one mutation per returned item.
@@ -128,8 +133,11 @@ export function unequipToBag(state,slotId,professionInventory={},itemDefinitions
   const equippedId=state.equipped[slot];
   next[equippedId]=(next[equippedId]??0)+1;
  }
+ const preview={equipped:{...state.equipped},
+  gearTraits:JSON.parse(JSON.stringify(state.gearTraits??{bag:{},equipped:{}}))};
+ moveTraitsOnUnequip(preview,affected);
  const projected=bagCapacityStatus(next,professionInventory,
-  equipmentBagDefs(next,professionInventory,itemDefinitions),state.slots);
+  equipmentBagDefs(next,professionInventory,itemDefinitions),state.slots,preview.gearTraits.bag);
  if(!projected.ok)return {ok:false,reason:'Bolsa llena: '+projected.used+' / '+projected.capacity+' casillas ocupadas'};
  // No separate max-per-stack rejection. A free physical slot can receive
  // an equipped item even if there are already 10 copies of that same ID.
