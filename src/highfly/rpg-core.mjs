@@ -4,6 +4,7 @@
  */
 import {EQUIP_ITEM_DEFS,normalizeEquipped} from './rpg-equipment.mjs';
 import {normalizeGearTraits,registerCraftedGear} from './rpg-itemization.mjs';
+import {inventoryStackRows,occupiedBagSlots,bagCapacityStatus,combinedCounts,perSlotLimit} from './rpg-bag-capacity.mjs';
 export const SAVE_KEY='highfly-rpg-f014-v1';
 export const SKILL_SLOT_COUNT=6;
 export const DEFAULT_SKILL_SLOTS=Object.freeze(['pulse','heavy','heal',null,null,null]);
@@ -43,7 +44,8 @@ export const ITEM_DEFS=Object.freeze({
  ingot_diamond:{id:'ingot_diamond',name:'Lingote de diamante',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Diamante refinado y compactado para fabricar equipamiento HIGHFLY.',max:999},
  ingot_obsidian:{id:'ingot_obsidian',name:'Lingote de obsidiana',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Obsidiana refinada para equipamiento especial HIGHFLY.',max:999},
  ingot_mithril:{id:'ingot_mithril',name:'Lingote de mitrilo',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Metal fantástico de alta calidad.',max:999},
- upgrade_stone:{id:'upgrade_stone',name:'Piedra de mejora',kind:'Materiales',icon:'ore',rarity:'Raro',description:'Se consume para mejorar equipo de +1 a +9. Éxito garantizado.',max:999},
+ upgrade_stone:{id:'upgrade_stone',name:'Piedra de mejora menor',kind:'Materiales',icon:'ore',rarity:'Raro',description:'Refuerza el equipo desde +0 hasta +6. Los porcentajes de éxito definitivos se definirán más adelante.',max:999},
+ upgrade_stone_advanced:{id:'upgrade_stone_advanced',name:'Piedra de mejora superior',kind:'Materiales',icon:'ore',rarity:'Épico',description:'Refuerzo avanzado para pasar de +6 a +7, de +7 a +8 y de +8 a +9. Tasas de éxito pendientes de definir.',max:999},
  ascension_core:{id:'ascension_core',name:'Núcleo de Ascensión',kind:'Especial',icon:'ore',rarity:'Épico',description:'Sube la rareza de un objeto +9, reiniciándolo a +0.',max:99}
 });
 export const RECIPES=Object.freeze({
@@ -65,17 +67,18 @@ export const RECIPES=Object.freeze({
  ingot_diamond:{item:'ingot_diamond',name:'Lingote de diamante',ingredients:{raw_diamond:3},count:1,profession:'Fundición'},
  ingot_obsidian:{item:'ingot_obsidian',name:'Lingote de obsidiana',ingredients:{raw_obsidian:3},count:1,profession:'Fundición'},
  ingot_mithril:{item:'ingot_mithril',name:'Lingote de mitrilo',ingredients:{ore_mithril:5},count:1,profession:'Fundición'},
- upgrade_stone:{item:'upgrade_stone',name:'Piedra de mejora',ingredients:{ore:2,ingot:1},count:1,profession:'Forja'},
+ upgrade_stone:{item:'upgrade_stone',name:'Piedra de mejora menor',ingredients:{ore:2,ingot:1},count:1,profession:'Forja'},
+ upgrade_stone_advanced:{item:'upgrade_stone_advanced',name:'Piedra de mejora superior',ingredients:{upgrade_stone:3,ingot_mithril:1,ore_gold:2},count:1,profession:'Forja'},
  ascension_core:{item:'ascension_core',name:'Núcleo de Ascensión',ingredients:{ore:6,ingot:3},count:1,profession:'Forja'}
 });
 const bounded=(n,max=999)=>Number.isInteger(n)?Math.max(0,Math.min(max,n)):0;
 export function normalizeRpgState(raw){
  const counts=raw&&typeof raw==='object'&&raw.items&&typeof raw.items==='object'?raw.items:{};
- const items={hp_potion:bounded(counts.hp_potion??2,99),mp_potion:bounded(counts.mp_potion??2,99)};
+ const items={hp_potion:bounded(counts.hp_potion??2,72*99),mp_potion:bounded(counts.mp_potion??2,72*99)};
  for(const [id,def] of Object.entries(ITEM_DEFS))if(id!=='hp_potion'&&id!=='mp_potion'&&id in counts)
-  items[id]=bounded(counts[id],def.max);
+  items[id]=bounded(counts[id],MAX_EXPANDED_BAG_SLOTS*perSlotLimit(def));
  // Saved generic ingots become a typed material; no legacy item lost.
- if((items.ingot??0)>0){items.ingot_iron=bounded((items.ingot_iron??0)+items.ingot,999);delete items.ingot;}
+ if((items.ingot??0)>0){items.ingot_iron=bounded((items.ingot_iron??0)+items.ingot,MAX_EXPANDED_BAG_SLOTS*perSlotLimit(ITEM_DEFS.ingot_iron));delete items.ingot;}
  const slots=Number.isInteger(raw?.slots)?Math.min(MAX_EXPANDED_BAG_SLOTS,Math.max(MAX_BAG_SLOTS,raw.slots)):MAX_BAG_SLOTS;
  const equipped=normalizeEquipped(raw?.equipped,true);
  const skills=Array.isArray(raw?.skillSlots)?raw.skillSlots:DEFAULT_SKILL_SLOTS;
@@ -96,12 +99,16 @@ export function consumeBagUpgrade(state){
  return {ok:true,slots:state.slots,remaining:state.items.bag_upgrade};
 }
 export function inventoryRows(state,professionInventory={}){
- const owned={...state?.items};
- for(const [id,n] of Object.entries(professionInventory??{}))
-  if(Number.isInteger(n)&&n>0)owned[id]=(owned[id]??0)+n;
- if((owned.ingot??0)>0){owned.ingot_iron=(owned.ingot_iron??0)+owned.ingot;delete owned.ingot;}
- return Object.entries(owned).filter(([id,n])=>ITEM_DEFS[id]&&Number.isInteger(n)&&n>0)
-  .map(([id,n])=>({...ITEM_DEFS[id],count:n})).sort((a,b)=>a.kind.localeCompare(b.kind)||a.name.localeCompare(b.name));
+ return inventoryStackRows(state?.items,professionInventory,ITEM_DEFS);
+}
+export function occupiedInventorySlots(state,professionInventory={}){
+ return occupiedBagSlots(state?.items,professionInventory,ITEM_DEFS);
+}
+export function distinctInventoryItems(state,professionInventory={}){
+ return Object.keys(combinedCounts(state?.items,professionInventory)).filter(id=>ITEM_DEFS[id]).length;
+}
+export function inventoryCapacity(state,professionInventory={}){
+ return bagCapacityStatus(state?.items,professionInventory,ITEM_DEFS,Number(state?.slots)||MAX_BAG_SLOTS);
 }
 export function spendPotion(state,player,id){
  const item=ITEM_DEFS[id];
@@ -128,13 +135,25 @@ export function canCraft(recipeId,professionInventory={},state){
  const recipe=RECIPES[recipeId];
  if(!recipe)return {ok:false,reason:'Receta desconocida'};
  if(!state?.items)return {ok:false,reason:'Bolsa no disponible'};
- if((state.items[recipe.item]??0)+recipe.count>ITEM_DEFS[recipe.item].max)
-  return {ok:false,reason:'La pila resultante alcanzó su límite'};
- const occupied=inventoryRows(state,professionInventory).length;
- const alreadyOwned=ownedMaterialCount(recipe.item,professionInventory,state)>0;
- if(!alreadyOwned&&occupied>=state.slots)return {ok:false,reason:'Bolsa llena'};
  const missing=Object.entries(recipe.ingredients).filter(([id,n])=>ownedMaterialCount(id,professionInventory,state)<n);
- return missing.length?{ok:false,reason:'Faltan materiales',missing}:{ok:true};
+ if(missing.length)return {ok:false,reason:'Faltan materiales',missing};
+ // Capacity is tested on the FINAL transaction. Ingredients may free slots
+ // before the newly crafted item is inserted (even in a full bag).
+ const next={...state.items},stock={...professionInventory};
+ for(const [id,n] of Object.entries(recipe.ingredients)){
+  let due=n;
+  const keys=id==='ingot'||id==='ingot_iron'?[id,id==='ingot'?'ingot_iron':'ingot']:[id];
+  for(const pool of [stock,next]){
+   for(const key of keys){
+    const amount=Math.min(due,Math.max(0,pool[key]??0));
+    if(amount){pool[key]-=amount;due-=amount;}
+   }
+  }
+  if(due)throw Error('HIGHFLY craft validation drift on '+id);
+ }
+ next[recipe.item]=(next[recipe.item]??0)+recipe.count;
+ const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots);
+ return capacity.ok?{ok:true,used:capacity.used,free:capacity.free}:{ok:false,reason:'Bolsa llena',used:capacity.used,capacity:capacity.capacity};
 }
 export function craftPotion(recipeId,professionState,state){
  const inventory=professionState?.inventory;
