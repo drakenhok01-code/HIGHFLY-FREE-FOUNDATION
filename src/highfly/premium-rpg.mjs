@@ -96,9 +96,11 @@ function art(id='stone',large=false,rarity=null){
  }
  return '<svg class="hf-rpg-art'+(large?' is-large':'')+'" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="hfrpgGlow"><stop stop-color="#e8e2ff" stop-opacity=".3"/><stop offset="1" stop-color="#3d176c" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="52" r="46" fill="url(#hfrpgGlow)"/>'+interior+'</svg>';
 }
-function tile(id,count,selected,trait=null,stackIndex=0,selectedIndex=0){
+function tile(id,count,selected,trait=null,stackIndex=0,selectedIndex=0,variantIndices=[]){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id&&stackIndex===selectedIndex?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+(def?.kind==='Equipamiento'||def?.kind==='Accesorios'?'':'<b>x'+numeric(count)+'</b>')+'</button>';
+ const gear=def?.kind==='Equipamiento'||def?.kind==='Accesorios';
+ const selectedThis=selected===id&&(variantIndices.length?variantIndices.includes(selectedIndex):stackIndex===selectedIndex);
+ return '<button type="button" class="hf-rpg-item '+(selectedThis?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+(!gear||count>1?'<b>x'+numeric(count)+'</b>':'')+'</button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -282,7 +284,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
     '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
    panel(title('Inventario','6 columnas · rareza por marco')+
-    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,o.variantIndex),o.stackIndex,local.selectedGearIndex):
+    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,o.variantIndex),o.variantIndex,local.selectedGearIndex,o.variantIndices):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+occupiedInventorySlots(bag,prof().inventory)+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
