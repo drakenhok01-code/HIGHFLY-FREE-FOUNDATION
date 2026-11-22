@@ -73,10 +73,11 @@ test('P4.6: full single stack does not falsely block loot with physical space av
  const result=grantP41TestLoot(bag,prof,'cofre');
  assert.equal(result.ok,true,'A new slot must be used rather than rejecting the 11th shield');
  assert.equal(bag.items.training_shield,11);
- assert.equal(inventoryRows(bag,prof.inventory).filter(x=>x.id==='training_shield').length,11);
+ assert.equal(inventoryRows(bag,prof.inventory).filter(x=>x.id==='training_shield').length,2);
 });
 test('P4.6: chest still rejects atomic overflow when all physical 36 slots occupied',()=>{
  const {bag,prof}=fixture();bag.items.training_shield=34;
+ bag.gearTraits.bag.training_shield=Array.from({length:34},(_,i)=>({id:'training_shield',rarity:['Común','Poco común','Raro','Épico'][Math.floor(i/10)],plus:i%10}));
  const snapshot=JSON.stringify([bag.items,prof.inventory]);
  const result=grantP41TestLoot(bag,prof,'cofre');
  assert.equal(result.ok,false);
