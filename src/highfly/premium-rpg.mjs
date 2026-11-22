@@ -379,26 +379,29 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>'+
    '</div>','hf-rpg-forge-main')+'</div>';
  }
- function quests(){
-  const rows=game.quests?.active??[];
-  const objective=translateHighfly(game.objective||'Explorá el mundo');
+ function questDetails(){
+  const rows=game.quests?.active??[],objective=translateHighfly(game.objective||'Explorá el mundo');
   const selected=rows.find(q=>q.id===local.selectedQuest)??null;
   const name=selected?translateHighfly(selected.title):objective;
   const goal=selected?translateHighfly(selected.verb):objective;
   const state=selected?game.quests?.state?.[selected.id]:null;
   const progress=selected?game.quests?.progress?.(selected):null;
   const progressText=state?.s==='ready'?'LISTA PARA ENTREGAR':progress?.length>=2?progress[0]+' / '+progress[1]:'OBJETIVO PRINCIPAL';
+  return '<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
+   '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
+   '<div class="hf-rpg-quest-art"><img alt="Escena de misión: '+safe(name)+'" src="'+questArtUrl(selected?.id,name)+'" loading="eager" draggable="false"/></div>'+
+   '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
+   '</div>';
+ }
+ function quests(){
+  const rows=game.quests?.active??[],objective=translateHighfly(game.objective||'Explorá el mundo');
   return '<div class="hf-rpg-quest-layout">'+panel(title('Misiones','Principal · Secundarias · Profesiones')+
-    '<div class="hf-rpg-subtitle">SEGUIMIENTO · '+rows.length+' ACTIVAS</div>'+
-    '<div class="hf-rpg-quest-list">'+
-     '<button type="button" data-hf-quest="primary" class="hf-rpg-quest-row '+(local.selectedQuest==='primary'?'is-selected':'')+'"><b>✦ HISTORIA · '+safe(objective)+'</b><small>Objetivo principal del Valle</small></button>'+
-     rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+
-    '</div>','hf-rpg-quest-left')+
-   panel('<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
-    '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
-    '<div class="hf-rpg-quest-art"><img alt="Escena de misión: '+safe(name)+'" src="'+questArtUrl(selected?.id,name)+'" loading="eager" draggable="false"/></div>'+
-    '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
-    '</div>','hf-rpg-quest-right')+'</div>';
+   '<div class="hf-rpg-subtitle">SEGUIMIENTO · '+rows.length+' ACTIVAS</div>'+
+   '<div class="hf-rpg-quest-list">'+
+   '<button type="button" data-hf-quest="primary" class="hf-rpg-quest-row '+(local.selectedQuest==='primary'?'is-selected':'')+'"><b>✦ HISTORIA · '+safe(objective)+'</b><small>Objetivo principal del Valle</small></button>'+
+   rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+
+   '</div>','hf-rpg-quest-left')+
+   panel(questDetails(),'hf-rpg-quest-right')+'</div>';
  }
  function map(){
   const native=originalMapSnapshot(game);
@@ -558,7 +561,21 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   }
   if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.selectedGearIndex=Math.max(0,Number(b.dataset.hfStackIndex)||0);local.pickEquipItem=null;render();return;}
    if(b.dataset.hfGearIndex!==undefined){local.selectedGearIndex=Number(b.dataset.hfGearIndex);render();return;}
-  if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
+  if(b.dataset.hfQuest){
+   // P4.6: Do NOT rebuild the scrollable mission list when selecting a row.
+   // Update only selected appearance and the right hand story detail.
+   local.selectedQuest=b.dataset.hfQuest;
+   const list=b.closest('.hf-rpg-quest-list'),scroll=list?.scrollTop??local.questScroll;
+   local.questScroll=scroll;local.scrollSaved['misiones.hf-rpg-quest-list']=scroll;
+   if(list){
+    for(const row of list.querySelectorAll('[data-hf-quest]'))
+     row.classList.toggle('is-selected',row.dataset.hfQuest===local.selectedQuest);
+   }
+   const detail=root.querySelector('.hf-rpg-quest-right');
+   if(detail)detail.innerHTML=questDetails();
+   else render();
+   return;
+  }
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
   if(b.dataset.hfProf){local.selectedProfession=b.dataset.hfProf;render();return;}
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
