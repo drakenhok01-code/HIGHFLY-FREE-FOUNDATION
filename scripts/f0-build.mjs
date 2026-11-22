@@ -293,7 +293,7 @@ run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-metal-variant
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p46-material-art.py',iconDest]);
 // P4.7B: approved 12 PAINTERLY ICONS from real binary Git atlas, inserted
 // BEFORE the established rarity-frame workflow. NEVER redraw the frames.
-run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p47b-approved-icons.py',loc('assets/highfly/p47/source-12-icons.jpg'),iconDest]);
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p47b-approved-icons.py',path.join(ROOT,'assets/highfly/p47/source-12-icons.jpg'),iconDest]);
 // Restore the approved P3.2 visual language without embedding 96 base64 images
 // in JavaScript: six real WebP frame variants generated on every deterministic build.
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p43-premium-art.py',iconDest,loc('public/highfly/rarity')]);
