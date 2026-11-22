@@ -1,4 +1,5 @@
 import {moveTraitsOnEquip,moveTraitsOnUnequip,enhancedStats} from './rpg-itemization.mjs';
+import {bagCapacityStatus} from './rpg-bag-capacity.mjs';
 /** HIGHFLY PHOENIX PREMIUM: real, persistent equip/unequip transactions.
  * No fake armor is equipped. Only supported KayKit Knight FREE weapon meshes
  * are exposed; future rigs/armour must provide verified visible adapters.
@@ -78,54 +79,62 @@ export function equipmentBonuses(equipped,gearTraits=null){
  }
  return stats;
 }
-export function equipFromBag(state,slotId,itemId,variantIndex=0){
+/** Item totals are not the number of physical slots. Replacements are atomic. */
+const equipmentBagDefs=(items,stock,extra={})=>({
+ ...Object.fromEntries(Object.keys({...items,...stock}).map(id=>[id,{
+  kind:'Materiales',max:id==='hp_potion'||id==='mp_potion'||id==='ascension_core'?99:id==='bag_upgrade'?3:999
+ }])),
+ ...EQUIP_ITEM_DEFS,...extra
+});
+export function equipFromBag(state,slotId,itemId,variantIndex=0,professionInventory={},itemDefinitions={}){
  if(!state?.items||!state?.equipped)return {ok:false,reason:'Inventario no disponible'};
  const def=EQUIP_ITEM_DEFS[itemId];
  if(!EQUIP_SLOTS.some(s=>s.id===slotId)||!def?.slots.includes(slotId))
   return {ok:false,reason:'Este objeto no es compatible con esa ranura'};
  if((state.items[itemId]??0)<1)return {ok:false,reason:'No tenés ese objeto en la Bolsa'};
- // The free Knight rig supports a shield or second sword only with a main sword.
  if(slotId==='left_hand'&&state.equipped.right_hand!=='training_sword')
   return {ok:false,reason:'La mano izquierda requiere una espada principal equipada'};
  const affected=[slotId];
- if(slotId==='right_hand'&&itemId==='training_greatsword'&&state.equipped.left_hand)
-  affected.push('left_hand');
  if(slotId==='right_hand'&&itemId!=='training_sword'&&state.equipped.left_hand)
   affected.push('left_hand');
  const nextItems={...state.items},nextEquipped={...state.equipped};
  for(const slot of affected){
   const previous=nextEquipped[slot];if(!previous)continue;
-  const d=EQUIP_ITEM_DEFS[previous];
-  if((nextItems[previous]??0)>=d.max)
-   return {ok:false,reason:'No hay espacio para devolver '+d.name+' a la Bolsa'};
   nextItems[previous]=(nextItems[previous]??0)+1;
   nextEquipped[slot]=null;
  }
- moveTraitsOnEquip(state,slotId,itemId,affected,variantIndex);
  nextItems[itemId]-=1;
  nextEquipped[slotId]=itemId;
+ const projection=bagCapacityStatus(nextItems,professionInventory,
+  equipmentBagDefs(nextItems,professionInventory,itemDefinitions),state.slots);
+ if(!projection.ok)
+  return {ok:false,reason:'Bolsa llena: '+projection.used+' / '+projection.capacity+' casillas ocupadas'};
+ // Commit together, not one mutation per returned item.
+ moveTraitsOnEquip(state,slotId,itemId,affected,variantIndex);
  state.items=nextItems;state.equipped=nextEquipped;
- return {ok:true,item:itemId,slot:slotId,mode:equippedMode(state.equipped)};
+ return {ok:true,item:itemId,slot:slotId,mode:equippedMode(state.equipped),used:projection.used};
 }
-export function unequipToBag(state,slotId){
+export function unequipToBag(state,slotId,professionInventory={},itemDefinitions={}){
  if(!state?.items||!state?.equipped||!EQUIP_SLOTS.some(s=>s.id===slotId))
   return {ok:false,reason:'Ranura no disponible'};
  const id=state.equipped[slotId];
  if(!id)return {ok:false,reason:'Esa ranura ya está vacía'};
  const item=EQUIP_ITEM_DEFS[id];
  if(!item)return {ok:false,reason:'Objeto sin adaptador de equipamiento'};
- if((state.items[id]??0)>=item.max)return {ok:false,reason:'La pila de '+item.name+' está completa'};
- // Unequipping the main sword with something in the offhand returns BOTH.
+ // Unequipping a main sword also returns its companion shield/sword.
  const affected=slotId==='right_hand'&&state.equipped.left_hand?['right_hand','left_hand']:[slotId];
  const next={...state.items};
  for(const slot of affected){
   const equippedId=state.equipped[slot];
-  const limit=EQUIP_ITEM_DEFS[equippedId]?.max??0;
-  if((next[equippedId]??0)>=limit)return {ok:false,reason:'No hay espacio en la Bolsa'};
   next[equippedId]=(next[equippedId]??0)+1;
  }
+ const projected=bagCapacityStatus(next,professionInventory,
+  equipmentBagDefs(next,professionInventory,itemDefinitions),state.slots);
+ if(!projected.ok)return {ok:false,reason:'Bolsa llena: '+projected.used+' / '+projected.capacity+' casillas ocupadas'};
+ // No separate max-per-stack rejection. A free physical slot can receive
+ // an equipped item even if there are already 10 copies of that same ID.
  moveTraitsOnUnequip(state,affected);
  state.items=next;
  for(const slot of affected)state.equipped[slot]=null;
- return {ok:true,item:id,slot:slotId,mode:equippedMode(state.equipped)};
+ return {ok:true,item:id,slot:slotId,mode:equippedMode(state.equipped),used:projected.used};
 }
