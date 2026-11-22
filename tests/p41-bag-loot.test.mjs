@@ -68,11 +68,20 @@ test('P4.1: potion use mutates real player and persists bag in a mock store',()=
  assert.equal(saveRpgState(bag,storage),true);
  assert.equal(loadRpgState(storage).items.hp_potion,1);
 });
-test('P4.1: repeated chest cannot overflow an equipment stack (atomic rollback)',()=>{
+test('P4.6: full single stack does not falsely block loot with physical space available',()=>{
  const {bag,prof}=fixture();bag.items.training_shield=10;
- const snap=JSON.stringify([bag.items,prof.inventory]);
- assert.equal(grantP41TestLoot(bag,prof,'cofre').ok,false);
- assert.equal(JSON.stringify([bag.items,prof.inventory]),snap);
+ const result=grantP41TestLoot(bag,prof,'cofre');
+ assert.equal(result.ok,true,'A new slot must be used rather than rejecting the 11th shield');
+ assert.equal(bag.items.training_shield,11);
+ assert.equal(inventoryRows(bag,prof.inventory).filter(x=>x.id==='training_shield').length,11);
+});
+test('P4.6: chest still rejects atomic overflow when all physical 36 slots occupied',()=>{
+ const {bag,prof}=fixture();bag.items.training_shield=34;
+ const snapshot=JSON.stringify([bag.items,prof.inventory]);
+ const result=grantP41TestLoot(bag,prof,'cofre');
+ assert.equal(result.ok,false);
+ assert.match(result.reason,/ranuras libres/);
+ assert.equal(JSON.stringify([bag.items,prof.inventory]),snapshot);
 });
 
 test('P4.1: real armor and accessory slots grant persistent defense and attribute points',()=>{
