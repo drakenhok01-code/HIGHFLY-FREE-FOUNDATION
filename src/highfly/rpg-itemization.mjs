@@ -22,7 +22,9 @@ export const enhancedStats=(stats={},trait)=>{
 export function normalizeGearTraits(raw,items={},equipped={}){
  const bag={},eq={};
  for(const id of GEAR_IDS){
-  const n=Math.max(0,Math.min(10,Number(items[id])||0));
+  const n=Math.max(0,Math.min(72,Math.floor(Number(items[id])||0)));
+  // Each gear piece has a separate persistent trait; 72 is the maximum
+  // bag capacity, not the former ten-unit stack cap.
   const input=Array.isArray(raw?.bag?.[id])?raw.bag[id]:[];
   bag[id]=Array.from({length:n},(_,i)=>validTrait(input[i],id));
  }
@@ -75,10 +77,14 @@ export function enhanceGear(state,{place='bag',id,index=0},kind='upgrade'){
  if(kind==='upgrade'){
   if(trait.plus>=MAX_ENHANCEMENT)return {ok:false,reason:'Este equipo ya está en +9'};
   const count=1+Math.floor(trait.plus/3);
-  if((state.items?.upgrade_stone??0)<count)return {ok:false,reason:'Necesitás '+count+' piedras de mejora'};
-  state.items.upgrade_stone-=count;
+  const advanced=trait.plus>=6;
+  const material=advanced?'upgrade_stone_advanced':'upgrade_stone';
+  const label=advanced?'Piedra de mejora superior':'Piedra de mejora menor';
+  if((state.items?.[material]??0)<count)
+   return {ok:false,reason:'Necesitás '+count+' '+label+(count>1?'es':'')};
+  state.items[material]-=count;
   trait.plus++;
-  return {ok:true,trait:{...trait},spent:count,material:'Piedra de mejora'};
+  return {ok:true,trait:{...trait},spent:count,material:label,materialId:material};
  }
  if(kind==='ascend'){
   if(trait.plus<MAX_ENHANCEMENT)return {ok:false,reason:'Primero mejorá el equipo hasta +9'};
