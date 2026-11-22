@@ -55,7 +55,7 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="personaje"]').getAttribute('class').then(s=>s.includes('is-active')),true,
   'P4.7 main menu must open at PERSONAJE, never Opciones');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="opciones"]').click();
- await page.locator('#hf-rpg [data-hf-action="close"]').click();
+ await page.locator('#hf-rpg .hf-rpg-close[data-hf-action="close"]').click();
  await page.locator('#hf-rpg-launch').click();
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
  assert.ok(await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="personaje"].is-active').count()>0,
