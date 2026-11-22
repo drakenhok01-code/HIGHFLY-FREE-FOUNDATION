@@ -4,7 +4,7 @@
  */
 import {ITEM_DEFS} from './rpg-core.mjs';
 import {bagCapacityStatus} from './rpg-bag-capacity.mjs';
-import {registerCraftedGear,RARITIES,GEAR_IDS} from './rpg-itemization.mjs';
+import {registerCraftedGear,normalizeGearTraits,RARITIES,GEAR_IDS} from './rpg-itemization.mjs';
 export const MATERIAL_ORDER=Object.freeze(['cobre','hierro','acero','plata','oro','diamante','obsidiana','mitrilo']);
 export const P41_TEST_DROPS=Object.freeze({
  lobo:Object.freeze({label:'Botín de prueba · lobo',bag:Object.freeze({hp_potion:1}),resources:Object.freeze({herb:2})}),
@@ -23,7 +23,7 @@ export function grantP41TestLoot(state,profession,source){
   // Physical stacks automatically spill into another real inventory cell.
   // A filled single stack is NOT a filled 36–72 slot bag.
  }
- const projection=bagCapacityStatus(items,stock,ITEM_DEFS,state.slots);
+ const projection=bagCapacityStatus(items,stock,ITEM_DEFS,state.slots,normalizeGearTraits(state.gearTraits,items,state.equipped).bag);
  if(!projection.ok)return {ok:false,reason:'No hay ranuras libres en la Bolsa: '+projection.used+' / '+state.slots};
  // All validations passed: atomic award, gear traits are normalized to +0.
  Object.assign(state.items,items);
@@ -39,7 +39,15 @@ export function receiveP41WorldPickup(state,profession,{id,count=1,rarity='Comú
  if(!state?.items||!stock||!def||!Number.isInteger(count)||count<1||count>5||!RARITIES.includes(rarity))
   return {ok:false,reason:'Botín inválido'};
  const next={...state.items,[id]:(state.items[id]??0)+count};
- const projection=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots);
+ const preview=normalizeGearTraits(state.gearTraits,next,state.equipped);
+ if(GEAR_IDS.includes(id)){
+  const list=preview.bag[id];
+  for(let i=list.length-count;i<list.length;i++){
+   list[i].rarity=rarity;
+   list[i].plus=0;
+  }
+ }
+ const projection=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots,preview.bag);
  if(!projection.ok)return {ok:false,reason:'Bolsa llena: '+projection.used+' / '+state.slots};
  state.items[id]=(state.items[id]??0)+count;
  if(GEAR_IDS.includes(id)){
