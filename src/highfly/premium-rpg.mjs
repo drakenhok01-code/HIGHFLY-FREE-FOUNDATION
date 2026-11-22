@@ -17,6 +17,7 @@ import './premium-p43.css';
 import './premium-p44.css';
 import './premium-p45.css';
 import './premium-p46.css';
+import './premium-p47.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -97,7 +98,7 @@ function art(id='stone',large=false,rarity=null){
 }
 function tile(id,count,selected,trait=null,stackIndex=0,selectedIndex=0){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id&&stackIndex===selectedIndex?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+'<b>x'+numeric(count)+'</b></button>';
+ return '<button type="button" class="hf-rpg-item '+(selected===id&&stackIndex===selectedIndex?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+(def?.kind==='Equipamiento'||def?.kind==='Accesorios'?'':'<b>x'+numeric(count)+'</b>')+'</button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -353,7 +354,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-stat-panel"><b>Materiales asociados</b><strong>'+numeric(owned)+'</strong></div>'+
     '<div class="hf-rpg-stat-panel"><b>Acciones completadas</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
     '<div class="hf-rpg-stat-panel"><b>Herramientas</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
-    '<div class="hf-rpg-mini-actions">'+button('VER RECETAS','data-hf-tab="forja"','is-primary')+'</div>','hf-rpg-right-panel')+'</div>';
+    '<p class="hf-p47-prof-note">'+(selected.ready?
+      'Profesión habilitada. Consultá sus recetas y recursos en Fabricación.':
+      'Oficio en preparación: aún no dispone de recetas ni acciones propias. Su icono ya está integrado.')+'</p>'+
+    '<div class="hf-rpg-mini-actions">'+(selected.ready?
+     button('VER RECETAS','data-hf-tab="forja"','is-primary'):
+     '<span class="hf-p47-prof-pending">RECETAS PENDIENTES</span>')+'</div>','hf-rpg-right-panel')+'</div>';
  }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(local.recipe,prof().inventory,bag);
@@ -369,7 +375,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-forge-recipes">'+recipes+'</div>'+
     '<div class="hf-rpg-forge-tip">La fabricación utiliza recursos reales. El inventario completo está en Bolsa.</div>',
     'hf-rpg-forge-list')+
-   panel('<div class="hf-rpg-forge-workshop">'+title(recipe.name,recipe.profession+' · Estación de creación')+
+   panel('<div class="hf-rpg-forge-workshop" data-hf-forge-working="'+(local.system?.type==='craft'&&local.system?.phase==='working'?'true':'false')+'">'+
+    title(recipe.name,recipe.profession+' · Estación de creación')+
+    '<div class="hf-p47-forge-channel" aria-hidden="true"><i></i></div>'+
     '<div class="hf-rpg-forge-preview"><div class="hf-rpg-forge-result-art">'+art('item_'+recipe.item,true)+'</div>'+
     '<div><h3>'+safe(recipe.name)+'</h3><p>'+safe(ITEM_DEFS[recipe.item].description)+'</p><small>Resultado · x'+recipe.count+'</small></div></div>'+
     '<div class="hf-rpg-forge-materials"><div class="hf-rpg-subtitle">RECETA · MATERIALES NECESARIOS</div>'+
@@ -455,7 +463,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(game.state!=='playing'||game.people?.talk||game.cine)return false;
   game.openMenu('hero');
   if(game.state!=='menu')return false;
-  local.opened=true;local.tab=tab;root.hidden=false;
+  local.opened=true;local.tab=tab==='bolsa'?'bolsa':'personaje';root.hidden=false; // regular menu ALWAYS begins at Character
   syncEquipment();syncSkills();
   document.body.classList.add('hf-rpg-is-open');
   render();return true;
@@ -463,7 +471,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  function close(){
   if(!local.opened||local.system?.phase==='working')return;
   if(local.system){local.system=null;render();return;}
-  local.opened=false;root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
+  local.opened=false;local.tab='personaje';root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
