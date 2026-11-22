@@ -15,6 +15,7 @@ import './premium-p41.css';
 import './premium-p42.css';
 import './premium-p43.css';
 import './premium-p44.css';
+import './premium-p45.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -310,12 +311,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<p>'+safe(chosen?.desc??'')+'</p></div>'+
     '<div class="hf-rpg-tag">'+safe(chosen?.kind??'')+' · '+safe(chosen?.cost??'')+'</div>'+
     '<div class="hf-rpg-subtitle">ASIGNACIÓN DE HABILIDAD</div>'+
-    '<p class="hf-rpg-info">Elegí una ranura de combate (1 a 6). Las habilidades bloqueadas no se pueden ejecutar.</p>'+
+    '<p class="hf-rpg-info hf-p45-skill-guide">Elegí una ranura (1–6) para equipar. Las habilidades bloqueadas no se pueden usar.</p>'+
     '<div class="hf-rpg-skill-slots">'+skillSlots+'</div>'+
     '<div class="hf-rpg-mini-actions">'+(equippedIndex>=0?
      button('DESEQUIPAR DE RANURA '+(equippedIndex+1),'data-hf-action="clear-skill:'+equippedIndex+'"'):
      button(choose?'TOCÁ UNA RANURA ↑':'EQUIPAR','data-hf-action="choose-skill" '+(chosen?.available?'':'disabled'),'is-primary'))+
-    '</div>','hf-rpg-right-panel')+'</div>';
+    '</div>','hf-rpg-right-panel hf-p45-skill-detail')+'</div>';
  }
  function professions(){
   const jobs=[
