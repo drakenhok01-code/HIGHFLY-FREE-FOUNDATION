@@ -42,14 +42,22 @@ for index,name in enumerate(ids):
  x=(index%4)*256;y=(index//4)*256
  image=im.crop((x,y,x+256,y+256)).convert('RGBA')
  if name=='ingot_copper':image=triple_copper_ingot(image)
- # Transparent outer 3% removes square photographic edges; approved metal
- # frame added later determines the visible rarity outline.
- alpha=Image.new('L',(256,256),0)
- d=ImageDraw.Draw(alpha)
- d.rounded_rectangle((5,5,250,250),radius=34,fill=255)
- alpha=alpha.filter(ImageFilter.GaussianBlur(2))
- image.putalpha(alpha)
+ # P4.8: keep the ORIGINAL user-approved icon FRAME AND BACKGROUND.
+ # Paste only the painting inside it, 16% smaller. The frame is never
+ # flattened, replaced or overpainted by the 12 newly illustrated minerals.
  dest=target/(name+'.webp')
+ approved=Image.open(dest).convert('RGBA')
+ assert approved.size==(256,256),name
+ painting=image.resize((216,216),Image.Resampling.LANCZOS)
+ interior=approved.copy()
+ interior.alpha_composite(painting,(20,20))
+ # Feather the photographic edges back into the existing premium vignette.
+ # The original gold frame is untouched outside the inner 188px area.
+ mask=Image.new('L',(256,256),0)
+ d=ImageDraw.Draw(mask)
+ d.rounded_rectangle((36,36,220,220),radius=37,fill=255)
+ mask=mask.filter(ImageFilter.GaussianBlur(8))
+ image=Image.composite(interior,approved,mask)
  image.save(dest,'WEBP',quality=97,method=6)
  check=Image.open(dest)
  assert check.size==(256,256) and check.getpixel((0,0))[3]==0, f'Invalid P47B icon {name}'
