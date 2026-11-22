@@ -30,10 +30,12 @@ export function describeSystemIntent(type,payload={},bag={},professionInventory=
   if(kind==='upgrade'){
    if(trait.plus>=9)return {ok:false,reason:'El equipo ya está en +9'};
    const count=1+Math.floor(trait.plus/3);
-   if((bag.items?.upgrade_stone??0)<count)return {ok:false,reason:'Necesitás '+count+' Piedras de mejora'};
+   const material=trait.plus>=6?'upgrade_stone_advanced':'upgrade_stone';
+   const materialName=trait.plus>=6?'Piedra de mejora superior':'Piedra de mejora menor';
+   if((bag.items?.[material]??0)<count)return {ok:false,reason:'Necesitás '+count+' '+materialName+(count>1?'es':'')};
    return {ok:true,type,place,id,index,kind,title:'MEJORA DE EQUIPO',verb:'MEJORAR',
-    description:'¿Querés subir este equipo a +'+(trait.plus+1)+'? Éxito garantizado.',
-    details:[{label:'Calidad',value:trait.rarity},{label:'Costo',value:count+' Piedras de mejora'}],icon:'ore'};
+    description:'¿Querés subir este equipo a +'+(trait.plus+1)+'? En la prueba actual las mejoras son seguras; los porcentajes definitivos se definirán después.',
+    details:[{label:'Calidad',value:trait.rarity},{label:'Piedra requerida',value:materialName},{label:'Costo',value:count+' × '+materialName}],icon:'item_'+material};
   }
   if(kind==='ascend'){
    const next=rarityIndex(trait.rarity)+1;
