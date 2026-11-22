@@ -279,10 +279,12 @@ try{
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="misiones"]').click();
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-row').count(),6,'Five active quests plus main objective, none hidden');
  await page.evaluate(()=>{const el=document.querySelector('#hf-rpg .hf-rpg-quest-list');el.scrollTop=64;});
+ await page.evaluate(()=>{window.__p46QuestListNode=document.querySelector('#hf-rpg .hf-rpg-quest-list');});
  const questScrollBefore=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
  await page.locator('#hf-rpg [data-hf-quest="q3"]').click();
  const questScrollAfter=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
  assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
+ assert.equal(await page.evaluate(()=>window.__p46QuestListNode===document.querySelector('#hf-rpg .hf-rpg-quest-list')),true,'P4.6 mission selection must NOT recreate its scrollable list');
  await page.screenshot({path:'qa-rpg-quests.png'});
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One real mission scene exists');
@@ -352,6 +354,53 @@ try{
  await page.locator('#hf-rpg [data-hf-skill="pulse"]').click();
  assert.match(await page.locator('#hf-rpg .hf-rpg-right-panel').innerText(),/Pulso/,'Skills selection renders detail');
 
+ // P4.6: reproduce user's real 14/48 false-full bug and test actual System UI.
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
+ await page.evaluate(()=>{
+  const state=window.__highflyRpg.state;
+  state.slots=48;
+  state.items.training_sword=10;
+  state.gearTraits.bag.training_sword=Array.from({length:10},()=>({id:'training_sword',rarity:'Común',plus:0}));
+  window.__highflyRpg.render();
+ });
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="personaje"]').click();
+ await page.locator('#hf-rpg [data-hf-equip-slot="right_hand"]').click();
+ await page.locator('#hf-rpg [data-hf-system-gear="unequip"]').click();
+ await page.locator('#hf-rpg [data-hf-system="confirm"]').click();
+ const unequipped=await page.evaluate(()=>({
+  success:document.querySelector('#hf-rpg .hf-system-shade')?.getAttribute('data-stage'),
+  message:document.querySelector('#hf-rpg .hf-system-card')?.innerText,
+  sword:window.__highflyRpg.state.items.training_sword,
+  main:window.__highflyRpg.state.equipped.right_hand,
+  traits:window.__highflyRpg.state.gearTraits.bag.training_sword.length
+ }));
+ console.log('[HIGHFLY P4.6 UNEQUIP 48]',JSON.stringify(unequipped));
+ assert.equal(unequipped.sword,11,'P4.6 must never reject unequip because prior sword stack has 10');
+ assert.equal(unequipped.main,null);
+ assert.equal(unequipped.traits,11,'Every gear instance retains its own rarity and enhancement');
+ assert.equal(unequipped.success,'result');
+ assert.doesNotMatch(unequipped.message,/No hay espacio|Bolsa llena/i);
+ await page.locator('#hf-rpg [data-hf-system="dismiss"]').click();
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="bolsa"]').click();
+ await page.locator('#hf-rpg [data-hf-action="p41:loot:muestras"]').click();
+ const allMinerals=await page.evaluate(()=>({
+  owned:Object.fromEntries(['coal','ore_copper','ore_iron','ore_silver','ore_gold',
+   'raw_diamond','raw_obsidian','ore_mithril'].map(id=>[id,window.__game.player._hfProfession.inventory[id]])),
+  superior:window.__highflyRpg.state.items.upgrade_stone_advanced
+ }));
+ console.log('[HIGHFLY P4.6 NEW MATERIALS]',JSON.stringify(allMinerals));
+ assert.ok(Object.values(allMinerals.owned).every(v=>v>0),'Each distinct mineral must be awarded for inspection');
+ assert.ok(allMinerals.superior>=2,'Advanced enhancement stone must be a real inventory object');
+ const distinctPics=await page.locator('#hf-rpg .hf-rpg-grid .hf-premium-icon[data-hf-art-id^="item_"]').evaluateAll(images=>
+  images.filter(img=>['item_coal','item_ore_copper','item_ore_iron','item_ore_silver',
+  'item_ore_gold','item_raw_diamond','item_raw_obsidian','item_ore_mithril',
+  'item_upgrade_stone','item_upgrade_stone_advanced'].includes(img.dataset.hfArtId))
+  .map(img=>({id:img.dataset.hfArtId,w:img.naturalWidth,src:img.getAttribute('src')})));
+ const uniqueIds=new Set(distinctPics.map(x=>x.id)),uniquePaths=new Set(distinctPics.map(x=>x.src));
+ assert.equal(uniqueIds.size,10,'P4.6 must expose all ten unique material/stone illustrations');
+ assert.equal(uniquePaths.size,10,'Each material requires an independent icon source, not a recolor placeholder reference');
+ assert.ok(distinctPics.every(x=>x.w===256),'Every material painting must remain 256px');
+ await page.screenshot({path:'qa-rpg-p46-materials.png'});
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="opciones"]').click();
  await page.screenshot({path:'qa-rpg-options.png'});
  await page.locator('#hf-rpg [data-hf-action="close"]').first().click();
