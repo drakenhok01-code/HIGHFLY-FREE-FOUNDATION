@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {normalizeRpgState,inventoryRows,occupiedInventorySlots,ITEM_DEFS} from '../src/highfly/rpg-core.mjs';
 const file=p=>fs.readFileSync(p,'utf8');
-test('P4.7: all consumables, drops, minerals, ingots, improvement stones stack; equipment does not',()=>{
+test('P4.8: consumables and identical equipment stack while preserving each equipment trait',()=>{
  const bag=normalizeRpgState(null);
  bag.items={hp_potion:24,mp_potion:17,upgrade_stone:18,upgrade_stone_advanced:11,
   coal:45,ore:38,ore_copper:27,ore_iron:26,ore_silver:25,
@@ -16,10 +16,10 @@ test('P4.7: all consumables, drops, minerals, ingots, improvement stones stack; 
   assert.equal(rows.find(x=>x.id===id).count,bag.items[id]);
  }
  for(const id of ['training_sword','hf_iron_chest','hf_copper_ring']){
-  assert.equal(rows.filter(x=>x.id===id).length,bag.items[id]);
-  assert.ok(rows.filter(x=>x.id===id).every(x=>x.count===1));
+  assert.equal(rows.filter(x=>x.id===id).length,1);
+  assert.equal(rows.find(x=>x.id===id).count,bag.items[id]);
  }
- assert.equal(occupiedInventorySlots(bag),12+4+3+2);
+ assert.equal(occupiedInventorySlots(bag),12+1+1+1);
 });
 test('P4.7: 1000 units of one material use two physical slots, not 1000',()=>{
  const bag=normalizeRpgState(null);bag.items.coal=1000;
