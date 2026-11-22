@@ -162,6 +162,15 @@ try{
  assert.ok(iconLoad.loaded===iconLoad.total&&iconLoad.allWebp,'P4.3 rarity sprites must be fully loaded WebP: '+JSON.stringify(iconLoad));
  const hpFrame=await page.locator('#hf-rpg .hf-rpg-item[data-hf-item="hp_potion"] img').getAttribute('src');
  assert.match(hpFrame,/rarity\/items\/hp_potion__poco-comun\.webp$/,'HP item frame must be GREEN and integral to artwork');
+ const selectedFrame=await page.locator('#hf-rpg .hf-rpg-item.is-selected[data-hf-rarity]').evaluate(el=>{
+  const st=getComputedStyle(el),r=el.getBoundingClientRect(),img=el.querySelector('img'),ir=img?.getBoundingClientRect();
+  return {border:[st.borderTopWidth,st.borderRightWidth,st.borderBottomWidth,st.borderLeftWidth],
+   outline:st.outlineWidth,shadow:st.boxShadow,slot:[r.width,r.height],
+   art:ir?[ir.width,ir.height]:null};
+ });
+ assert.ok(selectedFrame.border.every(w=>parseFloat(w)===0)&&parseFloat(selectedFrame.outline)===0
+  &&selectedFrame.shadow==='none','Bag doubles its embedded metal rarity frame: '+JSON.stringify(selectedFrame));
+ assert.ok(Math.abs(selectedFrame.slot[0]-selectedFrame.art[0])<1.25,'Premium painting is not full-bleed slot art');
  const fakeVector=await page.locator('#hf-rpg .hf-rpg-grid .hf-p42-icon').count();
  assert.equal(fakeVector,0,'P4.2 flat SVG potion or upgrade icon must not return');
  const packPaths=await page.locator('#hf-rpg .hf-user-icon').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));
@@ -209,6 +218,20 @@ try{
   assert.ok(metalImage.src.endsWith('/rarity/items/ingot_copper__comun.webp')&&metalImage.width===256,'Copper material must use full 256px premium rarity frame');
   await page.locator('#hf-rpg [data-hf-recipe="hp_potion"]').click();
   await page.screenshot({path:'qa-rpg-forge.png'});
+ const forgeScroll=await page.locator('#hf-rpg .hf-rpg-forge-recipes').evaluate(el=>{
+  const before=el.scrollTop;
+  el.scrollTop=el.scrollHeight;
+  const last=el.lastElementChild.getBoundingClientRect(),rect=el.getBoundingClientRect();
+  const outer=el.closest('.hf-rpg-forge-list');
+  const data={count:el.children.length,scrollTop:el.scrollTop,scrollHeight:el.scrollHeight,
+   clientHeight:el.clientHeight,lastBottom:last.bottom,visibleBottom:rect.bottom,
+   outerOverflow:getComputedStyle(outer).overflowY};el.scrollTop=before;return data;
+ });
+ console.log('[HIGHFLY P4.5 FORGE LIST]',JSON.stringify(forgeScroll));
+ assert.ok(forgeScroll.count>8&&forgeScroll.scrollTop>0&&forgeScroll.lastBottom<=forgeScroll.visibleBottom+2,
+  'Forge final recipe cut off; internal scroll failed: '+JSON.stringify(forgeScroll));
+ assert.equal(forgeScroll.outerOverflow,'hidden','Forge has two vertical scrollbars');
+
  const forgeSizes=await page.evaluate(()=>({recipe:document.querySelector('#hf-rpg .hf-rpg-recipe .hf-premium-icon')?.getBoundingClientRect().width,ingredient:document.querySelector('#hf-rpg .hf-rpg-ingredient .hf-premium-icon')?.getBoundingClientRect().width}));
  assert.ok(forgeSizes.recipe>=43&&forgeSizes.ingredient>=39,'Recipe/material icons remain too small: '+JSON.stringify(forgeSizes));
  assert.equal(await page.locator('#hf-rpg .hf-rpg-forge-layout > .hf-rpg-panel').count(),2,'Forge must not waste a third panel on material inventory');
@@ -238,13 +261,18 @@ try{
  assert.equal(await engineering.count(),1,'Engineering profession must exist');
  const engineeringIcon=await engineering.locator('img').evaluate(async image=>{await image.decode();return {src:image.getAttribute('src'),width:image.naturalWidth}});
  assert.ok(engineeringIcon.src.includes('professions/ingenieria.webp')&&engineeringIcon.width===256,'Engineering needs its own high-quality 256px gears illustration');
- const profPanel=await page.locator('#hf-rpg .hf-p42-professions>.hf-rpg-panel:first-child').evaluate(el=>{
+ const profPanel=await page.locator('#hf-rpg .hf-rpg-prof-grid').evaluate(el=>{
   const before=el.scrollTop;el.scrollTop=el.scrollHeight;
   const child=el.querySelector('.hf-rpg-prof-card:last-child')?.getBoundingClientRect();
-  const box=el.getBoundingClientRect(),result={lastVisible:!child||child.bottom<=box.bottom+2,scrollTop:el.scrollTop};
-  el.scrollTop=before;return result;
+  const box=el.getBoundingClientRect(),result={
+   lastVisible:!!child&&child.bottom<=box.bottom+2&&child.top>=box.top-2,
+   scrollTop:el.scrollTop,count:el.children.length,outerOverflow:getComputedStyle(el.parentElement).overflowY
+  };el.scrollTop=before;return result;
  });
- assert.ok(profPanel.lastVisible,'Last profession should remain accessible by internal scrolling');
+ console.log('[HIGHFLY P4.5 PROFESSIONS]',JSON.stringify(profPanel));
+ assert.ok(profPanel.count===15&&profPanel.scrollTop>0&&profPanel.lastVisible,
+   'Last profession inaccessible or clipped: '+JSON.stringify(profPanel));
+ assert.equal(profPanel.outerOverflow,'hidden','Profession grid must own the ONLY scrollbar');
 
  assert.equal(await page.locator('#hf-rpg .hf-rpg-prof-card .hf-p42-prof-frame').count(),15,'Every profession needs a dedicated frame');
  await page.screenshot({path:'qa-rpg-professions.png'});
@@ -283,14 +311,22 @@ try{
  assert.equal(await page.locator('#hf-rpg .hf-rpg-grid > *').count(),48,'Bag capacity persists across tab changes');
  await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="habilidades"]').click();
  assert.ok(await page.locator('#hf-rpg .hf-rpg-skill').count()>=4,'Actual skills missing');
- const detailScroll=await page.locator('#hf-rpg .hf-rpg-two>.hf-rpg-panel:last-child').evaluate(el=>{
-  const before=el.scrollTop;el.scrollTop=1e6;
-  const reached=el.scrollHeight<=el.clientHeight+2||el.scrollTop>0;
-  const info={scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,reached};
-  el.scrollTop=before;return info;
- });
- console.log('[HIGHFLY P4.4 SKILLS DETAIL]',JSON.stringify(detailScroll));
- assert.ok(detailScroll.reached,'Skills detail cuts information without allowing scrolling');
+ // All six skills must fit in the SAME fixed panel on landscape screens,
+ // including the final equip control, without a hidden scrollbar.
+ for(const skillId of ['attack','dash','roll','heavy','pulse','heal']){
+  await page.locator('#hf-rpg [data-hf-skill="'+skillId+'"]').click();
+  const d=await page.locator('#hf-rpg .hf-p45-skill-detail').evaluate(el=>{
+   const r=el.getBoundingClientRect(),a=el.querySelector('.hf-rpg-mini-actions')?.getBoundingClientRect();
+   const h=el.querySelector('.hf-rpg-heading')?.getBoundingClientRect();
+   return {scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,
+    overflow:getComputedStyle(el).overflowY,headerTop:h?.top,panelTop:r.top,
+    actionBottom:a?.bottom,panelBottom:r.bottom};
+  });
+  console.log('[HIGHFLY P4.5 SKILL NO SCROLL]',skillId,JSON.stringify(d));
+  assert.ok(d.scrollHeight<=d.clientHeight+3 &&d.overflow==='hidden'
+   &&d.actionBottom<=d.panelBottom+2&&d.headerTop>=d.panelTop-2,
+    'Skill '+skillId+' cuts content or requires scrolling: '+JSON.stringify(d));
+ }
 
  await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
  const alphaReframing=await page.locator('#hf-rpg .hf-rpg-skill-glyph .hf-premium-icon').first().evaluate(el=>getComputedStyle(el).transform);
