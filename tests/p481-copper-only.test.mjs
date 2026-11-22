@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const s=p=>fs.readFileSync(p,'utf8');
+test('P4.8.1 fixes ONLY the copper ingot with 3 painterly bars',()=>{
+ const build=s('scripts/f0-build.mjs');
+ const old=build.indexOf("'scripts/highfly-p47b-approved-icons.py'");
+ const copper=build.indexOf("'scripts/highfly-p481-copper-ingot.py'");
+ const framed=build.indexOf("'scripts/highfly-p43-premium-art.py'");
+ assert.ok(old>0&&old<copper&&copper<framed);
+ const code=s('scripts/highfly-p481-copper-ingot.py');
+ assert.ok(code.includes("items'/'ingot_copper.webp"),'Must update the existing copper ingot ID, not new items');
+ assert.match(code,/painting\.resize\(\(174,135\)/);
+ assert.match(code,/alpha_composite\(scaled,\(41,72\)\)/);
+ assert.match(code,/original gold\/fantasy rim|outer gold\/fantasy rim/i);
+ assert.match(code,/approved\.getpixel\(point\)/);
+ assert.doesNotMatch(code,/ITEM_DEFS|inventoryRows|gearTraits|\\.json|ingot_bronze/);
+ const asset=s('assets/highfly/p481/copper-triple.webp.b64').trim();
+ assert.equal(asset.length,18424);
+ assert.match(asset,/^UklG[A-Za-z0-9+/=]+$/);
+});
