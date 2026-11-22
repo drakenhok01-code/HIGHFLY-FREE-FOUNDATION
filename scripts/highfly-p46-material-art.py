@@ -22,7 +22,7 @@ def new_canvas(name,glow):
  # Replace ONLY the old central ore painting, while retaining HIGHFLY's
  # approved fantasy-violet atmosphere and every original gilt frame pixel.
  background=Image.new('RGBA',(N,N),(14,8,30,255))
- gd=ImageDraw.Draw(background)
+ nebula=Image.new('RGBA',(N,N),(0,0,0,0));gd=ImageDraw.Draw(nebula)
  for n in range(23,0,-1):
   rad=72+round(n*2.2)
   alpha=max(0,round((25-n)*2.4))
@@ -31,6 +31,7 @@ def new_canvas(name,glow):
  for i in range(84):
   x=r.randrange(54,203);y=r.randrange(44,205);rad=r.choice([.35,.6,.9,1.2])
   gd.ellipse(rect((x-rad,y-rad,x+rad,y+rad)),fill=(209,185,244,r.randrange(20,85)))
+ background=Image.alpha_composite(background,nebula)
  mask=Image.new('L',(N,N),0)
  ImageDraw.Draw(mask).ellipse(rect((50,45,210,215)),fill=255)
  mask=mask.filter(ImageFilter.GaussianBlur(sc(10)))
