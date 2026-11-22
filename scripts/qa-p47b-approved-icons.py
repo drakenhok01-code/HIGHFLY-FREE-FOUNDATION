@@ -19,11 +19,15 @@ for i,name in enumerate(ids):
  assert image.size==(256,256),master
  assert image.getpixel((0,0))[3]==0,'Original approved painting must leave outside frame transparent'
  ref=src.crop(((i%4)*256,(i//4)*256,(i%4+1)*256,(i//4+1)*256))
- roi=(60,65,193,195)
- delta=np.mean(np.abs(np.array(ref.crop(roi),dtype=np.float32)-
+ # P4.8 compares the APPROVED painting after precisely the intended 216px
+ # interior resizing; its outer frame MUST stay visible and unsullied.
+ roi=(80,87,176,178)
+ resized=ref.resize((216,216),Image.Resampling.LANCZOS)
+ expected=resized.crop((roi[0]-20,roi[1]-20,roi[2]-20,roi[3]-20))
+ delta=np.mean(np.abs(np.array(expected,dtype=np.float32)-
                      np.array(image.convert('RGB').crop(roi),dtype=np.float32)))
  if name!='ingot_copper':
-  assert delta<18,(name,'Approved art changed unexpectedly',delta)
+  assert delta<22,(name,'Approved art interior lost after frame-safe reduction',delta)
  else:
   assert delta>12,('Copper ingots must be stacked in 3, not the old single bar',delta)
  for grade in grades:
