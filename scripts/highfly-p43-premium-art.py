@@ -56,7 +56,9 @@ def crystal_variant(base,id):
  out.alpha_composite(overlay.resize((256,256),Image.Resampling.LANCZOS))
  out.save(icons/'items'/(id+'.webp'),'WEBP',quality=96,method=6)
 
-for name in ['upgrade_stone','ascension_core']:
+# P4.6 provides original painted upgrade_stone and upgrade_stone_advanced.
+# Only the ascension core keeps its older P4.3 illustration.
+for name in ['ascension_core']:
  crystal_variant(icons/'items'/'ore.webp',name)
 
 prof={
