@@ -26,7 +26,8 @@ test('One equipped sword upgrades +1..+9 only with real stones and persists',()=
  const s=normalizeRpgState(null);
  assert.equal(s.gearTraits.equipped.right_hand.plus,0);
  assert.equal(enhanceGear(s,{place:'equipped',id:'right_hand'}).ok,false);
- s.items.upgrade_stone=18;
+ s.items.upgrade_stone=9; // +0→+6 costs 1+1+1+2+2+2
+ s.items.upgrade_stone_advanced=9; // +6→+9 costs 3+3+3
  for(let plus=1;plus<=9;plus++){
   const intent=describeSystemIntent('gear-upgrade',{place:'equipped',id:'right_hand',kind:'upgrade'},s);
   assert.equal(intent.ok,true,plus);
@@ -35,6 +36,7 @@ test('One equipped sword upgrades +1..+9 only with real stones and persists',()=
   assert.equal(r.trait.plus,plus);
  }
  assert.equal(s.items.upgrade_stone,0);
+ assert.equal(s.items.upgrade_stone_advanced,0);
  assert.equal(enhanceGear(s,{place:'equipped',id:'right_hand'}).ok,false);
  assert.equal(enhanceGear(s,{place:'equipped',id:'right_hand'},'ascend').ok,false);
  s.items.ascension_core=1;
