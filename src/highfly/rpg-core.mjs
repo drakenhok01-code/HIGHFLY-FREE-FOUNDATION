@@ -152,7 +152,7 @@ export function canCraft(recipeId,professionInventory={},state){
   if(due)throw Error('HIGHFLY craft validation drift on '+id);
  }
  next[recipe.item]=(next[recipe.item]??0)+recipe.count;
- const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots,state?.gearTraits?.bag);
+ const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots,normalizeGearTraits(state.gearTraits,next,state.equipped).bag);
  return capacity.ok?{ok:true,used:capacity.used,free:capacity.free}:{ok:false,reason:'Bolsa llena',used:capacity.used,capacity:capacity.capacity};
 }
 export function craftPotion(recipeId,professionState,state){
