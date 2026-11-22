@@ -16,12 +16,13 @@ import './premium-p42.css';
 import './premium-p43.css';
 import './premium-p44.css';
 import './premium-p45.css';
+import './premium-p46.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
 import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
-import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
+import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,occupiedInventorySlots,distinctInventoryItems,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {grantP41TestLoot,MATERIAL_ORDER} from './p41-loot.mjs';
 import {installP41WorldLoot} from './p41-world-loot.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
@@ -94,9 +95,9 @@ function art(id='stone',large=false,rarity=null){
  }
  return '<svg class="hf-rpg-art'+(large?' is-large':'')+'" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="hfrpgGlow"><stop stop-color="#e8e2ff" stop-opacity=".3"/><stop offset="1" stop-color="#3d176c" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="52" r="46" fill="url(#hfrpgGlow)"/>'+interior+'</svg>';
 }
-function tile(id,count,selected,trait=null){
+function tile(id,count,selected,trait=null,stackIndex=0,selectedIndex=0){
  const def=ITEM_DEFS[id],icon='item_'+id;
- return '<button type="button" class="hf-rpg-item '+(selected===id?'is-selected':'')+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+'<b>x'+numeric(count)+'</b></button>';
+ return '<button type="button" class="hf-rpg-item '+(selected===id&&stackIndex===selectedIndex?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">'+art(icon,false,trait?.rarity??def?.rarity??'Común')+'<b>x'+numeric(count)+'</b></button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
@@ -192,9 +193,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    return;
   }
   let result={ok:false,reason:'Acción no compatible'};
-  if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId,m.variantIndex??0);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
+  if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId,m.variantIndex??0,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
   else if(m.type==='gear-upgrade'){result=enhanceGear(bag,{place:m.place,id:m.id,index:m.index},m.kind);if(result.ok)save();}
-   else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
+   else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
   else if(m.type==='assign-skill'){result=assignSkillSlot(bag,m.slotIndex,m.skillId,p());if(result.ok){save();syncSkills();local.pickSkill=null;}}
   else if(m.type==='expand'){result=consumeBagUpgrade(bag);if(result.ok)save();}
   let output=result.reason;
@@ -273,16 +274,16 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    blank('Este material se utiliza en Fabricación.');
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
     categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat,local.category===cat)).join('')+
-    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+allItems().length+'</strong></div>'+ 
+    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+distinctInventoryItems(bag,prof().inventory)+'</strong></div>'+ 
      '<div class="hf-p41-loot-lab"><b>✦ DEPURACIÓN TEMPORAL · BOTÍN</b><small>Para pruebas internas. También podés recoger drops reales en el mundo.</small>'+ 
-     button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+'</div>'+ 
+     button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+button('◆ MUESTRAS','data-hf-action="p41:loot:muestras"')+'</div>'+ 
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
     '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
    panel(title('Inventario','6 columnas · rareza por marco')+
-    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,0)):
+    '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,o.variantIndex),o.stackIndex,local.selectedGearIndex):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
-    '<div class="hf-rpg-inventory-counter">'+rows.length+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
+    '<div class="hf-rpg-inventory-counter">'+occupiedInventorySlots(bag,prof().inventory)+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
    panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art" data-hf-rarity="'+safe(trait?.rarity??chosen.rarity)+'">'+art('item_'+chosen.id,true,trait?.rarity??chosen.rarity)+'</div><h3>'+safe(chosen.name)+'</h3>'+
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
@@ -555,7 +556,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     else message('Ranura libre: elegí una habilidad y tocá EQUIPAR');
    }return;
   }
-  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.selectedGearIndex=0;local.pickEquipItem=null;render();return;}
+  if(b.dataset.hfItem){local.selected=b.dataset.hfItem;local.selectedGearIndex=Math.max(0,Number(b.dataset.hfStackIndex)||0);local.pickEquipItem=null;render();return;}
    if(b.dataset.hfGearIndex!==undefined){local.selectedGearIndex=Number(b.dataset.hfGearIndex);render();return;}
   if(b.dataset.hfQuest){local.selectedQuest=b.dataset.hfQuest;render();return;}
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
