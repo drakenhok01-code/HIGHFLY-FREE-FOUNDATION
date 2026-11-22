@@ -52,6 +52,15 @@ try{
  const opening=await page.evaluate(()=>({ok:window.__highflyRpg.opened,game:window.__game.state,harnessReady:window.__hfRpgTest?.ready,health:window.__game.player.health,maximum:window.__game.player.healthMax}));
  assert.ok(opening.ok&&opening.game==='menu'&&opening.harnessReady,'Premium RPG production menu mount failed '+JSON.stringify(opening));
  await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
+ assert.equal(await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="personaje"]').getAttribute('class').then(s=>s.includes('is-active')),true,
+  'P4.7 main menu must open at PERSONAJE, never Opciones');
+ await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="opciones"]').click();
+ await page.locator('#hf-rpg [data-hf-action="close"]').click();
+ await page.locator('#hf-rpg-launch').click();
+ await page.waitForSelector('#hf-rpg .hf-rpg-character-layout');
+ assert.ok(await page.locator('#hf-rpg .hf-rpg-nav [data-hf-tab="personaje"].is-active').count()>0,
+  'Reopening menu after visiting Opciones must reset to Personaje');
+
  await page.waitForFunction(()=>document.querySelector('.hf-rpg-approved-logo')?.naturalWidth>0,null,{timeout:15000});
  assert.equal(await page.locator('#hf-rpg .hf-rpg-approved-logo').count(),1,'Approved HIGHFLY Phoenix logo missing');
  const logoGeometry=await page.evaluate(()=>{
@@ -273,6 +282,15 @@ try{
  assert.ok(profPanel.count===15&&profPanel.scrollTop>0&&profPanel.lastVisible,
    'Last profession inaccessible or clipped: '+JSON.stringify(profPanel));
  assert.equal(profPanel.outerOverflow,'hidden','Profession grid must own the ONLY scrollbar');
+ const professionDetail=await page.locator('#hf-rpg .hf-p42-professions>.hf-rpg-panel:last-child').evaluate(el=>({
+  client:el.clientHeight,scroll:el.scrollHeight,overflow:getComputedStyle(el).overflowY,
+  bottom:el.querySelector('.hf-rpg-mini-actions')?.getBoundingClientRect().bottom,
+  panelBottom:el.getBoundingClientRect().bottom
+ }));
+ console.log('[HIGHFLY P4.7 PROFESSION RIGHT]',JSON.stringify(professionDetail));
+ assert.ok(professionDetail.scroll<=professionDetail.client+3&&professionDetail.overflow==='hidden'&&professionDetail.bottom<=professionDetail.panelBottom+2,
+  'Profession panel right must be fully visible without scrolling: '+JSON.stringify(professionDetail));
+
 
  assert.equal(await page.locator('#hf-rpg .hf-rpg-prof-card .hf-p42-prof-frame').count(),15,'Every profession needs a dedicated frame');
  await page.screenshot({path:'qa-rpg-professions.png'});
@@ -285,6 +303,16 @@ try{
  const questScrollAfter=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>el.scrollTop);
  assert.ok(Math.abs(questScrollBefore-questScrollAfter)<4,'Quest selection reset the mission scroll: '+questScrollBefore+' => '+questScrollAfter);
  assert.equal(await page.evaluate(()=>window.__p46QuestListNode===document.querySelector('#hf-rpg .hf-rpg-quest-list')),true,'P4.6 mission selection must NOT recreate its scrollable list');
+ const finalQuest=await page.locator('#hf-rpg .hf-rpg-quest-list').evaluate(el=>{
+  const prev=el.scrollTop;el.scrollTop=el.scrollHeight;
+  const last=el.lastElementChild?.getBoundingClientRect(),list=el.getBoundingClientRect();
+  const out={reached:!!last&&last.bottom<=list.bottom+2&&last.top>=list.top-2,
+   count:el.children.length,scrollTop:el.scrollTop,visibleEnd:list.bottom,cardEnd:last?.bottom};
+  el.scrollTop=prev;return out;
+ });
+ console.log('[HIGHFLY P4.7 LAST MISSION]',JSON.stringify(finalQuest));
+ assert.ok(finalQuest.reached&&finalQuest.count>=2,'Cannot reach the last quest card: '+JSON.stringify(finalQuest));
+
  await page.screenshot({path:'qa-rpg-quests.png'});
  assert.match(await page.locator('#hf-rpg .hf-rpg-quest-right').innerText(),/Encargo 3/,'Selected quest should update the right-hand illustrated card');
  assert.equal(await page.locator('#hf-rpg .hf-rpg-quest-art img').count(),1,'One real mission scene exists');
