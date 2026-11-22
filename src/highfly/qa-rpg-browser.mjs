@@ -391,6 +391,11 @@ try{
  console.log('[HIGHFLY P4.6 NEW MATERIALS]',JSON.stringify(allMinerals));
  assert.ok(Object.values(allMinerals.owned).every(v=>v>0),'Each distinct mineral must be awarded for inspection');
  assert.ok(allMinerals.superior>=2,'Advanced enhancement stone must be a real inventory object');
+ // Painting files are guaranteed 256px by the Python build gate; Chromium
+ // must wait for async decoding before checking HTMLImageElement.naturalWidth.
+ await page.locator('#hf-rpg .hf-rpg-grid img.hf-premium-icon').evaluateAll(async images=>{
+  await Promise.all(images.map(img=>img.decode().catch(()=>{})));
+ });
  const distinctPics=await page.locator('#hf-rpg .hf-rpg-grid .hf-premium-icon[data-hf-art-id^="item_"]').evaluateAll(images=>
   images.filter(img=>['item_coal','item_ore_copper','item_ore_iron','item_ore_silver',
   'item_ore_gold','item_raw_diamond','item_raw_obsidian','item_ore_mithril',
