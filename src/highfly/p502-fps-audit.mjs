@@ -13,7 +13,7 @@ export function installP502AutoProfiler(pipe,options={}){
  const original={shadows:pipe.shadows?.enabled,volumetrics:pipe.volumetrics?.enabled,
   taa:pipe.taa?.enabled,bloomRender:pipe.bloom?.render,
   bloomStrength:pipe.bloomStrength};
- const samples=[],results=[],measure=options.samples??25;
+ const results=[];
  let index=-1,started=now(),frameTimes=[],stageEnd=0,settledAt=0,active=true,finished=false;
  let panel=null;
  if(doc?.body){
@@ -49,7 +49,7 @@ export function installP502AutoProfiler(pipe,options={}){
    const table=results.map(x=>({
     ...x,improvement:baseline&&x.medianFrameMs>0?Math.round((baseline/x.medianFrameMs-1)*100):0
    }));
-   win.__hfP502Results={results:table,display:pipe.renderer?.getDrawingBufferSize?.({set(){}})??null,
+   win.__hfP502Results={results:table,
     timestamp:new Date().toISOString()};
    setLabel('HIGHFLY · RESULTADOS MEDIDOS EN ESTE TELÉFONO\n'
       +table.map(x=>x.name.padEnd(17)+' '+x.fps+' FPS · '+x.medianFrameMs+'ms '+(x.improvement>=0?'+':'')+x.improvement+'%').join('\n')
