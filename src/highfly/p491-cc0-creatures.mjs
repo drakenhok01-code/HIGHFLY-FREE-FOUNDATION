@@ -90,6 +90,7 @@ export function makeLicensedCreature(id,gltf){
  }
  const avatar={id,root,mixer,actions,state:null,model,disposed:false};
  setCreatureAction(avatar,'idle');
+ root.updateMatrixWorld(true);
  return avatar;
 }
 function setCreatureAction(avatar,label){
@@ -115,6 +116,11 @@ export function animateLicensedCreature(avatar,enemy,dt,near=true){
  avatar.root.position.copy(enemy.pos);
  avatar.root.rotation.y=enemy.yaw;
  avatar.mixer.update(Math.min(0.06,Math.max(0,Number(dt)||0)));
+ // Unsung's Pipeline has scene.matrixWorldAutoUpdate=false.  Unlike a
+ // standard Three.js scene, its renderer NEVER traverses new actors to
+ // calculate world transforms. Explicitly sync the whole skinned hierarchy
+ // AFTER moving, changing animation pose and before Pipeline.render().
+ avatar.root.updateMatrixWorld(true);
 }
 export function disposeLicensedCreature(avatar){
  if(!avatar||avatar.disposed)return;
