@@ -8,6 +8,11 @@ const read=p=>fs.readFileSync(p,'utf8');
 test('P495: precise stair corridor supports up and down without bypassing flank walls',()=>{
  const bottom={x:-118.2,y:5,z:-459},top={x:-173.5,y:30,z:-459};
  assert.equal(isHighflyStairLane(bottom,top),true);
+ const nativeStairs={groundHeight:(x,z)=>x===-532&&z===-70?200:4};
+ const dawnBottom={x:-549,y:201,z:-70},dawnTop={x:-525,y:210.4,z:-70};
+ assert.equal(isHighflyStairLane(dawnBottom,dawnTop,nativeStairs),true);
+ assert.equal(isHighflyStairLane(dawnTop,dawnBottom,nativeStairs),true);
+ assert.equal(isHighflyStairLane({...dawnBottom,z:-80},dawnTop,nativeStairs),false);
  assert.equal(isHighflyStairLane(top,bottom),true);
  assert.equal(isHighflyStairLane({...bottom,z:-454},top),false);
  assert.equal(isHighflyStairLane(bottom,{x:-183,z:-459}),false);
