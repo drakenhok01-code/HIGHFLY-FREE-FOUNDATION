@@ -28,17 +28,19 @@ test('Combat phase bounded and deterministic regardless FPS',()=>{
  for(const t of [-1,0,.05,.15,.23,.45,2])assert.ok(attackPhase(t,.46)>=0&&attackPhase(t,.46)<=1);
  assert.deepEqual(targetForHand('left',.3),targetForHand('left',.3));
 });
-test('Renderer keeps disabled SSAO and three query-selectable resolution profiles',()=>{
+test('Renderer keeps SSAO disabled and 4 reversible native visual profiles',()=>{
  const pipe={ao:{enabled:true},tonemap:{uniforms:{uSharpen:{value:0}}},bloomStrength:.2};
  const settings={values:{renderScale:.63,targetFps:50}};
  const r=installHighflyGraphics(pipe,settings,'?hfquality=quality',{getItem:()=>null,setItem(){}});
  assert.equal(r.selected,'quality');assert.equal(settings.values.renderScale,1);
- assert.equal(settings.values.targetFps,0,'NÍTIDO forces true 100% resolution without adaptive downscaling');
+ assert.equal(settings.values.targetFps,50,'Native quality uses a 50 FPS goal and can adapt resolution to preserve fluidity');
  assert.equal(pipe.ao.enabled,false);assert.equal(r.set('performance'),true);
- assert.equal(settings.values.renderScale,.75);assert.equal(r.set('bogus'),false);
- assert.equal(GRAPHICS.balanced.renderScale,1,'Default Android graphics now starts at 100% scale');
- assert.equal(GRAPHICS.balanced.targetFps,48,'Adaptive graphics retains mobile FPS governor');
- assert.equal(Object.keys(GRAPHICS).length,3);
+ assert.equal(settings.values.renderScale,.88);assert.equal(r.set('bogus'),false);
+ assert.equal(GRAPHICS.balanced.renderScale,1,'Default Android graphics starts at full logical resolution');
+ assert.equal(GRAPHICS.balanced.targetFps,55,'Adaptive balanced quality prioritizes fluidity');
+ assert.equal(Object.keys(GRAPHICS).length,4);
+ assert.equal(r.set('legacy'),true);
+ assert.equal(r.minRenderScale,.88,'Legacy remains available to compare with the unchanged P4.9.6 visuals');
 });
 test('Oxygen starts ~32s; progresses with levels and approved fitness points only',()=>{
  assert.equal(oxygenMax(1,0),100);assert.ok(oxygenMax(20,10)>oxygenMax(1));
