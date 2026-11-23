@@ -32,12 +32,11 @@ export function installHighflyKayKitPeople(game){
        side:THREE.DoubleSide,transparent:!!base?.transparent,alphaTest:base?.alphaTest??0
       });
      });
-     const bounds=new THREE.Box3().setFromObject(model);
      const scale=1.82/profile.naturalHeight;
      const holder=new THREE.Group();
      holder.name='HIGHFLY_PEOPLE_VISUAL_'+n.def.id;
      holder.scale.setScalar(scale);
-     model.position.y-=bounds.min.y;
+     // Preserve bind-pose origin as in the visible KayKit player.
      holder.add(model);n.root.add(holder);
      const mixer=new THREE.AnimationMixer(model);
      const idle=gltf.animations.find(c=>c.name==='Idle');
