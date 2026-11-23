@@ -9,6 +9,7 @@ import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {KINDS} from '../game/enemies.js';
 import {loadLicensedCreatureTemplates,makeLicensedCreature,animateLicensedCreature,disposeLicensedCreature} from './p491-cc0-creatures.mjs';
 import {saveRpgState} from './rpg-core.mjs';
+import {CORPSE_TIMEOUT,corpseLootFor,closestLootableCorpse} from './p494-creature-loot.mjs';
 import {HUNT_SAVE_KEY,HUNT_ORDER,HUNT_MOBS,HUNT_MISSIONS,createHuntState,
  gainHuntXp,acceptHunt,recordHuntKill,turnInHunt,xpRequired} from './p49-hunt-data.mjs';
 import './p49-hunts.css';
@@ -120,7 +121,20 @@ export function installP49Hunts(game){
  document.body.appendChild(dialog);
  const toast=document.createElement('div');toast.id='hf-p49-toast';toast.hidden=true;
  document.body.appendChild(toast);
- let toastUntil=0,dialogOpen=null,npcActors=[],disposed=false;
+ let toastUntil=0,dialogOpen=null,npcActors=[],disposed=false,corpseSeq=0;
+ const corpses=[]; // Real animated dead GLB bodies, 1 pickup each, 52 seconds.
+ function releaseCorpse(c){
+  c.collected=true;c.avatar.corpseAvailable=false;
+  disposeLicensedCreature(c.avatar);
+  const i=corpses.indexOf(c);if(i>=0)corpses.splice(i,1);
+ }
+ function claimCorpse(c){
+  if(!c||c.collected||game.time>=c.expiresAt)return false;
+  const claim=game.__hfP41WorldLoot?.claimCorpse?.(c.enemy);
+  if(claim?.ok){releaseCorpse(c);game.__highflyRpg?.render?.();return true;}
+  if(!claim)tell('Bolsa aún no disponible. Abrí el menú HIGHFLY e intentá de nuevo.');
+  return false;
+ }
  const tell=message=>{toast.textContent=message;toast.hidden=false;toastUntil=game.time+3.2;};
  const getEntry=id=>HUNT_MISSIONS[id];
  const progress=id=>state.missions[id];
@@ -159,6 +173,13 @@ export function installP49Hunts(game){
   const enemy=event.enemy,id=HUNT_ORDER.find(key=>HUNT_MOBS[key].kind===enemy.kind);
   if(!id)return;
   killsSeen.add(enemy);
+  const spot=spots[id],avatar=spot?.members.get(enemy);
+  if(avatar){
+   spot.members.delete(enemy);
+   avatar.corpseAvailable=true;
+   corpses.push({id:++corpseSeq,enemy,avatar,kind:id,collected:false,
+    pos:enemy.pos.clone(),expiresAt:game.time+CORPSE_TIMEOUT,now:game.time});
+  }else console.warn('[HIGHFLY P494] Wildlife death without skinned body',id);
   const xp=gainHuntXp(state,HUNT_MOBS[id].xp);
   const counted=recordHuntKill(state,id);
   hero._hfLevel=state.level;hero._hfXp=state.xp;persist();
@@ -181,6 +202,7 @@ export function installP49Hunts(game){
   return e;
  }
  function purge(spot){
+  for(const corpse of [...corpses])if(corpse.kind===spot.id)releaseCorpse(corpse);
   for(const avatar of spot.members.values())disposeLicensedCreature(avatar);
   spot.members.clear();spot.launched=false;spot.respawnAt=0;
   game.enemies.list=game.enemies.list.filter(e=>e.group!=='hf49:'+spot.id);
@@ -268,6 +290,13 @@ export function installP49Hunts(game){
     }
    }
   }
+  for(const c of [...corpses]){
+   c.now=game.time;
+   const dist=d2(hero.pos,c.enemy.pos);
+   if(c.expiresAt<=game.time||dist>UNLOAD_RANGE||c.collected){releaseCorpse(c);continue;}
+   animateLicensedCreature(c.avatar,c.enemy,realDt,dist<LOAD_RANGE);
+  }
+  const corpse=playing?closestLootableCorpse(corpses,hero.pos,3.3):null;
   let closest=null,range=3.2;
   if(playing&&!dialogOpen&&!game.people?.talk){
    for(const spot of Object.values(spots)){
@@ -275,23 +304,33 @@ export function installP49Hunts(game){
     if(d<range&&Math.abs(hero.pos.y-spot.npc.y)<3){closest=spot;range=d;}
    }
   }
-  prompt.hidden=!closest;prompt.dataset.quest=closest?.id??'';
-  if(closest)prompt.textContent='✦ USAR · '+HUNT_MISSIONS[closest.id].npc+' · '+HUNT_MISSIONS[closest.id].title;
-  if(closest&&game.input.pressed?.has('interact')){
-   game.input.pressed.delete('interact');speak(closest.id);
+  prompt.hidden=!closest&&!corpse;prompt.dataset.quest=corpse?'':closest?.id??'';
+  prompt.dataset.corpse=corpse?String(corpse.id):'';
+  if(corpse){const def=corpseLootFor(corpse.enemy);prompt.textContent='✦ '+def?.verb+' · '+def?.name+' · LOOT +0';}
+  else if(closest)prompt.textContent='✦ HABLAR · '+HUNT_MISSIONS[closest.id].npc+' · '+HUNT_MISSIONS[closest.id].title;
+  if((closest||corpse)&&game.input.pressed?.has('interact')){
+   game.input.pressed.delete('interact');
+   if(corpse)claimCorpse(corpse);else speak(closest.id);
   }
   for(const npc of npcActors)if(d2(hero.pos,npc.anchor.position)<110)npc.mixer.update(Math.min(realDt,.05));
   if(!toast.hidden&&game.time>toastUntil)toast.hidden=true;
   return result;
  };
- prompt.addEventListener('click',()=>{const id=prompt.dataset.quest;if(id&&spots[id]&&d2(hero.pos,spots[id].npc)<3.2)speak(id);});
- const api={state,spots,missions:HUNT_MISSIONS,readyPromise,
+ prompt.addEventListener('click',()=>{
+  const corpseId=Number(prompt.dataset.corpse);
+  if(corpseId){const c=corpses.find(item=>item.id===corpseId);if(c&&d2(hero.pos,c.enemy.pos)<3.3)claimCorpse(c);return;}
+  const id=prompt.dataset.quest;
+  if(id&&spots[id]&&d2(hero.pos,spots[id].npc)<3.2)speak(id);
+ });
+ const api={state,spots,missions:HUNT_MISSIONS,readyPromise,corpses,
   get loadedSpecies(){return Object.keys(species)},accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
   progress:id=>state.missions[id]??null,closeDialog,
   get npcCount(){return npcActors.length;},
   get activeCount(){return Object.values(spots).reduce((v,s)=>v+[...s.members.keys()].filter(e=>e.alive).length,0)},
+  get corpseCount(){return corpses.length;},
   dispose(){disposed=true;game.update=prior;closeDialog();prompt.remove();dialog.remove();toast.remove();
    for(const spot of Object.values(spots))purge(spot);
+   for(const corpse of [...corpses])releaseCorpse(corpse);
    for(const n of npcActors){stage.remove(n.anchor);n.mixer.stopAllAction();
     n.billboard.material.map.dispose();n.billboard.material.dispose();}
   }};
