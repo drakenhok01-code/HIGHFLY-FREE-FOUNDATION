@@ -114,6 +114,39 @@ export function installP49Hunts(game){
   if(!pt){console.warn('[HIGHFLY P4.9] Unsafe spot skipped',id);continue;}
   spots[id]={id,point:pt,npc:pickNpc(W,pt),members:new Map(),launched:false,respawnAt:0};
  }
+ // Readable CSS label is screen-space, not a low-resolution world sprite:
+ // preserves Sera/Brann/Mira names at mobile landscape render scales.
+ const plateStyle=document.createElement('style');
+ plateStyle.textContent=`.hf-p496-npc-label{position:fixed;pointer-events:none;z-index:15;display:flex;flex-direction:column;align-items:center;max-width:200px;white-space:nowrap;color:#fff7e9;background:rgba(13,13,31,.94);border:1px solid #c8a3e4;border-radius:8px;padding:5px 10px 4px;transform:translate(-50%,-100%);box-shadow:0 3px 12px #060710dd,0 0 1px #f5dcb8;font:700 15px/1.25 system-ui,sans-serif;text-shadow:0 1px 2px #000;letter-spacing:.02em}.hf-p496-npc-label small{font:600 11px/1.35 system-ui,sans-serif;color:#ebd4ff;letter-spacing:0}`;
+ document.head.appendChild(plateStyle);
+ function makeNpcPlate(id){
+  const el=document.createElement('div');el.className='hf-p496-npc-label';el.hidden=true;
+  const name=document.createElement('b'),role=document.createElement('small');
+  name.textContent=HUNT_MISSIONS[id].npc;role.textContent=HUNT_MISSIONS[id].role;
+  el.append(name,role);document.body.appendChild(el);return el;
+ }
+ const npcPlatePos=new THREE.Vector3(),npcPlateDir=new THREE.Vector3();
+ function updateNpcPlate(npc){
+  if(!npc.plate)return;
+  const near=game.state==='playing'&&!game.cine&&hero.state!=='dead'&&d2(hero.pos,npc.anchor.position)<25;
+  if(!near){npc.plate.hidden=true;npc.billboard.visible=true;return;}
+  const camera=game.pipe?.camera,canvas=game.pipe?.renderer?.domElement;
+  if(!camera||!canvas){npc.plate.hidden=true;return;}
+  const rect=canvas.getBoundingClientRect();
+  npcPlatePos.set(npc.anchor.position.x,npc.anchor.position.y+2.75,npc.anchor.position.z);
+  camera.updateMatrixWorld(true);npcPlatePos.project(camera);
+  if(npcPlatePos.z>1||npcPlatePos.z< -1||Math.abs(npcPlatePos.x)>1.02||Math.abs(npcPlatePos.y)>1.02){
+   npc.plate.hidden=true;npc.billboard.visible=true;return;
+  }
+  // Do not reveal a nameplate through masonry. The tag follows an actual NPC.
+  const from=hero.pos;const delta=npcPlateDir.set(npc.anchor.position.x-from.x,npc.anchor.position.y+1.2-from.y,npc.anchor.position.z-from.z);
+  const distance=delta.length();
+  const hit=distance>.001?W.raycast?.({x:from.x,y:from.y+1.2,z:from.z},delta.multiplyScalar(1/distance),distance):Infinity;
+  if(Number.isFinite(hit)&&hit<distance-.55){npc.plate.hidden=true;npc.billboard.visible=true;return;}
+  npc.plate.hidden=false;npc.billboard.visible=false;
+  npc.plate.style.left=(rect.left+(npcPlatePos.x+1)*rect.width/2)+'px';
+  npc.plate.style.top=(rect.top+(1-npcPlatePos.y)*rect.height/2)+'px';
+ }
  const prompt=document.createElement('button');prompt.id='hf-p49-prompt';prompt.type='button';
  prompt.hidden=true;document.body.appendChild(prompt);
  const dialog=document.createElement('div');dialog.id='hf-p49-dialog';dialog.hidden=true;
@@ -233,7 +266,7 @@ export function installP49Hunts(game){
     anchor.userData.highflyQuestNpc=id;
     stage.add(anchor);
     anchor.updateMatrixWorld(true);
-    npcActors.push({id,anchor,mixer,billboard,model:n});
+    npcActors.push({id,anchor,mixer,billboard,model:n,plate:makeNpcPlate(id)});
    }
    console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
   }catch(e){
@@ -244,7 +277,7 @@ export function installP49Hunts(game){
     // Never create dummy animal geometry: show an explicit nameplate on load failure.
     const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
     billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);anchor.updateMatrixWorld(true);
-    npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
+    npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true,plate:makeNpcPlate(id)});
    }
   }
  }
@@ -303,6 +336,7 @@ export function installP49Hunts(game){
    // CRITICAL: custom Pipeline.scene.matrixWorldAutoUpdate=false.
    // The GLB and the billboard are BOTH children of this transform.
    npc.anchor.updateMatrixWorld(true);
+   updateNpcPlate(npc);
   }
   if(!toast.hidden&&game.time>toastUntil)toast.hidden=true;
   return result;
@@ -324,7 +358,8 @@ export function installP49Hunts(game){
   dispose(){disposed=true;game.update=prior;closeDialog();prompt.remove();dialog.remove();toast.remove();
    for(const spot of Object.values(spots))purge(spot);
    for(const n of npcActors){stage.remove(n.anchor);n.mixer.stopAllAction();
-    n.billboard.material.map.dispose();n.billboard.material.dispose();}
+    n.billboard.material.map.dispose();n.billboard.material.dispose();n.plate?.remove();}
+   plateStyle.remove();
   }};
  game.__highflyHunts=api;globalThis.__highflyHunts=api;
  console.info('[HIGHFLY P4.9.1] CC0 animated wolf, boar and crab hunting spots registered',Object.keys(spots));
