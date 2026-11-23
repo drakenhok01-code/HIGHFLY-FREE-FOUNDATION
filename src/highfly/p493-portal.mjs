@@ -27,6 +27,7 @@ export function installP493PortalVisuals(game){
    p.a.rotation.z=count*.21;p.c.rotation.z=-count*.33;
    const pulse=1+Math.sin(count*2+p.n.x)*.06;
    p.group.scale.setScalar(pulse);
+   p.group.updateMatrixWorld(true);
   }
   return v;
  };
