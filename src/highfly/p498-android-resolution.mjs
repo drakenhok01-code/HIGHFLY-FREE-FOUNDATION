@@ -53,7 +53,7 @@ export function installAndroidPhysicalResolution(pipe,opts={}){
    renderTargets:[pipe.rw,pipe.rh],taaTargets:pipe.taa?.history?.map(t=>[t.width,t.height])??[],
    scale:pipe.renderScale,hardwareCapped:last?.hardwareCapped??false,
    actualFactor:last?.pixelFactor??1,
-   fps:Math.round(win.__gov?.fps??0),seq};
+   fps:Math.round(win.__hfGpuStats?.fps??win.__gov?.fps??0),seq};
  };
  const set=(name)=>{
   if(!Object.hasOwn(MODES,name))return false;
