@@ -4,6 +4,8 @@
  * Premium Android menu enabled by default. Approved backups remain untouched.
  */
 import './premium-rpg.css';
+import {drawHighflyLiveMap} from './p493-map.mjs';
+import {transactBagItem,bagItemPrice} from './p493-bag-actions.mjs';
 import './premium-f0148-v2.css';
 import './premium-f0148-v3.css';
 import './premium-f0148-v3-1-polish.css';
@@ -118,7 +120,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  root.id='hf-rpg';root.hidden=true;
  document.body.appendChild(root);
  const bag=loadRpgState();
- const local={scrollSaved:{},selectedGearIndex:0,tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
+ const local={bagIntent:null,scrollSaved:{},selectedGearIndex:0,tab:'personaje',category:'Todo',selected:'hp_potion',recipe:'hp_potion',selectedQuest:'primary',selectedSkill:'attack',selectedEquipSlot:null,confirmUnequip:null,pickEquipItem:null,pickSkill:null,selectedProfession:'Recolección',questScroll:0,mapZoom:1,system:null,toast:'',opened:false,heroTurn:0};
  root.style.setProperty('--hf-spritesheet','url("'+assetUrl('highfly-icons')+'")');
  root.style.setProperty('--hf-hero-art','url("'+assetUrl('premium/character_sanctuary')+'")');
  root.style.setProperty('--hf-map-art','url("'+assetUrl('world-petal')+'")');
@@ -453,7 +455,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const visual=native?'<img class="hf-rpg-map-native" alt="Mapa nativo real con terreno, posición y objetivos" src="'+native+'"/>':
    '<div class="hf-rpg-map-art" role="img" aria-label="Ilustración de la región de Aetheria"></div>';
   return '<div class="hf-rpg-map-layout">'+panel(title('Mapa del Mundo',native?'Terreno y marcadores reales':'Atlas de Aetheria · Vista ilustrativa')+
-   '<div class="hf-rpg-map-display"><div class="hf-rpg-map-zoom" style="transform:scale('+local.mapZoom.toFixed(2)+')">'+visual+'</div><div class="hf-rpg-map-controls">'+button('+','data-hf-action="zoom:in" aria-label="Ampliar mapa"')+button('−','data-hf-action="zoom:out" aria-label="Alejar mapa"')+button('⌖','data-hf-action="zoom:reset" aria-label="Restablecer mapa"')+'</div></div>'+
+   '<div class="hf-rpg-map-display"><canvas class="hf-p493-map-canvas" width="800" height="440" aria-label="Mapa real de terreno de Aetheria, tu ruta y los objetivos"></canvas><div class="hf-rpg-map-controls">'+button('+','data-hf-action="zoom:in" aria-label="Ampliar mapa"')+button('−','data-hf-action="zoom:out" aria-label="Alejar mapa"')+button('⌖','data-hf-action="zoom:reset" aria-label="Restablecer mapa"')+button('✦','data-hf-action="radar:next" aria-label="Siguiente objetivo"')+'</div></div>'+
    '<small class="hf-rpg-map-caveat">'+(native?'Mapa original del juego · Tu posición y objetivos están marcados.':'Vista ilustrativa. Conseguí el mapa en la misión del Cartógrafo para acceder a los datos del mundo.')+'</small>','hf-rpg-map-main')+
    panel(title('Leyenda','Ubicaciones descubiertas')+
     '<div class="hf-rpg-legend"><div>◈ Tu posición</div><div>✧ Objetivo principal</div><div>✦ Misiones activas</div><div>◇ Lugares descubiertos</div></div>'+
@@ -471,7 +473,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<input id="hf-p492-sens" type="range" min="0.3" max="2.5" step="0.05" value="'+sensitivity.toFixed(2)+'" data-hf-camera-sensitivity aria-label="Sensibilidad de cámara"/>'+
     '<button type="button" data-hf-camera-invert aria-pressed="'+invert+'">Invertir cámara vertical: '+(invert?'SÍ':'NO')+'</button>'+
     '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
-    '<div class="hf-rpg-rule"></div>'+blank('El editor HUD 3.1 también permite mover y escalar el radar.')+
+    '<div class="hf-rpg-rule"></div>'+button('✥ EDITAR HUD','data-hf-action="edit-hud"','is-primary')+blank('El editor HUD 3.1 permite mover y escalar el radar.')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
  const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
@@ -500,6 +502,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   }
   if(local.system)requestAnimationFrame(()=>root.querySelector('[data-hf-system-focus]')?.focus({preventScroll:true}));
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
+  if(local.tab==='mapa')requestAnimationFrame(()=>drawHighflyLiveMap(game,root.querySelector('.hf-p493-map-canvas'),game.input?.highflyTouch?.radar?.trail??[],local.mapZoom));
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
  }
  function open(tab='personaje',fromNative=false){
@@ -671,6 +674,13 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const action=b.dataset.hfAction??'';
   if(action==='intro')return;
   if(action==='close'){close();return;}
+  if(action==='edit-hud'){
+   close();requestAnimationFrame(()=>game.input?.highflyTouch?.hudEditor?.toggle?.());
+   return;
+  }
+  if(action==='radar:next'){
+   game.input?.highflyTouch?.radar?.choose?.();render();return;
+  }
   if(action.startsWith('zoom:')){
    const change=action.slice(5);local.mapZoom=change==='reset'?1:Math.max(.75,Math.min(2.8,local.mapZoom*(change==='in'?1.25:.8)));
    render();return;
