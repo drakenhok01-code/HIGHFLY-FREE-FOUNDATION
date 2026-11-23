@@ -7,8 +7,7 @@ const canvas=document.querySelector('#view');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'low-power'});
 renderer.setPixelRatio(1);renderer.setSize(915,412,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x1b2039);
-scene.add(new THREE.HemisphereLight(0xffffff,0x5b385a,3.5));
-const sun=new THREE.DirectionalLight(0xffe7cb,2.4);sun.position.set(6,10,8);scene.add(sun);
+// IMPORTANT: no standard Three.js lights, matching Unsung's custom shader engine.
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(22,13),new THREE.MeshLambertMaterial({color:0x395546,side:THREE.DoubleSide}));
 ground.rotation.x=-Math.PI/2;ground.position.y=-.03;scene.add(ground);
 const camera=new THREE.PerspectiveCamera(50,915/412,.1,100);
@@ -25,7 +24,11 @@ window.__p494VisualQA=q;
    a.root.position.set((i-1)*3.1,0,0);
    scene.add(a.root);
    const meshCount=(()=>{let n=0;a.model.traverse(m=>{if(m.isSkinnedMesh&&m.visible)n++;});return n;})();
-   q.creatures[id]={realRig:!!gltf.animations.length,meshCount,clips:gltf.animations.length};
+   const skins=[];a.model.traverse(m=>{if(m.isSkinnedMesh)skins.push({
+    material:m.material?.type??m.material?.[0]?.type,visible:m.visible
+   });});
+   q.creatures[id]={realRig:!!gltf.animations.length,meshCount,clips:gltf.animations.length,
+    unlit:skins.length>0&&skins.every(m=>m.material==='MeshBasicMaterial'&&m.visible)};
    q.visuals.push({a,enemy:{alive:true,state:'idle',pos:a.root.position.clone(),yaw:.2,vel:new THREE.Vector3(),t:0},isCreature:true});
   }
   const src=await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb');
