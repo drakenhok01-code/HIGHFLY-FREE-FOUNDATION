@@ -43,7 +43,7 @@ function dot(ctx,x,y,r,color){
  ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=color;ctx.fill();
 }
 export function installHighflyRadar(input,t){
- const root=t?.root;if(!root||t.radar)return t?.radar??null;
+ const root=t?.root;if(!root||t.radar||typeof root.appendChild!=='function'||typeof document?.createElement!=='function')return t?.radar??null;
  const shell=document.createElement('div');shell.className='hf-radar';shell.setAttribute('aria-label','Radar de Aetheria · tocar para cambiar objetivo');
  shell.innerHTML='<div class="hf-radar-head">◈ AETHERIA · RADAR</div>'+
   '<canvas class="hf-radar-canvas" width="190" height="190" aria-hidden="true"></canvas>'+
