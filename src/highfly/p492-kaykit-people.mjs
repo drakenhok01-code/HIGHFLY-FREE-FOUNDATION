@@ -68,6 +68,9 @@ export function installHighflyKayKitPeople(game){
     a.state=stance;
    }
    if(distance(a.n,p)<75)a.mixer.update(Math.min(.05,Math.max(0,dt||0)));
+   // Parent native NPC updates its matrix before OUR attached GLB's
+   // animation; commit all skinned descendants again for the GPU.
+   a.holder.updateMatrixWorld(true);
   }
   return out;
  };
