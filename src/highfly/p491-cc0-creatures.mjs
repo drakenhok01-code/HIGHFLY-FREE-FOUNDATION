@@ -13,6 +13,30 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 
 const HEIGHT=Object.freeze({wolf:1.48,boar:1.10,crab:0.85});
+const _skinPoint=new THREE.Vector3();
+/** WebGL driver guard: Quaternius's offset-armature skinned shaders can
+ * upload valid skeletons yet rasterize ZERO pixels. We keep the real source
+ * bones and animation clips, bake the animated vertices into a normal Mesh.
+ * This is actual animation, NOT a static proxy or primitive stand-in.
+ * Batch at 20Hz near player; 6Hz beyond 50m for Android GPU performance. */
+function bakeActualSkinnedVertices(avatar,force=false){
+ if(!avatar?.cpuSkins?.length)return;
+ const near=avatar._near??true;
+ const interval=force?0:(near?.045:.16);
+ if(!force&&(avatar._skinElapsed??0)<interval)return;
+ avatar._skinElapsed=0;
+ avatar.model.updateMatrixWorld(true);
+ for(const part of avatar.cpuSkins){
+  const src=part.source,geo=part.visual.geometry,attr=geo.attributes.position;
+  src.skeleton?.update();
+  for(let i=0;i<attr.count;i++){
+   src.getVertexPosition(i,_skinPoint);
+   attr.setXYZ(i,_skinPoint.x,_skinPoint.y,_skinPoint.z);
+  }
+  attr.needsUpdate=true;
+ }
+}
+
 const CLIPS=Object.freeze({
  wolf:{idle:'Idle',walk:'Walk',run:'Gallop',attack:'Attack',hurt:'Idle_HitReact_Left',death:'Death'},
  boar:{idle:'idle',walk:'walk',run:'walk',attack:'attack',death:'dead'},
@@ -84,6 +108,23 @@ export function makeLicensedCreature(id,gltf){
    -box.min.y*unit,-(box.min.z+box.max.z)*0.5*unit);
  scaled.add(model);root.add(scaled);
  root.updateMatrixWorld(true);
+ // The skinned source is still present as the real 51-bone animation owner.
+ // Only its GPU draw is replaced with a CPU-updated non-skinned visible mesh.
+ const cpuSkins=[];
+ const originalSkins=[];model.traverse(m=>{if(m.isSkinnedMesh&&m.visible)originalSkins.push(m);});
+ for(const src of originalSkins){
+  const geom=src.geometry.clone();
+  geom.attributes.position.setUsage(THREE.DynamicDrawUsage);
+  const visual=new THREE.Mesh(geom,src.material);
+  visual.name='HIGHFLY_REAL_ANIMATED_MESH_'+src.name;
+  visual.position.copy(src.position);
+  visual.quaternion.copy(src.quaternion);
+  visual.scale.copy(src.scale);
+  visual.frustumCulled=false;
+  src.parent.add(visual);
+  src.visible=false;
+  cpuSkins.push({source:src,visual});
+ }
  const mixer=new THREE.AnimationMixer(model),actions={};
  for(const [label,clipName] of Object.entries(CLIPS[id])){
   const clip=gltf.animations.find(a=>a.name===clipName);
@@ -92,8 +133,11 @@ export function makeLicensedCreature(id,gltf){
   if(['attack','hurt','death'].includes(label)){a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;}
   actions[label]=a;
  }
- const avatar={id,root,mixer,actions,state:null,model,disposed:false,visibleMeshes,corpseAvailable:false};
+ const avatar={id,root,mixer,actions,state:null,model,disposed:false,visibleMeshes,corpseAvailable:false,
+  cpuSkins,_skinElapsed:0,_near:true};
  setCreatureAction(avatar,'idle');
+ avatar.mixer.update(0);
+ bakeActualSkinnedVertices(avatar,true);
  return avatar;
 }
 function setCreatureAction(avatar,label){
@@ -116,7 +160,11 @@ export function animateLicensedCreature(avatar,enemy,dt,near=true){
  avatar.root.visible=near&&(enemy.alive||avatar.corpseAvailable||enemy.t<=2.8);
  avatar.root.position.copy(enemy.pos);
  avatar.root.rotation.y=enemy.yaw;
- avatar.mixer.update(Math.min(0.06,Math.max(0,Number(dt)||0)));
+ const delta=Math.min(.06,Math.max(0,Number(dt)||0));
+ avatar.mixer.update(delta);
+ avatar._near=!!near;
+ avatar._skinElapsed+=delta;
+ bakeActualSkinnedVertices(avatar);
 }
 export function disposeLicensedCreature(avatar){
  if(!avatar||avatar.disposed)return;
