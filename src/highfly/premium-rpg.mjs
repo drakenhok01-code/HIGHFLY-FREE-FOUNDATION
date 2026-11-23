@@ -424,10 +424,17 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const state=selected?game.quests?.state?.[selected.id]:null;
   const progress=selected?game.quests?.progress?.(selected):null;
   const progressText=state?.s==='ready'?'LISTA PARA ENTREGAR':progress?.length>=2?progress[0]+' / '+progress[1]:'OBJETIVO PRINCIPAL';
-  return '<div class="hf-rpg-quest-detail">'+title(name,'REGISTRO DE AETHERIA')+
-   '<p class="hf-rpg-info">'+safe(goal)+'</p>'+
+  const giver=selected?game.people?.get?.(selected.giver)?.def:null;
+  const narrator=selected?.offer?.[0]??selected?.wait?.[0]??goal;
+  const reward=selected?.reward;
+  const rewardLine=reward?('RECOMPENSA · '+(reward.xp??0)+' resonancia de Unsung'+(reward.up?' · Mejora: '+safe(reward.up):'')):
+   'Continuá la historia de Aetheria';
+  return '<div class="hf-rpg-quest-detail">'+title(name,'HIGHFLY · LA LLAMA SIN NOMBRE')+
+   '<div class="hf-p493-mission-giver">✦ '+safe(giver?.name??'Registro del Valle')+' · '+safe(translateHighfly(giver?.role??'Historia de Aetheria'))+'</div>'+
+   '<p class="hf-rpg-info hf-p493-mission-story">'+safe(translateHighfly(narrator))+'</p>'+
+   '<p class="hf-rpg-info"><b>OBJETIVO</b> · '+safe(goal)+'</p>'+
    '<div class="hf-rpg-quest-art"><img alt="Escena de misión: '+safe(name)+'" src="'+questArtUrl(selected?.id,name)+'" loading="eager" draggable="false"/></div>'+
-   '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+safe(progressText)+'</b><span>Las recompensas se obtienen al completar la misión del juego.</span></div>'+
+   '<div class="hf-rpg-quest-detail-foot"><b>'+safe(progressText)+'</b><span>'+safe(rewardLine)+'</span></div>'+
    '</div>';
  }
  function quests(){
