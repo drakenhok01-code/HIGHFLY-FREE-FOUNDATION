@@ -177,6 +177,9 @@ export function installP49Hunts(game){
   const avatar=makeLicensedCreature(spot.id,species[spot.id]);
   if(!avatar){console.warn('[HIGHFLY P493] Missing animal visual; enemy removed',spot.id);game.enemies.list=game.enemies.list.filter(e0=>e0!==e);return null;}
   stage.add(avatar.root);
+  // First world matrix must be valid before the first frame in Unsung's manual scene.
+  avatar.root.position.copy(e.pos);avatar.root.rotation.y=e.yaw;
+  avatar.root.updateMatrixWorld(true);
   spot.members.set(e,avatar);
   return e;
  }
@@ -228,7 +231,9 @@ export function installP49Hunts(game){
     billboard.material.depthTest=false;
     anchor.userData.visibleBodies=countVisible;
     anchor.userData.highflyQuestNpc=id;
-    stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
+    stage.add(anchor);
+    anchor.updateMatrixWorld(true);
+    npcActors.push({id,anchor,mixer,billboard,model:n});
    }
    console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
   }catch(e){
@@ -238,7 +243,7 @@ export function installP49Hunts(game){
     const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y+.06,spot.npc.z);
     // Never create dummy animal geometry: show an explicit nameplate on load failure.
     const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
+    billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);anchor.updateMatrixWorld(true);
     npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
    }
   }
@@ -293,7 +298,12 @@ export function installP49Hunts(game){
   if(closest&&game.input.pressed?.has('interact')){
    game.input.pressed.delete('interact');speak(closest.id);
   }
-  for(const npc of npcActors)if(d2(hero.pos,npc.anchor.position)<110)npc.mixer.update(Math.min(realDt,.05));
+  for(const npc of npcActors){
+   if(d2(hero.pos,npc.anchor.position)<110)npc.mixer.update(Math.min(realDt,.05));
+   // CRITICAL: custom Pipeline.scene.matrixWorldAutoUpdate=false.
+   // The GLB and the billboard are BOTH children of this transform.
+   npc.anchor.updateMatrixWorld(true);
+  }
   if(!toast.hidden&&game.time>toastUntil)toast.hidden=true;
   return result;
  };
@@ -302,9 +312,13 @@ export function installP49Hunts(game){
   get loadedSpecies(){return Object.keys(species)},accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
   progress:id=>state.missions[id]??null,closeDialog,
   get npcCount(){return npcActors.filter(n=>!n.fallback).length;},
-  get npcDiagnostics(){return npcActors.map(n=>({id:n.id,realModel:!n.fallback,
-   bodyMeshCount:n.anchor.userData.visibleBodies?.length??0,worldY:n.anchor.position.y,
-   anchorVisible:n.anchor.visible,modelVisible:n.model.visible}));},
+  get npcDiagnostics(){return npcActors.map(n=>{
+   const actual=new THREE.Vector3();n.model.getWorldPosition(actual);
+   return {id:n.id,realModel:!n.fallback,bodyMeshCount:n.anchor.userData.visibleBodies?.length??0,
+    expected:{x:n.anchor.position.x,y:n.anchor.position.y,z:n.anchor.position.z},
+    actual:{x:actual.x,y:actual.y,z:actual.z},
+    anchorVisible:n.anchor.visible,modelVisible:n.model.visible,attached:n.anchor.parent===stage};
+  });},
   avatarFor(enemy){for(const spot of Object.values(spots)){const found=spot.members.get(enemy);if(found)return found;}return null;},
   get activeCount(){return Object.values(spots).reduce((v,s)=>v+[...s.members.keys()].filter(e=>e.alive).length,0)},
   dispose(){disposed=true;game.update=prior;closeDialog();prompt.remove();dialog.remove();toast.remove();
