@@ -64,6 +64,13 @@ export function installP502AutoProfiler(pipe,options={}){
  function tick(){
   if(!active)return;
   const t=tickAt(),dt=t-last;last=t;
+  // Never benchmark the title screen or the loading animation. On a real
+  // phone the meaningful comparison begins only after gameplay starts.
+  if(index<0&&win?.__game?.state&&win.__game.state!=='playing'){
+   started=t;
+   if(active)raf=win.requestAnimationFrame(tick);
+   return;
+  }
   if(index<0){if(t-started>=2000)next(t);}
   else {
    if(t>=settledAt&&t<stageEnd&&dt>3&&dt<200)frameTimes.push(dt);
