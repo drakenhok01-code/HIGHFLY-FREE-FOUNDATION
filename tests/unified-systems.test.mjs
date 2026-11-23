@@ -35,7 +35,9 @@ test('Renderer keeps disabled SSAO and three query-selectable resolution profile
  assert.equal(r.selected,'quality');assert.equal(settings.values.renderScale,1);
  assert.equal(settings.values.targetFps,0,'NÍTIDO forces true 100% resolution without adaptive downscaling');
  assert.equal(pipe.ao.enabled,false);assert.equal(r.set('performance'),true);
- assert.equal(settings.values.renderScale,.7);assert.equal(r.set('bogus'),false);
+ assert.equal(settings.values.renderScale,.75);assert.equal(r.set('bogus'),false);
+ assert.equal(GRAPHICS.balanced.renderScale,1,'Default Android graphics now starts at 100% scale');
+ assert.equal(GRAPHICS.balanced.targetFps,48,'Adaptive graphics retains mobile FPS governor');
  assert.equal(Object.keys(GRAPHICS).length,3);
 });
 test('Oxygen starts ~32s; progresses with levels and approved fitness points only',()=>{
