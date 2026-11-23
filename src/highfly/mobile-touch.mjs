@@ -2,6 +2,7 @@
 export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
 import {installHudEditor} from '../highfly/hud-editor.mjs';
+import {installHighflyRadar} from './p492-radar.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
 import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 import {terrainWallContact} from '../highfly/wall-physics.mjs';
@@ -181,7 +182,12 @@ export function attachHighflyTouch(input){
  '#hf-input-debug{position:absolute;left:12px;bottom:145px;border:1px solid #bb88ec;background:#09091ccc;padding:4px 7px;font:11px monospace;pointer-events:none;white-space:pre}',
  '@media(orientation:portrait){#hf-rotate{display:grid!important}}'
  ].join('');
- const style=document.createElement('style');style.textContent=css+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab,#ui #hud .vitals{display:none!important}';document.head.append(style);
+ const radarCss='#hf-touch .hf-radar{position:absolute;left:350px;top:9px;width:115px;height:144px;z-index:12;border:1px solid #ae8fd0;border-radius:14px;background:#11162be9;padding:4px;box-sizing:border-box;text-align:center;pointer-events:auto;touch-action:manipulation;opacity:.70;box-shadow:0 3px 16px #07071a99;color:#e6d7ff;font:700 8px system-ui}'+
+  '#hf-touch .hf-radar-head{height:12px;white-space:nowrap;color:#edc98c;letter-spacing:.4px;font:700 8px system-ui}'+
+  '#hf-touch .hf-radar-canvas{width:105px;height:105px;max-width:100%;display:block;margin:0 auto}'+
+  '#hf-touch .hf-radar-target{font:700 8px system-ui;color:#d9cafa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 1px}'+
+  '#hf-touch[data-editing="1"] .hf-radar{outline:2px dashed #80ffec;outline-offset:2px;cursor:grab}';
+ const style=document.createElement('style');style.textContent=css+radarCss+'#view{touch-action:none!important}#ui #hud .hints,#ui #hud .grab,#ui #hud .vitals{display:none!important}';document.head.append(style);
  style.textContent+=`
 /* F0.13.1 Android design: saved per-control inline opacity overrides defaults */
 #ui #hud .compass{transform:scale(var(--hf-compass-scale,1));transform-origin:center top}
@@ -272,6 +278,7 @@ export function attachHighflyTouch(input){
  settingsPanel:root.querySelector('.hf-settings'),talkNext:root.querySelector('.hf-talk-next')};
  input.highflyTouch=t;
  for(const id of ['hp','en','mp','o2'])t.resources[id]=root.querySelector('.hf-'+id);
+ t.radar=installHighflyRadar(input,t);
  t.hudEditor=installHudEditor(t);
  t.settingsPanel?.querySelectorAll('[data-graphics]')?.forEach(btn=>btn.addEventListener('pointerdown',e=>{
   e.preventDefault();e.stopPropagation();
@@ -517,6 +524,7 @@ export function applyHighflyTouch(input){
   if(legacy)t.fpsBadge.textContent=translateHighfly(legacy);
  }
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
+ t.radar?.update();
  const context=resolveHighflyContext(globalThis.__game?.player);
  t.contextAction=context.action;
  if(t.contextButton){
