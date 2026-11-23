@@ -25,6 +25,7 @@ import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,occupiedInventorySlots,distinctInventoryItems,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 import {grantP41TestLoot,MATERIAL_ORDER} from './p41-loot.mjs';
+import {HUNT_ORDER,HUNT_MISSIONS,xpRequired} from './p49-hunt-data.mjs';
 import {installP41WorldLoot} from './p41-world-loot.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
 import {gearTraitAt,enhanceGear,traitLabel,enhancedStats} from './rpg-itemization.mjs';
@@ -390,6 +391,21 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '</div>','hf-rpg-forge-main')+'</div>';
  }
  function questDetails(){
+  // P4.9 standalone hunt missions coexist with Unsung quests. They share
+  // the journal, not the original quest engine's internal state machine.
+  const huntKey=HUNT_ORDER.find(id=>HUNT_MISSIONS[id].id===local.selectedQuest);
+  const hunt=game.__highflyHunts;
+  if(huntKey&&hunt){
+   const q=HUNT_MISSIONS[huntKey],m=hunt.progress(huntKey);
+   const text=m.status==='available'?'Buscá a '+q.npc+' para aceptar esta misión.':
+    m.status==='ready'?'¡Completada! Regresá con '+q.npc+' para recibir la recompensa.':
+    m.status==='done'?'Encargo completado. '+q.thanks:q.progress;
+   return '<div class="hf-rpg-quest-detail">'+title(q.title,'HIGHFLY · LA LLAMA SIN NOMBRE')+
+    '<p class="hf-rpg-info">'+safe(text)+'</p>'+
+    '<div class="hf-rpg-quest-art"><img alt="Encargo de '+safe(q.npc)+'" src="'+questArtUrl('primary')+'" loading="eager" draggable="false"/></div>'+
+    '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+m.count+' / '+q.count+
+    '</b><span>Al entregar: '+q.bonusXp+' EXP y una poción. Tu botín de monstruos se recoge con USAR.</span></div></div>';
+  }
   const rows=game.quests?.active??[],objective=translateHighfly(game.objective||'Explorá el mundo');
   const selected=rows.find(q=>q.id===local.selectedQuest)??null;
   const name=selected?translateHighfly(selected.title):objective;
@@ -405,11 +421,21 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  }
  function quests(){
   const rows=game.quests?.active??[],objective=translateHighfly(game.objective||'Explorá el mundo');
+  const hunt=game.__highflyHunts,hs=hunt?.state;
+  const huntRows=hs?HUNT_ORDER.map(id=>{
+   const q=HUNT_MISSIONS[id],m=hs.missions[id],selected=local.selectedQuest===q.id;
+   const status=m.status==='available'?'HABLÁ CON '+q.npc:
+    m.status==='ready'?'ENTREGAR A '+q.npc:m.status==='done'?'COMPLETADA':m.count+' / '+q.count;
+   return '<button type="button" data-hf-quest="'+q.id+'" class="hf-rpg-quest-row '+(selected?'is-selected':'')+
+    '"><b>✦ CAZA · '+safe(q.title)+'</b><small>'+safe(q.npc+' · '+q.role)+
+    '</small><span>'+safe(status)+'</span></button>';
+  }).join(''):'';
+  const huntLevel=hs?'<div class="hf-rpg-subtitle">HIGHFLY · NIVEL '+hs.level+' · EXP '+hs.xp+' / '+xpRequired(hs.level)+'</div>':'';
   return '<div class="hf-rpg-quest-layout">'+panel(title('Misiones','Principal · Secundarias · Profesiones')+
    '<div class="hf-rpg-subtitle">SEGUIMIENTO · '+rows.length+' ACTIVAS</div>'+
    '<div class="hf-rpg-quest-list">'+
    '<button type="button" data-hf-quest="primary" class="hf-rpg-quest-row '+(local.selectedQuest==='primary'?'is-selected':'')+'"><b>✦ HISTORIA · '+safe(objective)+'</b><small>Objetivo principal del Valle</small></button>'+
-   rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+
+   rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+huntLevel+huntRows+
    '</div>','hf-rpg-quest-left')+
    panel(questDetails(),'hf-rpg-quest-right')+'</div>';
  }
