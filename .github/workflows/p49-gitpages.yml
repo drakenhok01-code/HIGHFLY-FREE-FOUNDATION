@@ -63,6 +63,7 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.57.0 --no-audit --no-fund
           ./node_modules/.bin/playwright install chromium --with-deps
           node scripts/qa-rpg-browser.mjs
+          node scripts/qa-p49-browser.mjs
       - name: Restore LAST APPROVED P4.8 GitHub Pages release BYTE-FOR-BYTE
         uses: actions/download-artifact@v4
         with:
