@@ -33,6 +33,14 @@ export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ // NPC conversations outrank nearby rocks, walls or collision capsules.
+ const g=globalThis.__game;
+ const npc=g?.people?.near?.();
+ if(npc)return {action:'interact',label:'HABLAR'};
+ for(const spot of Object.values(g?.__highflyHunts?.spots??{})){
+  if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
+     Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};
+ }
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
