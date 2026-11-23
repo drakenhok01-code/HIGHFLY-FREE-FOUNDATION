@@ -512,7 +512,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    game.openMenu('hero');
    if(game.state!=='menu')return false;
   }
-  local.opened=true;local.tab=bodies[tab]?tab:'personaje';root.hidden=false;
+  local.opened=true;local.tab=tab==='bolsa'?'bolsa':'personaje';root.hidden=false;
+  if((fromNative||tab==='misiones'||tab==='mapa')&&bodies[tab])local.tab=tab;
   syncEquipment();syncSkills();
   document.body.classList.add('hf-rpg-is-open');
   render();return true;
