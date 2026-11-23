@@ -43,7 +43,9 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   if(!enemy||!enemy.pos)return;
   const boss=!!enemy.def?.boss;
   const kind=String(enemy.kind??'').toLowerCase();
-  const itemId=boss?'training_shield':/hound|wolf|beast/.test(kind)?'leather':'ore';
+  // Unique HIGHFLY P4.9 species drops; legacy Unsung foes keep their old behavior.
+  const special={'hf_wolf':'wolf_pelt','hf_boar':'boar_tusk','hf_crab':'crab_shell'};
+  const itemId=special[kind]??(boss?'training_shield':/hound|wolf|beast/.test(kind)?'leather':'ore');
   const rarity=boss?'Raro':'Común';
   const art=getTexture(itemId);
   if(!art)return;
@@ -81,7 +83,8 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
      if(d<dist&&Math.abs(drop.y-player.pos.y)<3.5){dist=d;nearest=drop;}
     }
     if(nearest){
-     label.textContent='✦ USAR · RECOGER '+(nearest.id==='leather'?'CUERO DE CRIATURA':nearest.id==='ore'?'MINERAL':'ESCUDO RARO +0');
+     const labelNames={leather:'CUERO DE CRIATURA',ore:'MINERAL',wolf_pelt:'PIEL DE LOBO',boar_tusk:'COLMILLO DE JABALÍ',crab_shell:'CAPARAZÓN DE CANGREJO'};
+     label.textContent='✦ USAR · RECOGER '+(labelNames[nearest.id]??'ESCUDO RARO +0');
      label.hidden=false;
      if(game.input?.pressed?.has('interact')){
       const result=receiveP41WorldPickup(bag,getProfession(),nearest);
