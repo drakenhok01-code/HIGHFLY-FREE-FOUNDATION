@@ -358,6 +358,7 @@ copy(path.join(ROOT,'src/highfly/qa-rpg.html'),loc('qa-rpg.html'));
 copy(path.join(ROOT,'src/highfly/qa-p493-rigs.html'),loc('qa-p493-rigs.html'));
 copy(path.join(ROOT,'src/highfly/qa-p493-rigs-entry.mjs'),loc('src/highfly/qa-p493-rigs-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p493-rigs-browser.mjs'),loc('scripts/qa-p493-rigs-browser.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p493-menu-smoke.mjs'),loc('scripts/qa-p493-menu-smoke.mjs'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';",
