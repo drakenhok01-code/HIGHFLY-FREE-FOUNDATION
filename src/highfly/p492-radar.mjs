@@ -1,3 +1,4 @@
+import {paintCartographicBackdrop} from './p494-cartographic-map.mjs';
 /** HIGHFLY P4.9.2: small live HUD radar.
  * Uses real-world X/Z, live Unsung enemies/NPCs and P4.9 hunt state.
  * No fictitious pins, no teleport and no substitute for native world map.
@@ -92,19 +93,6 @@ export function installHighflyRadar(input,t){
   const g=globalThis.__game,p=g?.player?.pos,c=largeCanvas,ctx=c?.getContext('2d');
   if(!ctx||!p)return;
   const W=c.width,H=c.height,scale=.28,terrain=g.world;
-  ctx.clearRect(0,0,W,H);
-  for(let x=0;x<W;x+=8)for(let y=0;y<H;y+=8){
-   const wx=p.x+(x-W/2)/scale,wz=p.z+(y-H/2)/scale;
-   const h=Number(terrain?.groundHeight?.(wx,wz));
-   const water=Number(terrain?.waterLevel?.(wx,wz));
-   const wet=Number.isFinite(water)&&Number.isFinite(h)&&h<water+.2;
-   const t=Number.isFinite(h)?Math.max(0,Math.min(1,(h+8)/280)):0;
-   ctx.fillStyle=wet?'#245371':t>.58?'#616477':t>.18?'#435b59':'#2d5146';
-   ctx.fillRect(x,y,9,9);
-  }
-  ctx.strokeStyle='#e8ddce2a';ctx.lineWidth=1;
-  for(let x=W/2%56;x<W;x+=56){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=H/2%56;y<H;y+=56){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   const points=[...collectHighflyRadarTargets(g)];
   for(const n of g.people?.list??[])if(n.awake)points.push({x:n.x,z:n.z,label:n.def.name,kind:'npc',id:'npc:'+n.def.id});
   for(const q of points){
