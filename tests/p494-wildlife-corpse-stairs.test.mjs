@@ -47,6 +47,8 @@ test('P494: native enemies do not produce duplicate Unsung purple faceted creatu
  const glb=source('src/highfly/p491-cc0-creatures.mjs');
  assert.match(glb,/models\/hf-p491-wolf\.glb/);
  assert.match(glb,/MeshoptDecoder/);
+ assert.match(glb,/HIGHFLY_P494_UNLIT_/);
+ assert.match(glb,/MeshBasicMaterial/);
  assert.match(glb,/avatar\.corpseLootPending/);
 });
 test('P494: death preserves single licensed corpse until loot or expiry, with no floating wildlife sprite',()=>{
