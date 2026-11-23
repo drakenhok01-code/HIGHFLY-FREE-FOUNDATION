@@ -24,8 +24,9 @@ try{
  const host=new THREE.Group();host.scale.setScalar(scale);
  person.position.y-=box.min.y;host.add(person);host.position.x=-5.7;scene.add(host);
  actors.push({name:'kaykit-npc',host,skinned:0});
+ const allSpecies=await loadLicensedCreatureTemplates('/');
  for(const id of ['wolf','boar','crab']){
-  const gltf=(await loadLicensedCreatureTemplates('/'))[id];
+  const gltf=allSpecies[id];
   if(!gltf)throw Error('Missing '+id+' licensed GLB');
   const animal=makeLicensedCreature(id,gltf);
   if(!animal)throw Error('No scene avatar for '+id);
