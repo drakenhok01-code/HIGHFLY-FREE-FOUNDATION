@@ -18,7 +18,17 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction(()=>window.__p494VisualQA?.ready,null,{timeout:35000});
- const report=await page.evaluate(()=>{const {ready,issues,creatures,kaykit}=window.__p494VisualQA;return {ready,issues,creatures,kaykit};});
+ await page.waitForFunction(()=>window.__p494VisualQA?.pixels?.kaykit?.drawn>0,null,{timeout:15000});
+ const report=await page.evaluate(()=>{const {ready,issues,creatures,kaykit,pixels,worldTransforms}=window.__p494VisualQA;return {ready,issues,creatures,kaykit,pixels,worldTransforms};});
+ assert.ok(report.pixels,'manual-scene framebuffer has no pixel evidence');
+ for(const id of ['wolf','boar','crab','kaykit']){
+  assert.equal(report.pixels[id]?.manualScene,true,id+' test scene did not emulate original Unsung');
+  assert.ok(report.pixels[id]?.bright>24,id+' not actually visible on the manual-matrix framebuffer: '+JSON.stringify(report.pixels[id]));
+ }
+ for(const [id,x] of [['wolf',-3.1],['boar',0],['crab',3.1]]){
+  const v=report.worldTransforms.find(a=>a.id===id);
+  assert.ok(v&&Math.abs(v.x-x)<.15,id+' model matrix not updated to real scene position: '+JSON.stringify(v));
+ }
  assert.deepEqual(report.issues,[],JSON.stringify(report));
  assert.ok(report.kaykit.meshCount>=5,JSON.stringify(report.kaykit));
  for(const id of ['wolf','boar','crab']){
