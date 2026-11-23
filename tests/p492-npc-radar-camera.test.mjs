@@ -47,6 +47,7 @@ test('P492 routes native menus through HIGHFLY but keeps original quest giver ID
  const menu=read('src/highfly/premium-rpg.mjs');
  assert.match(menu,/openFromNative:tab=>open\(tab,true\)/);
  assert.match(menu,/d\.menu==='bench'\?'forja'/);
+ assert.match(menu,/game\.buy\?\.\(b\.dataset\.hfNativeUpgrade\)/);
  assert.match(menu,/d\.menu==='journal'\?'misiones'/);
  assert.match(menu,/game\.closeMenu\(\)/);
 });
