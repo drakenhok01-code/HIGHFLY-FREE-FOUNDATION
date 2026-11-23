@@ -177,6 +177,8 @@ export function installP49Hunts(game){
   const avatar=makeLicensedCreature(spot.id,species[spot.id]);
   if(!avatar){console.warn('[HIGHFLY P493] Missing animal visual; enemy removed',spot.id);game.enemies.list=game.enemies.list.filter(e0=>e0!==e);return null;}
   stage.add(avatar.root);
+  avatar.root.position.copy(e.pos);avatar.root.rotation.y=e.yaw;
+  avatar.root.updateMatrixWorld(true);
   spot.members.set(e,avatar);
   return e;
  }
@@ -228,6 +230,7 @@ export function installP49Hunts(game){
     billboard.material.depthTest=false;
     anchor.userData.visibleBodies=countVisible;
     anchor.userData.highflyQuestNpc=id;
+    anchor.updateMatrixWorld(true);
     stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
    }
    console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
@@ -238,7 +241,8 @@ export function installP49Hunts(game){
     const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y+.06,spot.npc.z);
     // Never create dummy animal geometry: show an explicit nameplate on load failure.
     const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
+    billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);
+    anchor.updateMatrixWorld(true);stage.add(anchor);
     npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
    }
   }
@@ -293,7 +297,11 @@ export function installP49Hunts(game){
   if(closest&&game.input.pressed?.has('interact')){
    game.input.pressed.delete('interact');speak(closest.id);
   }
-  for(const npc of npcActors)if(d2(hero.pos,npc.anchor.position)<110)npc.mixer.update(Math.min(realDt,.05));
+  for(const npc of npcActors){
+   if(d2(hero.pos,npc.anchor.position)<110)npc.mixer.update(Math.min(realDt,.05));
+   // Both real bodies and fallback nameplates live in a manual-matrix scene.
+   npc.anchor.updateMatrixWorld(true);
+  }
   if(!toast.hidden&&game.time>toastUntil)toast.hidden=true;
   return result;
  };
