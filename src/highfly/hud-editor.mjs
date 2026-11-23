@@ -3,7 +3,7 @@
  */
 export const LAYOUT_KEY='highfly-hud-layout-f013';
 const PREVIOUS_KEY='highfly-hud-layout-f0122';
-const query='#hf-touch [data-a],#hf-touch .stick,#hf-touch .hf-vitals,#hf-touch .hf-quests,#hf-touch .hf-fps';
+const query='#hf-touch [data-a],#hf-touch .stick,#hf-touch .hf-vitals,#hf-touch .hf-quests,#hf-touch .hf-fps,#hf-touch .hf-radar';
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 export const COMPASS_SCALE_KEY='highfly-hud-compass-scale-f0131';
 export function savedCompassScale(storage=globalThis.localStorage){
@@ -18,7 +18,7 @@ export function setCompassScale(value,store=true){
 const vp=()=>({w:Math.max(1,globalThis.innerWidth??915),h:Math.max(1,globalThis.innerHeight??412)});
 export function hudNodeId(n){
  if(!n)return null;
- for(const [c,v] of [['hf-vitals','vitals'],['hf-quests','quests'],['hf-fps','fps'],['stick','stick']])
+ for(const [c,v] of [['hf-vitals','vitals'],['hf-quests','quests'],['hf-fps','fps'],['hf-radar','radar'],['stick','stick']])
   if(n.classList?.contains(c))return v;
  return n.dataset?.a??null;
 }
@@ -147,7 +147,7 @@ export function installHudEditor(t){
  let drag=null;
  root.addEventListener('pointerdown',e=>{
   if(!api.active||e.target?.closest?.('.hf-hud-editor'))return;
-  const node=e.target?.closest?.('[data-a],.stick,.hf-vitals,.hf-quests,.hf-fps');
+  const node=e.target?.closest?.('[data-a],.stick,.hf-vitals,.hf-quests,.hf-fps,.hf-radar');
   if(!node||!hudNodeId(node))return;
   e.preventDefault?.();e.stopImmediatePropagation?.();
   const rect=node.getBoundingClientRect();
