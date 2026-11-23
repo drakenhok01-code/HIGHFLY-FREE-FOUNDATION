@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -412,13 +412,13 @@ patch('src/main.js',nativeHero,freeHeroStart);
 // Keep Unsung's physical player and world unchanged. Prevent the camera
 // from penetrating the much taller terrain cliffs with a safety volume.
 patch('src/game/camera.js',"import * as THREE from 'three';",
- "import * as THREE from 'three';\nimport {safeCliffCameraDistance} from '../highfly/cliff-camera.mjs';");
+ "import * as THREE from 'three';\nimport {safeCliffCameraDistance} from '../highfly/cliff-camera.mjs';\nimport {cameraNearRealStairs,stairAwareCameraFloor,stabilizedStairCameraY} from '../highfly/p496-stair-camera.mjs';");
 patch('src/game/camera.js',
  "const wantDist = Math.max(0.7, Math.min(distance, free));",
- "const wantDist = safeCliffCameraDistance(this.world,_pivot,_dir,distance,Math.max(0.7,Math.min(distance,free)));");
+ "const wantDist = cameraNearRealStairs(this.world,player.pos) ? Math.max(0.7,Math.min(distance,free)) : safeCliffCameraDistance(this.world,_pivot,_dir,distance,Math.max(0.7,Math.min(distance,free)));");
 patch('src/game/camera.js',
  "const floor = this.world.groundHeight(_want.x, _want.z) + 0.25;",
- "const floor = this.world.groundHeight(_want.x, _want.z) + 0.54;");
+ "const floor = stairAwareCameraFloor(this.world,player.pos,_want);");
 patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';");
 patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
 patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
@@ -427,12 +427,16 @@ patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.
 patch('src/game/camera.js',
  "const free = this.world.raycast(_pivot, _dir, distance + 0.4) - 0.3;",
  `let terrainFree = distance + 0.4;
-    for(let sample=.45;sample<distance+.4;sample+=.19){
+    for(let sample=.45;!cameraNearRealStairs(this.world,player.pos)&&sample<distance+.4;sample+=.19){
       const x=_pivot.x+_dir.x*sample,y=_pivot.y+_dir.y*sample,z=_pivot.z+_dir.z*sample;
       if(this.world.groundHeight(x,z)>y-.18){terrainFree=Math.max(.68,sample-.22);break;}
     }
     const free = Math.min(this.world.raycast(_pivot, _dir, distance + 0.4),terrainFree) - 0.3;`);
- // Some NPC platforms sit higher than the terrain/underlying ground: always
+ // P496: cap vertical camera jumps only on solid stone staircase.
+patch('src/game/camera.js',
+ "this.camera.position.copy(_want);",
+ "_want.y=stabilizedStairCameraY(this._hfStairCamY,_want.y,dt,cameraNearRealStairs(this.world,player.pos)); this._hfStairCamY=_want.y; this.camera.position.copy(_want);");
+// Some NPC platforms sit higher than the terrain/underlying ground: always
  // resolve to the exposed surface, never put their body BELOW the terrain.
 patch('src/game/people.js',
  "const y = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6);",
@@ -443,6 +447,19 @@ patch('src/game/people.js',
 patch('src/game/enemies.js',
  "      if (e.far) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replaceAll('\\n','\n'),
  "      if (e.far || e.kind.startsWith('hf_')) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replaceAll('\\n','\n'));
+// P496: original Unsung shard debris persists until looted/expired.
+patch('src/game/enemies.js',
+ "this.list = this.list.filter((e) => e.alive || e.t < 3.2);",
+ "this.list = this.list.filter((e) => e.alive || e.t < 3.2 || (e.__hfCorpsePending===true && e.__hfCorpseUntil>time));");
+patch('src/game/enemies.js',
+ "sh.vel.y -= 20 * dt; sh.pos.addScaledVector(sh.vel, dt);",
+ "if (!e.__hfCorpsePending || e.t < 1.65) { sh.vel.y -= 20 * dt; sh.pos.addScaledVector(sh.vel, dt);");
+patch('src/game/enemies.js',
+ "sh.quat.premultiply(_q);",
+ "sh.quat.premultiply(_q); }");
+patch('src/game/enemies.js',
+ "e.state === 'dead' ? Math.max(0, (e.t - 1.6) / 1.5)",
+ "e.state === 'dead' ? (e.__hfCorpsePending ? 0 : Math.max(0, (e.t - 1.6) / 1.5))");
 // P495: Unsung built a real 56m Petal-to-Cantor STAIR BVH. Its heightfield
 // beneath the stone flight is NOT the walkable surface. This keeps every
 // architecture collision and makes both uphill and downhill travel native.
