@@ -90,7 +90,10 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
     let nearest=null,dist=2.7*2.7;
     for(const drop of [...drops]){
      if(ticker()>=drop.expires){release(drop);continue;}
-     if(drop.sprite)drop.sprite.position.y=drop.y+Math.sin(ticker()*2+drop.phase)*.13;
+     if(drop.sprite){
+      drop.sprite.position.y=drop.y+Math.sin(ticker()*2+drop.phase)*.13;
+      drop.sprite.updateMatrixWorld(true);
+     }
      const dx=drop.x-player.pos.x,dz=drop.z-player.pos.z;
      const d=dx*dx+dz*dz;
      if(d<dist&&Math.abs(drop.y-player.pos.y)<3.5){dist=d;nearest=drop;}
