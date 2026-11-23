@@ -41,7 +41,10 @@ export const USER_ICON_RESERVED_FILES=Object.freeze([
  ...'boots chest gloves helmet necklace ring shoulders'.split(' ').map(x=>'armor/'+x)
 ]);
 // Does not add an object to inventory or unlock a skill.
-export const userIconUrl=id=>USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
+const P494_CREATURE_ICON_IDS=new Set(['item_wolf_pelt','item_boar_tusk','item_crab_shell']);
+export const userIconUrl=id=>P494_CREATURE_ICON_IDS.has(id)?
+ import.meta.env.BASE_URL+'highfly/p494/'+id.slice(5)+'.svg':
+ USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
 const valid=id=>id.startsWith('item_')?ITEMS.has(id.slice(5)):id.startsWith('slot_')?SLOTS.has(id.slice(5)):id.startsWith('profession_')?PROFS.has(id.slice(11)):id.startsWith('skill_')?SKILLS.has(id.slice(6)):false;
 export function premiumArt(name,large=false,rarity='Común'){
@@ -51,9 +54,9 @@ export function premiumArt(name,large=false,rarity='Común'){
  const id=ALIAS[name]||name;
  const source=userIconUrl(id);
  if(source){
-  const rel=USER_ICONS[id],hasOrnateRarity=id.startsWith('item_')&&/^(items|armor|weapons)\//.test(rel);
+  const rel=USER_ICONS[id],custom=P494_CREATURE_ICON_IDS.has(id),hasOrnateRarity=!custom&&id.startsWith('item_')&&/^(items|armor|weapons)\//.test(rel);
   const framed=hasOrnateRarity?assetUrl('rarity/'+rel+'__'+(grades[rarity]??'comun')):source;
-  return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
+  return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(custom?'p494':hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
  }
  if(!valid(id))return null;
  return '<img class="hf-rpg-art hf-premium-icon'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" src="'+assetUrl('premium/'+id)+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
@@ -61,6 +64,8 @@ export function premiumArt(name,large=false,rarity='Común'){
 const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja','Marroquinería':'marroquineria','Sastrería':'sastreria','Joyería':'joyeria','Ingeniería':'ingenieria','Encantamiento':'encantamiento','Inscripción':'inscripcion','Desuello':'desuello'};
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
 export const questArtUrl=(id,title='')=>{
+ if(id==='hf_wolf'||id==='wolf'||/aullidos en el bosque/i.test(String(title)))
+  return import.meta.env.BASE_URL+'highfly/p494/quest_wolf.svg';
  if(!id||id==='primary')return assetUrl('premium/quest_primary');
  if(id==='scales')return assetUrl('premium/quest_voices'); // Grave, medio, agudo: arte musical propio; distinto de Cuatro nombres
  if(id==='names')return assetUrl('premium/quest_names');
