@@ -156,10 +156,28 @@ const PAIRS=[
  ["The orchard wakes. Only the Crown is left, where the Mute first fell.","El huerto despierta. Solo queda la Corona, donde cayeron los primeros Silentes."],
  ["Eight voices. The whole Vale sings, from the mountains to the sea.","Ocho voces. Todo el Valle canta, desde las montañas hasta el mar."],
  ["The graphics device was reset. Click to reload; what you have done is kept.","Se reinició el sistema gráfico. Tocá para recargar: tu progreso sigue guardado."],
+ // P4.9.3 exact original Unsung memory lines (src/game/notes.js).
+ ['Song-crystals','Cristales de la antigua canción'],
+ ['Song-crystals:','Cristales de la antigua canción:'],
+ ['They tuned the spires at dusk, when the wind off the lake was lowest.','Afinaban las agujas al anochecer, cuando el viento del lago se calmaba.'],
+ ['A child could hear the chord from any roof in the Vale, and know the way home.','Desde cualquier tejado del Valle, un niño podía oír el acorde y saber cómo volver a casa.'],
+ ['The bridge to the Choir was never stone. It stood for as long as someone sang.','El puente hacia el Coro nunca fue de piedra. Permanecía en pie mientras alguien cantara.'],
+ ['When the first spire fell silent, the gardens kept flowering. Nobody had told them.','Cuando la primera aguja enmudeció, los jardines siguieron floreciendo. Nadie se lo había dicho.'],
+ ['The Mute did not break the song. They only waited for a breath between notes.','Los Silentes no rompieron la canción. Esperaron el silencio entre dos notas.'],
+ ['Each court kept three bells out on its mesa, so that no one working in the fields was ever out of hearing.','Cada patio tenía tres campanas para que nadie que trabajara en los campos quedara lejos de su sonido.'],
+ ['The strings of light were roads once. People rode them to market with baskets on their knees.','Los hilos de luz eran caminos. La gente viajaba por ellos al mercado con canastas sobre las rodillas.'],
+ ['Lamplighters went round the Lantern mesa at dusk. From the sea it looked like a second sunset.','Los faroleros recorrían la meseta al anochecer. Desde el mar parecía un segundo atardecer.'],
+ ['The archive at the Aurel Court holds every tune the Vale ever made, written small.','El archivo de Aurel conserva, escritas con letra diminuta, todas las melodías del Valle.'],
+ ['In the orchard they sang to the trees at blossom time. The pears came sweeter for it, or so they said.','En el huerto cantaban a los árboles cuando florecían. Decían que así las peras eran más dulces.'],
+ ['Nobody was hurt when the silence came. They only stopped, each where they stood, mid-word.','Nadie sufrió heridas cuando llegó el silencio. Todos quedaron detenidos a mitad de una palabra.'],
+ ['The Crown was the first spire raised and the first to fall quiet.','La Corona fue la primera aguja erigida y la primera en callar.'],
 ];
 export const SPANISH=new Map(PAIRS);
 const PATTERNS=[
  [/^Return to (.+)$/,'Volvé con $1'],
+ [/^Speak with (.+)$/,'Hablá con $1'],
+ [/^Ride the strings? to (.+)$/,'Viajá por los hilos de luz hasta $1'],
+ [/^Ring the bells of (.+)$/,'Hacé sonar las campanas de $1'],
  [/^Talk to (.+)$/,'Hablá con $1'],
  [/^Defeat (.+)$/,'Derrotá a $1'],
  [/^Find (.+)$/,'Encontrá $1'],
