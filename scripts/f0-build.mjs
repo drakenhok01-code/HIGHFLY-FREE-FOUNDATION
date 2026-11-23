@@ -379,6 +379,19 @@ patch('src/main.js',"const settings = new Settings(pipe.renderer);",
 // are resized together via original Pipeline.setSize; no DPR double-up.
 patch('src/main.js',"function resize() { pipe.setSize(window.innerWidth, window.innerHeight); }",
  "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nfunction resize() { __hfPixelLab.resize(); }".replaceAll('\\n','\n'));
+// P5.0.1: The video confirms an exposed blue water pocket directly ahead
+// of the first tread at Petal/Cantor stair (x=-118,z=-459). This original
+// entrance is otherwise open because there is no low stone approach apron.
+// Extend the SAME Unsung paving material by ~6.6m on the lower/positive-X
+// approach. Include it in the original architecture mesh and native BVH,
+// never add a floating overlay or alter terrain/water/assets.
+patch('src/world/arch/sites.js',
+ '        stairs(q, run, rise, 9);',
+ `        stairs(q, run, rise, 9);
+        // HIGHFLY P501: stone apron seals the exposed foot-of-stair water gap.
+        // Original local +X goes uphill (world -X); negative X faces Cantor.
+        // The apron top is 5 cm BELOW the first tread to avoid a step snag.
+        q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
 // P499: mobile TAA saves eight neighbourhood texture fetches per physical
 // pixel, but keeps identical 3D geometry, output/scene resolution, fog, shadows,
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
@@ -514,7 +527,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
