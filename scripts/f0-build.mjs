@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-dialogue.mjs','p493-dialogue.css','p493-map.mjs','p493-portals.mjs','p493-bag-actions.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -367,6 +367,11 @@ patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog
 patch('src/main.js',"const ui = new UI({ game, settings, apply, story });",
  "window.__hfNativeSettings=settings;\\nwindow.__hfApplySettings=apply;\\nconst ui = new UI({ game, settings, apply, story });".replaceAll('\\n','\n'));
 patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);\nwindow.__highflyRpg=installPremiumRpgUI(game);\ngame.__highflyRpg=window.__highflyRpg;\nwindow.__highflyHunts=installP49Hunts(game);\nwindow.__highflyKayKitPeople=installHighflyKayKitPeople(game);\nwindow.__highflyIntro=installHighflyIntro();");
+// P4.9.3 uses existing Unsung gameplay state; only layers are added.
+patch('src/main.js',"import { installHighflyIntro } from './highfly/phoenix-intro.mjs';",
+ "import { installHighflyIntro } from './highfly/phoenix-intro.mjs';\\nimport { installHighflyDialogue } from './highfly/p493-dialogue.mjs';\\nimport { installHighflyPortals } from './highfly/p493-portals.mjs';".replaceAll('\\n','\n'));
+patch('src/main.js',"window.__highflyIntro=installHighflyIntro();",
+ "window.__highflyIntro=installHighflyIntro();\\nwindow.__highflyDialogue=installHighflyDialogue(game);\\nwindow.__highflyPortals=installHighflyPortals(game);".replaceAll('\\n','\n'));
 // Reset TAA history whenever the dynamic-resolution governor changes pixel count.
 patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
  "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");
