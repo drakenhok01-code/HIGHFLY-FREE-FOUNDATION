@@ -410,11 +410,13 @@ patch('src/engine/pipeline.js',
  "  setRenderScale(s) {",
  `  setHighflyDisplayMode(mode) {
     const selected=mode==='css'?'css':'native';
-    if(this.highflyDisplayMode!==selected) {
+    // Initial setSize already uses 'native'; do not allocate huge HDR/TAA
+    // targets a second time on S23 simply because the field was undefined.
+    if((this.highflyDisplayMode??'native')!==selected) {
       this.highflyDisplayMode=selected;
       if(this.highflyCssW&&this.highflyCssH)this.setSize(this.highflyCssW,this.highflyCssH);
       if(this.taa)this.taa.reset=true;
-    }
+    } else this.highflyDisplayMode=selected;
   }
 
   setRenderScale(s) {`);
