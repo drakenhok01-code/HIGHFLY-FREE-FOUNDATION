@@ -8,10 +8,13 @@ export function installHighflyFog(pipe,storage=globalThis.localStorage){
  if(!pipe?.fog?.haze || !pipe?.fog?.mist)throw Error('Original Unsung FogPass unavailable');
  const haze=pipe.fog.haze.x,mist=pipe.fog.mist.x;
  let raw=null;try{raw=storage?.getItem(FOG_KEY)??null}catch{}
- let value=fogLevel(raw);
+ // A/B photography: ?hffog=0 disables atmospheric haze for one session;
+ // does not silently overwrite the user's normal fog preference.
+ const override=new URLSearchParams(globalThis.location?.search??'').get('hffog');
+ let value=fogLevel(override??raw);
  function set(v){
    value=fogLevel(v);pipe.fog.haze.x=haze*value;pipe.fog.mist.x=mist*value;
-   try{storage?.setItem(FOG_KEY,String(value))}catch{}
+   if(override===null)try{storage?.setItem(FOG_KEY,String(value))}catch{}
    return value;
  }
  set(value);
