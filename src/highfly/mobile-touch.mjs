@@ -32,7 +32,7 @@ export function abilityVector(dx,dy,deadzone=9){
 export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
- const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.y);
+ const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
