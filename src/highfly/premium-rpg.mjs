@@ -452,10 +452,18 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     (locations.length?'<div class="hf-rpg-subtitle">AGUJAS DEL VALLE</div>'+locations.map(l=>'<div class="hf-rpg-material-row"><span>'+safe(translateHighfly(l.name))+'</span><b>'+(l.unlocked?'DESPIERTA':'CERRADA')+'</b></div>').join(''):blank('Explorá el Valle y descubrí sus lugares.')),'hf-rpg-map-aside')+'</div>';
  }
  function options(){
-  return panel(title('Opciones','Ajustes vinculados al renderizador')+
+  const settings=globalThis.__hfNativeSettings;
+  const sensitivity=Math.max(.3,Math.min(2.5,Number(settings?.get('sensitivity')??game.input?.sensitivity??1)));
+  const invert=!!(settings?.get('invertY')??game.input?.invertY);
+  return panel(title('Opciones','Gráficos y controles del cazador')+
     '<div class="hf-rpg-options"><div><b>Calidad gráfica</b><small>Los ajustes usan el sistema real HIGHFLY.</small></div>'+
     '<div class="hf-rpg-mini-actions">'+button('FLUIDO','data-hf-graphics="performance"')+button('BALANCE','data-hf-graphics="balanced"')+button('NÍTIDO','data-hf-graphics="quality"')+'</div></div>'+
-    '<div class="hf-rpg-rule"></div>'+blank('El editor HUD 3.1 se mantiene disponible desde el juego, con su guardado independiente.')+
+    '<div class="hf-rpg-rule"></div><div class="hf-p492-camera-options"><b>CÁMARA TÁCTIL</b>'+
+    '<label for="hf-p492-sens">Sensibilidad · <output data-hf-sens-value>'+Math.round(sensitivity*100)+'%</output></label>'+
+    '<input id="hf-p492-sens" type="range" min="0.3" max="2.5" step="0.05" value="'+sensitivity.toFixed(2)+'" data-hf-camera-sensitivity aria-label="Sensibilidad de cámara"/>'+
+    '<button type="button" data-hf-camera-invert aria-pressed="'+invert+'">Invertir cámara vertical: '+(invert?'SÍ':'NO')+'</button>'+
+    '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
+    '<div class="hf-rpg-rule"></div>'+blank('El editor HUD 3.1 también permite mover y escalar el radar.')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
  const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
@@ -486,12 +494,17 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.tab==='personaje')requestAnimationFrame(()=>refreshPortrait());
   if(local.tab==='misiones'){const list=root.querySelector('.hf-rpg-quest-list');if(list)list.scrollTop=local.questScroll;}
  }
- function open(tab='personaje'){
+ function open(tab='personaje',fromNative=false){
   if(local.opened){local.tab=tab;render();return true;}
-  if(game.state!=='playing'||game.people?.talk||game.cine)return false;
-  game.openMenu('hero');
-  if(game.state!=='menu')return false;
-  local.opened=true;local.tab=tab==='bolsa'?'bolsa':'personaje';root.hidden=false; // regular menu ALWAYS begins at Character
+  if(fromNative){
+   if(game.state!=='menu')return false;
+   game.menu='hero'; // Original native panel stays hidden; close() restores play.
+  }else{
+   if(game.state!=='playing'||game.people?.talk||game.cine)return false;
+   game.openMenu('hero');
+   if(game.state!=='menu')return false;
+  }
+  local.opened=true;local.tab=bodies[tab]?tab:'personaje';root.hidden=false;
   syncEquipment();syncSkills();
   document.body.classList.add('hf-rpg-is-open');
   render();return true;
@@ -503,7 +516,16 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
- const api={open,close,toggle:()=>local.opened?close():open(),render,get opened(){return local.opened},get state(){return bag}};
+ const api={open,openFromNative:tab=>open(tab,true),close,toggle:()=>local.opened?close():open(),render,
+  get opened(){return local.opened},get state(){return bag}};
+ // Reuse Unsung's native map/journal/bench command, but present the HIGHFLY
+ // menu instead of a second, conflicting legacy UI. Quest rules are untouched.
+ game.on((type,d)=>{
+  if(type!=='state'||d?.state!=='menu'||d.menu==='hero'||local.opened)return;
+  const tab=d.menu==='bench'?'forja':d.menu==='map'?'mapa':
+   d.menu==='journal'?'misiones':'personaje';
+  api.openFromNative(tab);
+ });
  // P4.3: real 3D portrait yaw through Android touch / mouse drag.
  // Only repaint the existing original actor in its shared WebGL renderer.
  let portraitDrag=null,portraitRaf=0;
@@ -548,6 +570,14 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   }
  },true);
 
+ root.addEventListener('input',e=>{
+  const slider=e.target?.closest?.('[data-hf-camera-sensitivity]');
+  if(!slider)return;
+  const n=Math.max(.3,Math.min(2.5,Number(slider.value)||1));
+  root.querySelector('[data-hf-sens-value]')?.replaceChildren(document.createTextNode(Math.round(n*100)+'%'));
+  if(globalThis.__hfNativeSettings){globalThis.__hfNativeSettings.set('sensitivity',n);globalThis.__hfApplySettings?.();}
+  else if(game.input)game.input.sensitivity=n;
+ });
  root.addEventListener('click',e=>{
   const b=e.target?.closest?.('button');if(!b)return;
   if(local.system){
@@ -615,6 +645,13 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(b.dataset.hfSkill){local.selectedSkill=b.dataset.hfSkill;render();return;}
   if(b.dataset.hfProf){local.selectedProfession=b.dataset.hfProf;render();return;}
   if(b.dataset.hfRecipe){local.recipe=b.dataset.hfRecipe;render();return;}
+  if(b.hasAttribute('data-hf-camera-invert')){
+   const settings=globalThis.__hfNativeSettings;
+   const next=!(settings?.get('invertY')??game.input?.invertY);
+   if(settings){settings.set('invertY',next);globalThis.__hfApplySettings?.();}
+   else if(game.input)game.input.invertY=next;
+   render();return;
+  }
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
   if(action==='intro')return;
