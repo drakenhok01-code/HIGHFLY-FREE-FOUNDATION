@@ -18,7 +18,7 @@ const USER_ICONS=Object.freeze({
  item_leather:'items/leather',
  // P4.9 safe temporary visuals: each new physical loot ID has an existing
  // approved rarity-capable frame until its dedicated painting is approved.
- item_wolf_pelt:'items/leather',
+ item_wolf_pelt:'items/wolf_pelt',
  item_boar_tusk:'items/raw_diamond',
  item_crab_shell:'armor/shield',
  item_training_sword:'weapons/sword',
@@ -42,7 +42,7 @@ export const USER_ICON_RESERVED_FILES=Object.freeze([
 ]);
 // Does not add an object to inventory or unlock a skill.
 const P494_CREATURE_ICON_IDS=new Set(['item_wolf_pelt','item_boar_tusk','item_crab_shell']);
-export const userIconUrl=id=>P494_CREATURE_ICON_IDS.has(id)?
+export const userIconUrl=id=>id==='item_wolf_pelt'?import.meta.env.BASE_URL+'highfly/p496/wolf_pelt.svg':P494_CREATURE_ICON_IDS.has(id)?
  import.meta.env.BASE_URL+'highfly/p494/'+id.slice(5)+'.svg':
  USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
