@@ -515,7 +515,7 @@ export function applyHighflyTouch(input){
  if(t.talkNext)t.talkNext.hidden=!talking;
  if(t.settingsPanel&&!t.settingsPanel.hidden){
   const box=t.settingsPanel.querySelector('[data-hf-settings-metrics]');
-  if(box)box.textContent='Resolución '+Math.round((globalThis.__pipe?.renderScale??1)*100)+' % · '+Math.round(globalThis.__gov?.fps??0)+' FPS';
+  if(box)box.textContent='Resolución '+Math.round((globalThis.__pipe?.renderScale??1)*100)+' % · '+Math.round(globalThis.__hfP498Perf?.fps??globalThis.__gov?.fps??0)+' FPS';
  }
  if(t.skillButtons){
   for(let i=1;i<=6;i++){
