@@ -43,7 +43,8 @@ test('P493 original quest identities and styling retained',()=>{
 });
 test('P493 radar exposes real terrain sampling and modal, while projecting numeric coordinates',()=>{
  const map=read('src/highfly/p492-radar.mjs');
- assert.match(map,/groundHeight\?\.\(wx,wz\)/);
+ assert.match(map,/paintCartographicBackdrop\(ctx,g,W,H,scale\)/);
+ assert.match(read('src/highfly/p494-cartographic-map.mjs'),/groundHeight\(wx,wz\)/);
  assert.match(map,/hf-p493-radar-modal/);
  assert.match(map,/TOCAR PARA MAPA|openMap\(\)/);
  const pos=radarProject({x:0,z:0},{x:50,z:30});
