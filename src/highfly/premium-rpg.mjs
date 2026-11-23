@@ -1,4 +1,5 @@
 import {highflyRemoveItem,nearHighflyMerchant,itemSalePrice} from './p493-item-transactions.mjs';
+import './p493-interaction.css';
 /** HIGHFLY F0.14 premium RPG windows.
  * DOM/CSS and original SVG art: NOT a screenshot pasted onto Unsung.
  * Read ONE real Player; render over existing Three.js canvas (no second renderer).
