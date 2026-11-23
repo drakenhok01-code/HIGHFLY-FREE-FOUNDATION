@@ -37,10 +37,25 @@ for(const [cat,expected] of Object.entries(userIconHashes)){
  reviewedPremiumArchives.add(rel);
 }
 
-const forbidden=files.filter(x=>/private_assets|phoenix-source-|kaykit.*source|upstream\/|\.glb$|\.fbx$|\.ogg$|\.wav$|\.bin$|\.zip$/i.test(x)&&!reviewedPremiumArchives.has(x));
-assert.deepEqual(forbidden,[],'Bootstrap cannot contain private or unaudited binaries');
+// P4.9.1: Exactly three independently verified CC0 animated GLBs may be
+// committed. Never relax the ban for arbitrary .glb or paid KayKit SOURCE.
+const auditedSpeciesBlobs=new Map([
+ ['assets/highfly/p491/models/wolf.glb','00d69a6c127752c2506c66bc93db9a10f4a73df0'],
+ ['assets/highfly/p491/models/crab.glb','ceb814db15ad267caeabadfb4da0299eccc807aa'],
+ ['assets/highfly/p491/models/boar.glb','f57ae4b2a4fa6df29e6feaf5fb9a7e39ec5ff73d']
+]);
+for(const [rel,expected] of auditedSpeciesBlobs){
+ assert.ok(fs.existsSync(rel),'Missing approved CC0 skeletal animal '+rel);
+ const bytes=fs.readFileSync(rel);
+ const gitBlob=crypto.createHash('sha1').update('blob '+bytes.length).update(Buffer.from([0])).update(bytes).digest('hex');
+ assert.equal(gitBlob,expected,'CC0 species asset changed unexpectedly '+rel);
+ assert.equal(bytes.toString('ascii',0,4),'glTF','Not an authentic GLB: '+rel);
+}
+
+const forbidden=files.filter(x=>/private_assets|phoenix-source-|kaykit.*source|upstream\/|\.glb$|\.fbx$|\.ogg$|\.wav$|\.bin$|\.zip$/i.test(x)&&!reviewedPremiumArchives.has(x)&&!auditedSpeciesBlobs.has(x));
+assert.deepEqual(forbidden,[],'Bootstrap cannot contain private or unaudited binaries; only 3 CC0 audited GLBs allowed');
 for(const name of ['src/highfly/mobile-touch.mjs','src/highfly/fog.mjs','src/highfly/kaykit-free-hero.mjs','scripts/f0-build.mjs','scripts/qa-dist.mjs'])assert.ok(fs.existsSync(name));
-console.log('PASS qa:static '+files.length+' clean source-only files; no SOURCE media or history');
+console.log('PASS qa:static '+files.length+' clean sources + 3 CC0 audited GLBs; no SOURCE media or history');
 
 const heroCode=fs.readFileSync('src/highfly/kaykit-free-hero.mjs','utf8');
 assert.match(heroCode,/stylizeUniversalKayKit\(data\)/,'One hero must use the continuous body/rest transform');
