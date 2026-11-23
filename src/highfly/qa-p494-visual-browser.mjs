@@ -41,6 +41,7 @@ try{
    }
   screenshotMetrics[id]={bright,nonBackground};
  }
+ console.log('HIGHFLY P495 RIG DIAGNOSTICS',JSON.stringify(report.creatures));
  console.log('HIGHFLY P495 MANUAL SCENE PIXEL METRICS',JSON.stringify({
   screenshotMetrics,webglPixels:report.pixels,worldTransforms:report.worldTransforms}));
  for(const [id,v] of Object.entries(screenshotMetrics))
