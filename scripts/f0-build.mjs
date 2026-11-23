@@ -419,6 +419,12 @@ patch('src/game/camera.js',
  "const floor = this.world.groundHeight(_want.x, _want.z) + 0.54;");
 patch('src/game/game.js',"import { Player, TUNE } from './player.js';","import { Player, TUNE } from './player.js';\nimport { installHighflyDash } from './highfly-dash.mjs';\nimport { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';");
 patch('src/game/game.js','    this.player = new Player(this.world);','    this.player = new Player(this.world);\n    installHighflyDash(this.player);\n    installHighflyUniversalMotion(this.player);');
+patch('src/game/game.js',
+ "import { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';",
+ "import { installHighflyUniversalMotion } from '../highfly/universal-motion.mjs';\\nimport {isHighflyStairLane} from '../highfly/wall-physics.mjs';".replace('\\n','\n'));
+patch('src/game/game.js',
+ "forest?.trunkColliders((a, b, r) => this.world.addCapsule(a, b, r));",
+ "forest?.trunkColliders((a, b, r) => { if (!isHighflyStairLane({x:(a[0]+b[0])/2,z:(a[2]+b[2])/2})) this.world.addCapsule(a,b,r); });");
 patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
  '    p._hfCameraPitch=this.rig.pitch;\n    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);');
 // Camera raymarches actual heightfield so a close cliff cannot show its backface.
