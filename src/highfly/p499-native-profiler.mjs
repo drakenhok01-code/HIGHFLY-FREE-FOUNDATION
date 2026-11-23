@@ -10,6 +10,10 @@ export function installP499GpuDiagnostics(pipe, options={}){
  // The existing P498 corner panel displays actual FPS already. A second
  // performance panel is explicit-only to avoid covering the top-right radar.
  const debug=q.has('hfperfdebug');
+ // Profiling is NOT part of normal play. P499 installed a GPU timer even
+ // with its panel hidden. On Android, query setup and readbacks add work.
+ if(!debug&&q.get('hfphase')!=='1')return {enabled:false,dispose(){}};
+
  const gl=pipe.renderer?.getContext?.();
  // Avoid nested GPU timer queries: ?hfphase=1 uses the detailed profiler.
  const ext=q.get('hfphase')==='1'?null:gl?.getExtension?.('EXT_disjoint_timer_query_webgl2');
