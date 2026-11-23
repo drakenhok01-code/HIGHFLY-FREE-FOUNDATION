@@ -1,0 +1,28 @@
+/* Keep the original quest logic; replace only tap affordance. */
+#hf-p493-dialog-tap[hidden]{display:none!important}
+#hf-p493-dialog-tap{position:fixed;z-index:9360;bottom:9%;left:50%;transform:translateX(-50%);
+ border:1px solid #d9b57c;border-radius:22px;padding:9px 18px;color:#fff1cf;
+ background:linear-gradient(125deg,#70409c,#241932);box-shadow:0 5px 24px #040313d9;
+ font:700 12px system-ui;touch-action:manipulation;pointer-events:auto}
+#ui:has(#talk.on){z-index:9300!important;pointer-events:none!important}
+#ui #talk.on{pointer-events:auto!important;z-index:2!important}
+#hf-touch[data-talking="1"] .hf-talk-next{display:none!important}
+#hf-touch .hud-edit,#hf-touch .settings{display:none!important}
+#hf-touch[data-editing="1"] .hud-edit{display:none!important}
+#hf-p49-dialog{z-index:9700!important;isolation:isolate;pointer-events:auto!important}
+#hf-p49-dialog section{position:relative;z-index:1;box-shadow:0 20px 70px #000e!important}
+#hf-p49-dialog button{pointer-events:auto!important;min-height:42px}
+#hf-p49-prompt{z-index:9365!important}
+#hf-touch .hf-radar{cursor:pointer}
+#hf-touch .hf-radar:after{content:'TOCAR PARA MAPA';display:block;position:absolute;bottom:0;left:0;right:0;font:600 7px system-ui;color:#d7b986}
+#hf-p493-radar-modal[hidden]{display:none!important}
+#hf-p493-radar-modal{position:fixed;inset:0;z-index:9550;background:#080a1be9;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:12px}
+#hf-p493-radar-modal .hf-map-sheet{display:flex;flex-direction:column;gap:8px;width:min(680px,94vw);height:min(380px,91vh);border:1px solid #c6a2e9;border-radius:16px;padding:12px;background:linear-gradient(140deg,#20143b,#111827);color:#f4e7ff;font:12px system-ui}
+#hf-p493-radar-modal header{display:flex;align-items:center;justify-content:space-between}
+#hf-p493-radar-modal canvas{min-height:0;flex:1;width:100%;border-radius:12px;border:1px solid #645385;background:#192c35;touch-action:manipulation}
+#hf-p493-radar-modal button{border:1px solid #be9bdb;border-radius:14px;color:white;background:#473062;padding:7px 12px}
+#hf-rpg .hf-p493-bag-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+#hf-rpg .hf-p493-bag-actions button{position:static;border:1px solid #9b76bb;border-radius:15px;color:white;background:#402854;padding:7px 12px;min-height:30px;font:700 10px system-ui}
+#hf-rpg .hf-p493-bag-actions button[data-hf-action^="discard"]{border-color:#d67f87}
+#hf-rpg .hf-p493-bag-actions button:disabled{opacity:.4}
+#hf-rpg .hf-p493-bag-actions small{width:100%;color:#d4b7ed}
