@@ -25,8 +25,26 @@ try{
   const basicScene=read();avatar.root.visible=false;const basicHidden=read();avatar.root.visible=true;
   const basic=compare(basicScene,basicHidden);
   for(const x of cached){x.o.material.dispose();x.o.material=x.material;}
+  const statics=[];
+  for(const x of cached){
+   if(!x.o.isSkinnedMesh)continue;
+   const m=new THREE.Mesh(x.o.geometry,new THREE.MeshBasicMaterial({color:0xfff45a,side:THREE.DoubleSide,depthTest:false}));
+   m.position.copy(x.o.position);m.quaternion.copy(x.o.quaternion);m.scale.copy(x.o.scale);m.frustumCulled=false;
+   x.o.parent.add(m);x.o.visible=false;statics.push({mesh:m,original:x.o});
+  }
+  const staticScene=read();avatar.root.visible=false;const staticHidden=read();avatar.root.visible=true;
+  const staticPixels=compare(staticScene,staticHidden);
+  for(const item of statics){item.original.visible=true;item.mesh.removeFromParent();item.mesh.material.dispose();}
+  const attrs=cached.filter(x=>x.o.isSkinnedMesh).map(x=>({
+   mesh:x.o.name,positionType:x.o.geometry?.attributes?.position?.array?.constructor?.name,
+   positionNormalized:x.o.geometry?.attributes?.position?.normalized,
+   skinIndexType:x.o.geometry?.attributes?.skinIndex?.array?.constructor?.name,
+   skinWeightsNormalized:x.o.geometry?.attributes?.skinWeight?.normalized,
+   bindMode:x.o.bindMode,bones:x.o.skeleton?.bones?.length}));
   const bounds=new THREE.Box3().setFromObject(avatar.root),center=bounds.getCenter(new THREE.Vector3());
-  report.push({id:avatar.id,originalPixels:original,basicPixels:basic,meshes:cached.length,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},projection:center.project(camera).toArray()});
+  report.push({id:avatar.id,originalPixels:original,basicPixels:basic,staticPixels,
+   meshes:cached.length,attributes:attrs,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},
+   projection:center.project(camera).toArray()});
  }
  read();
  window.__p493Fast={ready:true,report};
