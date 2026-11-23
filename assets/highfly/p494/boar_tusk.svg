@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Colmillo de jabalí">
+<defs><radialGradient id="bg"><stop stop-color="#504261"/><stop offset=".72" stop-color="#241c35"/><stop offset="1" stop-color="#0c1020"/></radialGradient>
+<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8deae"/><stop offset=".42" stop-color="#8d6b47"/><stop offset=".71" stop-color="#efce8e"/><stop offset="1" stop-color="#604e52"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="0" dy="6"/><feComponentTransfer><feFuncA type="linear" slope=".65"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs><rect x="4" y="4" width="248" height="248" rx="23" fill="#080e1f" stroke="url(#metal)" stroke-width="8"/>
+<rect x="15" y="15" width="226" height="226" rx="18" fill="url(#bg)" stroke="#d3b97d" stroke-width="2"/>
+<g opacity=".23"><path d="M28 175L84 100L115 151L155 88L225 175" stroke="#aaa0ba" stroke-width="8" fill="none"/><circle cx="196" cy="54" r="29" fill="#a797bf"/></g>
+<g filter="url(#shadow)"><path d="M55 181 C40 122 81 54 153 41 C199 32 217 54 214 73 C159 66 131 104 119 142 C109 176 80 203 55 181Z" fill="#e8d4ad" stroke="#9f7955" stroke-width="5"/><path d="M60 177 C57 132 88 78 150 62 C179 53 197 60 210 70 C151 76 137 113 122 149 C106 179 82 191 60 177Z" fill="#fff1d4"/><path d="M72 168 C88 171 106 144 117 116 M95 180 C130 136 122 92 172 73" stroke="#bfa483" stroke-width="4" opacity=".8" fill="none"/><ellipse cx="65" cy="181" rx="17" ry="10" fill="#966c58" stroke="#d8b89b" stroke-width="3"/><path d="M50 181 Q69 191 86 178 M57 193L47 219M72 195L81 216" stroke="#a46c54" stroke-width="5" fill="none"/></g>
+<path d="M19 62L19 29Q19 19 31 19L63 19M193 19h32q12 0 12 12v31M19 193v32q0 12 12 12h32M237 193v32q0 12-12 12h-32" stroke="#f4daa5" stroke-width="4" fill="none"/>
+</svg>
