@@ -39,6 +39,15 @@ export async function loadLicensedCreatureTemplates(base){
     let skins=0;gltf.scene.traverse(x=>{if(x.isSkinnedMesh)skins++});
     if(!skins)throw Error(id+' model lacks a real skeletal mesh');
    }
+   // Quaternius FBX-origin skinned meshes occasionally render with reversed
+   // winding under their 100x bind/root transforms. Disable backface culling
+   // only for the two affected CC0 species; preserve authentic materials.
+   if(id==='wolf'||id==='crab')gltf.scene.traverse(node=>{
+    if(!node.isSkinnedMesh)return;
+    node.frustumCulled=false;
+    const mats=Array.isArray(node.material)?node.material:[node.material];
+    for(const material of mats)if(material)material.side=THREE.DoubleSide;
+   });
    result[id]=gltf;
    console.info('[HIGHFLY P491] READY',id,meta.author,'CC0',gltf.animations.map(a=>a.name));
   }catch(e){console.error('[HIGHFLY P491] Species disabled; licensed GLB failed:',id,e);}
