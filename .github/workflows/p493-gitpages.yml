@@ -90,7 +90,7 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.57.0 --no-audit --no-fund
           ./node_modules/.bin/playwright install chromium --with-deps
           # Real mobile landscape RPG menu smoke must pass before deployment.
-          node scripts/qa-rpg-browser.mjs
+          node scripts/qa-p493-menu-smoke.mjs
           node scripts/qa-p493-rigs-browser.mjs
           # The whole-map 3D hunting smoke is available separately for hardware/
           # GPU-backed testing. Headless SwiftShader could not load the native
