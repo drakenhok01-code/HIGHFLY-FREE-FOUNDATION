@@ -16,6 +16,11 @@ const USER_ICONS=Object.freeze({
  ...Object.fromEntries('hp_potion mp_potion herb ore wood fish ingot blade_blank seed bag_upgrade'.split(' ').map(x=>['item_'+x,'items/'+(x==='ingot'?'ingot_iron':x)])),
  ...Object.fromEntries(Object.entries({hf_iron_helmet:'helmet',hf_iron_chest:'chest',hf_iron_gloves:'gloves',hf_iron_pants:'shoulders',hf_iron_boots:'boots',hf_iron_shoulders:'shoulders',hf_copper_ring:'ring',hf_silver_necklace:'necklace'}).map(([id,asset])=>['item_'+id,'armor/'+asset])),
  item_leather:'items/leather',
+ // P4.9 safe temporary visuals: each new physical loot ID has an existing
+ // approved rarity-capable frame until its dedicated painting is approved.
+ item_wolf_pelt:'items/leather',
+ item_boar_tusk:'items/raw_diamond',
+ item_crab_shell:'armor/shield',
  item_training_sword:'weapons/sword',
  item_training_shield:'armor/shield',
  item_training_greatsword:'weapons/greatsword',
