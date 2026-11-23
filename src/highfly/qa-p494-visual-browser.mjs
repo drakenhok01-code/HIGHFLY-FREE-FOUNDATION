@@ -18,7 +18,7 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction(()=>window.__p494VisualQA?.ready,null,{timeout:35000});
- const report=await page.evaluate(()=>window.__p494VisualQA);
+ const report=await page.evaluate(()=>{const {ready,issues,creatures,kaykit}=window.__p494VisualQA;return {ready,issues,creatures,kaykit};});
  assert.deepEqual(report.issues,[],JSON.stringify(report));
  assert.ok(report.kaykit.meshCount>=5,JSON.stringify(report.kaykit));
  for(const id of ['wolf','boar','crab']){
