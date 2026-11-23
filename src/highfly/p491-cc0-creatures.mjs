@@ -45,6 +45,26 @@ export async function loadLicensedCreatureTemplates(base){
    if(id==='wolf'||id==='crab')gltf.scene.traverse(node=>{
     if(!node.isSkinnedMesh)return;
     node.frustumCulled=false;
+    // The WoC Quaternius GLBs use normalized Int16 POSITION and Uint8
+    // WEIGHTS. CPU bind-pose dimensions are correct, but their combined GPU
+    // skinning shader clips the entire mesh in headless WebGL. Convert the
+    // quantized attributes to explicit floats once in the shared template.
+    const geo=node.geometry.clone();
+    for(const key of ['position','skinWeight']){
+     const attr=geo.getAttribute(key);
+     if(!attr||!attr.normalized)continue;
+     const values=new Float32Array(attr.count*attr.itemSize);
+     for(let i=0;i<attr.count;i++){
+      const j=i*attr.itemSize;
+      values[j]=attr.getX(i);
+      if(attr.itemSize>1)values[j+1]=attr.getY(i);
+      if(attr.itemSize>2)values[j+2]=attr.getZ(i);
+      if(attr.itemSize>3)values[j+3]=attr.getW(i);
+     }
+     geo.setAttribute(key,new THREE.Float32BufferAttribute(values,attr.itemSize));
+    }
+    geo.computeBoundingBox();geo.computeBoundingSphere();
+    node.geometry=geo;
     const mats=Array.isArray(node.material)?node.material:[node.material];
     for(const material of mats)if(material)material.side=THREE.DoubleSide;
    });
