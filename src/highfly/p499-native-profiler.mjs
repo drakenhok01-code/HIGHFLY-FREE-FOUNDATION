@@ -11,7 +11,9 @@ export function installP499GpuDiagnostics(pipe, options={}){
  // performance panel is explicit-only to avoid covering the top-right radar.
  const debug=q.has('hfperfdebug');
  const gl=pipe.renderer?.getContext?.();
- // A GPU cannot run nested TIME_ELAPSED queries. P500 stage sampling owns\n // the timer when ?hfphase=1; P499 still measures CPU, FPS and draw calls.\n const ext=q.get('hfphase')==='1'?null:gl?.getExtension?.('EXT_disjoint_timer_query_webgl2');
+ // A GPU cannot run nested TIME_ELAPSED queries. P500 stage sampling owns
+  // the timer when ?hfphase=1; P499 still measures CPU, FPS and draw calls.
+  const ext=q.get('hfphase')==='1'?null:gl?.getExtension?.('EXT_disjoint_timer_query_webgl2');
  let frames=0, last=perf.now(), smoothed=0, currentGpuMs=null, gpuQueries=[], sampleCounter=0, draws=0;
  const maxQueries=4;
  const stats={fps:0,frameMs:0,cpuRenderMs:0,gpuMs:null,drawCalls:0,triangles:0,querySupported:!!ext,history:[]};
