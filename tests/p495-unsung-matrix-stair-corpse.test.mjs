@@ -42,7 +42,7 @@ test('P495: manual frame matrix commit exists on ALL spawned licensed models',()
 });
 test('P495: build applies stair native movement and exact central lane without weakening terrain safety',()=>{
  const build=read('scripts/f0-build.mjs');
- assert.match(build,/isHighflyStairLane\(this\.pos,\{x:nx,z:nz\}\)/);
+ assert.match(build,/isHighflyStairLane\(this\.pos,\{x:nx,z:nz\},W\)/);
  assert.match(build,/forest\?\.trunkColliders/);
  assert.match(build,/!isHighflyStairLane\(\{x:\(a\[0\]\+b\[0\]\)\/2,z:/);
  assert.match(read('src/highfly/wall-physics.mjs'),/export function isHighflyStairLane/);
