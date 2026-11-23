@@ -28,7 +28,7 @@ test('Combat phase bounded and deterministic regardless FPS',()=>{
  for(const t of [-1,0,.05,.15,.23,.45,2])assert.ok(attackPhase(t,.46)>=0&&attackPhase(t,.46)<=1);
  assert.deepEqual(targetForHand('left',.3),targetForHand('left',.3));
 });
-test('Renderer keeps SSAO disabled and 4 reversible native visual profiles',()=>{
+test('Renderer keeps SSAO disabled and 5 reversible profiles including Android physical-native',()=>{
  const pipe={ao:{enabled:true},tonemap:{uniforms:{uSharpen:{value:0}}},bloomStrength:.2};
  const settings={values:{renderScale:.63,targetFps:50}};
  const r=installHighflyGraphics(pipe,settings,'?hfquality=quality',{getItem:()=>null,setItem(){}});
@@ -38,7 +38,9 @@ test('Renderer keeps SSAO disabled and 4 reversible native visual profiles',()=>
  assert.equal(settings.values.renderScale,.88);assert.equal(r.set('bogus'),false);
  assert.equal(GRAPHICS.balanced.renderScale,1,'Default Android graphics starts at full logical resolution');
  assert.equal(GRAPHICS.balanced.targetFps,55,'Adaptive balanced quality prioritizes fluidity');
- assert.equal(Object.keys(GRAPHICS).length,4);
+ assert.equal(Object.keys(GRAPHICS).length,5);
+ assert.equal(GRAPHICS.native.renderScale,1);
+ assert.equal(GRAPHICS.native.targetFps,0,'Fixed physical-native mode never silently reduces resolution');
  assert.equal(r.set('legacy'),true);
  assert.equal(r.minRenderScale,.88,'Legacy remains available to compare with the unchanged P4.9.6 visuals');
 });
