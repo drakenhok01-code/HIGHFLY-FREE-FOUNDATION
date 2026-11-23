@@ -7,63 +7,17 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {KINDS} from '../game/enemies.js';
+import {loadLicensedCreatureTemplates,makeLicensedCreature,animateLicensedCreature,disposeLicensedCreature} from './p491-cc0-creatures.mjs';
 import {saveRpgState} from './rpg-core.mjs';
 import {HUNT_SAVE_KEY,HUNT_ORDER,HUNT_MOBS,HUNT_MISSIONS,createHuntState,
  gainHuntXp,acceptHunt,recordHuntKill,turnInHunt,xpRequired} from './p49-hunt-data.mjs';
 import './p49-hunts.css';
 
 const CAP=3, LOAD_RANGE=125, UNLOAD_RANGE=165, RESP_COOLDOWN=23;
-const sphere=new THREE.SphereGeometry(1,9,7),cone=new THREE.ConeGeometry(1,1,7);
-const cylinder=new THREE.CylinderGeometry(1,1,1,7);
-const palette={
- wolf:{body:0x8b969f,head:0x9aa7ad,detail:0xe5e8dd,dark:0x293544},
- boar:{body:0x785142,head:0x94614a,detail:0xefddbd,dark:0x33201d},
- crab:{body:0xb65e50,head:0xd2785d,detail:0xffb987,dark:0x29373c}
-};
+// Every mob is a *real skeletal CC0 GLB*. No fake animal geometry remains.
 const d2=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const safeNumber=v=>Number.isFinite(v)?v:null;
 
-function animal(type){
- const color=palette[type],root=new THREE.Group();root.name='HIGHFLY_'+type.toUpperCase()+'_ORIGINAL_LOW_POLY';
- const mats={};for(const [id,c] of Object.entries(color))mats[id]=new THREE.MeshBasicMaterial({color:c});
- const add=(mat,geo,x,y,z,sx,sy,sz,rz=0)=>{
-  const m=new THREE.Mesh(geo,mats[mat]);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.rotation.z=rz;root.add(m);return m;
- };
- if(type==='wolf'||type==='boar'){
-  const boar=type==='boar';
-  add('body',sphere,0,.70,0,boar?.72:.56,boar?.53:.39,boar?.92:.83);
-  add('head',sphere,0,boar?.86:1.02,.76,boar?.48:.39,boar?.39:.36,boar?.42:.43);
-  add('dark',sphere,0,boar?.77:.94,1.13,boar?.32:.25,boar?.20:.16,.20);
-  for(const x of [-.36,.36])for(const z of [-.59,.57]){
-   add('body',cylinder,x,.31,z,.13,.59,.14);
-   add('dark',sphere,x,.075,z,.155,.075,.17);
-  }
-  for(const x of [-.27,.27]){
-   if(boar){
-    add('detail',cone,x,.83,1.08,.10,.27,.10,x>0?-.65:.65);
-    add('dark',sphere,x,1.03,1.115,.048,.05,.045);
-   }else{
-    add('head',cone,x,1.39,.77,.15,.36,.14);
-    add('dark',sphere,x,1.05,1.135,.048,.052,.05);
-   }
-  }
-  add('body',cone,0,.92,-.84,.17,.45,.20,Math.PI/2);
- }else{
-  add('body',sphere,0,.60,0,.79,.35,.66);
-  add('head',sphere,0,.69,.42,.56,.26,.45);
-  add('detail',sphere,0,.82,.12,.51,.17,.48);
-  for(const side of [-1,1]){
-   for(let i=0;i<3;i++){
-    add('body',cylinder,side*(.62+i*.17),.37,(i-1)*.31,.085,.64,.085,side*(.6+i*.17));
-   }
-   add('body',sphere,side*1.02,.64,.37,.23,.18,.23);
-   add('head',cone,side*1.24,.77,.59,.19,.48,.18,side*.74);
-   add('dark',cylinder,side*.28,1.02,.52,.045,.33,.045);
-   add('detail',sphere,side*.28,1.20,.52,.085,.085,.08);
-  }
- }
- return {root,mats};
-}
 function pointOnLand(W,x,z){
  const y=safeNumber(W.groundHeight(x,z));
  if(y===null)return null;
@@ -140,6 +94,9 @@ export function installP49Hunts(game){
  if(!W||!stage||!hero||!game.enemies?.spawn)return null;
  let saved=null;try{saved=JSON.parse(localStorage.getItem(HUNT_SAVE_KEY)??'null')}catch{}
  const state=createHuntState(saved),killsSeen=new WeakSet(),spots={};
+ const species=Object.create(null);
+ const readyPromise=loadLicensedCreatureTemplates(import.meta.env.BASE_URL)
+  .then(loaded=>{if(!disposed)Object.assign(species,loaded);return loaded;});
  const rpg=()=>game.__highflyRpg?.state??globalThis.__highflyRpg?.state;
  const persist=()=>{try{localStorage.setItem(HUNT_SAVE_KEY,JSON.stringify(state))}catch{}};
  hero._hfLevel=state.level;hero._hfXp=state.xp;
@@ -214,16 +171,17 @@ export function installP49Hunts(game){
   const base=spot.point,angle=(index*2.3999632297)+.36;
   const x=base.x+Math.sin(angle)*6,z=base.z+Math.cos(angle)*6;
   const pos=pointOnLand(W,x,z);
-  if(!pos||Math.abs(pos.y-base.y)>7)return null;
+  if(!pos||Math.abs(pos.y-base.y)>7||!species[spot.id])return null;
   const e=game.enemies.spawn(HUNT_MOBS[spot.id].kind,x,z,'hf49:'+spot.id,null,base.y);
   if(!Number.isFinite(e?.pos?.y))return null;
-  const avatar=animal(spot.id);stage.add(avatar.root);
+  const avatar=makeLicensedCreature(spot.id,species[spot.id]);
+  if(!avatar)return null;
+  stage.add(avatar.root);
   spot.members.set(e,avatar);
   return e;
  }
  function purge(spot){
-  for(const [e,avatar] of spot.members){stage.remove(avatar.root);
-   for(const m of Object.values(avatar.mats))m.dispose();}
+  for(const avatar of spot.members.values())disposeLicensedCreature(avatar);
   spot.members.clear();spot.launched=false;spot.respawnAt=0;
   game.enemies.list=game.enemies.list.filter(e=>e.group!=='hf49:'+spot.id);
  }
@@ -267,22 +225,20 @@ export function installP49Hunts(game){
   for(const spot of Object.values(spots)){
    const distance=d2(hero.pos,spot.point);
    if(!playing||distance>UNLOAD_RANGE){if(distance>UNLOAD_RANGE&&spot.launched)purge(spot);continue;}
-   if(distance<LOAD_RANGE&&!spot.launched){
+   if(distance<LOAD_RANGE&&!spot.launched&&species[spot.id]){
     for(let i=0;i<CAP;i++)spawnOne(spot,i);
     spot.launched=true;
    }
    if(spot.launched){
     for(const [enemy,avatar] of [...spot.members]){
-     if(!enemy.alive){avatar.root.visible=false;continue;}
-     avatar.root.visible=distance<LOAD_RANGE;
-     avatar.root.position.copy(enemy.pos);avatar.root.rotation.y=enemy.yaw;
-     // Light gait movement, never detached from actual native enemy collision.
-     avatar.root.position.y+=Math.sin(game.time*4+enemy.seed*5)*.025;
+     // The native Unsung enemy drives aggro, hits, walk speed and facing;
+     // the *source rig* plays the corresponding authentic GLB clip.
+     animateLicensedCreature(avatar,enemy,realDt,distance<LOAD_RANGE);
     }
     const active=[...spot.members.keys()].filter(e=>e.alive).length;
     if(active<CAP&&game.time>=spot.respawnAt){
      for(const [enemy,avatar] of [...spot.members])if(!enemy.alive){
-      stage.remove(avatar.root);for(const m of Object.values(avatar.mats))m.dispose();
+      disposeLicensedCreature(avatar);
       spot.members.delete(enemy);
      }
      game.enemies.list=game.enemies.list.filter(e=>e.alive||e.group!=='hf49:'+spot.id);
@@ -309,7 +265,8 @@ export function installP49Hunts(game){
   return result;
  };
  prompt.addEventListener('click',()=>{const id=prompt.dataset.quest;if(id&&spots[id]&&d2(hero.pos,spots[id].npc)<3.2)speak(id);});
- const api={state,spots,missions:HUNT_MISSIONS,accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
+ const api={state,spots,missions:HUNT_MISSIONS,readyPromise,
+  get loadedSpecies(){return Object.keys(species)},accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
   progress:id=>state.missions[id]??null,closeDialog,
   get npcCount(){return npcActors.length;},
   get activeCount(){return Object.values(spots).reduce((v,s)=>v+[...s.members.keys()].filter(e=>e.alive).length,0)},
@@ -319,6 +276,6 @@ export function installP49Hunts(game){
     n.billboard.material.map.dispose();n.billboard.material.dispose();}
   }};
  game.__highflyHunts=api;globalThis.__highflyHunts=api;
- console.info('[HIGHFLY P4.9] 3 controlled hunting spots and 3 offline quests registered',Object.keys(spots));
+ console.info('[HIGHFLY P4.9.1] CC0 animated wolf, boar and crab hunting spots registered',Object.keys(spots));
  return api;
 }
