@@ -49,6 +49,9 @@ export function makeLicensedCreature(id,gltf){
  if(!gltf||!CLIPS[id])return null;
  const model=cloneSkeleton(gltf.scene);
  model.name='HIGHFLY_LICENSED_ANIMATED_'+id.toUpperCase();
+ // FBX-origin quantized creature skins can be culled by bind-pose bounds.
+ // Keep authentic skeletal animation and never cull individual mesh parts.
+ model.traverse(n=>{if(n.isSkinnedMesh||n.isMesh)n.frustumCulled=false;});
  const box=new THREE.Box3().setFromObject(model);
  const h=box.getSize(new THREE.Vector3()).y;
  if(!Number.isFinite(h)||h<0.00001)throw Error(id+' invalid rig dimensions');
