@@ -48,7 +48,7 @@ window.__p494VisualQA=q;
   });
   holder.add(model);scene.add(holder);holder.updateMatrixWorld(true);
   const mixer=new THREE.AnimationMixer(model),idle=src.animations.find(x=>x.name==='Idle');
-  idle&&mixer.clipAction(idle).play();q.visuals.push({mixer});
+  idle&&mixer.clipAction(idle).play();q.visuals.push({mixer,holder});
   q.kaykit={meshCount:bodies.length,bodies,naturalHeight:profile.naturalHeight};
   q.manualWorldMatrix=true;
   if(bodies.length<5)q.issues.push('KayKit original body incomplete');
@@ -59,7 +59,7 @@ let prev=performance.now();function update(now){
  const dt=Math.min(.05,Math.max(0,(now-prev)/1000));prev=now;
  for(const a of q.visuals){
   if(a.isCreature){const o=a.a,place=o.root.position.clone();animateLicensedCreature(o,{...a.enemy,pos:place},dt,true);}
-  else if(a.mixer){a.mixer.update(dt);holder.updateMatrixWorld(true);}
+  else if(a.mixer){a.mixer.update(dt);a.holder.updateMatrixWorld(true);}
  }
  renderer.render(scene,camera);
  requestAnimationFrame(update);
