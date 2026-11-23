@@ -56,7 +56,7 @@ test('P491 build includes only verified CC0 animal models and immutable hashes',
  const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
  assert.ok(build.includes('p491-cc0-creatures.mjs'));
  for(const id of Object.keys(definitions)){
-  assert.ok(build.includes('models/hf-p491-'+id+'.glb'));
+  assert.ok(build.includes("public/models/hf-p491-'+id+'.glb"),'The approved model path must be generated for '+id);
   assert.ok(build.includes(definitions[id].sha));
  }
  assert.match(build,/sha1/);assert.match(build,/bytes\.toString\('utf8',0,4\)!=='glTF'/);
