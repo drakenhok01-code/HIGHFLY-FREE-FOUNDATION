@@ -41,8 +41,8 @@ export const USER_ICON_RESERVED_FILES=Object.freeze([
  ...'boots chest gloves helmet necklace ring shoulders'.split(' ').map(x=>'armor/'+x)
 ]);
 // Does not add an object to inventory or unlock a skill.
-const P494_CREATURE_ICON_IDS=new Set(['item_wolf_pelt','item_boar_tusk','item_crab_shell']);
-export const userIconUrl=id=>id==='item_wolf_pelt'?import.meta.env.BASE_URL+'highfly/p496/wolf_pelt.svg':P494_CREATURE_ICON_IDS.has(id)?
+const P494_CREATURE_ICON_IDS=new Set(['item_boar_tusk','item_crab_shell']);
+export const userIconUrl=id=>P494_CREATURE_ICON_IDS.has(id)?
  import.meta.env.BASE_URL+'highfly/p494/'+id.slice(5)+'.svg':
  USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
