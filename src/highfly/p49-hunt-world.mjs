@@ -175,7 +175,7 @@ export function installP49Hunts(game){
   const e=game.enemies.spawn(HUNT_MOBS[spot.id].kind,x,z,'hf49:'+spot.id,null,base.y);
   if(!Number.isFinite(e?.pos?.y))return null;
   const avatar=makeLicensedCreature(spot.id,species[spot.id]);
-  if(!avatar)return null;
+  if(!avatar){console.warn('[HIGHFLY P493] Missing animal visual; enemy removed',spot.id);game.enemies.list=game.enemies.list.filter(e0=>e0!==e);return null;}
   stage.add(avatar.root);
   spot.members.set(e,avatar);
   return e;
@@ -189,12 +189,21 @@ export function installP49Hunts(game){
   try{
    const gltf=await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb');
    if(disposed)return;
-   const profile=stylizeUniversalKayKit(gltf);
+   let profile;
+   try{profile=stylizeUniversalKayKit(gltf);}
+   catch(error){
+    console.warn('[HIGHFLY P493 NPC] Stylization failed; showing authentic KayKit FREE instead',error);
+    const box=new THREE.Box3().setFromObject(gltf.scene);
+    profile={naturalHeight:Math.max(.1,box.getSize(new THREE.Vector3()).y)};
+   }
    for(const [i,id] of HUNT_ORDER.entries()){
     const spot=spots[id];if(!spot)continue;
     const n=cloneSkeleton(gltf.scene);n.name='HIGHFLY_KAYKIT_NPC_'+id;
     const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
     anchor.rotation.y=(Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI);
+    const nativeBox=new THREE.Box3().setFromObject(n);
+    n.position.set(-(nativeBox.min.x+nativeBox.max.x)*.5,
+      -nativeBox.min.y,-(nativeBox.min.z+nativeBox.max.z)*.5);
     n.scale.setScalar(1.80/profile.naturalHeight);
     n.traverse(m=>{
      if(!m.isMesh)return;
@@ -211,6 +220,7 @@ export function installP49Hunts(game){
     const idle=gltf.animations.find(a=>a.name==='Idle');
     const mixer=new THREE.AnimationMixer(n);
     if(idle)mixer.clipAction(idle).play();
+    anchor.userData.highflyQuestNpc=id;
     stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
    }
    console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
