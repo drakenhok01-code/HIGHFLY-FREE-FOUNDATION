@@ -432,8 +432,9 @@ patch('src/game/people.js',
  "const rawY = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6); const baseY=W.groundHeight(x,z); const y=Number.isFinite(rawY)?Math.max(rawY,baseY):baseY;");
 // P4.9.4: preserve original combat/AI, but do not draw the native shards over
 // licensed Quaternius/Gobkit skinned wildlife.
-patch('src/game/enemies.js',"      if (e.far) continue;",
- "      if (e.far || String(e.kind).startsWith('hf_')) continue;");
+patch('src/game/enemies.js',
+ "      if (e.far) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replace('\\n','\n'),
+ "      if (e.far || String(e.kind).startsWith('hf_')) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replace('\\n','\n'));
 patch('src/game/enemies.js',
  "    this.particles.burst(c.x, c.y, c.z, e.def.boss ? 90 : 36,",
  "    if (!String(e.kind).startsWith('hf_')) this.particles.burst(c.x, c.y, c.z, e.def.boss ? 90 : 36,");
