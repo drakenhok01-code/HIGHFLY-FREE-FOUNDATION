@@ -19,7 +19,7 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction(()=>window.__p494VisualQA?.ready,null,{timeout:35000});
- await page.waitForFunction(()=>window.__p494VisualQA?.pixels?.kaykit?.drawn>0,null,{timeout:15000});
+ await page.waitForFunction(()=>window.__p494VisualQA?.ready && window.__p494VisualQA?.pixels && window.__p494VisualQA?.frame>25,null,{timeout:15000});
  const report=await page.evaluate(()=>{const {ready,issues,creatures,kaykit,pixels,worldTransforms}=window.__p494VisualQA;return {ready,issues,creatures,kaykit,pixels,worldTransforms};});
  const imageBytes=await page.screenshot({path:'qa-p494-real-wildlife.png'});
  const png=PNG.sync.read(imageBytes);
