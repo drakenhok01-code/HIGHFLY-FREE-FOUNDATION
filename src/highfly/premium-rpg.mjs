@@ -423,7 +423,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     m.status==='done'?'Encargo completado. '+q.thanks:q.progress;
    return '<div class="hf-rpg-quest-detail">'+title(q.title,'HIGHFLY · LA LLAMA SIN NOMBRE')+
     '<p class="hf-rpg-info">'+safe(text)+'</p>'+
-    '<div class="hf-rpg-quest-art"><img alt="Encargo de '+safe(q.npc)+'" src="'+questArtUrl('primary')+'" loading="eager" draggable="false"/></div>'+
+    '<div class="hf-rpg-quest-art"><img alt="Escena de cacería de '+safe(q.npc)+'" src="'+questArtUrl(q.id,q.title)+'" loading="eager" draggable="false"/></div>'+
     '<div class="hf-rpg-quest-detail-foot"><b>OBJETIVO · '+m.count+' / '+q.count+
     '</b><span>Al entregar: '+q.bonusXp+' EXP y una poción. Tu botín de monstruos se recoge con USAR.</span></div></div>';
   }
