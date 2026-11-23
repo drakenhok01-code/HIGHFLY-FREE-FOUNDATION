@@ -109,6 +109,9 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
        saveRpgState(bag);
        msg('✦ Obtenido: '+result.name+' · '+result.rarity+' +0');
        release(nearest);
+       // One button press is one interaction: do not also open a nearby
+       // native NPC dialogue or another highfly quest on the same frame.
+       game.input.pressed.delete('interact');
        onUpdate();
       }else msg(result.reason);
      }
@@ -118,7 +121,16 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   }catch(e){console.warn('[HIGHFLY P41 world pickup]',e)}
   return result;
  };
- const api={drops,get active(){return drops.length},get corpses(){return drops.filter(d=>!!d.avatar).length},dispose(){
+ const api={drops,get active(){return drops.length},get corpses(){return drops.filter(d=>!!d.avatar).length},
+  nearCorpse(pos,radius=2.7){
+   if(!pos)return null;
+   let best=null,d2=radius*radius;
+   for(const d of drops)if(d.avatar){
+    const v=(pos.x-d.x)**2+(pos.z-d.z)**2;
+    if(v<d2&&Math.abs(pos.y-d.y)<3.5){best=d;d2=v;}
+   }
+   return best;
+  },dispose(){
   game.update=originalUpdate;while(drops.length)release(drops[0]);
   for(const tex of cache.values())tex.dispose();
   label.remove();notice.remove();
