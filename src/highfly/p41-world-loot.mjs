@@ -13,7 +13,7 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
  if(!game||game.__hfP41WorldLoot)return game?.__hfP41WorldLoot??null;
  const stage=game.pipe?.sceneT??game.pipe?.scene;
  if(!stage||!game.on||!game.update)return null;
- const loader=new THREE.TextureLoader(),cache=new Map(),drops=[];
+ const drops=[]; // Native bodies and CC0 wildlife remain in the actual scene.
  const label=document.createElement('div');label.id='hf-p41-pickup-prompt';label.hidden=true;
  document.body.appendChild(label);
  const notice=document.createElement('div');notice.id='hf-p41-world-toast';notice.hidden=true;
@@ -27,17 +27,8 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   if(!drop)return;
   if(drop.sprite){stage.remove(drop.sprite);drop.sprite.material.dispose();}
   if(drop.avatar){drop.avatar.corpseLootPending=false;drop.avatar.corpseLootUntil=0;}
+  if(drop.native){drop.native.__hfCorpsePending=false;drop.native.__hfCorpseUntil=0;drop.native.t=Math.max(drop.native.t,3.3);}
   const i=drops.indexOf(drop);if(i>=0)drops.splice(i,1);
- }
- function getTexture(id){
-  const url=userIconUrl('item_'+id);
-  if(!url)return null;
-  if(!cache.has(id)){
-   const tex=loader.load(url);
-   tex.colorSpace=THREE.SRGBColorSpace;
-   cache.set(id,tex);
-  }
-  return cache.get(id);
  }
  function spawn(enemy){
   if(!enemy||!enemy.pos)return;
@@ -54,19 +45,16 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   if(wildlife&&!avatar){console.error('[HIGHFLY CORPSE] No real CC0 animal model for',kind);return;}
   const x=Number(enemy.pos.x),y=Number(enemy.pos.y),z=Number(enemy.pos.z);
   if(![x,y,z].every(Number.isFinite))return;
-  let sprite=null;
-  const base=Math.max(y,Number(game.world?.groundHeight?.(x,z))||y)+(wildlife ? .20 : .86);
-  if(wildlife){
-   avatar.corpseLootPending=true;
-   avatar.corpseLootUntil=ticker()+60;
-  }else{
-   const art=getTexture(itemId);if(!art)return;
-   const material=new THREE.SpriteMaterial({map:art,color:0xffffff,transparent:true,depthWrite:false,alphaTest:.06});
-   sprite=new THREE.Sprite(material);
-   sprite.position.set(x,base,z);sprite.scale.set(1.05,1.05,1);sprite.renderOrder=12;stage.add(sprite);sprite.updateMatrixWorld(true);
-  }
-  drops.push({id:itemId,rarity,count:1,x,y:base,z,sprite,avatar:avatar??null,
-   expires:ticker()+(wildlife?60:32),phase:drops.length*.72});
+  // Unsung's native enemies are procedural shard constructs. Their original
+  // InstancedMesh death debris is the REAL carcass; keep settled shards visible
+  // and lootable, rather than replacing them with a floating item sprite.
+  const native=wildlife?null:enemy;
+  if(wildlife){avatar.corpseLootPending=true;avatar.corpseLootUntil=ticker()+60;}
+  else {native.__hfCorpsePending=true;native.__hfCorpseUntil=ticker()+60;}
+  const base=y+.20;
+  const sprite=null;
+  drops.push({id:itemId,rarity,count:1,x,y:base,z,sprite,avatar:avatar??null,native,
+   expires:ticker()+60,phase:drops.length*.72});
   // Never scatter eight visual items in one spot: all three hunting corpses
   // stay single-interaction bodies. Legacy Unsung markers are capped to 4.
   const visual=drops.filter(d=>!!d.sprite);
@@ -100,7 +88,7 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
     }
     if(nearest){
      const labelNames={leather:'CUERO DE CRIATURA',ore:'MINERAL',wolf_pelt:'PIEL DE LOBO',boar_tusk:'COLMILLO DE JABALÍ',crab_shell:'CAPARAZÓN DE CANGREJO'};
-     label.textContent=nearest.avatar?'✦ USAR · SAQUEAR '+(labelNames[nearest.id]??'CRIATURA'):
+     label.textContent=(nearest.avatar||nearest.native)?'✦ USAR · SAQUEAR '+(labelNames[nearest.id]??'CRIATURA'):
       '✦ USAR · RECOGER '+(labelNames[nearest.id]??'ESCUDO RARO +0');
      label.hidden=false;
      if(game.input?.pressed?.has('interact')){
@@ -121,18 +109,17 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   }catch(e){console.warn('[HIGHFLY P41 world pickup]',e)}
   return result;
  };
- const api={drops,get active(){return drops.length},get corpses(){return drops.filter(d=>!!d.avatar).length},
+ const api={drops,get active(){return drops.length},get corpses(){return drops.filter(d=>!!(d.avatar||d.native)).length},
   nearCorpse(pos,radius=2.7){
    if(!pos)return null;
    let best=null,d2=radius*radius;
-   for(const d of drops)if(d.avatar){
+   for(const d of drops)if(d.avatar||d.native){
     const v=(pos.x-d.x)**2+(pos.z-d.z)**2;
     if(v<d2&&Math.abs(pos.y-d.y)<3.5){best=d;d2=v;}
    }
    return best;
   },dispose(){
   game.update=originalUpdate;while(drops.length)release(drops[0]);
-  for(const tex of cache.values())tex.dispose();
   label.remove();notice.remove();
  }};
  game.__hfP41WorldLoot=api;
