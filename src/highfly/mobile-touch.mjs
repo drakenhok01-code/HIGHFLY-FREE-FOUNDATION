@@ -29,10 +29,16 @@ export function abilityVector(dx,dy,deadzone=9){
  if(!Number.isFinite(length)||length<deadzone)return null;
  return {x:dx===0?0:dx/length,y:dy===0?0:-dy/length};
 }
-export function resolveHighflyContext(p){
+export function resolveHighflyContext(p,game=globalThis.__game){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
- const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ const nearNative=game?.people?.near?.();
+ if(nearNative)return {action:'interact',label:'HABLAR'};
+ for(const spot of Object.values(game?.__highflyHunts?.spots??{})){
+  const d=Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z);
+  if(d<3.4&&Math.abs(p.pos.y-spot.npc.y)<3.5)return {action:'interact',label:'HABLAR'};
+ }
+ const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.y);
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
@@ -493,7 +499,7 @@ export function applyHighflyTouch(input){
  const g=globalThis.__game,p=g?.player;
  const talking=!!g?.people?.talk;
  if(t.root?.dataset)t.root.dataset.talking=talking?'1':'0';
- if(t.talkNext)t.talkNext.hidden=!talking;
+ if(t.talkNext)t.talkNext.hidden=true; // Dialogue advances by tapping the text card.
  if(t.settingsPanel&&!t.settingsPanel.hidden){
   const box=t.settingsPanel.querySelector('[data-hf-settings-metrics]');
   if(box)box.textContent='Resolución '+Math.round((globalThis.__pipe?.renderScale??1)*100)+' % · '+Math.round(globalThis.__gov?.fps??0)+' FPS';
@@ -525,7 +531,7 @@ export function applyHighflyTouch(input){
  }
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
  t.radar?.update();
- const context=resolveHighflyContext(globalThis.__game?.player);
+ const context=resolveHighflyContext(globalThis.__game?.player,globalThis.__game);
  t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;
