@@ -71,7 +71,12 @@ export function makeLicensedCreature(id,gltf){
  if(!gltf||!CLIPS[id])return null;
  const model=cloneSkeleton(gltf.scene);
  model.name='HIGHFLY_LICENSED_ANIMATED_'+id.toUpperCase();
- const box=new THREE.Box3().setFromObject(model);
+ // SkeletonUtils.clone() can produce a transient, stale skinned AABB on
+ // Quaternius Meshopt-compressed Int16 rigs. That AABB makes wolves/crabs
+ // hundreds of metres tall, shrinking the visible mesh to almost zero.
+ // Normalize from the original, correctly bound GLTF skeleton instead.
+ gltf.scene.updateMatrixWorld(true);
+ const box=new THREE.Box3().setFromObject(gltf.scene);
  const h=box.getSize(new THREE.Vector3()).y;
  if(!Number.isFinite(h)||h<0.00001)throw Error(id+' invalid rig dimensions');
  const root=new THREE.Group();
