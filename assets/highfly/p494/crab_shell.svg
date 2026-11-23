@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Caparazón de cangrejo">
+<defs><radialGradient id="bg"><stop stop-color="#504261"/><stop offset=".72" stop-color="#241c35"/><stop offset="1" stop-color="#0c1020"/></radialGradient>
+<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8deae"/><stop offset=".42" stop-color="#8d6b47"/><stop offset=".71" stop-color="#efce8e"/><stop offset="1" stop-color="#604e52"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="0" dy="6"/><feComponentTransfer><feFuncA type="linear" slope=".65"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs><rect x="4" y="4" width="248" height="248" rx="23" fill="#080e1f" stroke="url(#metal)" stroke-width="8"/>
+<rect x="15" y="15" width="226" height="226" rx="18" fill="url(#bg)" stroke="#d3b97d" stroke-width="2"/>
+<g opacity=".23"><path d="M28 175L84 100L115 151L155 88L225 175" stroke="#aaa0ba" stroke-width="8" fill="none"/><circle cx="196" cy="54" r="29" fill="#a797bf"/></g>
+<g filter="url(#shadow)"><path d="M48 155 Q48 78 126 62 Q208 75 210 157 Q187 187 126 198 Q70 190 48 155Z" fill="#9b4b52" stroke="#e2a88d" stroke-width="6"/><path d="M67 154 Q71 94 126 82 Q182 93 189 155 Q156 176 126 178 Q94 173 67 154Z" fill="#cd6c64" stroke="#f6bfa5" stroke-width="3"/><path d="M70 150Q123 133 186 151 M90 107Q125 112 161 106 M124 83 L124 178 M76 138L109 150 M178 139L140 153" fill="none" stroke="#f2af91" stroke-width="4" opacity=".65"/><path d="M65 151 L44 166 L62 184 M184 157 L216 172 L195 189 M88 176 L69 208 M159 178 L181 210" fill="none" stroke="#e99381" stroke-width="9" stroke-linecap="round"/><circle cx="100" cy="116" r="7" fill="#5e2c43"/><circle cx="153" cy="115" r="7" fill="#5e2c43"/></g>
+<path d="M19 62L19 29Q19 19 31 19L63 19M193 19h32q12 0 12 12v31M19 193v32q0 12 12 12h32M237 193v32q0 12-12 12h-32" stroke="#f4daa5" stroke-width="4" fill="none"/>
+</svg>
