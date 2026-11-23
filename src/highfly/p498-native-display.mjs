@@ -74,7 +74,7 @@ export function highflyDisplayReport(pipe,windowRef=globalThis){
 export function installHighflyDisplayDiagnostics(pipe,settings,search='',win=globalThis){
  const params=new URLSearchParams(search);
  const capture=()=>({...highflyDisplayReport(pipe,win),
-  fps:win.__gov?.fps??null,quality:win.__hfGraphics?.selected??null,
+  fps:win.__hfP498Perf?.fps??win.__gov?.fps??null,quality:win.__hfGraphics?.selected??null,
   targetFps:settings?.values?.targetFps??null});
  if(win)win.__highflyNativeReport=capture;
  if(!params.has('hfdiag')||params.get('hfdiag')==='0'||!win.document)return {capture};
