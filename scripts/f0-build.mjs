@@ -428,7 +428,22 @@ patch('src/main.js',"const apply = () => applySettings(settings, { pipe, game, c
  "const apply = () => applySettings(settings, { pipe, game, cover, audio, gloss, governor });\nwindow.__highflySetGraphics = mode => { const ok = window.__hfGraphics?.set(mode); if(ok){apply();pipe.taa.reset=true;} return !!ok; };");
 patch('src/main.js',"window.__game = game;",
  "window.__game = game;\nif(params.get('hfworkshop')==='1')window.__hfProfessionYard=installProfessionYard(game,pipe);");
- // Browser-only full-world collision QA mode: retain the real world, player,
+ // P4.9.8 fixed-resolution profile disables Governor.end(), which also used
+// to calculate the HUD FPS. Count actual completed game frames independently;
+// no scale changes and no new render loop.
+patch('src/main.js',
+ "  try { tick(dt); } catch (e) { if (++frameErrors <= 5) console.error(e); }",
+ `  try {
+    tick(dt);
+    const perf=(window.__hfP498Perf??={fps:0,frames:0,since:now});
+    perf.frames++;
+    if(now-perf.since>=1000){
+      perf.fps=Math.round((perf.frames*1000/(now-perf.since))*10)/10;
+      perf.frames=0;perf.since=now;
+    }
+  } catch (e) { if (++frameErrors <= 5) console.error(e); }`);
+
+// Browser-only full-world collision QA mode: retain the real world, player,
  // terrain heightfields, props and collision BVH, but shorten only the
  // cosmetic pre-game lighting bake in software WebGL. Normal play unchanged.
  patch('src/main.js','  const total = terrain._queue.length;',
