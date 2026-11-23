@@ -39,3 +39,8 @@
  font:600 clamp(11px,1.4vw,15px)/1.4 system-ui,sans-serif;
  box-shadow:0 4px 16px #090312b8;text-align:center;pointer-events:none;
 }
+
+/* P4.9.3 quest dialogue always above mobile HUD and RPG panels. */
+#hf-p49-dialog{z-index:9700!important;pointer-events:auto!important}
+#hf-p49-dialog section{pointer-events:auto!important;z-index:1}
+#hf-p49-dialog .hf-p49-dialog-actions button{pointer-events:auto!important}
