@@ -74,7 +74,7 @@ test('real pipeline patch preserves all original display-sized pass relationship
  const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
  assert.match(build,/highflyPhysicalDisplaySize\(this\.highflyCssW,this\.highflyCssH/);
  assert.match(build,/this\.renderer\.setSize\(this\.displayW,this\.displayH,false\)/);
- assert.match(build,/this\.taa\.setSize\(this\.displayW, this\.displayH\)/.source ? /setHighflyDisplayMode/ : /setHighflyDisplayMode/);
+ assert.match(build,/setHighflyDisplayMode/);
  assert.match(build,/installHighflyDisplayDiagnostics/);
  assert.match(build,/this\.taa\.reset = true/);
  const cfg=JSON.parse(fs.readFileSync('foundation.config.json','utf8'));
