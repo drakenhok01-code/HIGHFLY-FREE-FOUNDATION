@@ -24,7 +24,7 @@ test('P493 requires Odo nearby to sell and does not affect equipped gear',()=>{
  assert.equal(nearHighflyMerchant(g),true);
  g.player.pos.x=99;assert.equal(nearHighflyMerchant(g),false);
 });
-test('P493 original quest identities and styling retained',()=>{
+test('P493 original quest identities preserved with P494 verified 3D body fallback',()=>{
  const build=read('scripts/f0-build.mjs');
  assert.match(build,/installP493Interaction\(game\)/);
  assert.match(build,/installP493PortalVisuals\(game\)/);
@@ -32,7 +32,8 @@ test('P493 original quest identities and styling retained',()=>{
  assert.match(build,/p493-interaction\.css/);
  const hunt=read('src/highfly/p49-hunt-world.mjs');
  assert.match(hunt,/n\.position\.set\(/);
- assert.match(hunt,/profile=stylizeUniversalKayKit\(gltf\)/);
+ assert.match(hunt,/cloneSkeleton\(gltf\.scene\)/);
+ assert.match(hunt,/meshCount!==6/); // P4.9.4 demands six ACTUAL visible KayKit body meshes
  assert.match(hunt,/if\(!avatar\)/);
  const touch=read('src/highfly/mobile-touch.mjs');
  assert.match(touch,/label:'HABLAR'/);
