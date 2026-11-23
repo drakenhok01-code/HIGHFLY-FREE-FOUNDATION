@@ -61,8 +61,20 @@ window.__p495ProbeCorpse=()=>{
    const skins=[];a.model.traverse(m=>{if(m.isSkinnedMesh)skins.push({
     material:m.material?.type??m.material?.[0]?.type,visible:m.visible
    });});
+   const box=new THREE.Box3().setFromObject(a.root);
+   const unscaled=new THREE.Box3().setFromObject(gltf.scene);
+   const meshNodes=[];a.model.traverse(m=>{if(m.isSkinnedMesh){const wb=new THREE.Box3().setFromObject(m);
+    meshNodes.push({name:m.name,scale:[m.scale.x,m.scale.y,m.scale.z],
+     bboxMin:[wb.min.x,wb.min.y,wb.min.z],bboxMax:[wb.max.x,wb.max.y,wb.max.z],
+     geometryPositionType:m.geometry.attributes.position.array?.constructor?.name,
+     normalized:m.geometry.attributes.position.normalized,
+     geometryBoundingBoxMin:m.geometry.boundingBox?.min.toArray()});}});
    q.creatures[id]={realRig:!!gltf.animations.length,meshCount,clips:gltf.animations.length,
-    unlit:skins.length>0&&skins.every(m=>m.material==='MeshBasicMaterial'&&m.visible)};
+    unlit:skins.length>0&&skins.every(m=>m.material==='MeshBasicMaterial'&&m.visible),
+    rawBox:{min:unscaled.min.toArray(),max:unscaled.max.toArray()},
+    worldBox:{min:box.min.toArray(),max:box.max.toArray()},
+    modelPosition:a.model.position.toArray(),scaledScale:a.root.children?.[0]?.scale?.toArray(),
+    meshNodes};
    q.visuals.push({a,enemy:{alive:true,state:'idle',pos:a.root.position.clone(),yaw:.2,vel:new THREE.Vector3(),t:0},isCreature:true});
   }
   const src=await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb');
