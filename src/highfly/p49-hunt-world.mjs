@@ -199,12 +199,13 @@ export function installP49Hunts(game){
    for(const [i,id] of HUNT_ORDER.entries()){
     const spot=spots[id];if(!spot)continue;
     const n=cloneSkeleton(gltf.scene);n.name='HIGHFLY_KAYKIT_NPC_'+id;
-    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
+    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y+.06,spot.npc.z);
     anchor.rotation.y=(Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI);
-    const nativeBox=new THREE.Box3().setFromObject(n);
-    n.position.set(-(nativeBox.min.x+nativeBox.max.x)*.5,
-      -nativeBox.min.y,-(nativeBox.min.z+nativeBox.max.z)*.5);
+    // The identical KayKit hero rig renders at scene origin. Re-centering a
+    // skinned mesh AFTER its bind can displace the visible body beneath ground.
+    // Keep bind-pose origin unchanged and scale only, just like the working hero.
     n.scale.setScalar(1.80/profile.naturalHeight);
+    n.position.set(0,0,0);
     n.traverse(m=>{
      if(!m.isMesh)return;
      m.frustumCulled=false;
@@ -220,6 +221,12 @@ export function installP49Hunts(game){
     const idle=gltf.animations.find(a=>a.name==='Idle');
     const mixer=new THREE.AnimationMixer(n);
     if(idle)mixer.clipAction(idle).play();
+    const countVisible=[];n.traverse(m=>{if(m.isSkinnedMesh&&m.visible)countVisible.push(m.name);});
+    if(countVisible.length<5)throw Error('NPC '+id+' missing real KayKit body meshes: '+countVisible.join(','));
+    // A signpost survives WebGL material failures, and cannot be occluded by
+    // the ground when the natural terrain varies by a few decimetres.
+    billboard.material.depthTest=false;
+    anchor.userData.visibleBodies=countVisible;
     anchor.userData.highflyQuestNpc=id;
     stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
    }
@@ -228,10 +235,10 @@ export function installP49Hunts(game){
    console.error('[HIGHFLY P493] KayKit model failed; showing NPC name and diagnostic marker',e);
    for(const id of HUNT_ORDER){
     const spot=spots[id];if(!spot)continue;
-    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
+    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y+.06,spot.npc.z);
     // Never create dummy animal geometry: show an explicit nameplate on load failure.
     const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
+    billboard.material.depthTest=false;billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
     npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
    }
   }
@@ -255,15 +262,21 @@ export function installP49Hunts(game){
      // the *source rig* plays the corresponding authentic GLB clip.
      animateLicensedCreature(avatar,enemy,realDt,distance<LOAD_RANGE);
     }
+    for(const [enemy,avatar] of [...spot.members])if(!enemy.alive&&
+       (!avatar.corpseLootPending||game.time>=avatar.corpseLootUntil)){
+      disposeLicensedCreature(avatar);spot.members.delete(enemy);
+    }
     const active=[...spot.members.keys()].filter(e=>e.alive).length;
     if(active<CAP&&game.time>=spot.respawnAt){
      for(const [enemy,avatar] of [...spot.members])if(!enemy.alive){
-      disposeLicensedCreature(avatar);
-      spot.members.delete(enemy);
+      // Keep the physical GLB carcass until looted or expiry; no floating
+      // material sprites. Never count a corpse as a living member for respawn.
+      if(avatar.corpseLootPending && game.time<avatar.corpseLootUntil)continue;
+      disposeLicensedCreature(avatar);spot.members.delete(enemy);
      }
      game.enemies.list=game.enemies.list.filter(e=>e.alive||e.group!=='hf49:'+spot.id);
-     const used=spot.members.size;
-     if(used<CAP)spawnOne(spot,(Math.floor(game.time)%7)+used);
+     const living=[...spot.members.keys()].filter(e=>e.alive).length;
+     if(living<CAP)spawnOne(spot,(Math.floor(game.time)%7)+living);
      spot.respawnAt=game.time+RESP_COOLDOWN;
     }
    }
@@ -288,7 +301,11 @@ export function installP49Hunts(game){
  const api={state,spots,missions:HUNT_MISSIONS,readyPromise,
   get loadedSpecies(){return Object.keys(species)},accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
   progress:id=>state.missions[id]??null,closeDialog,
-  get npcCount(){return npcActors.length;},
+  get npcCount(){return npcActors.filter(n=>!n.fallback).length;},
+  get npcDiagnostics(){return npcActors.map(n=>({id:n.id,realModel:!n.fallback,
+   bodyMeshCount:n.anchor.userData.visibleBodies?.length??0,worldY:n.anchor.position.y,
+   anchorVisible:n.anchor.visible,modelVisible:n.model.visible}));},
+  avatarFor(enemy){for(const spot of Object.values(spots)){const found=spot.members.get(enemy);if(found)return found;}return null;},
   get activeCount(){return Object.values(spots).reduce((v,s)=>v+[...s.members.keys()].filter(e=>e.alive).length,0)},
   dispose(){disposed=true;game.update=prior;closeDialog();prompt.remove();dialog.remove();toast.remove();
    for(const spot of Object.values(spots))purge(spot);
