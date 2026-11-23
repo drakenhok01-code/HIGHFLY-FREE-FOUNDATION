@@ -275,7 +275,7 @@ export function attachHighflyTouch(input){
  '<button data-a="cheer" aria-label="Festejar"><span>🙌</span>FESTEJAR</button></div>'+
  '<div class="hf-settings" hidden><b>CALIDAD GRÁFICA</b><div class="hf-setting-buttons">'+
  '<button data-graphics="performance">FLUIDO</button><button data-graphics="balanced">BALANCE</button>'+
- '<button data-graphics="quality">NÍTIDO</button></div>'+
+ '<button data-graphics="native">ANDROID NÍTIDO</button></div>'+
  '<button data-a="equip" aria-label="Cambiar arma">⚔ ARMA</button>'+
  '<div data-hf-settings-metrics>Resolución y FPS</div></div>'+
  '<button class="hf-talk-next" data-a="dialogue-next" hidden>SEGUIR</button>';
