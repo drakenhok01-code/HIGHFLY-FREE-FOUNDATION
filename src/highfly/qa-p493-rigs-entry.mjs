@@ -45,7 +45,22 @@ try{
   let pixels=0;
   for(let i=0;i<all.length;i+=4)
    if(Math.abs(all[i]-absent[i])+Math.abs(all[i+1]-absent[i+1])+Math.abs(all[i+2]-absent[i+2])>36)pixels++;
-  report.push({name:a.name,skinned:a.skinned,visiblePixels:pixels});
+  const bounds=new THREE.Box3().setFromObject(a.host);
+  const center=bounds.getCenter(new THREE.Vector3());
+  const size=bounds.getSize(new THREE.Vector3());
+  const projection=center.clone().project(camera);
+  const meshes=[];
+  a.host.traverse(o=>{
+   if(o.isMesh){
+    const p=o.getWorldPosition(new THREE.Vector3());
+    meshes.push({name:o.name,skinned:!!o.isSkinnedMesh,visible:o.visible,frustumCulled:o.frustumCulled,
+      worldPos:p.toArray(),vertices:o.geometry?.attributes?.position?.count,
+      material:o.material?.type,side:o.material?.side});
+   }
+  });
+  report.push({name:a.name,skinned:a.skinned,visiblePixels:pixels,
+   bounds:{min:bounds.min.toArray(),max:bounds.max.toArray(),size:size.toArray(),center:center.toArray()},
+   projectedCenter:projection.toArray(),meshes});
  }
  draw();
  window.__hfP493RigQA={ready:true,error:null,profile,report,triangles:renderer.info.render.triangles};
