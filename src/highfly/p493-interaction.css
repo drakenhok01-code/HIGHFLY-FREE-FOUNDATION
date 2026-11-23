@@ -26,3 +26,18 @@
 #hf-rpg .hf-p493-bag-actions button[data-hf-action^="discard"]{border-color:#d67f87}
 #hf-rpg .hf-p493-bag-actions button:disabled{opacity:.4}
 #hf-rpg .hf-p493-bag-actions small{width:100%;color:#d4b7ed}
+
+/* The 17 original Unsung missions keep their state machine but now use the
+   same foreground anime-fantasy conversation treatment as HIGHFLY hunts. */
+#ui #talk.on{
+ position:fixed!important;top:47%!important;left:50%!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;width:min(650px,87vw)!important;
+ max-height:73vh!important;overflow-y:auto!important;
+ padding:clamp(13px,2vw,23px)!important;background:linear-gradient(145deg,#25143c,#101628)!important;
+ border:1.5px solid #d4b077!important;border-radius:17px!important;
+ box-shadow:0 18px 60px #01010ee5!important;pointer-events:auto!important;
+ color:#f4e8d8!important;text-align:left!important;
+}
+#ui #talk.on .who{color:#e6c590!important}
+#ui #talk.on p{color:#f1e9f7!important;font:500 clamp(12px,1.55vw,17px)/1.5 system-ui!important}
+#ui #talk .next{display:none!important}
