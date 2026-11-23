@@ -117,7 +117,7 @@ export function installP49Hunts(game){
  // Readable CSS label is screen-space, not a low-resolution world sprite:
  // preserves Sera/Brann/Mira names at mobile landscape render scales.
  const plateStyle=document.createElement('style');
- plateStyle.textContent=`.hf-p496-npc-label{position:fixed;pointer-events:none;z-index:15;display:flex;flex-direction:column;align-items:center;max-width:200px;white-space:nowrap;color:#fff7e9;background:rgba(13,13,31,.94);border:1px solid #c8a3e4;border-radius:8px;padding:5px 10px 4px;transform:translate(-50%,-100%);box-shadow:0 3px 12px #060710dd,0 0 1px #f5dcb8;font:700 15px/1.25 system-ui,sans-serif;text-shadow:0 1px 2px #000;letter-spacing:.02em}.hf-p496-npc-label small{font:600 11px/1.35 system-ui,sans-serif;color:#ebd4ff;letter-spacing:0}`;
+ plateStyle.textContent=`.hf-p496-npc-label{position:fixed;pointer-events:none;z-index:15;display:flex;flex-direction:column;align-items:center;max-width:200px;white-space:nowrap;color:#fff7e9;background:rgba(13,13,31,.94);border:1px solid #c8a3e4;border-radius:8px;padding:5px 10px 4px;transform:translate(-50%,-100%);box-shadow:0 3px 12px #060710dd,0 0 1px #f5dcb8;font:700 15px/1.25 system-ui,sans-serif;text-shadow:0 1px 2px #000;letter-spacing:.02em}.hf-p496-npc-label small{font:600 11px/1.35 system-ui,sans-serif;color:#ebd4ff;letter-spacing:0}.hf-p496-npc-label[hidden]{display:none!important}`;
  document.head.appendChild(plateStyle);
  function makeNpcPlate(id){
   const el=document.createElement('div');el.className='hf-p496-npc-label';el.hidden=true;
