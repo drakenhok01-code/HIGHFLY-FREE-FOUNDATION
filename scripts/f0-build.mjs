@@ -308,6 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+copy(path.join(ROOT,'src/highfly/p498-native-display.mjs'),loc('src/highfly/p498-native-display.mjs'));
 for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
@@ -372,14 +373,50 @@ copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';",
  "import { FILM } from './engine/quality.js';\\nimport { installHighflyFog } from './highfly/fog.mjs';\\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';\\nimport { installHighflyGraphics } from './highfly/visual-profile.mjs';\\nimport { installSpanishLocalization, translateHighfly } from './highfly/es-localization.mjs';\\nimport { installProfessionYard } from './highfly/profession-yard.mjs';\nimport { installPremiumRpgUI } from './highfly/premium-rpg.mjs';\nimport { installP49Hunts } from './highfly/p49-hunt-world.mjs';\nimport { installHighflyKayKitPeople } from './highfly/p492-kaykit-people.mjs';\nimport { installP493Interaction } from './highfly/p493-interaction.mjs';\nimport { installP493PortalVisuals } from './highfly/p493-portal.mjs';\nimport { installHighflyIntro } from './highfly/phoenix-intro.mjs';".replaceAll('\\n','\n'));
+patch('src/main.js',"import { installHighflyIntro } from './highfly/phoenix-intro.mjs';",
+ "import { installHighflyIntro } from './highfly/phoenix-intro.mjs';\\nimport {installHighflyDisplayDiagnostics} from './highfly/p498-native-display.mjs';".replace('\\n','\n'));
 patch('src/main.js',"const settings = new Settings(pipe.renderer);",
- "const settings = new Settings(pipe.renderer);\\nwindow.__hfGraphics=installHighflyGraphics(pipe,settings,location.search);".replaceAll('\\n','\n'));
+ "const settings = new Settings(pipe.renderer);\\nwindow.__hfGraphics=installHighflyGraphics(pipe,settings,location.search);\\nwindow.__hfP498Diag=installHighflyDisplayDiagnostics(pipe,settings,location.search);".replaceAll('\\n','\n'));
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
 patch('src/main.js',"const ui = new UI({ game, settings, apply, story });",
  "window.__hfNativeSettings=settings;\\nwindow.__hfApplySettings=apply;\\nconst ui = new UI({ game, settings, apply, story });".replaceAll('\\n','\n'));
 patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);\nwindow.__highflyRpg=installPremiumRpgUI(game);\ngame.__highflyRpg=window.__highflyRpg;\nwindow.__highflyHunts=installP49Hunts(game);\nwindow.__highflyKayKitPeople=installHighflyKayKitPeople(game);\nwindow.__highflyP493Interaction=installP493Interaction(game);\nwindow.__highflyP493Portals=installP493PortalVisuals(game);\nwindow.__highflyIntro=installHighflyIntro();");
+
+// P4.9.8: Unsung formerly created the output and ALL display-sized TAA/bloom
+// buffers at CSS pixels, despite Android DPR ~3+. A renderScale of 1 did NOT
+// represent native S23 Ultra panel resolution. Change the same renderer and
+// its existing render targets together; do not add canvases or fake upscalers.
+patch('src/engine/pipeline.js',"import * as THREE from 'three';",
+ "import * as THREE from 'three';\\nimport {highflyPhysicalDisplaySize,highflyGetGpuLimit} from '../highfly/p498-native-display.mjs';".replace('\\n','\n'));
+patch('src/engine/pipeline.js',
+ "    this.displayW = Math.max(2, Math.floor(w));\\n    this.displayH = Math.max(2, Math.floor(h));\\n    if (!scaleOnly) this.renderer.setSize(this.displayW, this.displayH, false);".replaceAll('\\n','\n'),
+ `    if (!scaleOnly) {
+      this.highflyCssW = Math.max(2, Math.floor(w));
+      this.highflyCssH = Math.max(2, Math.floor(h));
+      const size=highflyPhysicalDisplaySize(this.highflyCssW,this.highflyCssH,{
+        mode:this.highflyDisplayMode??'native',dpr:globalThis.devicePixelRatio,
+        ...highflyGetGpuLimit(this.renderer)});
+      this.highflyDisplaySizing=size;
+      this.displayW=size.width;this.displayH=size.height;
+      // Keep CSS dimensions unchanged. WebGL drawingBuffer now uses physical
+      // pixels and setSize below allocates scene, depth, fog, TAA and bloom.
+      this.renderer.setSize(this.displayW,this.displayH,false);
+    }`);
+patch('src/engine/pipeline.js',
+ "  setRenderScale(s) {",
+ `  setHighflyDisplayMode(mode) {
+    const selected=mode==='css'?'css':'native';
+    if(this.highflyDisplayMode!==selected) {
+      this.highflyDisplayMode=selected;
+      if(this.highflyCssW&&this.highflyCssH)this.setSize(this.highflyCssW,this.highflyCssH);
+      if(this.taa)this.taa.reset=true;
+    }
+  }
+
+  setRenderScale(s) {`);
+
 // Reset TAA history whenever the dynamic-resolution governor changes pixel count.
 patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
  "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");
