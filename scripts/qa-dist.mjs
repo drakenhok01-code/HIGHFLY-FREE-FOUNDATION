@@ -8,17 +8,37 @@ const prov=JSON.parse(fs.readFileSync(path.join(root,'BUILD_PROVENANCE.json'),'u
 assert.equal(prov.originalUnsungCommit,'9f61b0d80b18c6cf661f72372545b3f9214fb455');
 assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/\/HIGHFLY-FREE-FOUNDATION\//);
 const m=JSON.parse(fs.readFileSync(path.join(root,'ASSET_MANIFEST.json'),'utf8'));
-const groups={};assert.equal(m.records.length,137,'134 baseline + 2 Emberfall + 1 Quaternius extracted retarget');
+const groups={};assert.equal(m.records.length,140,'137 approved P4.9 assets + 3 exact CC0 animated animals');
+const approvedSpecies=new Map([
+ ['highfly-p491:wolf','00d69a6c127752c2506c66bc93db9a10f4a73df0'],
+ ['highfly-p491:boar','f57ae4b2a4fa6df29e6feaf5fb9a7e39ec5ff73d'],
+ ['highfly-p491:crab','ceb814db15ad267caeabadfb4da0299eccc807aa']
+]);
+let speciesCount=0;
 for(const a of m.records){
  assert.equal(a.decision,'ALLOW');
  const f=path.join(root,a.path);assert.ok(fs.existsSync(f),'Missing asset '+a.path);
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'),a.sha256,'Unexpected file hash '+a.path);
- const commit=a.id.startsWith('quaternius-ual:')?'bb2ce469f0ab2ccfc487faef55550ba07fae2483':
- a.id.startsWith('emberfall-original:')?'5d199ab4888e428b0dab80528a37ab8ac0107360':
- (a.id==='kaykit-free:Knight.glb'?prov.kaykitCommit:prov.originalUnsungCommit);
- assert.ok(a.source.includes(commit));groups[a.license]=(groups[a.license]||0)+1;
+ if(approvedSpecies.has(a.id)){
+  speciesCount++;
+  assert.equal(a.license,'CC0-1.0');
+  assert.equal(a.gitBlob,approvedSpecies.get(a.id),'Source model git blob changed '+a.id);
+  const bytes=fs.readFileSync(f);
+  const blob=crypto.createHash('sha1').update('blob '+bytes.length).update(Buffer.from([0])).update(bytes).digest('hex');
+  assert.equal(blob,a.gitBlob,'Creature GLB bytes no longer match verified source '+a.id);
+  assert.equal(bytes.toString('ascii',0,4),'glTF');
+  assert.equal(a.path,'models/hf-p491-'+a.id.split(':')[1]+'.glb');
+  assert.ok(a.source.includes('github.com/')&&a.source.includes('blob/'));
+ } else {
+  const commit=a.id.startsWith('quaternius-ual:')?'bb2ce469f0ab2ccfc487faef55550ba07fae2483':
+   a.id.startsWith('emberfall-original:')?'5d199ab4888e428b0dab80528a37ab8ac0107360':
+   (a.id==='kaykit-free:Knight.glb'?prov.kaykitCommit:prov.originalUnsungCommit);
+  assert.ok(a.source.includes(commit));
+ }
+ groups[a.license]=(groups[a.license]||0)+1;
 }
-assert.equal(groups['CC-BY-4.0'],62);assert.equal(groups['CC0-1.0'],69);
+assert.equal(groups['CC-BY-4.0'],62);assert.equal(speciesCount,3,'Missing exactly 3 legal annotated wildlife assets');
+assert.equal(groups['CC0-1.0'],72);
 assert.equal(groups['MIT (original Unsung)'],4);
 assert.equal(groups['MIT (Emberfall original geometry)'],2);
 function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);}
