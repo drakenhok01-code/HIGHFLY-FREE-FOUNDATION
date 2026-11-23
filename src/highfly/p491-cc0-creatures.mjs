@@ -87,7 +87,9 @@ export function animateLicensedCreature(avatar,enemy,dt,near=true){
  else if(enemy.state==='stagger'&&avatar.actions.hurt)action='hurt';
  else if(moving)action=enemy.vel?.lengthSq?.()>8&&avatar.actions.run?'run':'walk';
  setCreatureAction(avatar,action);
- avatar.root.visible=near&&(!(!enemy.alive&&enemy.t>2.8));
+ // A looted body disappears after pickup; an unlooted animal remains
+ // in its actual death pose until the 60-second window expires.
+ avatar.root.visible=near&&(enemy.alive||!!avatar.corpseLootPending||enemy.t<=2.8);
  avatar.root.position.copy(enemy.pos);
  avatar.root.rotation.y=enemy.yaw;
  avatar.mixer.update(Math.min(0.06,Math.max(0,Number(dt)||0)));
