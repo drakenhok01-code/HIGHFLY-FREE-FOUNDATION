@@ -9,6 +9,14 @@
  * "legacy" restores the settings captured before this module changed anything.
  */
 export const GRAPHICS = Object.freeze({
+  // Fixed internal 3D resolution: measure physical pixels without governor
+  // silently reducing the scene during motion. Recommended for ?hfpx=native.
+  android: Object.freeze({
+    renderScale: 1, minRenderScale: 1, targetFps: 0, sharpen: .60,
+    shadows: true, shadowRate: 2, softShadows: 1,
+    volumetrics: true, reflections: false, cover: 1,
+    clouds: 1, cloudRes: 1024,
+  }),
   legacy: Object.freeze({
     renderScale: 1, minRenderScale: .88, targetFps: 48, sharpen: .65,
   }),
