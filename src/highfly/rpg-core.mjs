@@ -86,7 +86,7 @@ export function normalizeRpgState(raw){
  const equipped=normalizeEquipped(raw?.equipped,true);
  const skills=Array.isArray(raw?.skillSlots)?raw.skillSlots:DEFAULT_SKILL_SLOTS;
  const skillSlots=Array.from({length:SKILL_SLOT_COUNT},(_,i)=>typeof skills[i]==='string'&&SKILL_IDS.includes(skills[i])?skills[i]:null);
- return {schema:4,items,slots,equipped,skillSlots,gearTraits:normalizeGearTraits(raw?.gearTraits,items,equipped)};
+ return {schema:4,items,slots,equipped,skillSlots,coins:bounded(raw?.coins??0,100000000),gearTraits:normalizeGearTraits(raw?.gearTraits,items,equipped)};
 }
 export function loadRpgState(store=globalThis.localStorage){
  try{return normalizeRpgState(JSON.parse(store?.getItem(SAVE_KEY)||'null'));}catch{return normalizeRpgState(null);}
