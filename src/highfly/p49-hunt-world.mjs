@@ -74,24 +74,48 @@ function pointOnLand(W,x,z){
  return {x,z,y};
 }
 function coastAnchor(W){
- // Deterministic candidate scan on the *existing* terrain. Never place crabs
- // underwater or over a cliff; the east-pool shoreline is a safe fallback.
+ // Unsung waterLevel() returns -Infinity on DRY ground: look for a nearby
+ // *wet neighbour*, not a finite waterLevel at the crab's standing point.
+ // Scan the authentic coastline of the core sea/lake; no invented coordinates
+ // or terrain edits. Wildlife must stand above water on walkable solid land.
+ const offsets=[[9,0],[-9,0],[0,9],[0,-9],[16,0],[-16,0],[0,16],[0,-16]];
  let best=null,score=Infinity;
- for(const cx of [260,300,360,420,520,590,680,740,860])
-  for(const cz of [-210,-120,-30,60,150,240])
-   for(const dx of [-18,0,18])for(const dz of [-18,0,18]){
-    const pt=pointOnLand(W,cx+dx,cz+dz);if(!pt||pt.y>28)continue;
-    const water=Number(W.waterLevel?.(pt.x,pt.z));
-    if(!Number.isFinite(water)||pt.y-water>11)continue;
-    const wet=[[8,0],[-8,0],[0,8],[0,-8]].some(([x,z])=>
-     W.groundHeight(pt.x+x,pt.z+z)<water+.5);
-    if(!wet)continue;
-    const sc=Math.abs(pt.x-340)*.03+Math.abs(pt.z+40)*.02+pt.y*.15;
-    if(sc<score){best=pt;score=sc;}
+ for(let x=180;x<=1240;x+=24)for(let z=-620;z<=610;z+=24){
+  const dry=pointOnLand(W,x,z);
+  if(!dry||dry.y>28||dry.y<.25)continue;
+  let sea=false;
+  for(const [dx,dz] of offsets){
+   const wx=x+dx,wz=z+dz;
+   // Ignore elevated mesa pools; this is the central coast (sea level = 0).
+   if(W.groundHeight(wx,wz)<-.25&&Math.abs(W.waterLevel(wx,wz))<.01){sea=true;break;}
+  }
+  if(!sea)continue;
+  const value=Math.abs(x-740)*.018+Math.abs(z+85)*.012+dry.y*.065;
+  if(value<score){score=value;best=dry;}
+ }
+ if(best)return best;
+ // Last-resort wet shoreline, not an invented coastal spawn: discover the
+ // eastern mesa pool's actual bank and warn during QA.
+ const pool={x:560,z:-330,r:38};
+ for(let radius=pool.r+4;radius<pool.r+30;radius+=4)
+  for(let n=0;n<20;n++){
+   const ang=2*Math.PI*n/20,x=pool.x+Math.cos(ang)*radius,z=pool.z+Math.sin(ang)*radius;
+   const p=pointOnLand(W,x,z);
+   if(p&&Math.abs(p.y-125)<9){
+    console.warn('[HIGHFLY P4.9] Coastal search failed: crab fallback uses EASTERN POOL SHORE. Review terrain on Android.');
+    return p;
    }
- return best??pointOnLand(W,603,-331)??pointOnLand(W,576,-293);
+  }
+ console.warn('[HIGHFLY P4.9] No walkable coastline; crab spot disabled instead of underwater spawning.');
+ return null;
 }
 function pickNpc(W,spot){
+ // NPC quest givers stand outside the combat pack's aggro radius when terrain
+ // permits. Never put a dialogue giver inside a dense hostile spawn.
+ for(const [dx,dz] of [[-44,8],[44,-8],[-8,44],[8,-44],[-54,-16],[54,16],[-32,28],[32,-28]]){
+  const p=pointOnLand(W,spot.x+dx,spot.z+dz);
+  if(p&&Math.abs(p.y-spot.y)<6)return p;
+ }
  for(const [dx,dz] of [[-18,16],[20,-18],[17,22],[-24,-12],[0,-30],[0,30]]){
   const p=pointOnLand(W,spot.x+dx,spot.z+dz);
   if(p&&Math.abs(p.y-spot.y)<6)return p;
