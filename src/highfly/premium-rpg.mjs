@@ -521,7 +521,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  function close(){
   if(!local.opened||local.system?.phase==='working')return;
   if(local.system){local.system=null;render();return;}
-  local.opened=false;local.tab='personaje';local.nativeBench=false;root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
+  local.opened=false;local.tab='personaje';root.hidden=true;local.nativeBench=false;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
