@@ -1,0 +1,64 @@
+name: HIGHFLY P4.9.7 Wolf Pelt Premium Frame QA (no Pages deployment)
+on:
+  push:
+    branches: [p497-premium-wolf-pelt-20261123]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  wolf-icon:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare approved artwork image processing
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Reject stale low-resolution or frameless fallback
+        run: |
+          npm run qa:static
+          node --test tests/p497-wolf-premium.test.mjs
+          node --check src/highfly/premium-assets.mjs
+      - name: Compile REAL HIGHFLY P4.9.7 including approved rarity frames
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p497/ npm run build
+          npm run qa:dist
+          test -s .work/unsung/public/highfly/user-icons/items/wolf_pelt.webp
+          test -s dist/highfly/rarity/items/wolf_pelt__comun.webp
+          test -s dist/highfly/rarity/items/wolf_pelt__raro.webp
+          test -s dist/highfly/rarity/items/wolf_pelt__epico.webp
+          test -s dist/highfly/rarity/items/wolf_pelt__mitico.webp
+          grep -q "item_wolf_pelt:'items/wolf_pelt'" .work/unsung/src/highfly/premium-assets.mjs
+          if grep -q "id==='item_wolf_pelt'" .work/unsung/src/highfly/premium-assets.mjs; then
+            echo "Frameless SVG fallback detected" >&2
+            exit 1
+          fi
+      - name: Inspect six real 256px WebP rarity variants and original artwork
+        run: |
+          "$HIGHFLY_ICON_PYTHON" - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageChops
+          root=Path('.work/unsung/public/highfly')
+          grades=['comun','poco-comun','raro','epico','legendario','mitico']
+          images=[Image.open(root/'rarity'/'items'/('wolf_pelt__'+g+'.webp')).convert('RGBA') for g in grades]
+          assert all(i.size==(256,256) for i in images)
+          assert all((root/'rarity'/'items'/('wolf_pelt__'+g+'.webp')).stat().st_size>10000 for g in grades)
+          assert ImageChops.difference(images[0].convert('RGB'),images[-1].convert('RGB')).getbbox(), 'Six rarities should not have identical frame colors'
+          source=Image.open(root/'user-icons'/'items'/'wolf_pelt.webp').convert('RGBA')
+          leather=Image.open(root/'user-icons'/'items'/'leather.webp').convert('RGBA')
+          assert ImageChops.difference(source.crop((55,55,200,200)).convert('RGB'),leather.crop((55,55,200,200)).convert('RGB')).getbbox(), 'Wolf artwork must differ from generic leather'
+          print('HIGHFLY WOLF PELT REAL PREMIUM QA PASSED: 256px artwork / six rarity frames / distinct pelt illustration')
+          PY
+      - name: Upload isolated P4.9.7 wolf pelt art for review (not a Pages update)
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-wolf-pelt-premium-256-six-rarities
+          path: |
+            .work/unsung/public/highfly/user-icons/items/wolf_pelt.webp
+            .work/unsung/public/highfly/rarity/items/wolf_pelt__*.webp
+          if-no-files-found: error
