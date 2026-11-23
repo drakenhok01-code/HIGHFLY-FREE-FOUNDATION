@@ -465,7 +465,17 @@ export function activeQuestSummary(game){
   return {title:translateHighfly(q.title),text,count:st?.s==='ready'?null:
      value[0]+' / '+value[1]};
  });
- return {primary:translateHighfly(game?.objective??''),side,total:tasks.length};
+ const hunt=game?.__highflyHunts;
+ if(hunt?.state?.missions){
+  for(const id of ['wolf','boar','crab']){
+   const progress=hunt.state.missions[id],q=hunt.missions?.[id];
+   if(!q||!progress||!['active','ready'].includes(progress.status))continue;
+   side.push({title:'✦ '+q.title,text:progress.status==='ready'?
+    'Entregá la misión a '+q.npc:'Cazá '+q.count+' · Encargo de '+q.npc,
+    count:progress.status==='ready'?'✓':progress.count+' / '+q.count});
+  }
+ }
+ return {primary:translateHighfly(game?.objective??''),side,total:side.length};
 }
 export function refreshHighflyQuests(t,game){
  const root=t?.questPanel;if(!root)return;
