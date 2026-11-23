@@ -48,10 +48,10 @@ jobs:
           images=[Image.open(root/'rarity'/'items'/('wolf_pelt__'+g+'.webp')).convert('RGBA') for g in grades]
           assert all(i.size==(256,256) for i in images)
           assert all((root/'rarity'/'items'/('wolf_pelt__'+g+'.webp')).stat().st_size>10000 for g in grades)
-          assert ImageChops.difference(images[0],images[-1]).getbbox(), 'Six rarities should not have identical frame colors'
+          assert ImageChops.difference(images[0].convert('RGB'),images[-1].convert('RGB')).getbbox(), 'Six rarities should not have identical frame colors'
           source=Image.open(root/'user-icons'/'items'/'wolf_pelt.webp').convert('RGBA')
           leather=Image.open(root/'user-icons'/'items'/'leather.webp').convert('RGBA')
-          assert ImageChops.difference(source.crop((55,55,200,200)),leather.crop((55,55,200,200))).getbbox(), 'Wolf artwork must differ from generic leather'
+          assert ImageChops.difference(source.crop((55,55,200,200)).convert('RGB'),leather.crop((55,55,200,200)).convert('RGB')).getbbox(), 'Wolf artwork must differ from generic leather'
           print('HIGHFLY WOLF PELT REAL PREMIUM QA PASSED: 256px artwork / six rarity frames / distinct pelt illustration')
           PY
       - name: Upload isolated P4.9.7 wolf pelt art for review (not a Pages update)
