@@ -384,7 +384,7 @@ patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=i
 patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
  "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");
 patch('src/engine/governor.js',"this.max = max; this.target = target;",
- "this.max = max; this.target = target; this.min = Math.max(0.60,Math.min(0.88,max-0.12));");
+ "this.max = max; this.target = target; this.min = Math.max(0.60,Math.min(max,window.__hfGraphics?.minRenderScale ?? 0.75));");
 patch('src/main.js',"const apply = () => applySettings(settings, { pipe, game, cover, audio, gloss, governor });",
  "const apply = () => applySettings(settings, { pipe, game, cover, audio, gloss, governor });\nwindow.__highflySetGraphics = mode => { const ok = window.__hfGraphics?.set(mode); if(ok){apply();pipe.taa.reset=true;} return !!ok; };");
 patch('src/main.js',"window.__game = game;",
