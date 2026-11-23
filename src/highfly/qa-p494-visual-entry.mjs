@@ -7,12 +7,15 @@ const canvas=document.querySelector('#view');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'low-power'});
 renderer.setPixelRatio(1);renderer.setSize(915,412,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x1b2039);
+ // Crucial: match EXACT native Unsung Pipeline behaviour.
+ scene.matrixWorldAutoUpdate=false;
 // IMPORTANT: no standard Three.js lights, matching Unsung's custom shader engine.
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(22,13),new THREE.MeshLambertMaterial({color:0x395546,side:THREE.DoubleSide}));
 ground.rotation.x=-Math.PI/2;ground.position.y=-.03;scene.add(ground);
+ ground.updateMatrixWorld(true);
 const camera=new THREE.PerspectiveCamera(50,915/412,.1,100);
 camera.position.set(0,4.0,10.5);camera.lookAt(0,.95,0);
-const q={ready:false,issues:[],visuals:[],creatures:{},kaykit:null};
+const q={ready:false,issues:[],visuals:[],creatures:{},kaykit:null,frame:0,pixels:null,worldTransforms:[]};
 window.__p494VisualQA=q;
 (async()=>{
  try{
@@ -22,7 +25,7 @@ window.__p494VisualQA=q;
    if(!gltf){q.issues.push('GLB animation missing '+id);continue;}
    const a=makeLicensedCreature(id,gltf);
    a.root.position.set((i-1)*3.1,0,0);
-   scene.add(a.root);
+   scene.add(a.root);a.root.updateMatrixWorld(true);
    const meshCount=(()=>{let n=0;a.model.traverse(m=>{if(m.isSkinnedMesh&&m.visible)n++;});return n;})();
    const skins=[];a.model.traverse(m=>{if(m.isSkinnedMesh)skins.push({
     material:m.material?.type??m.material?.[0]?.type,visible:m.visible
@@ -44,9 +47,9 @@ window.__p494VisualQA=q;
    const material=Array.isArray(m.material)?m.material[0]:m.material;
    m.material=new THREE.MeshBasicMaterial({map:material?.map??null,color:0xf0d5c1,side:THREE.DoubleSide});
   });
-  holder.add(model);scene.add(holder);
+  holder.add(model);scene.add(holder);holder.updateMatrixWorld(true);
   const mixer=new THREE.AnimationMixer(model),idle=src.animations.find(x=>x.name==='Idle');
-  idle&&mixer.clipAction(idle).play();q.visuals.push({mixer});
+  idle&&mixer.clipAction(idle).play();q.visuals.push({mixer,root:holder});
   q.kaykit={meshCount:bodies.length,bodies,naturalHeight:profile.naturalHeight};
   if(bodies.length<5)q.issues.push('KayKit original body incomplete');
   q.ready=true;
@@ -56,9 +59,34 @@ let prev=performance.now();function update(now){
  const dt=Math.min(.05,Math.max(0,(now-prev)/1000));prev=now;
  for(const a of q.visuals){
   if(a.isCreature){const o=a.a,place=o.root.position.clone();animateLicensedCreature(o,{...a.enemy,pos:place},dt,true);}
-  else a.mixer?.update(dt);
+  else{a.mixer?.update(dt);a.root?.updateMatrixWorld(true);}
  }
  renderer.render(scene,camera);
+ // Test ACTUAL drawn pixels, not just glTF model existence/clip count.
+ // The production scene has manual matrices: a naive Three.js QA passes
+ // even when actors are invisible because their world matrices remain 0.
+ if(q.ready&&!(q.frame++%20)){
+  const W=915,H=412,gl=renderer.getContext(),pix=new Uint8Array(W*H*4);
+  gl.readPixels(0,0,W,H,gl.RGBA,gl.UNSIGNED_BYTE,pix);
+  const points=[[-3.1,'wolf'],[0,'boar'],[3.1,'crab'],[-5.9,'kaykit']];
+  q.pixels={};
+  for(const [worldX,id] of points){
+   const center=new THREE.Vector3(worldX,.8,0).project(camera);
+   const ix=Math.round((center.x+1)*W/2),iy=Math.round((center.y+1)*H/2);
+   let bright=0,drawn=0;
+   for(let y=Math.max(0,iy-76);y<Math.min(H,iy+74);y++)
+    for(let x=Math.max(0,ix-43);x<Math.min(W,ix+42);x++){
+     const i=(y*W+x)*4;
+     if(pix[i]+pix[i+1]+pix[i+2]>195)bright++;
+     if(pix[i]+pix[i+1]+pix[i+2]>135)drawn++;
+    }
+   q.pixels[id]={bright,drawn,screenX:ix,screenY:iy,
+    worldX:worldX,manualScene:scene.matrixWorldAutoUpdate===false};
+  }
+  q.worldTransforms=q.visuals.filter(v=>v.isCreature).map(v=>({
+   id:v.a.id,x:v.a.root.matrixWorld.elements[12],z:v.a.root.matrixWorld.elements[14]}));
+ }
+
  requestAnimationFrame(update);
 }
 requestAnimationFrame(update);
