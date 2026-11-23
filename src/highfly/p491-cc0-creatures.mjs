@@ -74,9 +74,16 @@ export function makeLicensedCreature(id,gltf){
  const root=new THREE.Group();
  root.name='HIGHFLY_CC0_'+id.toUpperCase();
  const scaled=new THREE.Group();
- scaled.scale.setScalar(HEIGHT[id]/h);
- model.position.set(-(box.min.x+box.max.x)*0.5,-box.min.y,-(box.min.z+box.max.z)*0.5);
+ // The Quaternius GLB's skeleton is authored hundreds of units away from its
+ // scene origin. Moving the skinned SCENE root after GLTFLoader has bound it
+ // can invalidate GPU skinning (CPU boxes still look centered but 0 pixels).
+ // Normalize through the OUTER carrier, leaving source rig/bind pose intact.
+ const unit=HEIGHT[id]/h;
+ scaled.scale.setScalar(unit);
+ scaled.position.set(-(box.min.x+box.max.x)*0.5*unit,
+   -box.min.y*unit,-(box.min.z+box.max.z)*0.5*unit);
  scaled.add(model);root.add(scaled);
+ root.updateMatrixWorld(true);
  const mixer=new THREE.AnimationMixer(model),actions={};
  for(const [label,clipName] of Object.entries(CLIPS[id])){
   const clip=gltf.animations.find(a=>a.name===clipName);
