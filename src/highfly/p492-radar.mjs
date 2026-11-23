@@ -93,6 +93,7 @@ export function installHighflyRadar(input,t){
   const g=globalThis.__game,p=g?.player?.pos,c=largeCanvas,ctx=c?.getContext('2d');
   if(!ctx||!p)return;
   const W=c.width,H=c.height,scale=.28,terrain=g.world;
+  paintCartographicBackdrop(ctx,g,W,H,scale);
   const points=[...collectHighflyRadarTargets(g)];
   for(const n of g.people?.list??[])if(n.awake)points.push({x:n.x,z:n.z,label:n.def.name,kind:'npc',id:'npc:'+n.def.id});
   for(const q of points){
