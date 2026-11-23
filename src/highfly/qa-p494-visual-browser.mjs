@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
+import {PNG} from 'pngjs';
 const port=5188,url='http://127.0.0.1:'+port+'/qa-p494-visual.html';
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
 let browser;
@@ -20,11 +21,30 @@ try{
  await page.waitForFunction(()=>window.__p494VisualQA?.ready,null,{timeout:35000});
  await page.waitForFunction(()=>window.__p494VisualQA?.pixels?.kaykit?.drawn>0,null,{timeout:15000});
  const report=await page.evaluate(()=>{const {ready,issues,creatures,kaykit,pixels,worldTransforms}=window.__p494VisualQA;return {ready,issues,creatures,kaykit,pixels,worldTransforms};});
- assert.ok(report.pixels,'manual-scene framebuffer has no pixel evidence');
+ const imageBytes=await page.screenshot({path:'qa-p494-real-wildlife.png'});
+ const png=PNG.sync.read(imageBytes);
+ const screenshotMetrics={};
  for(const id of ['wolf','boar','crab','kaykit']){
-  assert.equal(report.pixels[id]?.manualScene,true,id+' test scene did not emulate original Unsung');
-  assert.ok(report.pixels[id]?.bright>24,id+' not actually visible on the manual-matrix framebuffer: '+JSON.stringify(report.pixels[id]));
+  const probe=report.pixels?.[id];
+  assert.ok(probe,'missing rendered pixel probe for '+id);
+  assert.equal(probe.manualScene,true,'QA must use Unsung manual-matrix scene');
+  // Chrome composites the WebGL drawing buffer before readback. Sampling
+  // a Playwright screenshot is more reliable than gl.readPixels on a
+  // default framebuffer with preserveDrawingBuffer=false.
+  let bright=0,nonBackground=0;
+  const py=png.height-probe.screenY;
+  for(let y=Math.max(0,py-76);y<Math.min(png.height,py+74);y++)
+   for(let x=Math.max(0,probe.screenX-43);x<Math.min(png.width,probe.screenX+42);x++){
+    const i=(y*png.width+x)*4,rr=png.data[i],gg=png.data[i+1],bb=png.data[i+2];
+    if(rr+gg+bb>195)bright++;
+    if(rr+gg+bb>135)nonBackground++;
+   }
+  screenshotMetrics[id]={bright,nonBackground};
  }
+ console.log('HIGHFLY P495 MANUAL SCENE PIXEL METRICS',JSON.stringify({
+  screenshotMetrics,webglPixels:report.pixels,worldTransforms:report.worldTransforms}));
+ for(const [id,v] of Object.entries(screenshotMetrics))
+  assert.ok(v.bright>24,id+' model has no visible image pixels in real manual scene '+JSON.stringify(v));
  for(const [id,x] of [['wolf',-3.1],['boar',0],['crab',3.1]]){
   const v=report.worldTransforms.find(a=>a.id===id);
   assert.ok(v&&Math.abs(v.x-x)<.15,id+' model matrix not updated to real scene position: '+JSON.stringify(v));
@@ -39,8 +59,8 @@ try{
  await delay(800);
  const corpse=await page.evaluate(()=>window.__p495ProbeCorpse());
  assert.equal(corpse.ok,true,'Corpse + USAR transaction failed: '+JSON.stringify(corpse));
- await page.screenshot({path:'qa-p494-real-wildlife.png'});
- fs.writeFileSync('qa-p494-real-wildlife.json',JSON.stringify({report,corpse,errors},null,2));
+ // Screenshot already captured for per-species visible pixel validation.
+ fs.writeFileSync('qa-p494-real-wildlife.json',JSON.stringify({report,screenshotMetrics,corpse,errors},null,2));
  assert.deepEqual(errors.filter(x=>/TypeError|ReferenceError|SyntaxError|WebGL/.test(x)),[]);
  console.log('HIGHFLY P494 REAL THREE MODEL QA PASS',JSON.stringify(report));
 }finally{await browser?.close();server.kill('SIGTERM');}
