@@ -44,14 +44,14 @@ function dot(ctx,x,y,r,color){
 }
 export function installHighflyRadar(input,t){
  const root=t?.root;if(!root||t.radar||typeof root.appendChild!=='function'||typeof document?.createElement!=='function')return t?.radar??null;
- const shell=document.createElement('div');shell.className='hf-radar';shell.setAttribute('aria-label','Radar de Aetheria · tocar para cambiar objetivo');
+ const shell=document.createElement('div');shell.className='hf-radar';shell.setAttribute('aria-label','Radar de Aetheria · tocar para abrir el mapa');
  shell.innerHTML='<div class="hf-radar-head">◈ AETHERIA · RADAR</div>'+
   '<canvas class="hf-radar-canvas" width="190" height="190" aria-hidden="true"></canvas>'+
   '<div class="hf-radar-target">Explorá el mundo</div>';
  root.appendChild(shell);
  const canvas=shell.querySelector('canvas'),ctx=canvas.getContext('2d');
  const caption=shell.querySelector('.hf-radar-target');
- let targetId=null,frame=0,lastLabel='',lastDistance=-1;
+ let targetId=null,frame=0,lastLabel='',lastDistance=-1,trail=[];
  try{targetId=localStorage.getItem('hf-p492-radar-target')||null;}catch{}
  const choose=()=>{
   const targets=collectHighflyRadarTargets(globalThis.__game),ids=targets.map(q=>q.id);
@@ -59,7 +59,7 @@ export function installHighflyRadar(input,t){
   try{if(targetId)localStorage.setItem('hf-p492-radar-target',targetId);}catch{}
   draw();
  };
- shell.addEventListener('click',()=>{if(!t.editing)choose();});
+ shell.addEventListener('click',()=>{if(!t.editing)globalThis.__highflyRpg?.open?.('mapa');});
  function draw(){
   const g=globalThis.__game,p=g?.player?.pos;if(!g||!p||!ctx)return;
   if(root.hidden)return;
@@ -71,6 +71,12 @@ export function installHighflyRadar(input,t){
   ctx.strokeStyle='#43536b';ctx.lineWidth=1;
   for(const circle of [r/3,r*2/3]){ctx.beginPath();ctx.arc(0,0,circle,0,TAU);ctx.stroke();}
   ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();
+  // The last real movement samples show where the player has travelled.
+  if(trail.length>1){
+   ctx.beginPath();ctx.strokeStyle='#71eee0';ctx.lineWidth=1.6;
+   for(let i=0;i<trail.length;i++){const q=radarProject(p,trail[i]);if(i===0)ctx.moveTo(q.x,q.y);else ctx.lineTo(q.x,q.y);}
+   ctx.stroke();
+  }
   // Current live mobs; avoid thousands of dormant world entities.
   for(const e of g.enemies?.list??[]){
    if(!e.alive||!e.pos||dist(e.pos,p)>RANGE)continue;
@@ -113,7 +119,14 @@ export function installHighflyRadar(input,t){
   ctx.strokeStyle='#9c77d4';ctx.lineWidth=4;ctx.beginPath();ctx.arc(cx,cy,r+2,0,TAU);ctx.stroke();
   ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f5ddaa';ctx.fillText('N',cx,cy-r-5);
  }
- const api={node:shell,draw,choose,targets:()=>collectHighflyRadarTargets(globalThis.__game),dispose:()=>shell.remove(),
-  update(){if(++frame%8===1)draw();}};
+ const api={node:shell,draw,choose,get trail(){return trail.slice();},
+  targets:()=>collectHighflyRadarTargets(globalThis.__game),dispose:()=>shell.remove(),
+  update(){
+   const p=globalThis.__game?.player?.pos;
+   if(p&&(!trail.length||dist(p,trail.at(-1))>2.5)){
+    trail.push({x:p.x,z:p.z});if(trail.length>180)trail.shift();
+   }
+   if(++frame%8===1)draw();
+  }};
  t.radar=api;draw();return api;
 }
