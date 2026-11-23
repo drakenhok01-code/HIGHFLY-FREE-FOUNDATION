@@ -39,6 +39,16 @@ export async function loadLicensedCreatureTemplates(base){
     let skins=0;gltf.scene.traverse(x=>{if(x.isSkinnedMesh)skins++});
     if(!skins)throw Error(id+' model lacks a real skeletal mesh');
    }
+   // P4.9.3 actual GPU pixel regression proved SkeletonUtils.clone breaks
+   // Quaternius Wolf/Crab skinning while their original glTF scenes render.
+   // Pre-parse THREE INDEPENDENT original rigs per species (the exact per-spot
+   // CAP), then lease/recycle them instead of cloning. Browsers cache the GLB
+   // bytes; animations, bones, materials and authoring fidelity remain intact.
+   const originals=(id==='wolf'||id==='crab')
+    ?[gltf,...await Promise.all([1,2].map(()=>loader.loadAsync(base+meta.path)))]
+    :[gltf];
+   if(originals.length===3)gltf._hfOriginalPool=originals.map(g=>g.scene);
+   for(const source of originals){
    // Quaternius FBX-origin skinned meshes occasionally render with reversed
    // winding under their 100x bind/root transforms. Disable backface culling
    // only for the two affected CC0 species; preserve authentic materials.
@@ -68,6 +78,7 @@ export async function loadLicensedCreatureTemplates(base){
     const mats=Array.isArray(node.material)?node.material:[node.material];
     for(const material of mats)if(material)material.side=THREE.DoubleSide;
    });
+   } // Every independently parsed original scene needs the same material care.
    result[id]=gltf;
    console.info('[HIGHFLY P491] READY',id,meta.author,'CC0',gltf.animations.map(a=>a.name));
   }catch(e){console.error('[HIGHFLY P491] Species disabled; licensed GLB failed:',id,e);}
@@ -76,7 +87,19 @@ export async function loadLicensedCreatureTemplates(base){
 }
 export function makeLicensedCreature(id,gltf){
  if(!gltf||!CLIPS[id])return null;
- const model=cloneSkeleton(gltf.scene);
+ const pool=Array.isArray(gltf._hfOriginalPool)?gltf._hfOriginalPool:null;
+ const model=pool?pool.pop():cloneSkeleton(gltf.scene);
+ if(!model){
+  console.warn('[HIGHFLY P493] All independent CC0 creature rigs busy:',id);
+  return null;
+ }
+ if(pool){
+  model.position.set(0,0,0);
+  model.quaternion.identity();
+  model.scale.set(1,1,1);
+  // Restore bind-pose joints when reusing a previously slain original rig.
+  model.traverse(n=>{if(n.isSkinnedMesh)n.pose();});
+ }
  model.name='HIGHFLY_LICENSED_ANIMATED_'+id.toUpperCase();
  // FBX-origin quantized creature skins can be culled by bind-pose bounds.
  // Keep authentic skeletal animation and never cull individual mesh parts.
@@ -98,7 +121,7 @@ export function makeLicensedCreature(id,gltf){
   if(['attack','hurt','death'].includes(label)){a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;}
   actions[label]=a;
  }
- const avatar={id,root,mixer,actions,state:null,model,disposed:false};
+ const avatar={id,root,mixer,actions,state:null,model,disposed:false,sourcePool:pool};
  setCreatureAction(avatar,'idle');
  return avatar;
 }
@@ -132,4 +155,8 @@ export function disposeLicensedCreature(avatar){
  // NEVER dispose them on individual respawns; keep them cached for all 9 mobs.
  avatar.mixer.uncacheRoot(avatar.model);
  avatar.root.removeFromParent();
+ if(avatar.sourcePool){
+  avatar.model.removeFromParent();
+  avatar.sourcePool.push(avatar.model);
+ }
 }
