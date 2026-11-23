@@ -393,6 +393,40 @@ patch('src/world/arch/sites.js',
         // Original local +X goes uphill (world -X); negative X faces Cantor.
         // The apron top is 5 cm BELOW the first tread to avoid a step snag.
         q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
+// P502 - mobile fog math, with full native pixel count and 4-sample
+// bilateral weighting unchanged. All modifications are restricted to shader
+// instructions, never the atmospheric model or the screen buffers.
+// ?hffog=reference compiles the exact P501 source shader for A/B comparisons.
+patch('src/engine/post.js',
+ "  return isSky(d) ? 1.0e5 : length(viewPosFromDepth(uv, d));",
+ `#ifdef HF_S23_FOG_EXACT_TEXEL
+  if (isSky(d)) return 1.0e5;
+  // length(V.xyz / V.w) == length(V.xyz) / abs(V.w). A single
+  // reciprocal instead of three for each of four depth probes.
+#ifdef REVERSED_DEPTH
+  vec4 V = uProjInv * vec4(uv * 2.0 - 1.0, d, 1.0);
+#else
+  vec4 V = uProjInv * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0);
+#endif
+  return length(V.xyz) / abs(V.w);
+#else
+  return isSky(d) ? 1.0e5 : length(viewPosFromDepth(uv, d));
+#endif`);
+patch('src/engine/post.js',
+ "    acc += textureLod(uVol, uv, 0.0) * w; wsum += w;",
+ `#ifdef HF_S23_FOG_EXACT_TEXEL
+    // uv=(integer+0.5)/textureSize is the exact sample centre.
+    // texelFetch avoids bilinear sampler work; clamp matches textureLod
+    // at the texture edges, including base=-1 after the 0.5 offset.
+    ivec2 volPx = clamp(ivec2(base + o), ivec2(0), ivec2(uVolSize) - ivec2(1));
+    acc += texelFetch(uVol, volPx, 0) * w;
+#else
+    acc += textureLod(uVol, uv, 0.0) * w;
+#endif
+    wsum += w;`);
+patch('src/engine/post.js',
+ "      fragment: FOG_PASS,\\n      defines: pipe.depthDefines,".replaceAll('\\n','\n'),
+ "      fragment: FOG_PASS,\\n      defines: new URLSearchParams(globalThis.location?.search||'').get('hffog')==='reference' ? pipe.depthDefines : {...pipe.depthDefines,HF_S23_FOG_EXACT_TEXEL:1},".replaceAll('\\n','\n'));
 // P499: mobile TAA saves eight neighbourhood texture fetches per physical
 // pixel, but keeps identical 3D geometry, output/scene resolution, fog, shadows,
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
