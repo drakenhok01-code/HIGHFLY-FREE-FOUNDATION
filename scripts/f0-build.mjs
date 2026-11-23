@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -353,6 +353,13 @@ for(const [id,m] of Object.entries(approvedSpecies)){
   commercial:true,redistribution:true,attributionRequired:false});
 }
 
+// Every wildlife icon is an independent original HIGHFLY vector painting.
+for(const id of ['wolf_pelt','boar_tusk','crab_shell','quest_wolf']){
+ const source=path.join(ROOT,'assets/highfly/p494/'+id+'.svg');
+ const dest=loc('public/highfly/p494/'+id+'.svg');
+ copy(source,dest);
+ if(fs.statSync(dest).size<250)throw Error('Invalid HIGHFLY P494 wildlife illustration '+id);
+}
 copy(path.join(ROOT,'src/highfly/qa-rpg-entry.mjs'),loc('src/highfly/qa-rpg-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-rpg.html'),loc('qa-rpg.html'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
@@ -425,6 +432,33 @@ patch('src/game/camera.js',
 patch('src/game/people.js',
  "const y = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6);",
  "const rawY = W.floorBelow(x, (spire?.base ?? game.sites.spawn.y) + 1.6, z, 6); const baseY=W.groundHeight(x,z); const y=Number.isFinite(rawY)?Math.max(rawY,baseY):baseY;");
+// Native Unsung retains ALL AI, collisions and combat; just do not draw
+// the incompatible purple shard/aura layer on our licensed Quaternius/Gobkit
+// animals. No fake spheres, glow balls or shadow geometry for HF creatures.
+patch('src/game/enemies.js',
+ "      if (e.far) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replaceAll('\\n','\n'),
+ "      if (e.far || e.kind.startsWith('hf_')) continue;\\n      const d = e.def, cy = Math.cos(e.yaw), sy = Math.sin(e.yaw);".replaceAll('\\n','\n'));
+// Descend real stone stairs if the next tread is lower and the waist ray is
+// unobstructed. Never bypass actual walls or terrain cliffs.
+patch('src/game/player.js',"import * as THREE from 'three';",
+ "import * as THREE from 'three';\\nimport {stairDownstep} from '../highfly/p494-stair-guard.mjs';".replace('\\n','\n'));
+patch('src/game/player.js',
+ "      if (W.resolveCapsule(this.pos, T.radius, T.height, this.vel.y)) grounded = true;",
+ `      if (W.resolveCapsule(this.pos, T.radius, T.height, this.vel.y)) grounded = true;
+      // HIGHFLY P494: narrow genuine downward stair, not a terrain wall.
+      // A stepped stone nose can catch the capsule at the knees despite a
+      // clear path ahead at waist height. Only apply if forward movement
+      // was blocked and an actual lower floor is present.
+      if(wasGrounded && this.vel.y<=0.01 && run>0.0001 &&
+         Math.hypot(this.pos.x-px,this.pos.z-pz)<run*.4){
+        const stair=stairDownstep(W,{x:px,y:py,z:pz},{x:nx,z:nz},T.radius);
+        if(stair){
+          this.pos.x=nx;this.pos.z=nz;
+          this.pos.y=Math.max(stair.floor,py-.42);
+          grounded=true;
+          if(this.vel.y<0)this.vel.y=0;
+        }
+      }`);
 patch('src/game/input.js',"  interact: ['KeyE'],","  dash: ['KeyV'], interact: ['KeyE'],");
 
 patch('src/game/input.js','export class Input {',"import { attachHighflyTouch, applyHighflyTouch } from './highfly-touch.mjs';\nexport class Input {");
@@ -435,7 +469,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
