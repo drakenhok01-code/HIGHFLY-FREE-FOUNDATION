@@ -29,7 +29,7 @@ export function abilityVector(dx,dy,deadzone=9){
  if(!Number.isFinite(length)||length<deadzone)return null;
  return {x:dx===0?0:dx/length,y:dy===0?0:-dy/length};
 }
-export function resolveHighflyContext(p,game=globalThis.__game){
+export function resolveHighflyContext(p,game=null){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const nearNative=game?.people?.near?.();
