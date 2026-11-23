@@ -74,9 +74,13 @@ jobs:
           test -s dist/highfly/p494/boar_tusk.svg
           test -s dist/highfly/p494/crab_shell.svg
           test -s dist/highfly/p494/quest_wolf.svg
-          grep -Rql 'stairDownstep' dist/assets
+          # Function names are intentionally minified in the final JS bundle.
+          # Verify wired source, and verify stable runtime properties in bundled JS.
+          grep -q 'stairDownstep' .work/unsung/src/game/player.js
+          grep -q 'stairDownstep' .work/unsung/src/highfly/p494-stair-guard.mjs
           grep -Rql 'corpseLootPending' dist/assets
-          grep -Rql 'paintCartographicBackdrop' dist/assets
+          grep -q 'paintCartographicBackdrop(ctx,g,W,H,scale)' .work/unsung/src/highfly/p492-radar.mjs
+          grep -q 'highfly/p494/quest_wolf.svg' .work/unsung/src/highfly/premium-assets.mjs
           grep -Rql 'HIGHFLY_PORTAL_AURA_' dist/assets
           grep -Rql 'TOCAR PARA CONTINUAR' dist/assets
           grep -Rql 'HIGHFLY_KAYKIT_ORIGINAL_' dist/assets
