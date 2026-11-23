@@ -5,10 +5,20 @@
  * Uses only existing Unsung Settings/three.js pipeline switches. SSAO remains disabled
  * because the half-resolution pass produced streaks in earlier Android reviews.
  *
- * ?hfquality=legacy|performance|balanced|quality allows a reversible A/B check.
+ * P4.9.8 adds ?hfquality=native (physical-pixel Android fixed-resolution).
+ * ?hfquality=legacy|performance|balanced|quality remain reversible comparisons.
  * "legacy" restores the settings captured before this module changed anything.
  */
 export const GRAPHICS = Object.freeze({
+  // On S23 Ultra: full effective physical framebuffer, fixed internal scale.
+  // Reducing redundant effects is preferable to a silently blurred 80% frame.
+  // Requires real-device thermal/FPS checks before final acceptance.
+  native: Object.freeze({
+    renderScale: 1, minRenderScale: 1, targetFps: 0, sharpen: .36,
+    shadows: true, shadowRate: 1, softShadows: 1,
+    volumetrics: true, reflections: true, cover: 1,
+    clouds: 1, cloudRes: 1024,
+  }),
   legacy: Object.freeze({
     renderScale: 1, minRenderScale: .88, targetFps: 48, sharpen: .65,
   }),
@@ -43,7 +53,7 @@ export function installHighflyGraphics(pipe, settings, search = '', storage = gl
   const baseline = Object.fromEntries(NATIVE_KEYS.map(k => [k, settings.values[k]]));
   let saved = null;
   try { saved = storage?.getItem('highfly-graphics-profile-v1'); } catch {}
-  const requested = query.get('hfquality') || saved || 'balanced';
+  const requested = query.get('hfquality') || saved || (Number(globalThis.devicePixelRatio)>1.2 ? 'native' : 'balanced');
   let selected = Object.hasOwn(GRAPHICS, requested) ? requested : 'balanced';
 
   const apply = (mode, persist = false) => {
@@ -56,11 +66,19 @@ export function installHighflyGraphics(pipe, settings, search = '', storage = gl
     }
     if (mode !== 'legacy') settings.values.preset = 'custom';
 
+    // Correct physical-vs-CSS render-target sizing WITHOUT changing CSS layout.
+    // 'legacy' remains a true screenshot A/B baseline.
+    pipe.setHighflyDisplayMode?.(mode === 'legacy' ? 'css' : 'native');
     // Native depth-aware TAA and AgX tonemap. No second scene, canvas or overlay.
     // The governor may later adjust sharpening when it changes render resolution.
     if (pipe.ao) pipe.ao.enabled = false;
     if (pipe.tonemap?.uniforms?.uSharpen) pipe.tonemap.uniforms.uSharpen.value = spec.sharpen;
-    if (pipe.taa) pipe.taa.reset = true;
+    if (pipe.taa) {
+      pipe.taa.enabled = query.get('hftaa') !== 'off';
+      if(pipe.taa.pass?.uniforms?.uBlend)
+        pipe.taa.pass.uniforms.uBlend.value = mode === 'native' ? .22 : .10;
+      pipe.taa.reset = true;
+    }
     if (pipe.bloomStrength !== undefined) pipe.bloomStrength = .065;
     selected = mode;
     if (persist) {
