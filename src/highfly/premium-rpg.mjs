@@ -694,7 +694,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    // Prevent accidental deletion: explicit confirmation, selected variant, no negative inventory.
    const desc=(selling?'Vender':'Descartar')+' una unidad de '+item.name+
     (selling?' por '+itemSalePrice(item,bag.gearTraits?.bag?.[id]?.[local.selectedGearIndex]?.rarity??item.rarity)+' monedas?':'?');
-   local.system={type:'p493-item-transaction',phase:'choose',id,selling,variantIndex:local.selectedGearIndex,
+   local.system={type:'p493-item-transaction',phase:'confirm',id,selling,variantIndex:local.selectedGearIndex,
     title:selling?'VENDER OBJETO':'DESCARTAR OBJETO',description:desc,icon:'item_'+id,
     details:[{label:'Cantidad',value:'1'},{label:'Acción',value:selling?'Venta con Odo':'Descarte irreversible'}]};
    render();return;
