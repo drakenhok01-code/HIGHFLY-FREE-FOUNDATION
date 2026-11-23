@@ -326,6 +326,9 @@ copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'))
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-rpg-browser.mjs'),loc('scripts/qa-rpg-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p49-browser.mjs'),loc('scripts/qa-p49-browser.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p494-visual.html'),loc('qa-p494-visual.html'));
+copy(path.join(ROOT,'src/highfly/qa-p494-visual-entry.mjs'),loc('src/highfly/qa-p494-visual-entry.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p494-visual-browser.mjs'),loc('scripts/qa-p494-visual-browser.mjs'));
 
 // P4.9.1 REAL skinned, animated animal GLBs from free CC0 source packs.
 // Fail closed: expected *Git blob* fingerprints are checked byte-for-byte,
