@@ -55,7 +55,7 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   const x=Number(enemy.pos.x),y=Number(enemy.pos.y),z=Number(enemy.pos.z);
   if(![x,y,z].every(Number.isFinite))return;
   let sprite=null;
-  const base=Math.max(y,Number(game.world?.groundHeight?.(x,z))||y)+(wildlife?.20:.86);
+  const base=Math.max(y,Number(game.world?.groundHeight?.(x,z))||y)+(wildlife ? .20 : .86);
   if(wildlife){
    avatar.corpseLootPending=true;
    avatar.corpseLootUntil=ticker()+60;
