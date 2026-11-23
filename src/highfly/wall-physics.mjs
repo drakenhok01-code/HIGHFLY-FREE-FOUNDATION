@@ -1,3 +1,4 @@
+import {p495OnActualStairs,p495StairTraverse} from './p495-stair-route.mjs';
 /** Heightfield steep-wall safety for the ONE Unsung capsule.
  * Native terrain heightfields cannot represent true vertical overhang geometry.
  * This layer adds a conservative side-wall barrier; no fabricated ledges.
@@ -13,11 +14,13 @@ export function terrainGradient(world,x,z,eps=.30){
  * Physics of that surface is still owned by native Unsung collision BVH. */
 export function walkableBuiltFloor(world,p,tolerance=.23){
  if(typeof world?.floorBelow!=='function'||typeof world?.groundHeight!=='function'||!p)return false;
+ if(p495OnActualStairs(world,p))return true; // Real Unsung stone tread, not the mountain under it.
  const ground=world.groundHeight(p.x,p.z);
  const floor=world.floorBelow(p.x,p.y+.55,p.z,.95);
  return Number.isFinite(ground)&&Number.isFinite(floor)&&floor-ground>.24&&Math.abs(floor-p.y)<tolerance;
 }
 export function allowTerrainTraverse(world,a,b,maximum=1.1){
+ if(p495StairTraverse(world,a,b))return {ok:true,builtFloor:true,stair:'petal-cantor'};
  if(walkableBuiltFloor(world,a)&&walkableBuiltFloor(world,b))return {ok:true,builtFloor:true};
  if(typeof world?.groundHeight!=='function')return {ok:true};
  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
@@ -62,6 +65,7 @@ export function terrainWallContact(world,pos,dir,reach=1.15,height=.82){
  */
 export function allowCliffCapsule(world,previous,next,radius=.35){
  if(!previous||!next)return {ok:true};
+ if(p495StairTraverse(world,previous,next))return {ok:true,builtFloor:true,stair:'petal-cantor'};
  if(walkableBuiltFloor(world,previous)&&walkableBuiltFloor(world,next))return {ok:true,builtFloor:true};
  const dx=next.x-previous.x,dz=next.z-previous.z,len=Math.hypot(dx,dz);
  if(len<.001)return {ok:true};
