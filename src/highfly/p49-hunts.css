@@ -1,0 +1,41 @@
+/* HIGHFLY P4.9: minimal responsive dialogue for the existing 16:9 touch HUD.
+   Does not reposition or override the approved HUD editor or RPG menu. */
+#hf-p49-prompt {
+  position:fixed;left:50%;bottom:17%;transform:translateX(-50%);
+  z-index:71;max-width:min(80vw,440px);padding:9px 18px;
+  background:linear-gradient(110deg,rgba(20,10,39,.95),rgba(41,23,63,.95));
+  border:1px solid #d1aa6c;border-radius:24px;color:#f9eac5;
+  font-size:clamp(11px,1.45vw,16px);font-weight:700;letter-spacing:.03em;
+  box-shadow:0 6px 24px #07031390;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
+  touch-action:manipulation;
+}
+#hf-p49-prompt[hidden],#hf-p49-dialog[hidden],#hf-p49-toast[hidden]{display:none!important}
+#hf-p49-dialog {
+ position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+ background:rgba(4,4,16,.66);backdrop-filter:blur(5px);padding:8px;
+}
+#hf-p49-dialog section {
+ width:min(650px,88vw);max-height:92vh;overflow-y:auto;padding:clamp(13px,2vw,24px);
+ color:#f6e9d7;border:1px solid #b69865;border-radius:18px;
+ background:linear-gradient(145deg,#201331 0%,#0d1022 88%);
+ box-shadow:0 12px 52px #02020acf;
+ font-family:system-ui,sans-serif;
+}
+#hf-p49-dialog small {color:#c8a0ec;font-weight:700;letter-spacing:.11em}
+#hf-p49-dialog h3{font-size:clamp(17px,2.4vw,25px);margin:.28em 0 .38em;color:#f5d591}
+#hf-p49-dialog b{color:#f5efff}
+#hf-p49-dialog p{font-size:clamp(12px,1.6vw,17px);line-height:1.45;margin:.7em 0}
+.hf-p49-dialog-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.hf-p49-dialog-actions button{
+ color:#fbeed2;border:1px solid #9475a8;border-radius:18px;
+ background:linear-gradient(150deg,#58447b,#281c42);
+ padding:10px 17px;font-weight:700;touch-action:manipulation;cursor:pointer;
+}
+.hf-p49-dialog-actions button:first-child{border-color:#d0a94d}
+#hf-p49-toast{
+ position:fixed;z-index:86;top:14%;left:50%;transform:translateX(-50%);
+ max-width:min(86vw,570px);background:#150d29e8;border:1px solid #ad8cd4;
+ border-radius:17px;padding:10px 14px;color:#ffeabc;
+ font:600 clamp(11px,1.4vw,15px)/1.4 system-ui,sans-serif;
+ box-shadow:0 4px 16px #090312b8;text-align:center;pointer-events:none;
+}
