@@ -8,6 +8,8 @@ permissions:
 jobs:
   render:
     runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
