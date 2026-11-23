@@ -2,9 +2,11 @@
  * Removes known half-resolution ambient-occlusion streaks; does not falsify FPS.
  */
 export const GRAPHICS=Object.freeze({
- performance:{renderScale:.70,targetFps:50,sharpen:.50},
- balanced:{renderScale:.85,targetFps:50,sharpen:.58},
- quality:{renderScale:1,targetFps:0,sharpen:.45}
+ performance:{renderScale:.75,targetFps:50,sharpen:.56},
+ // S23 Ultra / landscape: start native-resolution, dynamically recover FPS
+ // down to 88% only if necessary. The old default silently began at 85%.
+ balanced:{renderScale:1,targetFps:48,sharpen:.65},
+ quality:{renderScale:1,targetFps:0,sharpen:.62}
 });
 export function installHighflyGraphics(pipe,settings,search='',storage=globalThis.localStorage){
  const query=new URLSearchParams(search);
