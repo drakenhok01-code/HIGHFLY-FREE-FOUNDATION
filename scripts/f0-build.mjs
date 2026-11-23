@@ -379,6 +379,35 @@ patch('src/main.js',"const settings = new Settings(pipe.renderer);",
 // are resized together via original Pipeline.setSize; no DPR double-up.
 patch('src/main.js',"function resize() { pipe.setSize(window.innerWidth, window.innerHeight); }",
  "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nfunction resize() { __hfPixelLab.resize(); }".replaceAll('\\n','\n'));
+// P500: exact-output sky environment cache. Unsung renders its 256x128
+// environment and regenerates its mipmaps every frame, even while cloudA,
+// cloudB, atmo and blend are unchanged. During cloudRaw background sweeps the
+// referenced A/B textures DO NOT change until _finishSweep. Skip identical
+// output; maintain identical QHD canvas, weather/sky, sun and draw semantics.
+// ?hfsky=reference restores the original behaviour for image comparison.
+patch('src/engine/sky.js',
+ "    this._sweep = 0;\\n    this._bakeTarget = null;".replaceAll('\\n','\n'),
+ "    this._sweep = 0;\\n    this._bakeTarget = null;\\n    this._hfEnvCacheEnabled = new URLSearchParams(globalThis.location?.search || '').get('hfsky') !== 'reference';\\n    this._hfEnvCacheStats = { skipped: 0, rendered: 0 };\\n    this._hfEnvLast = null;".replaceAll('\\n','\n'));
+patch('src/engine/sky.js',
+ "    this.cloudTime += dt * this.windSpeed;\\n    if (!this.ready) this.bakeFull();".replaceAll('\\n','\n'),
+ "    this.cloudTime += dt * this.windSpeed;\\n    const hfEnvRebaked = !this.ready;\\n    if (!this.ready) this.bakeFull();".replaceAll('\\n','\n'));
+patch('src/engine/sky.js',
+ "    this.uniforms.uCloudMix.value = this.mix;\\n    this.resolve.render(this.renderer, this.env);".replaceAll('\\n','\n'),
+ `    this.uniforms.uCloudMix.value = this.mix;
+    const hfEnv = this._hfEnvLast, hfUnits = this.uniforms;
+    const hfChanged = hfEnvRebaked || !hfEnv ||
+      hfEnv.mix !== this.mix ||
+      hfEnv.cloudA !== hfUnits.uCloudA.value ||
+      hfEnv.cloudB !== hfUnits.uCloudB.value ||
+      hfEnv.atmo !== hfUnits.uSkyAtmo.value;
+    if (!this._hfEnvCacheEnabled || hfChanged) {
+      this.resolve.render(this.renderer, this.env);
+      this._hfEnvLast = { mix: this.mix, cloudA: hfUnits.uCloudA.value,
+        cloudB: hfUnits.uCloudB.value, atmo: hfUnits.uSkyAtmo.value };
+      this._hfEnvCacheStats.rendered++;
+    } else {
+      this._hfEnvCacheStats.skipped++;
+    }`);
 // P499: mobile TAA saves eight neighbourhood texture fetches per physical
 // pixel, but keeps identical 3D geometry, output/scene resolution, fog, shadows,
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
