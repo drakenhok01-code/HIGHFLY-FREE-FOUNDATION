@@ -446,6 +446,13 @@ patch('src/game/enemies.js',
 patch('src/game/player.js',"import * as THREE from 'three';",
  "import * as THREE from 'three';\\nimport {stairDownstep} from '../highfly/p494-stair-guard.mjs';".replace('\\n','\n'));
 patch('src/game/player.js',
+ "import {stairDownstep} from '../highfly/p494-stair-guard.mjs';",
+ "import {stairDownstep} from '../highfly/p494-stair-guard.mjs';\\nimport {isHighflyStairLane} from '../highfly/wall-physics.mjs';".replace('\\n','\n'));
+patch('src/game/player.js',
+ "const onTerrain = this.pos.y - g0 < 0.5;",
+ "const onTerrain = this.pos.y - g0 < 0.5 && !isHighflyStairLane(this.pos,{x:nx,z:nz});");
+
+patch('src/game/player.js',
  "      if (W.resolveCapsule(this.pos, T.radius, T.height, this.vel.y)) grounded = true;",
  `      if (W.resolveCapsule(this.pos, T.radius, T.height, this.vel.y)) grounded = true;
       // HIGHFLY P494: narrow genuine downward stair, not a terrain wall.
