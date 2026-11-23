@@ -7,6 +7,8 @@ const canvas=document.querySelector('#view');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'low-power'});
 renderer.setPixelRatio(1);renderer.setSize(915,412,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x1b2039);
+// The actual Unsung Pipeline disables automatic world transforms.
+scene.matrixWorldAutoUpdate=false;
 // IMPORTANT: no standard Three.js lights, matching Unsung's custom shader engine.
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(22,13),new THREE.MeshLambertMaterial({color:0x395546,side:THREE.DoubleSide}));
 ground.rotation.x=-Math.PI/2;ground.position.y=-.03;scene.add(ground);
@@ -44,10 +46,11 @@ window.__p494VisualQA=q;
    const material=Array.isArray(m.material)?m.material[0]:m.material;
    m.material=new THREE.MeshBasicMaterial({map:material?.map??null,color:0xf0d5c1,side:THREE.DoubleSide});
   });
-  holder.add(model);scene.add(holder);
+  holder.add(model);scene.add(holder);holder.updateMatrixWorld(true);
   const mixer=new THREE.AnimationMixer(model),idle=src.animations.find(x=>x.name==='Idle');
   idle&&mixer.clipAction(idle).play();q.visuals.push({mixer});
   q.kaykit={meshCount:bodies.length,bodies,naturalHeight:profile.naturalHeight};
+  q.manualWorldMatrix=true;
   if(bodies.length<5)q.issues.push('KayKit original body incomplete');
   q.ready=true;
  }catch(e){q.issues.push(String(e));q.ready=true;}
@@ -56,7 +59,7 @@ let prev=performance.now();function update(now){
  const dt=Math.min(.05,Math.max(0,(now-prev)/1000));prev=now;
  for(const a of q.visuals){
   if(a.isCreature){const o=a.a,place=o.root.position.clone();animateLicensedCreature(o,{...a.enemy,pos:place},dt,true);}
-  else a.mixer?.update(dt);
+  else if(a.mixer){a.mixer.update(dt);holder.updateMatrixWorld(true);}
  }
  renderer.render(scene,camera);
  requestAnimationFrame(update);
