@@ -7,7 +7,9 @@ export function installP499GpuDiagnostics(pipe, options={}){
  const doc=options.doc??document;
  const perf=options.perf??performance;
  const q=new URLSearchParams(options.search??win.location?.search??'');
- const debug=q.has('hfdebug')||q.has('hfperfdebug');
+ // The existing P498 corner panel displays actual FPS already. A second
+ // performance panel is explicit-only to avoid covering the top-right radar.
+ const debug=q.has('hfperfdebug');
  const gl=pipe.renderer?.getContext?.();
  const ext=gl?.getExtension?.('EXT_disjoint_timer_query_webgl2');
  let frames=0, last=perf.now(), smoothed=0, currentGpuMs=null, gpuQueries=[], sampleCounter=0, draws=0;
