@@ -301,7 +301,7 @@ export function installP49Hunts(game){
    }
   }
   prompt.hidden=!closest;prompt.dataset.quest=closest?.id??'';
-  if(closest)prompt.textContent='✦ USAR · '+HUNT_MISSIONS[closest.id].npc+' · '+HUNT_MISSIONS[closest.id].title;
+  if(closest)prompt.textContent='✦ HABLAR · '+HUNT_MISSIONS[closest.id].npc+' · '+HUNT_MISSIONS[closest.id].title;
   if(closest&&game.input.pressed?.has('interact')){
    game.input.pressed.delete('interact');speak(closest.id);
   }
