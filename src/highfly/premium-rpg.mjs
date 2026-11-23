@@ -364,6 +364,14 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
      button('VER RECETAS','data-hf-tab="forja"','is-primary'):
      '<span class="hf-p47-prof-pending">RECETAS PENDIENTES</span>')+'</div>','hf-rpg-right-panel')+'</div>';
  }
+ function nativeBenchControls(){
+  if(!local.nativeBench)return '';
+  const cost=game.benchCost??100,pv=game.player?.up??{},xp=Math.max(0,game.xp??0);
+  return '<div class="hf-p492-native-bench"><b>MEJORAS DEL LUTIER · HISTORIA ORIGINAL</b>'+
+   '<small>Resonancia del Valle '+xp+' · Próxima mejora '+cost+'. Independiente de la EXP HIGHFLY.</small>'+
+   '<div>'+[['blade','ESPADA'],['health','VIDA'],['stamina','ENERGÍA']].map(([id,name])=>
+    '<button type="button" data-hf-native-upgrade="'+id+'" '+(xp<cost||pv[id]>=8?'disabled':'')+'>'+name+' '+(pv[id]??0)+'/8</button>').join('')+'</div></div>';
+ }
  function forge(){
   const recipe=RECIPES[local.recipe]||RECIPES.hp_potion,ok=canCraft(local.recipe,prof().inventory,bag);
   const recipes=Object.entries(RECIPES).filter(([recipeId])=>!['ingot_copper','ingot_iron','ingot_silver','ingot_gold'].includes(recipeId)).map(([recipeId,r])=>
@@ -387,7 +395,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-ingredients">'+ingredients+'</div></div>'+
     '<div class="hf-rpg-forge-actions">'+button(ok.ok?'⚒ INICIAR FABRICACIÓN':'FALTAN MATERIALES',
     'data-hf-action="craft:'+local.recipe+'" '+(ok.ok?'':'disabled'),'is-primary')+
-    button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>'+
+    button('ABRIR BOLSA','data-hf-tab="bolsa"')+'</div>'+nativeBenchControls()+
    '</div>','hf-rpg-forge-main')+'</div>';
  }
  function questDetails(){
@@ -498,7 +506,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   if(local.opened){local.tab=tab;render();return true;}
   if(fromNative){
    if(game.state!=='menu')return false;
-   game.menu='hero'; // Original native panel stays hidden; close() restores play.
+   game.menu='hero'; // Native state retained for close(); quest and bench progress are unchanged.
   }else{
    if(game.state!=='playing'||game.people?.talk||game.cine)return false;
    game.openMenu('hero');
@@ -512,7 +520,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  function close(){
   if(!local.opened||local.system?.phase==='working')return;
   if(local.system){local.system=null;render();return;}
-  local.opened=false;local.tab='personaje';root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
+  local.opened=false;local.tab='personaje';local.nativeBench=false;root.hidden=true;root.innerHTML='';document.body.classList.remove('hf-rpg-is-open');
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
@@ -522,6 +530,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  // menu instead of a second, conflicting legacy UI. Quest rules are untouched.
  game.on((type,d)=>{
   if(type!=='state'||d?.state!=='menu'||d.menu==='hero'||local.opened)return;
+  local.nativeBench=d.menu==='bench';
   const tab=d.menu==='bench'?'forja':d.menu==='map'?'mapa':
    d.menu==='journal'?'misiones':'personaje';
   api.openFromNative(tab);
@@ -651,6 +660,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    if(settings){settings.set('invertY',next);globalThis.__hfApplySettings?.();}
    else if(game.input)game.input.invertY=next;
    render();return;
+  }
+  if(b.dataset.hfNativeUpgrade){
+   const ok=game.buy?.(b.dataset.hfNativeUpgrade)??false;
+   message(ok?'Mejora original aplicada':'No alcanza la resonancia o ya alcanzaste el máximo');
+   return;
   }
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
