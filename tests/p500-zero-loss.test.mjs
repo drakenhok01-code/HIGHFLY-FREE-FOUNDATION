@@ -15,9 +15,11 @@ test('zero-loss visual path never touches native render scale, vegetation, terra
  assert.equal(GRAPHICS.android.renderScale,1);
  assert.equal(GRAPHICS.android.minRenderScale,1);
  assert.equal(GRAPHICS.android.targetFps,0);
- for(const name of ['forest.js','terrain.js','p491-cc0-creatures.mjs']){
-  assert.doesNotMatch(script,new RegExp('patch\\(.[^\\n]*'+name.replace('.','\\.') ));
- }
+ // The three original Unsung terrain URL patches are part of P4.9.8;
+ // P5.0.0 must not introduce any further geometry or foliage modification.
+ assert.equal((script.match(/patch\('src\/world\/terrain\.js'/g)||[]).length,3);
+ assert.doesNotMatch(script,/patch\('src\/world\/flora\/forest\.js'/);
+ assert.doesNotMatch(script,/patch\('src\/highfly\/p491-cc0-creatures\.mjs'/);
 });
 test('phase profiler defaults off, keeps all original method references and quality',()=>{
  const scene={},render=function(){return 42;};
