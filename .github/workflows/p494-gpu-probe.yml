@@ -1,0 +1,44 @@
+name: HIGHFLY P4.9.4 - Fast REAL Quaternius and KayKit GPU visibility gate
+on:
+  push:
+    branches: [p494-creatures-corpses-npc-stairs-20261123]
+permissions:
+  contents: read
+jobs:
+  real-3d-gpu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare ONLY REAL approved CC0 models, no dummy creatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/models
+          for id in wolf boar crab; do
+            cp "assets/highfly/p491/models/$id.glb" "public/models/hf-p491-$id.glb"
+            test -s "public/models/hf-p491-$id.glb"
+          done
+          curl -fsSL --retry 3 --max-time 45 "https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p493/models/hf-kaykit-knight.glb" -o "public/models/hf-kaykit-knight.glb"
+          test -s public/models/hf-kaykit-knight.glb
+          cp src/highfly/qa-p494-scene.html qa-p494-scene.html
+          cp src/highfly/qa-p494-browser.mjs scripts/qa-p494-browser.mjs
+      - name: Install renderer + headless WebGL browser for actual GLBs
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund three@0.180.0 vite@7.1.0 playwright@1.57.0
+          ./node_modules/.bin/playwright install chromium --with-deps
+      - name: Render REAL six-piece skinned KayKit and 51-bone Quaternius wolf
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
+        run: |
+          node scripts/qa-p494-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p494-real-3d-probe
+          path: qa-p494-actors.png
+          if-no-files-found: ignore
