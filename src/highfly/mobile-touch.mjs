@@ -35,6 +35,8 @@ export function resolveHighflyContext(p){
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  // NPC conversations outrank nearby rocks, walls or collision capsules.
  const g=globalThis.__game;
+ // Physical fallen animal outranks proximity climb and tree collisions.
+ if(g?.__hfP41WorldLoot?.nearCorpse?.(p.pos))return {action:'interact',label:'SAQUEAR'};
  const npc=g?.people?.near?.();
  if(npc)return {action:'interact',label:'HABLAR'};
  for(const spot of Object.values(g?.__highflyHunts?.spots??{})){
