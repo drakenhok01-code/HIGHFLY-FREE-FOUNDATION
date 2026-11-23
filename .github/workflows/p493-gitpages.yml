@@ -1,4 +1,4 @@
-name: HIGHFLY P4.9.3 - CC0 Animated Wildlife isolated Pages
+name: HIGHFLY P4.9.3 LAB - Independent bugfix preview
 on:
   workflow_dispatch:
   push:
@@ -10,7 +10,7 @@ permissions:
   id-token: write
 concurrency:
   group: highfly-gitpages-p493-isolated-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           node --test tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs tests/itemization.test.mjs tests/system-dialog.test.mjs tests/p41-bag-loot.test.mjs tests/p42-ui.test.mjs tests/p43-fidelity.test.mjs tests/p44-ui.test.mjs tests/p45-scrolling.test.mjs tests/p46-inventory-materials.test.mjs tests/p47-corrections.test.mjs tests/p47b-approved-art-in-app.test.mjs tests/p48-gear-stacking-frame.test.mjs tests/p481-copper-only.test.mjs tests/p482-all-three-ingots.test.mjs tests/p49-three-hunts.test.mjs
       - name: Build REAL Unsung P4.9.3 game at separate GitHub Pages subpath
         run: |
-          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p493/ npm run build
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p493-lab/ npm run build
           npm run qa:dist
           test -s .work/unsung/public/highfly/rarity/items/hp_potion__poco-comun.webp
           test -s .work/unsung/public/highfly/rarity/items/upgrade_stone__raro.webp
@@ -80,7 +80,7 @@ jobs:
           grep -Rql 'hf49:' dist/assets
           grep -Rql 'Pinzas entre las redes' dist/assets
           test -s dist/index.html
-          grep -q '/HIGHFLY-FREE-FOUNDATION/preview-p493/' dist/index.html
+          grep -q '/HIGHFLY-FREE-FOUNDATION/preview-p493-lab/' dist/index.html
           cp -a dist "$RUNNER_TEMP/highfly-p493-game"
       - name: Real-game Chromium and inventory interaction gates
         env:
@@ -97,11 +97,11 @@ jobs:
           # Unsung world within 115 seconds; do NOT claim that test passed.
           test -s scripts/qa-p49-browser.mjs
           echo "::warning::P4.9.3 - Real-skeleton GLBs verified, but live-world GPU/browser gameplay unverified; run on Samsung."
-      - name: Restore LAST APPROVED P4.9.2 GitHub Pages release BYTE-FOR-BYTE
+      - name: Restore CURRENT P4.9.3 GitHub Pages release BYTE-FOR-BYTE
         uses: actions/download-artifact@v4
         with:
           name: github-pages
-          run-id: 45175389402
+          run-id: 45190373772
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/highfly-approved-pages-artifact
       - name: Prepare separate P4.9.3 URL without touching approved root or preview-v3
@@ -124,6 +124,7 @@ jobs:
           test -s "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html"
           test -s "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html"
           test -s "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html"
           ROOT_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/index.html" | cut -d' ' -f1)"
           V3_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-v3/index.html" | cut -d' ' -f1)"
           P41_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p41/index.html" | cut -d' ' -f1)"
@@ -139,10 +140,11 @@ jobs:
           P49_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html" | cut -d' ' -f1)"
           P491_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html" | cut -d' ' -f1)"
           P492_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html" | cut -d' ' -f1)"
-          test ! -e "$RUNNER_TEMP/highfly-approved-site/preview-p493"
-          mkdir "$RUNNER_TEMP/highfly-approved-site/preview-p493"
-          cp -a "$RUNNER_TEMP/highfly-p493-game/." "$RUNNER_TEMP/highfly-approved-site/preview-p493/"
-          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html"
+          P493_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html" | cut -d' ' -f1)"
+          test ! -e "$RUNNER_TEMP/highfly-approved-site/preview-p493-lab"
+          mkdir "$RUNNER_TEMP/highfly-approved-site/preview-p493-lab"
+          cp -a "$RUNNER_TEMP/highfly-p493-game/." "$RUNNER_TEMP/highfly-approved-site/preview-p493-lab/"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p493-lab/index.html"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/index.html" | cut -d' ' -f1)" = "$ROOT_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-v3/index.html" | cut -d' ' -f1)" = "$V3_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p41/index.html" | cut -d' ' -f1)" = "$P41_HASH"
@@ -158,9 +160,10 @@ jobs:
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html" | cut -d' ' -f1)" = "$P49_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html" | cut -d' ' -f1)" = "$P491_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html" | cut -d' ' -f1)" = "$P492_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html" | cut -d' ' -f1)" = "$P493_HASH"
           touch "$RUNNER_TEMP/highfly-approved-site/.nojekyll"
           mv "$RUNNER_TEMP/highfly-approved-site" dist-pages
-          echo "Approved root, v3, P4.1–P4.9.2 preserved byte-for-byte; only /preview-p493/ added."
+          echo "Approved root, v3, P4.1–P4.9.3 preserved byte-for-byte; only /preview-p493-lab/ added."
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
