@@ -1,0 +1,12 @@
+/* P4.9.3: original NPC scripts in a readable HIGHFLY card, tap anywhere to advance. */
+#ui #talk.on{display:none!important}
+#hf-p493-story[hidden]{display:none!important}
+#hf-p493-story{position:fixed;inset:0;z-index:9650;pointer-events:none;display:flex;justify-content:center;align-items:flex-start;padding:12px 10px}
+#hf-p493-story .hf-p493-story-card{pointer-events:auto;width:min(685px,87vw);max-height:55vh;overflow-y:auto;box-sizing:border-box;border:1px solid #d8ac75;border-radius:18px;background:linear-gradient(150deg,#291b45f5,#090e24f5);box-shadow:0 7px 28px #000a;color:#f4edff;padding:12px 18px;touch-action:manipulation;cursor:pointer;display:grid;gap:6px}
+#hf-p493-story .hf-p493-story-kicker{font:750 10px system-ui;letter-spacing:1.2px;color:#e9c68b}
+#hf-p493-story h3{font:750 clamp(14px,2vw,20px) system-ui;color:#fbe2af;margin:0}
+#hf-p493-story p{font:500 clamp(12px,1.4vw,16px)/1.35 system-ui;margin:0;white-space:pre-wrap}
+#hf-p493-story small{text-align:right;font:750 9px system-ui;color:#ae91db}
+#hf-touch[data-talking="1"] .hf-talk-next{display:none!important}
+#hf-p49-dialog{z-index:9670!important}
+#hf-p49-prompt{z-index:9100!important;bottom:22%!important}
