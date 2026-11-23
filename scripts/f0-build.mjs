@@ -343,7 +343,7 @@ for(const [id,m] of Object.entries(approvedSpecies)){
  const src=path.join(ROOT,'assets/highfly/p491/models/'+id+'.glb'), dest=loc('public/models/hf-p491-'+id+'.glb');
  if(!fs.existsSync(src))throw Error('P491 CC0 rig missing '+src);
  const bytes=fs.readFileSync(src);
- const gitBlob=crypto.createHash('sha1').update('blob '+bytes.length+'\\0').update(bytes).digest('hex');
+ const gitBlob=crypto.createHash('sha1').update('blob '+bytes.length).update(Buffer.from([0])).update(bytes).digest('hex');
  if(gitBlob!==m.gitBlob)throw Error('P491 model SHA mismatch '+id+' '+gitBlob);
  if(bytes.toString('utf8',0,4)!=='glTF')throw Error('P491 invalid GLB header: '+id);
  copy(src,dest);
