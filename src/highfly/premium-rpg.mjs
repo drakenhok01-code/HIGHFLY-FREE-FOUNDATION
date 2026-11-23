@@ -529,7 +529,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   get opened(){return local.opened},get state(){return bag}};
  // Reuse Unsung's native map/journal/bench command, but present the HIGHFLY
  // menu instead of a second, conflicting legacy UI. Quest rules are untouched.
- game.on((type,d)=>{
+ game.on?.((type,d)=>{
   if(type!=='state'||d?.state!=='menu'||d.menu==='hero'||local.opened)return;
   local.nativeBench=d.menu==='bench';
   const tab=d.menu==='bench'?'forja':d.menu==='map'?'mapa':
