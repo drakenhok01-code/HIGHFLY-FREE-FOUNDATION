@@ -1,3 +1,4 @@
+import {highflyRemoveItem,nearHighflyMerchant,itemSalePrice} from './p493-item-transactions.mjs';
 /** HIGHFLY F0.14 premium RPG windows.
  * DOM/CSS and original SVG art: NOT a screenshot pasted onto Unsung.
  * Read ONE real Player; render over existing Three.js canvas (no second renderer).
@@ -197,6 +198,13 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    return;
   }
   let result={ok:false,reason:'Acción no compatible'};
+  if(m.type==='p493-item-transaction'){
+   const result=highflyRemoveItem(bag,prof().inventory,{id:m.id,count:1,variantIndex:m.variantIndex,
+    sell:m.selling,merchant:nearHighflyMerchant(game)});
+   if(result.ok){save();p()?._hfProfessionSave?.();local.selected=m.id;}
+   local.system=null;message(result.ok?(m.selling?'Vendido por '+result.price+' monedas: ':'Descartado: ')+result.name:result.reason);
+   return;
+  }
   if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId,m.variantIndex??0,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
   else if(m.type==='gear-upgrade'){result=enhanceGear(bag,{place:m.place,id:m.id,index:m.index},m.kind);if(result.ok)save();}
    else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
@@ -283,7 +291,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
      button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+button('◆ MUESTRAS','data-hf-action="p41:loot:muestras"')+'</div>'+ 
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
-    '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
+    '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Monedas '+(bag.coins??0)+' · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
    panel(title('Inventario','6 columnas · rareza por marco')+
     '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,o.variantIndex),o.variantIndex,local.selectedGearIndex,o.variantIndices):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
@@ -293,7 +301,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
-      choices:blank('No hay objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
+      choices+'<div class="hf-p493-bag-actions">'+
+        button('DESCARTAR','data-hf-action="discard:'+safe(chosen.id)+'"')+
+        button('VENDER','data-hf-action="sell:'+safe(chosen.id)+'" '+(nearHighflyMerchant(game)?'':'disabled'))+
+        '<small>Venta: '+itemSalePrice(chosen,trait?.rarity??chosen.rarity)+' monedas · solo con Odo (lutier). Descartar requiere confirmación.</small></div>':
+       blank('No hay objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
  }
  function skills(){
   const list=liveSkillRows(p()),chosen=list.find(s=>s.id===local.selectedSkill)||list[0];
@@ -471,7 +483,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<input id="hf-p492-sens" type="range" min="0.3" max="2.5" step="0.05" value="'+sensitivity.toFixed(2)+'" data-hf-camera-sensitivity aria-label="Sensibilidad de cámara"/>'+
     '<button type="button" data-hf-camera-invert aria-pressed="'+invert+'">Invertir cámara vertical: '+(invert?'SÍ':'NO')+'</button>'+
     '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
-    '<div class="hf-rpg-rule"></div>'+blank('El editor HUD 3.1 también permite mover y escalar el radar.')+
+    '<div class="hf-rpg-rule"></div>'+button('✧ EDITAR HUD 3.1','data-hf-action="edit-hud"','is-primary')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
  const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
@@ -669,7 +681,23 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   }
   if(b.dataset.hfGraphics){const ok=globalThis.__highflySetGraphics?.(b.dataset.hfGraphics);message(ok?'Calidad gráfica actualizada':'No se pudo aplicar ese perfil');return;}
   const action=b.dataset.hfAction??'';
+  if(action==='edit-hud'){
+   close();game.input?.highflyTouch?.hudEditor?.toggle();return;
+  }
   if(action==='intro')return;
+  if(action.startsWith('discard:')||action.startsWith('sell:')){
+   const selling=action.startsWith('sell:'),id=action.slice(selling?5:8);
+   const item=ITEM_DEFS[id];if(!item)return;
+   const merchant=nearHighflyMerchant(game);
+   if(selling&&!merchant){message('Para vender, acercate a Odo, el lutier');return;}
+   // Prevent accidental deletion: explicit confirmation, selected variant, no negative inventory.
+   const desc=(selling?'Vender':'Descartar')+' una unidad de '+item.name+
+    (selling?' por '+itemSalePrice(item,bag.gearTraits?.bag?.[id]?.[local.selectedGearIndex]?.rarity??item.rarity)+' monedas?':'?');
+   local.system={type:'p493-item-transaction',phase:'choose',id,selling,variantIndex:local.selectedGearIndex,
+    title:selling?'VENDER OBJETO':'DESCARTAR OBJETO',description:desc,icon:'item_'+id,
+    details:[{label:'Cantidad',value:'1'},{label:'Acción',value:selling?'Venta con Odo':'Descarte irreversible'}]};
+   render();return;
+  }
   if(action==='close'){close();return;}
   if(action.startsWith('zoom:')){
    const change=action.slice(5);local.mapZoom=change==='reset'?1:Math.max(.75,Math.min(2.8,local.mapZoom*(change==='in'?1.25:.8)));
