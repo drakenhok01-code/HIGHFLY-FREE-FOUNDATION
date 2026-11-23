@@ -64,6 +64,7 @@ try {
   const g=window.__game,p=window.__highflyHunts.spots.wolf.point;
   g.player.spawn(p.x,p.y+.16,p.z);g.player.invulnerable=1000;
  });
+ await page.waitForFunction(()=>window.__game.enemies.list.some(e=>e.group==='hf49:wolf'&&e.alive),null,{timeout:12000});
  assert.equal(await page.evaluate(()=>window.__highflyHunts.accept('wolf')),true);
  const wolfBefore=await page.evaluate(()=>window.__highflyHunts.state.totalXp);
  await page.evaluate(()=>{
