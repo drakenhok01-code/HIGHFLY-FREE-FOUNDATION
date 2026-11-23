@@ -3,6 +3,20 @@
  * Unknown strings are reported in ?hfi18nqa=1 rather than incorrectly invented.
  */
 const PAIRS=[
+ ['The Petal Court answers. Far to the east, a second voice stirs.','El Patio de los Pétalos responde. Más al este, despierta una segunda voz.'],
+ ['Two voices now. Across the water the old bridge remembers its shape.','Ya son dos voces. Al otro lado del agua, el viejo puente recupera su forma.'],
+ ['The Lantern Court burns again. The string runs on, south across the lake.','El Patio de los Faroles vuelve a brillar. El camino de luz sigue al sur, cruzando el lago.'],
+ ['Reeds and water, and a voice among them. Five now.','Juncos, agua y una voz entre ellos. Ya son cinco.'],
+ ['The Aurel Court gives back its gold. Two remain, and the silence knows it.','El Patio de Aurel recupera su oro. Quedan dos y el silencio lo sabe.'],
+ ['The orchard wakes. Only the Crown is left, where the Mute first fell.','El huerto despierta. Solo falta la Corona, donde cayó el primer Silente.'],
+ ['Eight voices. The whole Vale sings, from the mountains to the sea.','Ocho voces. El Valle entero canta, de las montañas al mar.'],
+ ['The petals fall the same whether anyone sings or not. But they fall better to music.','Los pétalos caen igual, canten o no. Pero con música caen mejor.'],
+ ['The petals fall the same whether anyone sings or not. But they fall better to music','Los pétalos caen igual, canten o no. Pero con música caen mejor'],
+ ['Eight spires stood over the Vale, and every one is silent. The nearest waits below, on the Petal Court.','Ocho agujas dominaban el Valle y todas enmudecieron. La más cercana está abajo, en el Patio de los Pétalos.'],
+ ['Each court out here kept three bells on its mesa. The Mute stand over them now. Ring all three and the court will hear.','Cada patio tenía tres campanas en su meseta. Los Silentes las vigilan. Hacé sonar las tres y el patio escuchará.'],
+ ['Sound and petals','Sonido y pétalos'],
+ ['Sound and Petals','Sonido y pétalos'],
+
  ['The Vale once sang. Its spires carried one chord from the mountains to the sea.','El Valle cantaba antaño. Sus agujas llevaban una misma melodía desde las montañas hasta el mar.'],
  ['Then the Mute came, and the song went out, one voice at a time.','Entonces llegaron los Silentes y la canción se apagó, voz por voz.'],
  ['You kept the last note. Carry it back to them.','Conservaste la última nota. Devolvésela a quienes la perdieron.'],
