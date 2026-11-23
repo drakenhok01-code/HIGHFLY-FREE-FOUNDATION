@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>HIGHFLY P4.9.8 WebGL real framebuffer QA</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0c1220}
+#view{display:block;width:100vw;height:100vh;touch-action:none}</style>
+</head><body><canvas id="view"></canvas><script type="module">
+import {Pipeline} from './src/engine/pipeline.js';
+import {highflyDisplayReport,highflyPhysicalDisplaySize} from './src/highfly/p498-native-display.mjs';
+try{
+ const canvas=document.getElementById('view');
+ const pipe=new Pipeline(canvas,{renderScale:1});
+ if(new URLSearchParams(location.search).get('hfdisplay')==='css')
+   pipe.setHighflyDisplayMode('css');
+ const d=highflyDisplayReport(pipe);
+ const sim=highflyPhysicalDisplaySize(915,412,{dpr:3});
+ window.__p498Browser={...d,simDpr3:[sim.width,sim.height],ok:true,kind:'ACTUAL_UNSUNG_PIPELINE'};
+ document.body.dataset.qaReady='true';
+}catch(e){window.__p498Browser={ok:false,error:String(e),stack:e?.stack};console.error(e);}
+</script></body></html>
