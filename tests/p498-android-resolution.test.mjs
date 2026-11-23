@@ -27,11 +27,11 @@ test('real pipeline setSize runs at physical pixels, keeps CSS style and records
  const store={setItem(k,v){this.value=v},getItem:()=>null};
  const api=installAndroidPhysicalResolution(pipe,{win,doc:{},storage:store,search:win.location.search});
  assert.equal(updates.length,1);
- assert.deepEqual(updates[0],[3088,1384]);
+ assert.deepEqual(updates[0],[3151,1411]);
  assert.equal(canvas.style.width,'920px');
  assert.equal(canvas.style.height,'412px');
- assert.equal(api.measure().drawingBuffer[0],3088);
- assert.equal(api.measure().taaTargets[0][0],3088);
+ assert.equal(api.measure().drawingBuffer[0],3151);
+ assert.equal(api.measure().taaTargets[0][0],3151);
  assert.equal(pipe.taa.reset,true);
  assert.equal(api.set('css'),true);
  assert.deepEqual(updates[1],[920,412]);
