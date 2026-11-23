@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p49-hunt-data.mjs','p49-hunt-world.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -326,6 +326,33 @@ copy(path.join(ROOT,'src/highfly/qa-browser.mjs'),loc('scripts/qa-browser.mjs'))
 copy(path.join(ROOT,'src/highfly/qa-world-browser.mjs'),loc('scripts/qa-world-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-rpg-browser.mjs'),loc('scripts/qa-rpg-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p49-browser.mjs'),loc('scripts/qa-p49-browser.mjs'));
+
+// P4.9.1 REAL skinned, animated animal GLBs from free CC0 source packs.
+// Fail closed: expected *Git blob* fingerprints are checked byte-for-byte,
+// not guessed from filenames or publisher descriptions.
+const approvedSpecies={
+ wolf:{origin:'https://github.com/levy-street/world-of-claudecraft/blob/v0.45.8/public/models/creatures/wolf.glb',
+  sourcePack:'Quaternius animated creatures',author:'Quaternius',gitBlob:'00d69a6c127752c2506c66bc93db9a10f4a73df0'},
+ crab:{origin:'https://github.com/levy-street/world-of-claudecraft/blob/v0.45.8/public/models/creatures/crabenemy.glb',
+  sourcePack:'Quaternius animated creatures',author:'Quaternius',gitBlob:'ceb814db15ad267caeabadfb4da0299eccc807aa'},
+ boar:{origin:'https://github.com/zttimmerman/project-whiskeyjack/blob/main/assets/meshes/gobkit_Boar.glb',
+  original:'https://gobkit.itch.io/gobkit-free-animal-pack-vol-2',
+  sourcePack:'Gobkit Animal Pack B',author:'Gobkit / Alsomind Tech',gitBlob:'f57ae4b2a4fa6df29e6feaf5fb9a7e39ec5ff73d'}
+};
+for(const [id,m] of Object.entries(approvedSpecies)){
+ const src=path.join(ROOT,'assets/highfly/p491/models/'+id+'.glb'), dest=loc('public/models/hf-p491-'+id+'.glb');
+ if(!fs.existsSync(src))throw Error('P491 CC0 rig missing '+src);
+ const bytes=fs.readFileSync(src);
+ const gitBlob=crypto.createHash('sha1').update('blob '+bytes.length+'\\0').update(bytes).digest('hex');
+ if(gitBlob!==m.gitBlob)throw Error('P491 model SHA mismatch '+id+' '+gitBlob);
+ if(bytes.toString('utf8',0,4)!=='glTF')throw Error('P491 invalid GLB header: '+id);
+ copy(src,dest);
+ records.push({id:'highfly-p491:'+id,path:'models/hf-p491-'+id+'.glb',source:m.origin,
+  original:m.original??m.origin,sha256:hash(dest),gitBlob,bytes:bytes.length,
+  author:m.author,sourcePack:m.sourcePack,license:'CC0-1.0',decision:'ALLOW',
+  commercial:true,redistribution:true,attributionRequired:false});
+}
+
 copy(path.join(ROOT,'src/highfly/qa-rpg-entry.mjs'),loc('src/highfly/qa-rpg-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-rpg.html'),loc('qa-rpg.html'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
