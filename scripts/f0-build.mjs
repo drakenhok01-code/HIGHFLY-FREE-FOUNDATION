@@ -384,7 +384,7 @@ patch('src/main.js',"function resize() { pipe.setSize(window.innerWidth, window.
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
 // algorithm via ?hfperf=reference without downloading another game.
 patch('src/engine/post.js',
- "    vec2 o = vec2(float(x), float(y)) * texel;\\n    vec3 c = toYCoCg(squash(textureLod(uCurrent, cuv + o, 0.0).rgb));",
+ "    vec2 o = vec2(float(x), float(y)) * texel;\\n    vec3 c = toYCoCg(squash(textureLod(uCurrent, cuv + o, 0.0).rgb));".replaceAll(\x27\\n\x27,\x27\n\x27),
  "    vec2 o = vec2(float(x), float(y)) * texel;\\n#if defined(HF_S23_NATIVE_TAA)\\n    if(x!=0 && y!=0) continue; // 5-tap cross in native full-res framebuffer\\n#endif\\n    vec3 c = toYCoCg(squash(textureLod(uCurrent, cuv + o, 0.0).rgb));".replaceAll('\\n','\n'));
 patch('src/engine/post.js',
  "  m1 /= 9.0; m2 /= 9.0;",
@@ -393,7 +393,7 @@ patch('src/engine/post.js',
  "      fragment: TAA_PASS,",
  "      fragment: TAA_PASS,");
 patch('src/engine/post.js',
- "      defines: pipe.depthDefines,\\n      uniforms: {\\n        uCurrent: { value: null }, uHistory: { value: null }, uDepth: { value: null }, ...pipe.camUniforms,",
+ "      defines: pipe.depthDefines,\\n      uniforms: {\\n        uCurrent: { value: null }, uHistory: { value: null }, uDepth: { value: null }, ...pipe.camUniforms,".replaceAll(\x27\\n\x27,\x27\n\x27),
  "      defines: new URLSearchParams(globalThis.location?.search||'').get('hfperf')==='reference' ? pipe.depthDefines : {...pipe.depthDefines,HF_S23_NATIVE_TAA:1},\\n      uniforms: {\\n        uCurrent: { value: null }, uHistory: { value: null }, uDepth: { value: null }, ...pipe.camUniforms,".replaceAll('\\n','\n'));
 // Preserve actual full-resolution 3D, masks and scene. Merely track frame time.
 patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});",
