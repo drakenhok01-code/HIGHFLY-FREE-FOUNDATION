@@ -33,6 +33,25 @@ try{
  if(!wolf)throw Error('Quaternius CC0 wolf GLB failed to instantiate');
  wolf.root.position.x=1.75;scene.add(wolf.root);
  wolf.model.traverse(mesh=>{if(mesh.isMesh&&mesh.visible)report.wolfMeshes++;});
+ const boxProbe=(o)=>{
+  o.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(o);
+  return {min:box.min.toArray(),max:box.max.toArray(),size:box.getSize(new THREE.Vector3()).toArray(),
+   center:box.getCenter(new THREE.Vector3()).toArray(),
+   view:box.getCenter(new THREE.Vector3()).project(camera).toArray()};
+ };
+ report.wolfBounds=boxProbe(wolf.root);
+ report.wolfRootTransform={position:wolf.root.position.toArray(),scale:wolf.root.scale.toArray(),
+  modelPosition:wolf.model.position.toArray(),modelScale:wolf.model.scale.toArray()};
+ report.wolfMaterials=[];
+ wolf.model.traverse(mesh=>{
+  if(!mesh.isMesh)return;
+  report.wolfMaterials.push({name:mesh.name,skinned:mesh.isSkinnedMesh,
+   visible:mesh.visible,opacity:mesh.material?.opacity,alphaTest:mesh.material?.alphaTest,
+   map:!!mesh.material?.map,vertices:mesh.geometry?.attributes?.position?.count,
+   bounding:boxProbe(mesh),boneCount:mesh.skeleton?.bones?.length??0});
+ });
+ report.npcBounds=boxProbe(holder);
  const pixels=()=>{renderer.render(scene,camera);return renderer.domElement.getContext('webgl2')?'webgl2':'WebGL';};
  pixels();const cv=renderer.domElement;
  const context=renderer.getContext(),raw=new Uint8Array(900*440*4);
