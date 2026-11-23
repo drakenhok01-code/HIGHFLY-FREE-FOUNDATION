@@ -1,0 +1,58 @@
+name: HIGHFLY P493 FAST CC0 Render Diagnostics
+on:
+  push:
+    branches: [p493-npc-missions-map-inventory-20261123]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install small Vite/Three/Playwright test lab
+        run: |
+          npm install --no-save --no-package-lock three@0.181.0 vite@7.3.1 playwright@1.57.0 --no-audit --no-fund
+          npx playwright install chromium --with-deps
+          mkdir -p public/models
+          cp assets/highfly/p491/models/wolf.glb public/models/hf-p491-wolf.glb
+          cp assets/highfly/p491/models/boar.glb public/models/hf-p491-boar.glb
+          cp assets/highfly/p491/models/crab.glb public/models/hf-p491-crab.glb
+      - name: Browser render original vs bright Basic material
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
+        run: |
+          node --input-type=module <<'SCRIPT'
+          import {spawn} from 'node:child_process';
+          import {setTimeout as delay} from 'node:timers/promises';
+          import {chromium} from 'playwright';
+          import assert from 'node:assert/strict';
+          const server=spawn('node',['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5195'],{stdio:'inherit'});
+          let browser;
+          try{
+           let ok=false;
+           for(let i=0;i<50;i++){
+            try{if((await fetch('http://127.0.0.1:5195/qa-p493-fast.html')).ok){ok=true;break;}}catch{}
+            await delay(250);
+           }
+           assert.ok(ok,'Vite timeout');
+           browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--enable-unsafe-swiftshader','--no-sandbox']});
+           const page=await browser.newPage({viewport:{width:1220,height:490}});
+           page.on('console',m=>{if(m.type()==='error')console.error('[BROWSER ERROR]',m.text())});
+           await page.goto('http://127.0.0.1:5195/qa-p493-fast.html',{waitUntil:'domcontentloaded'});
+           await page.waitForFunction(()=>window.__p493Fast?.ready||window.__p493Fast?.error,null,{timeout:90000});
+           const report=await page.evaluate(()=>window.__p493Fast);await page.screenshot({path:'p493-fast.png'});
+           console.log('[HF_FAST_CC0_DIAGNOSTICS]',JSON.stringify(report));
+           assert.ok(report.ready,'Three.js GLTF cannot load');
+           assert.equal(report.report.length,3);
+          }finally{await browser?.close();server.kill('SIGTERM');}
+          SCRIPT
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p493-fast-diagnostic-screenshot
+          path: p493-fast.png
+          if-no-files-found: ignore
