@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {normalizeRpgState,ITEM_DEFS} from '../src/highfly/rpg-core.mjs';
+import {highflyRemoveItem,itemSalePrice,nearHighflyMerchant} from '../src/highfly/p493-item-transactions.mjs';
+import {radarProject} from '../src/highfly/p492-radar.mjs';
+const read=f=>fs.readFileSync(f,'utf8');
+test('P493 discard needs explicit safe transaction; persistent copper',()=>{
+ const bag=normalizeRpgState({items:{hp_potion:4,mp_potion:2},coins:42});
+ const action=highflyRemoveItem(bag,{}, {id:'hp_potion',count:1});
+ assert.equal(action.ok,true);assert.equal(bag.items.hp_potion,3);assert.equal(bag.coins,42);
+ const failure=highflyRemoveItem(bag,{}, {id:'hp_potion',count:30});
+ assert.equal(failure.ok,false);assert.equal(bag.items.hp_potion,3);
+ assert.equal(normalizeRpgState(bag).coins,42);
+});
+test('P493 requires Odo nearby to sell and does not affect equipped gear',()=>{
+ const bag=normalizeRpgState({items:{hp_potion:3},coins:2});
+ assert.equal(highflyRemoveItem(bag,{}, {id:'hp_potion',sell:true,merchant:false}).ok,false);
+ assert.equal(bag.items.hp_potion,3);
+ const result=highflyRemoveItem(bag,{}, {id:'hp_potion',sell:true,merchant:true});
+ assert.equal(result.price,itemSalePrice(ITEM_DEFS.hp_potion));
+ assert.equal(bag.coins,2+result.price);
+ const g={player:{pos:{x:1,y:0,z:1}},people:{get:id=>id==='odo'?{awake:true,x:2,y:0,z:1}:null}};
+ assert.equal(nearHighflyMerchant(g),true);
+ g.player.pos.x=99;assert.equal(nearHighflyMerchant(g),false);
+});
+test('P493 original quest identities and styling retained',()=>{
+ const build=read('scripts/f0-build.mjs');
+ assert.match(build,/installP493Interaction\(game\)/);
+ assert.match(build,/installP493PortalVisuals\(game\)/);
+ assert.match(build,/installP49Hunts\(game\)/);
+ assert.match(build,/p493-interaction\.css/);
+ const hunt=read('src/highfly/p49-hunt-world.mjs');
+ assert.match(hunt,/n\.position\.set\(/);
+ assert.match(hunt,/profile=stylizeUniversalKayKit\(gltf\)/);
+ assert.match(hunt,/if\(!avatar\)/);
+ const touch=read('src/highfly/mobile-touch.mjs');
+ assert.match(touch,/label:'HABLAR'/);
+ assert.match(touch,/installHighflyRadar\(input,t\)/);
+ const bag=read('src/highfly/premium-rpg.mjs');
+ assert.match(bag,/p493-item-transaction',phase:'confirm'/);
+ assert.match(bag,/data-hf-action="edit-hud"/);
+});
+test('P493 radar exposes real terrain sampling and modal, while projecting numeric coordinates',()=>{
+ const map=read('src/highfly/p492-radar.mjs');
+ assert.match(map,/groundHeight\?\.\(wx,wz\)/);
+ assert.match(map,/hf-p493-radar-modal/);
+ assert.match(map,/TOCAR PARA MAPA|openMap\(\)/);
+ const pos=radarProject({x:0,z:0},{x:50,z:30});
+ assert.equal(pos.distance,Math.hypot(50,30));
+});
