@@ -24,6 +24,7 @@ try{
  for(const id of ['wolf','boar','crab']){
   const entry=report.creatures[id];assert.ok(entry?.meshCount>=1,id+' has no visible skinned mesh');
   assert.ok(entry.clips>=4,id+' has no original animations');
+  assert.equal(entry.unlit,true,id+' will render black inside unlit Unsung world');
  }
  await delay(800);
  await page.screenshot({path:'qa-p494-real-wildlife.png'});
