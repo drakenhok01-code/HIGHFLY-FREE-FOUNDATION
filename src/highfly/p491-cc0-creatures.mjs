@@ -39,8 +39,30 @@ export async function loadLicensedCreatureTemplates(base){
     let skins=0;gltf.scene.traverse(x=>{if(x.isSkinnedMesh)skins++});
     if(!skins)throw Error(id+' model lacks a real skeletal mesh');
    }
+   // Unsung deliberately uses CUSTOM Three ShaderMaterials and NO standard
+   // Ambient/Directional lights. PBR GLB materials render black/invisible.
+   // Keep the licensed textures/UVs/vertex colors, but make animal surfaces
+   // unlit, just like our known-visible KayKit player and NPCs.
+   let visibleMeshes=0;
+   gltf.scene.traverse(node=>{
+    if(!node.isMesh)return;
+    const toUnlit=material=>{
+     const m=new THREE.MeshBasicMaterial({
+      color:material?.color?.clone?.()??new THREE.Color(0xffffff),
+      map:material?.map??null,vertexColors:!!material?.vertexColors,
+      transparent:!!material?.transparent,opacity:material?.opacity??1,
+      alphaTest:material?.alphaTest??0,side:THREE.DoubleSide,
+      depthTest:true,depthWrite:true,skinning:true
+     });
+     m.name='HIGHFLY_P494_UNLIT_'+id;
+     return m;
+    };
+    node.material=Array.isArray(node.material)?node.material.map(toUnlit):toUnlit(node.material);
+    node.frustumCulled=false;visibleMeshes++;
+   });
+   if(!visibleMeshes)throw Error('Real licensed animal has no visible mesh '+id);
    result[id]=gltf;
-   console.info('[HIGHFLY P491] READY',id,meta.author,'CC0',gltf.animations.map(a=>a.name));
+   console.info('[HIGHFLY P494] UNLIT CC0 READY',id,meta.author,visibleMeshes,'meshes',gltf.animations.length,'clips');
   }catch(e){console.error('[HIGHFLY P491] Species disabled; licensed GLB failed:',id,e);}
  }));
  return result;
