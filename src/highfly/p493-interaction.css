@@ -41,3 +41,12 @@
 #ui #talk.on .who{color:#e6c590!important}
 #ui #talk.on p{color:#f1e9f7!important;font:500 clamp(12px,1.55vw,17px)/1.5 system-ui!important}
 #ui #talk .next{display:none!important}
+
+/* P494 independent original wildlife icons have their own rarity-colored
+   outline; no second ornamental frame is pasted over the illustration. */
+#hf-rpg [data-hf-rarity="Común"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #dce5ed9c}
+#hf-rpg [data-hf-rarity="Poco común"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #57e49e}
+#hf-rpg [data-hf-rarity="Raro"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #4a9aff}
+#hf-rpg [data-hf-rarity="Épico"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #c479ff}
+#hf-rpg [data-hf-rarity="Legendario"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #fbc26c}
+#hf-rpg [data-hf-rarity="Mítico"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #fe5b6f}
