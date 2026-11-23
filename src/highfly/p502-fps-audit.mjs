@@ -10,9 +10,16 @@ export function installP502AutoProfiler(pipe,options={}){
  const q=new URLSearchParams(options.search??win?.location?.search??'');
  if(q.get('hffpsaudit')!=='1')return {enabled:false,dispose(){}};
  const now=()=>options.now?.()??globalThis.performance.now();
- const original={shadows:pipe.shadows?.enabled,volumetrics:pipe.volumetrics?.enabled,
-  taa:pipe.taa?.enabled,bloomRender:pipe.bloom?.render,
-  bloomStrength:pipe.bloomStrength};
+ // Capture final, applied graphics settings when the player enters the
+ // benchmark, not while game settings are still initializing.
+ const original={};
+ const capture=()=>{
+  original.shadows=pipe.shadows?.enabled;
+  original.volumetrics=pipe.volumetrics?.enabled;
+  original.taa=pipe.taa?.enabled;
+  original.bloomRender=pipe.bloom?.render;
+  original.bloomStrength=pipe.bloomStrength;
+ };
  const results=[];
  let index=-1,started=now(),frameTimes=[],stageEnd=0,settledAt=0,active=true,finished=false;
  let panel=null;
@@ -43,6 +50,7 @@ export function installP502AutoProfiler(pipe,options={}){
   }
  };
  function next(t){
+  if(index<0)capture();
   index++;frameTimes=[];settledAt=t+settle;stageEnd=t+duration;
   if(index>=STAGES.length){restore();finished=true;active=false;
    const baseline=results.find(x=>x.name==='reference')?.medianFrameMs;
@@ -87,6 +95,6 @@ export function installP502AutoProfiler(pipe,options={}){
  }
  raf=win?.requestAnimationFrame?.(tick);
  return {enabled:true,get finished(){return finished},get results(){return results},dispose(){
-  active=false;win?.cancelAnimationFrame?.(raf);restore();panel?.remove();
+  active=false;win?.cancelAnimationFrame?.(raf);if(index>=0)restore();panel?.remove();
  }};
 }
