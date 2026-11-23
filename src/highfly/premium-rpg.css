@@ -680,4 +680,4 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg .hf-p492-native-bench>div{display:flex;gap:6px;flex-wrap:wrap}
 #hf-rpg .hf-p492-native-bench button{position:static;border:1px solid #bb9ded;background:#493066;border-radius:12px;font-size:10px;min-height:29px;padding:5px 8px}
 
-@import './p493-interaction.css';
+
