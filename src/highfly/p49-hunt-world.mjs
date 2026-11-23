@@ -224,7 +224,19 @@ export function installP49Hunts(game){
     stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
    }
    console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
-  }catch(e){console.warn('[HIGHFLY P4.9] NPC GLB loading failed; no hidden fake models',e);}
+  }catch(e){
+   console.error('[HIGHFLY P493] KayKit model failed; showing NPC name and diagnostic marker',e);
+   for(const id of HUNT_ORDER){
+    const spot=spots[id];if(!spot)continue;
+    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
+    const plate=new THREE.Mesh(new THREE.CylinderGeometry(.53,.68,.16,12),
+     new THREE.MeshBasicMaterial({color:0x8565c9,transparent:true,opacity:.85}));
+    plate.position.y=.12;anchor.add(plate);
+    const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
+    billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
+    npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
+   }
+  }
  }
  loadKaykitNpcs();
  const prior=game.update;
