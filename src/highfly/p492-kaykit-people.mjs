@@ -38,6 +38,9 @@ export function installHighflyKayKitPeople(game){
      holder.scale.setScalar(scale);
      // Preserve bind-pose origin as in the visible KayKit player.
      holder.add(model);n.root.add(holder);
+     // n.root is updated manually by native People, but the newly attached
+     // skinned child needs an initial world-matrix pass to be visible at once.
+     n.root.updateMatrixWorld(true);
      const mixer=new THREE.AnimationMixer(model);
      const idle=gltf.animations.find(c=>c.name==='Idle');
      const walk=gltf.animations.find(c=>c.name==='Walking_A');
@@ -68,6 +71,9 @@ export function installHighflyKayKitPeople(game){
     a.state=stance;
    }
    if(distance(a.n,p)<75)a.mixer.update(Math.min(.05,Math.max(0,dt||0)));
+   // Native People updates n.root BEFORE our GLTF AnimationMixer. Rebuild
+   // all child matrices after the skinned pose has changed.
+   a.n.root.updateMatrixWorld(true);
   }
   return out;
  };
