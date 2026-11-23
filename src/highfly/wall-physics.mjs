@@ -9,10 +9,19 @@
  * supplementary heightFIELD cliff guard from rejecting movement on stairs.
  * Restrict to the central 6.8m lane; never bypass the solid flank walls.
  */
-export function isHighflyStairLane(a,b=a){
- const inside=p=>!!p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&
+export function isHighflyStairLane(a,b=a,world=null){
+ const cantor=p=>!!p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&
   p.x>=-175.5&&p.x<=-116.5&&Math.abs(p.z+459)<=3.35;
- return inside(a)&&inside(b);
+ // Dawn Terrace: original stairs(q, run, rise, 18) in sites.js.
+ // The nested +90°/-90° rotations cancel; their world lane is x=-525-run
+ // through -525, centred at z=-70. The run is generated from terrain height
+ // at (-532,-70) by Unsung itself.
+ const h=Number(world?.groundHeight?.(-532,-70));
+ const rise=Number.isFinite(h)?Math.max(0,210.4-h+0.3):null;
+ const run=rise===null?null:rise*2.3;
+ const dawn=p=>!!p&&run!==null&&run>2&&run<120&&Number.isFinite(p.x)&&
+  Number.isFinite(p.z)&&p.x>=-526-run&&p.x<=-523&&Math.abs(p.z+70)<=7.5;
+ return (cantor(a)&&cantor(b))||(dawn(a)&&dawn(b));
 }
 
 export function terrainGradient(world,x,z,eps=.30){
@@ -31,7 +40,7 @@ export function walkableBuiltFloor(world,p,tolerance=.23){
  return Number.isFinite(ground)&&Number.isFinite(floor)&&floor-ground>.24&&Math.abs(floor-p.y)<tolerance;
 }
 export function allowTerrainTraverse(world,a,b,maximum=1.1){
- if(isHighflyStairLane(a,b))return {ok:true,builtStair:true};
+ if(isHighflyStairLane(a,b,world))return {ok:true,builtStair:true};
  if(walkableBuiltFloor(world,a)&&walkableBuiltFloor(world,b))return {ok:true,builtFloor:true};
  if(typeof world?.groundHeight!=='function')return {ok:true};
  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
@@ -75,7 +84,7 @@ export function terrainWallContact(world,pos,dir,reach=1.15,height=.82){
  * steep faces even when native capsule BVH did not report the terrain.
  */
 export function allowCliffCapsule(world,previous,next,radius=.35){
- if(isHighflyStairLane(previous,next))return {ok:true,builtStair:true};
+ if(isHighflyStairLane(previous,next,world))return {ok:true,builtStair:true};
  if(!previous||!next)return {ok:true};
  if(walkableBuiltFloor(world,previous)&&walkableBuiltFloor(world,next))return {ok:true,builtFloor:true};
  const dx=next.x-previous.x,dz=next.z-previous.z,len=Math.hypot(dx,dz);
