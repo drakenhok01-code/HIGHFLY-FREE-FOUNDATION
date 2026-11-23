@@ -3,6 +3,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {loadLicensedCreatureTemplates,makeLicensedCreature,animateLicensedCreature} from './p491-cc0-creatures.mjs';
 import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
+import {installP41WorldLoot} from './p41-world-loot.mjs';
+import {normalizeRpgState} from './rpg-core.mjs';
 const canvas=document.querySelector('#view');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'low-power'});
 renderer.setPixelRatio(1);renderer.setSize(915,412,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -17,6 +19,35 @@ const camera=new THREE.PerspectiveCamera(50,915/412,.1,100);
 camera.position.set(0,4.0,10.5);camera.lookAt(0,.95,0);
 const q={ready:false,issues:[],visuals:[],creatures:{},kaykit:null,frame:0,pixels:null,worldTransforms:[]};
 window.__p494VisualQA=q;
+// End-to-end executable corpse transaction using the SAME in-game handler:
+// native death event -> 3D wolf body -> USAR -> inventory +1 -> remove corpse.
+window.__p495ProbeCorpse=()=>{
+ const wolf=q.visuals.find(v=>v.isCreature&&v.a.id==='wolf');
+ if(!wolf)return {ok:false,reason:'Wolf rig missing'};
+ const enemy=wolf.enemy,bag=normalizeRpgState({items:{wolf_pelt:0}}),profession={inventory:{}},subs=[];
+ const game={time:1,state:'playing',cine:false,
+  player:{pos:enemy.pos.clone(),state:'move'},
+  pipe:{scene,sceneT:scene},
+  input:{pressed:new Set()},
+  world:{groundHeight:()=>0},
+  on(fn){subs.push(fn);},
+  update(dt){this.time+=dt;},
+  __highflyHunts:{avatarFor:e=>e===enemy?wolf.a:null}
+ };
+ const loot=installP41WorldLoot(game,bag,()=>profession);
+ if(!loot)return {ok:false,reason:'Loot layer failed to install'};
+ enemy.kind='hf_wolf';enemy.alive=false;enemy.state='dead';
+ for(const fn of subs)fn('enemy',{type:'death',enemy});
+ const corpseBefore=loot.corpses;
+ game.input.pressed.add('interact');
+ game.update(.016);
+ const result={ok:corpseBefore===1&&loot.corpses===0&&bag.items.wolf_pelt===1,
+  corpseBefore,corpseAfter:loot.corpses,itemsInBag:bag.items.wolf_pelt,
+  bodyFreed:!wolf.a.corpseLootPending,
+  noFloatingSprite:loot.drops.every(d=>!d.sprite)};
+ loot.dispose();
+ return result;
+};
 (async()=>{
  try{
   const result=await loadLicensedCreatureTemplates(import.meta.env.BASE_URL);
