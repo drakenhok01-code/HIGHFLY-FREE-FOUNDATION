@@ -52,7 +52,7 @@ export async function loadLicensedCreatureTemplates(base){
    // Quaternius FBX-origin skinned meshes occasionally render with reversed
    // winding under their 100x bind/root transforms. Disable backface culling
    // only for the two affected CC0 species; preserve authentic materials.
-   if(id==='wolf'||id==='crab')gltf.scene.traverse(node=>{
+   if(id==='wolf'||id==='crab')source.scene.traverse(node=>{
     if(!node.isSkinnedMesh)return;
     node.frustumCulled=false;
     // The WoC Quaternius GLBs use normalized Int16 POSITION and Uint8
