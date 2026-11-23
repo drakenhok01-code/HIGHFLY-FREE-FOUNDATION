@@ -2,6 +2,19 @@
  * Native terrain heightfields cannot represent true vertical overhang geometry.
  * This layer adds a conservative side-wall barrier; no fabricated ledges.
  */
+/**
+ * The original Unsung "Petal -> Cantor" stair is hand-built at
+ * (-118, terrainHeight, -459), yaw PI, 56m long and 9m wide.
+ * Its actual BVH collision remains authoritative: this flag ONLY stops our
+ * supplementary heightFIELD cliff guard from rejecting movement on stairs.
+ * Restrict to the central 6.8m lane; never bypass the solid flank walls.
+ */
+export function isHighflyStairLane(a,b=a){
+ const inside=p=>!!p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&
+  p.x>=-175.5&&p.x<=-116.5&&Math.abs(p.z+459)<=3.35;
+ return inside(a)&&inside(b);
+}
+
 export function terrainGradient(world,x,z,eps=.30){
  if(typeof world?.groundHeight!=='function')return null;
  const h=(a,b)=>world.groundHeight(a,b),l=h(x-eps,z),r=h(x+eps,z),b=h(x,z-eps),f=h(x,z+eps);
@@ -18,6 +31,7 @@ export function walkableBuiltFloor(world,p,tolerance=.23){
  return Number.isFinite(ground)&&Number.isFinite(floor)&&floor-ground>.24&&Math.abs(floor-p.y)<tolerance;
 }
 export function allowTerrainTraverse(world,a,b,maximum=1.1){
+ if(isHighflyStairLane(a,b))return {ok:true,builtStair:true};
  if(walkableBuiltFloor(world,a)&&walkableBuiltFloor(world,b))return {ok:true,builtFloor:true};
  if(typeof world?.groundHeight!=='function')return {ok:true};
  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
@@ -61,6 +75,7 @@ export function terrainWallContact(world,pos,dir,reach=1.15,height=.82){
  * steep faces even when native capsule BVH did not report the terrain.
  */
 export function allowCliffCapsule(world,previous,next,radius=.35){
+ if(isHighflyStairLane(previous,next))return {ok:true,builtStair:true};
  if(!previous||!next)return {ok:true};
  if(walkableBuiltFloor(world,previous)&&walkableBuiltFloor(world,next))return {ok:true,builtFloor:true};
  const dx=next.x-previous.x,dz=next.z-previous.z,len=Math.hypot(dx,dz);
