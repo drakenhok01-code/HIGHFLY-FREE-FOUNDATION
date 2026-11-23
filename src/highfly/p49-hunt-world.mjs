@@ -76,6 +76,20 @@ function pickNpc(W,spot){
  }
  return {x:spot.x+14,z:spot.z+14,y:spot.y};
 }
+function safeSeraSite(W,game){
+ // Safe quest giver on Dawn Terrace, away from native monster-wave triggers.
+ const maren=game.people?.get?.('maren');
+ if(!maren)return null;
+ const candidates=[[8,7],[11,1],[11,-5],[5,-9],[-7,8],[-10,-4],[6,11]];
+ for(const [dx,dz] of candidates){
+  const x=maren.x+dx,z=maren.z+dz;
+  const y=W.floorBelow?.(x,maren.y+2,z,7);
+  if(!Number.isFinite(y)||Math.abs(y-maren.y)>2.5)continue;
+  if((game.people?.list??[]).some(n=>Math.hypot(n.x-x,n.z-z)<3.2))continue;
+  return {x,z,y};
+ }
+ return {x:maren.x+7,z:maren.z+5,y:maren.y};
+}
 function npcBillboard(name,role){
  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;
  const ctx=canvas.getContext('2d');
@@ -112,7 +126,8 @@ export function installP49Hunts(game){
   const def=HUNT_MOBS[id];
   const pt=id==='crab'?coastAnchor(W):pointOnLand(W,def.anchor.x,def.anchor.z);
   if(!pt){console.warn('[HIGHFLY P4.9] Unsafe spot skipped',id);continue;}
-  spots[id]={id,point:pt,npc:pickNpc(W,pt),members:new Map(),launched:false,respawnAt:0};
+  const questNpc=id==='wolf'?safeSeraSite(W,game):null;
+  spots[id]={id,point:pt,npc:questNpc??pickNpc(W,pt),members:new Map(),launched:false,respawnAt:0};
  }
  const prompt=document.createElement('button');prompt.id='hf-p49-prompt';prompt.type='button';
  prompt.hidden=true;document.body.appendChild(prompt);
@@ -121,6 +136,25 @@ export function installP49Hunts(game){
  const toast=document.createElement('div');toast.id='hf-p49-toast';toast.hidden=true;
  document.body.appendChild(toast);
  let toastUntil=0,dialogOpen=null,npcActors=[],disposed=false;
+ // Anchor and nameplate exist immediately. Failed asynchronous GLB loading
+ // never leaves an invisible quest giver with a functional interaction.
+ const npcMarkers=[];
+ for(const id of HUNT_ORDER){
+  const spot=spots[id];if(!spot)continue;
+  const anchor=new THREE.Group();
+  anchor.name='HIGHFLY_QUEST_NPC_'+id;
+  anchor.position.set(spot.npc.x,spot.npc.y+.08,spot.npc.z);
+  anchor.rotation.y=Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI;
+  const fallback=new THREE.Mesh(new THREE.CapsuleGeometry(.32,1.17,3,8),
+   new THREE.MeshBasicMaterial({color:0xae8aea,depthTest:true}));
+  fallback.name='HIGHFLY_NPC_LOADING_'+id;fallback.position.y=.91;
+  const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
+  billboard.position.y=2.45;billboard.material.depthTest=false;
+  anchor.add(fallback,billboard);stage.add(anchor);
+  spot.npcAnchor=anchor;spot.npcFallback=fallback;spot.npcBillboard=billboard;
+  npcMarkers.push({anchor,fallback,billboard});
+ }
+
  const tell=message=>{toast.textContent=message;toast.hidden=false;toastUntil=game.time+3.2;};
  const getEntry=id=>HUNT_MISSIONS[id];
  const progress=id=>state.missions[id];
@@ -174,8 +208,13 @@ export function installP49Hunts(game){
   if(!pos||Math.abs(pos.y-base.y)>7||!species[spot.id])return null;
   const e=game.enemies.spawn(HUNT_MOBS[spot.id].kind,x,z,'hf49:'+spot.id,null,base.y);
   if(!Number.isFinite(e?.pos?.y))return null;
-  const avatar=makeLicensedCreature(spot.id,species[spot.id]);
-  if(!avatar)return null;
+  let avatar=null;
+  try{avatar=makeLicensedCreature(spot.id,species[spot.id]);}
+  catch(error){console.error('[HIGHFLY P493] Enemy rig failed:',spot.id,error);}
+  if(!avatar){
+   game.enemies.list=game.enemies.list.filter(other=>other!==e);
+   return null; // Never keep a combat hitbox with an invisible animal.
+  }
   stage.add(avatar.root);
   spot.members.set(e,avatar);
   return e;
@@ -193,8 +232,7 @@ export function installP49Hunts(game){
    for(const [i,id] of HUNT_ORDER.entries()){
     const spot=spots[id];if(!spot)continue;
     const n=cloneSkeleton(gltf.scene);n.name='HIGHFLY_KAYKIT_NPC_'+id;
-    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
-    anchor.rotation.y=(Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI);
+    const anchor=spot.npcAnchor;
     n.scale.setScalar(1.80/profile.naturalHeight);
     n.traverse(m=>{
      if(!m.isMesh)return;
@@ -205,9 +243,11 @@ export function installP49Hunts(game){
      m.material=new THREE.MeshBasicMaterial({map:base?.map??null,color,side:THREE.DoubleSide,
       transparent:!!base?.transparent,alphaTest:base?.alphaTest??0});
     });
-    anchor.add(n);
-    const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.position.y=2.35;anchor.add(billboard);
+    const box=new THREE.Box3().setFromObject(n);
+    if(!Number.isFinite(box.min.y))throw Error('KayKit NPC bounding box invalid '+id);
+    n.position.y-=box.min.y;
+    anchor.add(n);spot.npcFallback.visible=false;
+    const billboard=spot.npcBillboard;
     const idle=gltf.animations.find(a=>a.name==='Idle');
     const mixer=new THREE.AnimationMixer(n);
     if(idle)mixer.clipAction(idle).play();
@@ -225,9 +265,14 @@ export function installP49Hunts(game){
   for(const spot of Object.values(spots)){
    const distance=d2(hero.pos,spot.point);
    if(!playing||distance>UNLOAD_RANGE){if(distance>UNLOAD_RANGE&&spot.launched)purge(spot);continue;}
-   if(distance<LOAD_RANGE&&!spot.launched&&species[spot.id]){
-    for(let i=0;i<CAP;i++)spawnOne(spot,i);
-    spot.launched=true;
+   if(distance<LOAD_RANGE&&!spot.launched&&species[spot.id]&&game.time>=spot.respawnAt){
+    let created=0;
+    for(let i=0;i<CAP;i++)if(spawnOne(spot,i))created++;
+    spot.launched=created>0;
+    if(!created){
+     console.warn('[HIGHFLY P493] Spawn site has no safe visible rig:',spot.id);
+     spot.respawnAt=game.time+6;
+    }
    }
    if(spot.launched){
     for(const [enemy,avatar] of [...spot.members]){
@@ -269,11 +314,18 @@ export function installP49Hunts(game){
   get loadedSpecies(){return Object.keys(species)},accept:id=>{const ok=acceptHunt(state,id);if(ok)persist();return ok;},
   progress:id=>state.missions[id]??null,closeDialog,
   get npcCount(){return npcActors.length;},
+  get npcMarkers(){return npcMarkers.length;},
+  get npcLoaded(){return npcActors.map(n=>n.id);},
+  get spawnDiagnostics(){return Object.fromEntries(Object.entries(spots).map(([id,spot])=>[id,
+   {placed:!!spot.npcAnchor,visual:!!npcActors.find(n=>n.id===id),active:spot.members.size}]))},
   get activeCount(){return Object.values(spots).reduce((v,s)=>v+[...s.members.keys()].filter(e=>e.alive).length,0)},
   dispose(){disposed=true;game.update=prior;closeDialog();prompt.remove();dialog.remove();toast.remove();
    for(const spot of Object.values(spots))purge(spot);
-   for(const n of npcActors){stage.remove(n.anchor);n.mixer.stopAllAction();
-    n.billboard.material.map.dispose();n.billboard.material.dispose();}
+   for(const n of npcActors)n.mixer.stopAllAction();
+   for(const n of npcMarkers){
+    stage.remove(n.anchor);n.billboard.material.map.dispose();n.billboard.material.dispose();
+    n.fallback.material.dispose();n.fallback.geometry.dispose();
+   }
   }};
  game.__highflyHunts=api;globalThis.__highflyHunts=api;
  console.info('[HIGHFLY P4.9.1] CC0 animated wolf, boar and crab hunting spots registered',Object.keys(spots));
