@@ -465,7 +465,16 @@ export function activeQuestSummary(game){
   return {title:translateHighfly(q.title),text,count:st?.s==='ready'?null:
      value[0]+' / '+value[1]};
  });
- return {primary:translateHighfly(game?.objective??''),side,total:tasks.length};
+ // Show active HIGHFLY hunts in the SAME quick tracker as native Unsung quests.
+ const hunts=game?.__highflyHunts;
+ if(hunts?.state?.missions)for(const id of ['wolf','boar','crab']){
+  const m=hunts.state.missions[id],q=hunts.missions?.[id];
+  if(!q||!m||!['active','ready'].includes(m.status))continue;
+  side.unshift({title:'✦ '+q.title,text:m.status==='ready'?'Volvé con '+q.npc+' para cobrar':
+   'Derrotá '+q.count+' '+(id==='wolf'?'lobos':id==='boar'?'jabalíes':'cangrejos'),
+   count:m.status==='ready'?'✓':m.count+' / '+q.count});
+ }
+ return {primary:translateHighfly(game?.objective??''),side,total:side.length};
 }
 export function refreshHighflyQuests(t,game){
  const root=t?.questPanel;if(!root)return;
