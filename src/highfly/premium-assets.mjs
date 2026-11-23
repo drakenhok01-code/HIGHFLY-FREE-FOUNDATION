@@ -18,9 +18,9 @@ const USER_ICONS=Object.freeze({
  item_leather:'items/leather',
  // P4.9 safe temporary visuals: each new physical loot ID has an existing
  // approved rarity-capable frame until its dedicated painting is approved.
- item_wolf_pelt:'items/leather',
- item_boar_tusk:'items/raw_diamond',
- item_crab_shell:'armor/shield',
+ item_wolf_pelt:'p494/wolf_pelt',
+ item_boar_tusk:'p494/boar_tusk',
+ item_crab_shell:'p494/crab_shell',
  item_training_sword:'weapons/sword',
  item_training_shield:'armor/shield',
  item_training_greatsword:'weapons/greatsword',
@@ -61,6 +61,7 @@ export function premiumArt(name,large=false,rarity='Común'){
 const jobNames={'Recolección':'recoleccion','Minería':'mineria','Tala':'tala','Pesca':'pesca','Cocina':'cocina','Alquimia':'alquimia','Fundición':'fundicion','Forja':'forja','Marroquinería':'marroquineria','Sastrería':'sastreria','Joyería':'joyeria','Ingeniería':'ingenieria','Encantamiento':'encantamiento','Inscripción':'inscripcion','Desuello':'desuello'};
 export const professionIcon=job=>'profession_'+(jobNames[job]||'recoleccion');
 export const questArtUrl=(id,title='')=>{
+ if(id==='hf_wolf'||id==='wolf')return assetUrl('p494/quest_wolf');
  if(!id||id==='primary')return assetUrl('premium/quest_primary');
  if(id==='scales')return assetUrl('premium/quest_voices'); // Grave, medio, agudo: arte musical propio; distinto de Cuatro nombres
  if(id==='names')return assetUrl('premium/quest_names');
