@@ -7,7 +7,8 @@ export function installP493Interaction(game){
  document.body.append(talk);
  const advance=()=>{
   if(!game.people?.talk||game.people.talk.phase!=='hold')return;
-  game.input?.pressed?.add('interact');
+  if(game.input?._down?.add)game.input._down.add('interact');
+  else game.input?.pressed?.add('interact');
  };
  const onTouch=e=>{e.preventDefault();e.stopPropagation();advance();};
  talk.addEventListener('pointerdown',onTouch);
