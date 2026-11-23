@@ -1,0 +1,242 @@
+name: HIGHFLY P4.9.9 - S23 Native Quality Performance isolated Pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [p499-s23-native-gpu-20261123]
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-gitpages-p499-isolated-release
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install approved icon image tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Internal simulation / original gameplay regression
+        run: |
+          npm run qa:static
+          node --check src/highfly/premium-rpg.mjs
+          node --check src/highfly/p49-hunt-world.mjs
+          node --check src/highfly/p491-cc0-creatures.mjs
+          node --check src/highfly/p492-kaykit-people.mjs
+          node --check src/highfly/p492-radar.mjs
+          node --test tests/p492-npc-radar-camera.test.mjs
+          node --check src/highfly/p493-item-transactions.mjs
+          node --check src/highfly/p493-interaction.mjs
+          node --check src/highfly/p493-portal.mjs
+          node --test tests/p493-regression.test.mjs
+          node --check src/highfly/p494-stair-guard.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node --check src/highfly/qa-p494-visual-entry.mjs
+          node --test tests/p494-wildlife-corpse-stairs.test.mjs
+          node --check src/highfly/p495-stair-route.mjs
+          node --check src/highfly/qa-p495-stairs.mjs
+          node --test tests/p495-matrix-stair-corpse.test.mjs
+          node --test tests/p496-camera-corpse.test.mjs
+          node --test tests/p497-native-quality.test.mjs
+          node --test tests/p498-android-resolution.test.mjs
+          node --test tests/p499-native-gpu.test.mjs
+          node --check src/highfly/p499-native-profiler.mjs
+          node --check src/highfly/p498-android-resolution.mjs
+          node --check src/highfly/p49-hunt-data.mjs
+          node --check src/highfly/premium-assets.mjs
+          npm run qa:gameplay
+          node --test tests/p491-cc0-animals.test.mjs
+          node --test tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs tests/itemization.test.mjs tests/system-dialog.test.mjs tests/p41-bag-loot.test.mjs tests/p42-ui.test.mjs tests/p43-fidelity.test.mjs tests/p44-ui.test.mjs tests/p45-scrolling.test.mjs tests/p46-inventory-materials.test.mjs tests/p47-corrections.test.mjs tests/p47b-approved-art-in-app.test.mjs tests/p48-gear-stacking-frame.test.mjs tests/p481-copper-only.test.mjs tests/p482-all-three-ingots.test.mjs tests/p49-three-hunts.test.mjs
+      - name: Build REAL Unsung P4.9.9 game at separate GitHub Pages subpath
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p499/ npm run build
+          npm run qa:dist
+          test -s .work/unsung/public/highfly/rarity/items/hp_potion__poco-comun.webp
+          test -s .work/unsung/public/highfly/rarity/items/upgrade_stone__raro.webp
+          test -s .work/unsung/public/highfly/rarity/items/upgrade_stone_advanced__epico.webp
+          test -s .work/unsung/public/highfly/user-icons/items/coal.webp
+          test -s .work/unsung/public/highfly/user-icons/items/ore_copper.webp
+          test -s .work/unsung/src/highfly/p49-hunt-world.mjs
+          for id in wolf boar crab; do
+            test -s "dist/models/hf-p491-$id.glb"
+            test -s ".work/unsung/public/models/hf-p491-$id.glb"
+          done
+          test -s .work/unsung/src/highfly/p491-cc0-creatures.mjs
+          test -s .work/unsung/src/highfly/p49-hunt-data.mjs
+          test -s .work/unsung/src/highfly/p492-kaykit-people.mjs
+          test -s .work/unsung/src/highfly/p492-radar.mjs
+          test -s .work/unsung/src/highfly/p493-interaction.mjs
+          test -s .work/unsung/src/highfly/p493-portal.mjs
+          test -s .work/unsung/src/highfly/p493-interaction.css
+          test -s .work/unsung/src/highfly/p494-stair-guard.mjs
+          test -s .work/unsung/src/highfly/p494-cartographic-map.mjs
+          test -s .work/unsung/src/highfly/p495-stair-route.mjs
+          test -s .work/unsung/src/highfly/p496-stair-camera.mjs
+          test -s .work/unsung/src/highfly/p498-android-resolution.mjs
+          test -s .work/unsung/src/highfly/p499-native-profiler.mjs
+          grep -q 'HF_S23_NATIVE_TAA' .work/unsung/src/engine/post.js
+          grep -q 'installP499GpuDiagnostics' .work/unsung/src/main.js
+          grep -q 'installAndroidPhysicalResolution' .work/unsung/src/main.js
+          grep -q 'function resize() { __hfPixelLab.resize(); }' .work/unsung/src/main.js
+          grep -q 'stairAwareCameraFloor' .work/unsung/src/game/camera.js
+          grep -q '__hfCorpsePending' .work/unsung/src/game/enemies.js
+          test -s dist/highfly/p496/wolf_pelt.svg
+          test -s .work/unsung/scripts/qa-p495-stairs.mjs
+          test -s .work/unsung/src/game/collision.js
+          grep -q 'p495StairTread' .work/unsung/src/game/collision.js
+          grep -q 'p495StairTraverse' .work/unsung/src/game/player.js
+          grep -q 'updateMatrixWorld(true)' .work/unsung/src/highfly/p491-cc0-creatures.mjs
+          grep -q 'updateMatrixWorld(true)' .work/unsung/src/highfly/p49-hunt-world.mjs
+          test -s .work/unsung/qa-p494-visual.html
+          test -s dist/highfly/p494/wolf_pelt.svg
+          test -s dist/highfly/p494/boar_tusk.svg
+          test -s dist/highfly/p494/crab_shell.svg
+          test -s dist/highfly/p494/quest_wolf.svg
+          # Function names are intentionally minified in the final JS bundle.
+          # Verify wired source, and verify stable runtime properties in bundled JS.
+          grep -q 'p495StairTraverse' .work/unsung/src/game/player.js
+          grep -q 'stairDownstep' .work/unsung/src/highfly/p494-stair-guard.mjs
+          grep -Rql 'corpseLootPending' dist/assets
+          grep -q 'paintCartographicBackdrop(ctx,g,W,H,scale)' .work/unsung/src/highfly/p492-radar.mjs
+          grep -q 'highfly/p494/quest_wolf.svg' .work/unsung/src/highfly/premium-assets.mjs
+          grep -Rql 'HIGHFLY_PORTAL_AURA_' dist/assets
+          grep -Rql 'TOCAR PARA CONTINUAR' dist/assets
+          grep -Rql 'HIGHFLY_KAYKIT_ORIGINAL_' dist/assets
+          grep -Rql 'hf-radar' dist/assets
+          "$HIGHFLY_ICON_PYTHON" scripts/qa-p46-materials.py .work/unsung/public/highfly/user-icons .work/unsung/public/highfly/rarity
+          "$HIGHFLY_ICON_PYTHON" scripts/qa-p47b-approved-icons.py .work/unsung/public/highfly/user-icons assets/highfly/p47/source-12-icons.jpg .work/unsung/public/highfly/rarity
+          "$HIGHFLY_ICON_PYTHON" scripts/qa-p481-copper-ingot.py .work/unsung/public/highfly/user-icons .work/unsung/public/highfly/rarity assets/highfly/p481/copper-triple.webp.b64
+          "$HIGHFLY_ICON_PYTHON" scripts/qa-p482-three-ingots.py .work/unsung/public/highfly/user-icons .work/unsung/public/highfly/rarity assets/highfly/p481/copper-triple.webp.b64
+          test -s .work/unsung/public/highfly/user-icons/professions/desuello.webp
+          test -s .work/unsung/public/highfly/user-icons/professions/ingenieria.webp
+          test -s .work/unsung/public/highfly/brand/official-rpg-fitness.webp
+          test -s .work/unsung/public/highfly/rarity/weapons/sword__mitico.webp
+          # P4.9.6 is included in the real production JS bundle, not just source.
+          grep -Rql 'hf49:' dist/assets
+          grep -Rql 'Pinzas entre las redes' dist/assets
+          test -s dist/index.html
+          grep -q '/HIGHFLY-FREE-FOUNDATION/preview-p499/' dist/index.html
+          cp -a dist "$RUNNER_TEMP/highfly-p495-game"
+      - name: Real-game Chromium and inventory interaction gates
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
+        run: |
+          cd .work/unsung
+          npm install --no-save --no-package-lock playwright@1.57.0 pngjs@7.0.0 --no-audit --no-fund
+          ./node_modules/.bin/playwright install chromium --with-deps
+          # Real mobile landscape RPG menu smoke must pass before deployment.
+          node src/highfly/qa-p495-stairs.mjs
+          node scripts/qa-rpg-browser.mjs
+          node scripts/qa-p494-visual-browser.mjs
+          test -s qa-p494-real-wildlife.png
+          test -s qa-p494-real-wildlife.json
+          # Fully integrated world still requires verification on a real device.
+          # The manual-matrix framebuffer and actual BVH stair simulations PASS first.
+          # The whole-map 3D hunting smoke is available separately for hardware/
+          # GPU-backed testing. Headless SwiftShader could not load the native
+          # Unsung world within 115 seconds; do NOT claim that test passed.
+          test -s scripts/qa-p49-browser.mjs
+          echo "::warning::P4.9.9 - Real S23 FPS comparison and temporal edge quality remain required."
+      - name: Restore LAST APPROVED P4.8 GitHub Pages release BYTE-FOR-BYTE
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45254924429
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/highfly-approved-pages-artifact
+      - name: Prepare separate P4.9.6 URL without touching approved root or preview-v3
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/highfly-approved-site"
+          tar -xf "$RUNNER_TEMP/highfly-approved-pages-artifact/artifact.tar" -C "$RUNNER_TEMP/highfly-approved-site"
+          test -s "$RUNNER_TEMP/highfly-approved-site/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-v3/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p41/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p42/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p43/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p44/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p45/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p46/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p47/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p47b/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p48/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p482/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p494/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p495/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p496/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p497/index.html"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p498/index.html"
+          ROOT_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/index.html" | cut -d' ' -f1)"
+          V3_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-v3/index.html" | cut -d' ' -f1)"
+          P41_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p41/index.html" | cut -d' ' -f1)"
+          P42_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p42/index.html" | cut -d' ' -f1)"
+          P43_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p43/index.html" | cut -d' ' -f1)"
+          P44_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p44/index.html" | cut -d' ' -f1)"
+          P45_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p45/index.html" | cut -d' ' -f1)"
+          P46_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p46/index.html" | cut -d' ' -f1)"
+          P47_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p47/index.html" | cut -d' ' -f1)"
+          P47B_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p47b/index.html" | cut -d' ' -f1)"
+          P48_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p48/index.html" | cut -d' ' -f1)"
+          P482_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p482/index.html" | cut -d' ' -f1)"
+          P49_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html" | cut -d' ' -f1)"
+          P491_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html" | cut -d' ' -f1)"
+          P492_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html" | cut -d' ' -f1)"
+          P493_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html" | cut -d' ' -f1)"
+          P494_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p494/index.html" | cut -d' ' -f1)"
+          P496_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p496/index.html" | cut -d' ' -f1)"
+          P497_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p497/index.html" | cut -d' ' -f1)"
+          P498_HASH="$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p498/index.html" | cut -d' ' -f1)"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p496/index.html"
+          test ! -e "$RUNNER_TEMP/highfly-approved-site/preview-p499"
+          mkdir "$RUNNER_TEMP/highfly-approved-site/preview-p499"
+          cp -a "$RUNNER_TEMP/highfly-p495-game/." "$RUNNER_TEMP/highfly-approved-site/preview-p499/"
+          test -s "$RUNNER_TEMP/highfly-approved-site/preview-p499/index.html"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/index.html" | cut -d' ' -f1)" = "$ROOT_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-v3/index.html" | cut -d' ' -f1)" = "$V3_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p41/index.html" | cut -d' ' -f1)" = "$P41_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p42/index.html" | cut -d' ' -f1)" = "$P42_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p43/index.html" | cut -d' ' -f1)" = "$P43_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p44/index.html" | cut -d' ' -f1)" = "$P44_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p45/index.html" | cut -d' ' -f1)" = "$P45_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p46/index.html" | cut -d' ' -f1)" = "$P46_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p47/index.html" | cut -d' ' -f1)" = "$P47_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p47b/index.html" | cut -d' ' -f1)" = "$P47B_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p48/index.html" | cut -d' ' -f1)" = "$P48_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p482/index.html" | cut -d' ' -f1)" = "$P482_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p49/index.html" | cut -d' ' -f1)" = "$P49_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p491/index.html" | cut -d' ' -f1)" = "$P491_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p492/index.html" | cut -d' ' -f1)" = "$P492_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p493/index.html" | cut -d' ' -f1)" = "$P493_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p494/index.html" | cut -d' ' -f1)" = "$P494_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p496/index.html" | cut -d' ' -f1)" = "$P496_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p497/index.html" | cut -d' ' -f1)" = "$P497_HASH"
+          test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p498/index.html" | cut -d' ' -f1)" = "$P498_HASH"
+          touch "$RUNNER_TEMP/highfly-approved-site/.nojekyll"
+          mv "$RUNNER_TEMP/highfly-approved-site" dist-pages
+          echo "Approved root and P4.9.8 preserved; only /preview-p499/ added."
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish approved site + existing previews + new P4.9.9 preview
+        id: deployment
+        uses: actions/deploy-pages@v4
