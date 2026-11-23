@@ -37,8 +37,10 @@ try{
   assert.equal(entry.unlit,true,id+' will render black inside unlit Unsung world');
  }
  await delay(800);
+ const corpse=await page.evaluate(()=>window.__p495ProbeCorpse());
+ assert.equal(corpse.ok,true,'Corpse + USAR transaction failed: '+JSON.stringify(corpse));
  await page.screenshot({path:'qa-p494-real-wildlife.png'});
- fs.writeFileSync('qa-p494-real-wildlife.json',JSON.stringify({report,errors},null,2));
+ fs.writeFileSync('qa-p494-real-wildlife.json',JSON.stringify({report,corpse,errors},null,2));
  assert.deepEqual(errors.filter(x=>/TypeError|ReferenceError|SyntaxError|WebGL/.test(x)),[]);
  console.log('HIGHFLY P494 REAL THREE MODEL QA PASS',JSON.stringify(report));
 }finally{await browser?.close();server.kill('SIGTERM');}
