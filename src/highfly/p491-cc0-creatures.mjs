@@ -49,6 +49,25 @@ export function makeLicensedCreature(id,gltf){
  if(!gltf||!CLIPS[id])return null;
  const model=cloneSkeleton(gltf.scene);
  model.name='HIGHFLY_LICENSED_ANIMATED_'+id.toUpperCase();
+ // Unsung has a custom lighting pipeline and no general Three.js lights.
+ // Convert skinned PBR meshes to UNLIT texture-preserving materials, as we
+ // already do for the visible KayKit hero. Preserve bone skinning / UVs.
+ let visibleMeshes=0;
+ model.traverse(mesh=>{
+  if(!mesh.isMesh)return;
+  mesh.visible=true;mesh.frustumCulled=false;visibleMeshes++;
+  const toUnlit=base=>new THREE.MeshBasicMaterial({
+   map:base?.map??null,
+   color:base?.color?.clone?.()??new THREE.Color(0xffffff),
+   side:THREE.DoubleSide,
+   transparent:!!base?.transparent,
+   opacity:base?.opacity??1,
+   alphaTest:base?.alphaTest??0,
+   depthWrite:true
+  });
+  mesh.material=Array.isArray(mesh.material)?mesh.material.map(toUnlit):toUnlit(mesh.material);
+ });
+ if(visibleMeshes<1)throw Error('HIGHFLY '+id+' rig has no visible mesh');
  const box=new THREE.Box3().setFromObject(model);
  const h=box.getSize(new THREE.Vector3()).y;
  if(!Number.isFinite(h)||h<0.00001)throw Error(id+' invalid rig dimensions');
@@ -66,7 +85,7 @@ export function makeLicensedCreature(id,gltf){
   if(['attack','hurt','death'].includes(label)){a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;}
   actions[label]=a;
  }
- const avatar={id,root,mixer,actions,state:null,model,disposed:false};
+ const avatar={id,root,mixer,actions,state:null,model,disposed:false,visibleMeshes,corpseAvailable:false};
  setCreatureAction(avatar,'idle');
  return avatar;
 }
@@ -87,7 +106,7 @@ export function animateLicensedCreature(avatar,enemy,dt,near=true){
  else if(enemy.state==='stagger'&&avatar.actions.hurt)action='hurt';
  else if(moving)action=enemy.vel?.lengthSq?.()>8&&avatar.actions.run?'run':'walk';
  setCreatureAction(avatar,action);
- avatar.root.visible=near&&(!(!enemy.alive&&enemy.t>2.8));
+ avatar.root.visible=near&&(enemy.alive||avatar.corpseAvailable||enemy.t<=2.8);
  avatar.root.position.copy(enemy.pos);
  avatar.root.rotation.y=enemy.yaw;
  avatar.mixer.update(Math.min(0.06,Math.max(0,Number(dt)||0)));
@@ -99,5 +118,6 @@ export function disposeLicensedCreature(avatar){
  // Geometry, textures and original GLTF materials are SHARED by all clones.
  // NEVER dispose them on individual respawns; keep them cached for all 9 mobs.
  avatar.mixer.uncacheRoot(avatar.model);
+ avatar.model.traverse(mesh=>{if(mesh.isMesh){for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat?.dispose?.();}});
  avatar.root.removeFromParent();
 }
