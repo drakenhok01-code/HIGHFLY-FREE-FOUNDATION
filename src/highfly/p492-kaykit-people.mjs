@@ -17,7 +17,11 @@ export function installHighflyKayKitPeople(game){
  const readyPromise=new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb')
   .then(gltf=>{
    if(disposed)return 0;
-   const profile=stylizeUniversalKayKit(gltf);
+   const rawBounds=new THREE.Box3().setFromObject(gltf.scene);
+   const naturalHeight=rawBounds.getSize(new THREE.Vector3()).y;
+   if(!Number.isFinite(naturalHeight)||naturalHeight<1)throw Error('KayKit FREE actual height invalid');
+   // Clone AUTHENTIC unmodified rig first. Old clone-after-retarget path can
+   // break the skinned mesh visibility and must not hide the working native NPC.
    for(const [i,n] of native.entries()){
     try{
      const model=cloneSkeleton(gltf.scene);
@@ -25,7 +29,8 @@ export function installHighflyKayKitPeople(game){
      model.traverse(m=>{
       if(!m.isMesh)return;
       m.frustumCulled=false;
-      if(/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(m.name)){m.visible=false;return;}
+      m.visible=/^Knight_(Body|Head|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(m.name);
+      if(!m.visible)return;
       const base=Array.isArray(m.material)?m.material[0]:m.material;
       m.material=new THREE.MeshBasicMaterial({
        map:base?.map??null,color:m.name.includes('Head')?0xffffff:TINTS[i%TINTS.length],
@@ -33,11 +38,14 @@ export function installHighflyKayKitPeople(game){
       });
      });
      const bounds=new THREE.Box3().setFromObject(model);
-     const scale=1.82/profile.naturalHeight;
+     const scale=1.82/naturalHeight;
      const holder=new THREE.Group();
      holder.name='HIGHFLY_PEOPLE_VISUAL_'+n.def.id;
      holder.scale.setScalar(scale);
-     model.position.y-=bounds.min.y;
+     model.position.set(-(bounds.min.x+bounds.max.x)*.5,-bounds.min.y,
+       -(bounds.min.z+bounds.max.z)*.5);
+     const parts=[];model.traverse(m=>{if(m.isMesh&&m.visible)parts.push(m);});
+     if(parts.length!==6)throw Error('KayKit NPC visible parts != 6: '+parts.length);
      holder.add(model);n.root.add(holder);
      const mixer=new THREE.AnimationMixer(model);
      const idle=gltf.animations.find(c=>c.name==='Idle');
