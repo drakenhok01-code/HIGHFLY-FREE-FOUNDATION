@@ -115,6 +115,10 @@ export function animateLicensedCreature(avatar,enemy,dt,near=true){
  avatar.root.position.copy(enemy.pos);
  avatar.root.rotation.y=enemy.yaw;
  avatar.mixer.update(Math.min(0.06,Math.max(0,Number(dt)||0)));
+ // Unsung Pipeline.scene.matrixWorldAutoUpdate=false. Its renderer does NOT
+ // propagate transforms. The GLB root, skinned bone matrices and corpse pose
+ // must be explicitly committed every frame after animation.
+ avatar.root.updateMatrixWorld(true);
 }
 export function disposeLicensedCreature(avatar){
  if(!avatar||avatar.disposed)return;
