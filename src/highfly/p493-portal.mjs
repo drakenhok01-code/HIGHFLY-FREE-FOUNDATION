@@ -13,7 +13,7 @@ export function installP493PortalVisuals(game){
   const group=new THREE.Group();group.name='HIGHFLY_PORTAL_AURA_'+n.id;
   group.position.set(n.x,n.y+3.1,n.z);group.rotation.y=.25;
   const a=new THREE.Mesh(geo,violet),c=new THREE.Mesh(inner,cyan);
-  group.add(a,c);stage.add(group);
+  group.add(a,c);stage.add(group);group.updateMatrixWorld(true);
   actors.push({n,group,a,c});
  }
  let count=0,prior=game.update,active=true;
@@ -27,6 +27,7 @@ export function installP493PortalVisuals(game){
    p.a.rotation.z=count*.21;p.c.rotation.z=-count*.33;
    const pulse=1+Math.sin(count*2+p.n.x)*.06;
    p.group.scale.setScalar(pulse);
+   p.group.updateMatrixWorld(true);
   }
   return v;
  };
