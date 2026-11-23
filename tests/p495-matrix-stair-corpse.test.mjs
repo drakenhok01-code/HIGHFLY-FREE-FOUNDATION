@@ -32,6 +32,6 @@ test('P495 builder removes forced position skipping and uses native stair BVH',(
  assert.match(b,/p495StairTraverse/);
  assert.match(b,/p495OnActualStairs/);
  assert.match(b,/src\/game\/collision\.js/);
- assert.match(b,/src\/highfly\/p495-stair-route\.mjs/);
+ assert.match(b,/p495-stair-route\.mjs/);
  assert.doesNotMatch(b,/const stair=stairDownstep\(W/);
 });
