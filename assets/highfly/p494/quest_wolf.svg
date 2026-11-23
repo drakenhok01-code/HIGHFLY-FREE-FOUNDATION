@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400"><defs><linearGradient id="sky" x2=".8" y2="1"><stop stop-color="#121328"/><stop offset=".55" stop-color="#38425d"/><stop offset="1" stop-color="#656985"/></linearGradient><radialGradient id="moon"><stop stop-color="#fff0cf"/><stop offset="1" stop-color="#dbcae1"/></radialGradient><linearGradient id="ground" x2="0" y2="1"><stop stop-color="#2b4144"/><stop offset="1" stop-color="#101d29"/></linearGradient></defs>
+<rect width="720" height="400" fill="url(#sky)"/><circle cx="546" cy="93" r="68" fill="url(#moon)" opacity=".9"/><circle cx="546" cy="93" r="87" fill="none" stroke="#cfc4d3" opacity=".18" stroke-width="2"/>
+<path d="M0 243 L81 187 L133 222L216 155L323 242L420 184L557 230L660 168L720 212V400H0Z" fill="#293442"/><path d="M0 280L84 218L181 258L288 214L390 275L510 212L649 249L720 217V400H0Z" fill="#1b2937"/>
+<g fill="#111f2c"><path d="M45 333V151l-41 82h24l-37 76h90l-34-78h24Z M119 345V118L66 222h35l-39 84h117l-43-84h29Z M251 343V96l-56 114h36l-52 111h145l-55-112h37Z M402 343V117l-52 106h30l-47 97h136l-49-97h34Z M655 345V99l-60 123h39l-45 92h145l-53-95h41Z"/></g>
+<path d="M0 310Q96 277 188 312Q311 278 392 319Q501 274 593 312Q664 287 720 304V400H0Z" fill="url(#ground)"/>
+<path d="M212 326L238 280L257 302L276 271L305 292L332 283L354 313L392 332L365 347L331 337L312 363L287 350L253 359Z" fill="#202c36" stroke="#bdc0c9" stroke-width="3"/>
+<path d="M250 295L245 255L274 278L300 259L302 298L327 309L303 330L276 323L246 330L227 312Z" fill="#6d7984"/><path d="M246 299L260 303M290 303L303 300" stroke="#f4d9aa" stroke-width="4"/><path d="M273 320L283 320L278 327Z" fill="#171e2b"/>
+<g opacity=".28" stroke="#e1dfdd" stroke-width="2"><path d="M30 370Q180 340 330 372T720 350" fill="none"/><path d="M5 386Q164 354 306 385T706 374" fill="none"/></g>
+<rect x="11" y="11" width="698" height="378" rx="15" fill="none" stroke="#d6b87f" stroke-width="5"/>
+<text x="44" y="46" fill="#f5e8d1" font-size="16" font-family="serif" letter-spacing="4">HIGHFLY · AETHERIA</text>
+<text x="44" y="380" fill="#f3d7a6" font-size="27" font-family="serif" font-weight="bold" letter-spacing="2">AULLIDOS EN EL BOSQUE</text></svg>
