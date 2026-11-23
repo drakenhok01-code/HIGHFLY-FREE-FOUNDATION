@@ -34,7 +34,7 @@ test('CPU FPS and GPU queries are asynchronous: no forced GPU fence or state mut
  const pipe={renderer:{getContext:()=>gl,info:{render:{calls:47,triangles:153000}}},
   render(dt){renders++;assert.equal(dt,1/60);return 123;}};
  const win={location:{search:''}};
- const monitor=installP499GpuDiagnostics(pipe,{win,doc:{},perf:fakePerf,search:''});
+ const monitor=installP499GpuDiagnostics(pipe,{win,doc:{},perf:fakePerf,search:'?hfperf=measure'});
  for(let i=0;i<100;i++){t+=16.6;assert.equal(pipe.render(1/60),123)}
  assert.equal(renders,100);
  assert.ok(monitor.stats.fps>=55 && monitor.stats.fps<=63);
