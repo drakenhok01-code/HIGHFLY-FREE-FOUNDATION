@@ -29,15 +29,9 @@ export function abilityVector(dx,dy,deadzone=9){
  if(!Number.isFinite(length)||length<deadzone)return null;
  return {x:dx===0?0:dx/length,y:dy===0?0:-dy/length};
 }
-export function resolveHighflyContext(p,game=null){
+export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
- const nearNative=game?.people?.near?.();
- if(nearNative)return {action:'interact',label:'HABLAR'};
- for(const spot of Object.values(game?.__highflyHunts?.spots??{})){
-  const d=Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z);
-  if(d<3.4&&Math.abs(p.pos.y-spot.npc.y)<3.5)return {action:'interact',label:'HABLAR'};
- }
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.y);
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
@@ -531,7 +525,15 @@ export function applyHighflyTouch(input){
  }
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
  t.radar?.update();
- const context=resolveHighflyContext(globalThis.__game?.player,globalThis.__game);
+ let context=resolveHighflyContext(globalThis.__game?.player);
+ const nearby=globalThis.__game?.people?.near?.();
+ if(nearby)context={action:'interact',label:'HABLAR'};
+ else for(const spot of Object.values(globalThis.__game?.__highflyHunts?.spots??{})){
+  const hero=globalThis.__game?.player;
+  if(hero&&Math.hypot(hero.pos.x-spot.npc.x,hero.pos.z-spot.npc.z)<3.4&&Math.abs(hero.pos.y-spot.npc.y)<3.5){
+   context={action:'interact',label:'HABLAR'};break;
+  }
+ }
  t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;
