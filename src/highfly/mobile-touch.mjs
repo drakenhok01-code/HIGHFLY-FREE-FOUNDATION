@@ -2,7 +2,7 @@
 export const isTouchDevice=()=>/Android/i.test(globalThis.navigator?.userAgent??'')||!!globalThis.matchMedia?.('(pointer:coarse)')?.matches;
 
 import {installHudEditor} from '../highfly/hud-editor.mjs';
-import {installHighflyRadar} from './p492-radar.mjs';
+import {installHighflyRadar} from '../highfly/p492-radar.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
 import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 import {terrainWallContact} from '../highfly/wall-physics.mjs';
