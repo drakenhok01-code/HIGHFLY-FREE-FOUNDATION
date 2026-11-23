@@ -15,7 +15,7 @@ test('P495: precise stair corridor supports up and down without bypassing flank 
   floorBelow:(x,y,z)=>x<-143?16:5,raycast:()=>99};
  assert.equal(allowCliffCapsule(world,bottom,top).builtStair,true);
  assert.equal(allowTerrainTraverse(world,top,bottom).builtStair,true);
- assert.equal(allowCliffCapsule(world,{x:-118,y:5,z:-450},{x:-173,y:8,z:-450}).builtStair,true);
+ assert.notEqual(allowCliffCapsule(world,{x:-118,y:5,z:-450},{x:-173,y:8,z:-450}).builtStair,true);
 });
 test('P495: P494 descending stair safety still blocks wall ray and > .72m drops',()=>{
  const world={floorBelow:(x)=>x>.25?9.55:10,groundHeight:()=>8,raycast:()=>10};
