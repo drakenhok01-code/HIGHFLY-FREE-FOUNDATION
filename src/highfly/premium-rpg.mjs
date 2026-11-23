@@ -280,7 +280,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    blank('Este material se utiliza en Fabricación.');
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
     categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat,local.category===cat)).join('')+
-    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+distinctInventoryItems(bag,prof().inventory)+'</strong></div>'+ 
+    '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+distinctInventoryItems(bag,prof().inventory)+'</strong></div><div class="hf-rpg-space">MONEDAS <strong>'+numeric(bag.coins??0)+'</strong></div>'+  
      '<div class="hf-p41-loot-lab"><b>✦ DEPURACIÓN TEMPORAL · BOTÍN</b><small>Para pruebas internas. También podés recoger drops reales en el mundo.</small>'+ 
      button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+button('◆ MUESTRAS','data-hf-action="p41:loot:muestras"')+'</div>'+ 
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
@@ -295,6 +295,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
       '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
+      (chosen?'<div class="hf-rpg-mini-actions hf-p493-bag-actions">'+button('DESCARTAR','data-hf-action="bag:discard"')+(bagItemPrice(chosen.id,trait)>0?button('VENDER','data-hf-action="bag:sell"'):'')+'</div>':'')+
       choices:blank('No hay objetos en esta categoría.')),'hf-rpg-right-panel')+'</div>';
  }
  function skills(){
@@ -477,6 +478,14 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
  const bodies={personaje:character,atributos:attributes,bolsa:bagView,habilidades:skills,oficios:professions,forja:forge,misiones:quests,mapa:map,opciones:options};
+ function bagConfirmLayer(){
+  const q=local.bagIntent;if(!q)return '';
+  const def=ITEM_DEFS[q.id],owned=Math.max(0,itemCount(q.id,prof(),bag));
+  const canAll=owned>1&&!EQUIP_ITEM_DEFS[q.id],price=q.action==='sell'?bagItemPrice(q.id,gearTraitAt(bag,'bag',q.id,q.variantIndex)):0;
+  return '<div class="hf-p493-confirm-mask" role="dialog" aria-label="Confirmar operación en Bolsa"><section><b>CONFIRMAR '+(q.action==='sell'?'VENTA':'DESCARTE')+'</b><p>'+safe(def?.name??q.id)+'</p><small>'+
+   (q.action==='sell'?'Recibís '+price+' monedas por unidad.':'Este objeto se eliminará definitivamente.')+'</small><div>'+button('CANCELAR','data-hf-bag="cancel"')+
+   button('UNA UNIDAD','data-hf-bag="confirm:one"','is-primary')+(canAll?button('TODAS ('+owned+')','data-hf-bag="confirm:all"'):'')+'</div></section></div>';
+ }
  function render(){
   if(!local.opened)return;
   if(local.tab==='misiones')local.questScroll=root.querySelector('.hf-rpg-quest-list')?.scrollTop??local.questScroll;
@@ -486,7 +495,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<nav class="hf-rpg-nav" aria-label="Pestañas del RPG">'+NAV.map(([id,icon,name])=>'<button data-hf-tab="'+id+'" type="button" class="'+(id===local.tab?'is-active':'')+'"><img class="hf-rpg-nav-icon hf-user-nav-icon" alt="" aria-hidden="true" src="'+assetUrl('user-icons/navigation/'+id)+'"/><span>'+name+'</span></button>').join('')+'</nav>'+
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+ (local.toast?'<div class="hf-p41-toast" role="status" aria-live="polite">'+safe(local.toast)+'</div>':'')+
-   '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer();
+   '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer()+bagConfirmLayer();
   // Restore scroll state across selection/render updates. No inaccessible
   // information at the end of bag/forge/skills panels.
   const scrollTargets={
@@ -593,6 +602,20 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
  });
  root.addEventListener('click',e=>{
   const b=e.target?.closest?.('button');if(!b)return;
+  if(local.bagIntent){
+   const action=b.dataset.hfBag;
+   if(action==='cancel'){local.bagIntent=null;render();return;}
+   if(action?.startsWith('confirm:')){
+    const q=local.bagIntent;
+    const amount=action.endsWith('all')?Math.max(0,itemCount(q.id,prof(),bag)):1;
+    const result=transactBagItem(bag,prof(),q.id,q.action,amount,q.variantIndex);
+    local.bagIntent=null;
+    if(result.ok){save();p()?._hfProfessionSave?.();local.selectedGearIndex=0;}
+    message(result.ok?(q.action==='sell'?'Vendiste ':'Descartaste ')+result.name+' ×'+result.count+(result.earned?' · +'+result.earned+' monedas':''):result.reason);
+    return;
+   }
+   return; // No click-through beneath the confirmation.
+  }
   if(local.system){
    const sys=b.dataset.hfSystem;
    if(b.dataset.hfSystemGear){
@@ -674,6 +697,11 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const action=b.dataset.hfAction??'';
   if(action==='intro')return;
   if(action==='close'){close();return;}
+  if(action==='bag:discard'||action==='bag:sell'){
+   const rows=allItems(),owned=rows.find(x=>x.id===local.selected)??rows[0];
+   if(owned){local.bagIntent={id:owned.id,action:action.slice(4),variantIndex:local.selectedGearIndex};render();}
+   return;
+  }
   if(action==='edit-hud'){
    close();requestAnimationFrame(()=>game.input?.highflyTouch?.hudEditor?.toggle?.());
    return;
