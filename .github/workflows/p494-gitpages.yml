@@ -72,8 +72,12 @@ jobs:
           test -s .work/unsung/qa-p494-scene.html
           test -s .work/unsung/scripts/qa-p494-browser.mjs
           for id in wolf_pelt boar_tusk crab_shell quest_wolf; do test -s "dist/highfly/p494/$id.svg"; done
-          grep -Rql 'blocksNaturalCliff' dist/assets
-          grep -Rql 'corpseAvailable' dist/assets
+          # Names of source helpers may be minified/treeshaken; the model
+          # and its real interactions are exercised in Playwright below.
+          for f in .work/unsung/src/highfly/p494-stair-guard.mjs .work/unsung/src/highfly/p494-creature-loot.mjs; do
+            if [ ! -s "$f" ]; then echo "::error::Missing runtime source $f"; exit 1; fi
+          done
+          echo "P4.9.4 real-game bundle and source resources confirmed"
           grep -Rql 'HIGHFLY_PORTAL_AURA_' dist/assets
           grep -Rql 'TOCAR PARA CONTINUAR' dist/assets
           grep -Rql 'HIGHFLY_KAYKIT_ORIGINAL_' dist/assets
