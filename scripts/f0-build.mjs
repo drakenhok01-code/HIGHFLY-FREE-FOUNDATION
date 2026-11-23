@@ -359,6 +359,7 @@ for(const [id,m] of Object.entries(approvedSpecies)){
 }
 
 // Every wildlife icon is an independent original HIGHFLY vector painting.
+copy(path.join(ROOT,'assets/highfly/p496/wolf_pelt.svg'),loc('public/highfly/p496/wolf_pelt.svg'));
 for(const id of ['wolf_pelt','boar_tusk','crab_shell','quest_wolf']){
  const source=path.join(ROOT,'assets/highfly/p494/'+id+'.svg');
  const dest=loc('public/highfly/p494/'+id+'.svg');
