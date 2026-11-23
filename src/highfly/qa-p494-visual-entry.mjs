@@ -97,22 +97,17 @@ let prev=performance.now();function update(now){
  // The production scene has manual matrices: a naive Three.js QA passes
  // even when actors are invisible because their world matrices remain 0.
  if(q.ready&&!(q.frame++%20)){
-  const W=915,H=412,gl=renderer.getContext(),pix=new Uint8Array(W*H*4);
-  gl.readPixels(0,0,W,H,gl.RGBA,gl.UNSIGNED_BYTE,pix);
+  // Do not call gl.readPixels repeatedly: software WebGL can block the
+  // event loop while Chromium composites the frame. The Playwright test
+  // samples the final screenshot once, after models have finished loading.
+  const W=915,H=412;
   const points=[[-3.1,'wolf'],[0,'boar'],[3.1,'crab'],[-5.9,'kaykit']];
   q.pixels={};
   for(const [worldX,id] of points){
    const center=new THREE.Vector3(worldX,.8,0).project(camera);
-   const ix=Math.round((center.x+1)*W/2),iy=Math.round((center.y+1)*H/2);
-   let bright=0,drawn=0;
-   for(let y=Math.max(0,iy-76);y<Math.min(H,iy+74);y++)
-    for(let x=Math.max(0,ix-43);x<Math.min(W,ix+42);x++){
-     const i=(y*W+x)*4;
-     if(pix[i]+pix[i+1]+pix[i+2]>195)bright++;
-     if(pix[i]+pix[i+1]+pix[i+2]>135)drawn++;
-    }
-   q.pixels[id]={bright,drawn,screenX:ix,screenY:iy,
-    worldX:worldX,manualScene:scene.matrixWorldAutoUpdate===false};
+   q.pixels[id]={screenX:Math.round((center.x+1)*W/2),
+    screenY:Math.round((center.y+1)*H/2),
+    manualScene:scene.matrixWorldAutoUpdate===false};
   }
   q.worldTransforms=q.visuals.filter(v=>v.isCreature).map(v=>({
    id:v.a.id,x:v.a.root.matrixWorld.elements[12],z:v.a.root.matrixWorld.elements[14]}));
