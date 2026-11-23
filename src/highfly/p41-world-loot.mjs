@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import {userIconUrl} from './premium-assets.mjs';
 import {receiveP41WorldPickup} from './p41-loot.mjs';
 import {saveRpgState} from './rpg-core.mjs';
+import {corpseLootFor} from './p494-creature-loot.mjs';
 
 const GRADES={Común:0xEAF3FF,'Poco común':0x2EFF80,Raro:0x168EFF,Épico:0xBA40FF,Legendario:0xFFB332,Mítico:0xFF324C};
 export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
@@ -43,7 +44,10 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   if(!enemy||!enemy.pos)return;
   const boss=!!enemy.def?.boss;
   const kind=String(enemy.kind??'').toLowerCase();
-  // Unique HIGHFLY P4.9 species drops; legacy Unsung foes keep their old behavior.
+  // HIGHFLY animated wildlife is looted from its actual physical corpse.
+  // Never spawn a second floating icon or scatter objects for these species.
+  if(corpseLootFor(enemy))return;
+  // Legacy Unsung constructs may still keep their original floating pickups.
   const special={'hf_wolf':'wolf_pelt','hf_boar':'boar_tusk','hf_crab':'crab_shell'};
   const itemId=special[kind]??(boss?'training_shield':/hound|wolf|beast/.test(kind)?'leather':'ore');
   const rarity=boss?'Raro':'Común';
@@ -101,7 +105,18 @@ export function installP41WorldLoot(game,bag,getProfession,onUpdate=()=>{}){
   }catch(e){console.warn('[HIGHFLY P41 world pickup]',e)}
   return result;
  };
- const api={drops,get active(){return drops.length},dispose(){
+ function claimCorpse(enemy){
+  const loot=corpseLootFor(enemy);
+  if(!loot)return {ok:false,reason:'No hay botín compatible'};
+  const result=receiveP41WorldPickup(bag,getProfession(),{id:loot.item,count:1,rarity:'Común'});
+  if(result.ok){
+   saveRpgState(bag);
+   msg('✦ '+loot.name+' · COMÚN +0 · Guardado en Bolsa');
+   onUpdate();game.__highflyRpg?.render?.();
+  }else msg(result.reason);
+  return result;
+ }
+ const api={drops,claimCorpse,get active(){return drops.length},dispose(){
   game.update=originalUpdate;while(drops.length)release(drops[0]);
   for(const tex of cache.values())tex.dispose();
   label.remove();notice.remove();
