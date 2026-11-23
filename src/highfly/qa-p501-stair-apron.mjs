@@ -23,7 +23,7 @@ for(const x of [-111.55,-112,-113,-114,-115,-116,-117,-117.75]){
 assert.ok(Math.abs(sample(-118.1)-(y0+.07))<.17,'native first stone tread still walkable');
 assert.ok(sample(-120)>y0+.3,'upper treads not removed');
 assert.equal(sample(-114,-466),y0-7,'apron does not cover neighbouring terrain outside 9m stone width');
-assert.ok(geometry.getAttribute('materialIndex')||geometry.attributes?.mat,'native original textured material index missing');
+assert.ok(geometry.getAttribute('aMat'),'native original textured material index missing');
 const player=new Player(world);player.spawn(-112.5,y0+.025,-459,Math.PI);
 player.grounded=true;player.coyote=.12;player.vel.y=0;
 let steps=0,stall=0;
