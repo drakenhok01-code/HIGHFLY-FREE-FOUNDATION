@@ -665,3 +665,11 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
  #hf-rpg .hf-system-shade{animation:none}
  #hf-rpg .hf-system-progress i{animation:none;width:100%}
 }
+
+/* P4.9.2 original engine camera controls in HIGHFLY settings. */
+#hf-rpg .hf-p492-camera-options{display:grid;gap:8px;padding:7px 10px;color:#e7d3f6;font-size:11px}
+#hf-rpg .hf-p492-camera-options>b{color:#f3d397;letter-spacing:1px}
+#hf-rpg .hf-p492-camera-options label{display:flex;justify-content:space-between;align-items:center;font-weight:650}
+#hf-rpg .hf-p492-camera-options input{width:100%;accent-color:#aa79ef;min-height:27px;touch-action:pan-x}
+#hf-rpg .hf-p492-camera-options button{position:static;border:1px solid #a38adc;border-radius:15px;background:#3c275a;padding:8px 12px;text-align:left;font-size:11px}
+#hf-rpg .hf-p492-camera-options small{color:#b6a9cb;line-height:1.4}
