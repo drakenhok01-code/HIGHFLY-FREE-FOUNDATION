@@ -60,17 +60,21 @@ export function installHighflyRadar(input,t){
   draw();
  };
  // Tap opens the real-world map instead of silently switching quest.
- let modal=null,largeCanvas=null,mapCaption=null;
+ let modal=null,largeCanvas=null,mapCaption=null,mapScale=.40,mapCache=null;
  const openMap=()=>{
   if(modal)return;
   modal=document.createElement('div');modal.id='hf-p493-radar-modal';
   modal.innerHTML='<section class="hf-map-sheet" role="dialog" aria-modal="true" aria-label="Mapa de Aetheria">'+
-   '<header><b>✦ AETHERIA · MAPA DE EXPLORACIÓN</b><button data-close>✕ CERRAR</button></header>'+
+   '<header><b>✦ AETHERIA · MAPA DE EXPLORACIÓN</b><span><button data-zoom="out">−</button><button data-zoom="in">+</button><button data-close>✕ CERRAR</button></span></header>'+
    '<canvas width="672" height="286" aria-label="Mapa local de terreno con posición, NPC y misiones"></canvas>'+
    '<div class="hf-map-caption">El triángulo cian indica tu posición; tocá un marcador para fijar el objetivo.</div></section>';
   document.body.appendChild(modal);largeCanvas=modal.querySelector('canvas');
   mapCaption=modal.querySelector('.hf-map-caption');
   modal.querySelector('[data-close]').addEventListener('click',closeMap);
+  for(const b of modal.querySelectorAll('[data-zoom]'))b.addEventListener('click',()=>{
+   mapScale=Math.max(.16,Math.min(1.20,mapScale*(b.dataset.zoom==='in'?1.45:1/1.45)));
+   mapCache=null;renderMap();
+  });
   modal.addEventListener('click',e=>{if(e.target===modal)closeMap();});
   largeCanvas.addEventListener('click',e=>{
    const rect=largeCanvas.getBoundingClientRect(),g=globalThis.__game,p=g?.player?.pos;
@@ -78,7 +82,8 @@ export function installHighflyRadar(input,t){
    const x=(e.clientX-rect.left)*672/rect.width,y=(e.clientY-rect.top)*286/rect.height;
    let best=null,dd=22*22;
    for(const q of collectHighflyRadarTargets(g)){
-    const px=336+(q.x-p.x)*.28,py=143+(q.z-p.z)*.28,d=(px-x)**2+(py-y)**2;
+    const cx=mapCache?.cx??p.x,cz=mapCache?.cz??p.z;
+    const px=336+(q.x-cx)*mapScale,py=143+(q.z-cz)*mapScale,d=(px-x)**2+(py-y)**2;
     if(d<dd){best=q;dd=d;}
    }
    if(best){targetId=best.id;try{localStorage.setItem('hf-p492-radar-target',targetId);}catch{}}
@@ -86,39 +91,69 @@ export function installHighflyRadar(input,t){
   });
   renderMap();
  };
- const closeMap=()=>{modal?.remove();modal=largeCanvas=mapCaption=null;};
+ const closeMap=()=>{modal?.remove();modal=largeCanvas=mapCaption=mapCache=null;};
  shell.addEventListener('click',()=>{if(!t.editing)openMap();});
  function renderMap(){
   const g=globalThis.__game,p=g?.player?.pos,c=largeCanvas,ctx=c?.getContext('2d');
   if(!ctx||!p)return;
-  const W=c.width,H=c.height,scale=.28,terrain=g.world;
-  ctx.clearRect(0,0,W,H);
-  for(let x=0;x<W;x+=8)for(let y=0;y<H;y+=8){
-   const wx=p.x+(x-W/2)/scale,wz=p.z+(y-H/2)/scale;
-   const h=Number(terrain?.groundHeight?.(wx,wz));
-   const water=Number(terrain?.waterLevel?.(wx,wz));
-   const wet=Number.isFinite(water)&&Number.isFinite(h)&&h<water+.2;
-   const t=Number.isFinite(h)?Math.max(0,Math.min(1,(h+8)/280)):0;
-   ctx.fillStyle=wet?'#245371':t>.58?'#616477':t>.18?'#435b59':'#2d5146';
-   ctx.fillRect(x,y,9,9);
+  const W=c.width,H=c.height,terrain=g.world,step=3;
+  const recenter=!mapCache||Math.hypot(mapCache.cx-p.x,mapCache.cz-p.z)>12||mapCache.scale!==mapScale;
+  if(recenter){
+   const terrainCanvas=document.createElement('canvas');terrainCanvas.width=W;terrainCanvas.height=H;
+   const bg=terrainCanvas.getContext('2d');
+   // Map only ORIGINAL world elevation/water. Lighting and contour gradients
+   // give more readable relief than the previous 8px opaque Minecraft squares.
+   const cx=p.x,cz=p.z,scale=mapScale;
+   for(let y=0;y<H;y+=step)for(let x=0;x<W;x+=step){
+    const wx=cx+(x-W/2)/scale,wz=cz+(y-H/2)/scale;
+    const h=Number(terrain?.groundHeight?.(wx,wz));
+    const water=Number(terrain?.waterLevel?.(wx,wz));
+    const wet=Number.isFinite(water)&&Number.isFinite(h)&&h<water+.18;
+    const hN=Number(terrain?.groundHeight?.(wx+3,wz+3));
+    const hS=Number(terrain?.groundHeight?.(wx-3,wz-3));
+    const shade=Number.isFinite(hN)&&Number.isFinite(hS)?Math.max(-1,Math.min(1,(hN-hS)/35)):0;
+    let red,green,blue;
+    if(wet){red=24;green=68;blue=99;}
+    else if(h>165){red=108;green=111;blue=124;}
+    else if(h>65){red=87;green=105;blue=101;}
+    else if(h>15){red=72;green=109;blue=92;}
+    else{red=59;green=104;blue=82;}
+    const light=shade*19+(Math.sin(wx*.043)*Math.cos(wz*.041))*4;
+    const contour=Number.isFinite(h)&&Number.isFinite(hN)&&
+      Math.floor(h/16)!==Math.floor(hN/16)?12:0;
+    const clamp=n=>Math.min(255,Math.max(0,Math.round(n)));
+    bg.fillStyle='rgb('+clamp(red+light+contour)+','+
+     clamp(green+light+contour)+','+clamp(blue+light+contour)+')';
+    bg.fillRect(x,y,step,step);
+   }
+   bg.strokeStyle='#e9dab02d';bg.lineWidth=1;
+   for(let x=W/2%72;x<W;x+=72){bg.beginPath();bg.moveTo(x,0);bg.lineTo(x,H);bg.stroke();}
+   for(let y=H/2%72;y<H;y+=72){bg.beginPath();bg.moveTo(0,y);bg.lineTo(W,y);bg.stroke();}
+   mapCache={canvas:terrainCanvas,cx,cz,scale};
   }
-  ctx.strokeStyle='#e8ddce2a';ctx.lineWidth=1;
-  for(let x=W/2%56;x<W;x+=56){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=H/2%56;y<H;y+=56){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.clearRect(0,0,W,H);ctx.drawImage(mapCache.canvas,0,0);
+  const cx=mapCache.cx,cz=mapCache.cz,scale=mapScale;
   const points=[...collectHighflyRadarTargets(g)];
-  for(const n of g.people?.list??[])if(n.awake)points.push({x:n.x,z:n.z,label:n.def.name,kind:'npc',id:'npc:'+n.def.id});
+  for(const n of g.people?.list??[])if(n.awake)
+   points.push({x:n.x,z:n.z,label:n.def.name,kind:'npc',id:'npc:'+n.def.id});
+  for(const q of g.spires??[])if(Number.isFinite(q.x)&&Number.isFinite(q.z))
+   points.push({x:q.x,z:q.z,label:q.name??q.id,kind:'story',id:'spire:'+q.id});
   for(const q of points){
-   const x=W/2+(q.x-p.x)*scale,y=H/2+(q.z-p.z)*scale;
+   const x=W/2+(q.x-cx)*scale,y=H/2+(q.z-cz)*scale;
    if(x<6||y<6||x>W-6||y>H-6)continue;
-   dot(ctx,x,y,q.id===targetId?7:4,q.kind==='quest'?'#d9a4ff':q.kind==='npc'?'#a3cdf8':'#eacd82');
-   if(q.id===targetId){ctx.fillStyle='#ffffff';ctx.font='bold 13px system-ui';ctx.fillText(q.label,x+9,y-7);}
+   const selected=q.id===targetId;
+   dot(ctx,x,y,selected?7:4,q.kind==='quest'?'#d9a4ff':q.kind==='npc'?'#a3cdf8':'#eacd82');
+   if(selected){ctx.fillStyle='#ffffff';ctx.font='bold 13px system-ui';ctx.fillText(q.label,x+9,y-7);}
   }
-  ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI-(g.rig?.yaw??0));
+  const heroX=W/2+(p.x-cx)*scale,heroY=H/2+(p.z-cz)*scale;
+  ctx.save();ctx.translate(heroX,heroY);ctx.rotate(Math.PI-(g.rig?.yaw??0));
   ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,9);ctx.lineTo(0,3);ctx.lineTo(-8,9);ctx.closePath();
   ctx.fillStyle='#67eef9';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.fill();ctx.stroke();ctx.restore();
+  ctx.fillStyle='#ead4ad';ctx.font='700 12px system-ui';ctx.fillText('N',W/2,13);
   const chosen=points.find(q=>q.id===targetId);
   if(mapCaption)mapCaption.textContent='POSICIÓN X '+Math.round(p.x)+' · Z '+Math.round(p.z)+
-   ' · '+(chosen?chosen.label+' · '+Math.round(dist(p,chosen))+' m':'Tocá un NPC o misión para fijar objetivo');
+   ' · '+(chosen?chosen.label+' · '+Math.round(dist(p,chosen))+' m':'Tocá un NPC o misión para fijar objetivo')+
+   ' · Zoom '+Math.round(mapScale/.4*100)+'%';
  }
 
  function draw(){
