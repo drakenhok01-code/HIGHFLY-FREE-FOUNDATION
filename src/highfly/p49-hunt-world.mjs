@@ -208,56 +208,69 @@ export function installP49Hunts(game){
   game.enemies.list=game.enemies.list.filter(e=>e.group!=='hf49:'+spot.id);
  }
  async function loadKaykitNpcs(){
-  try{
-   const gltf=await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb');
-   if(disposed)return;
-   let profile;
-   try{profile=stylizeUniversalKayKit(gltf);}
-   catch(error){
-    console.warn('[HIGHFLY P493 NPC] Stylization failed; showing authentic KayKit FREE instead',error);
-    const box=new THREE.Box3().setFromObject(gltf.scene);
-    profile={naturalHeight:Math.max(.1,box.getSize(new THREE.Vector3()).y)};
+  // P4.9.4: PRIORITY = actually visible on Android. The hero's 41-bone
+  // authentic KayKit CC0 rig is rendered first. Stylizing the shared GLB
+  // *before* SkeletonUtils.clone can invalidate clone bone inverse matrices.
+  // NPCs keep the original rig until a GPU-backed stylized clone test passes.
+  let gltf;
+  try{gltf=await new GLTFLoader().loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb');}
+  catch(err){console.error('[HIGHFLY P494 NPC] GLB unavailable',err);}
+  if(disposed)return;
+  const report={source:'KayKit FREE CC0 Knight',models:0,fallbacks:0,visibleMeshes:0,
+   species:HUNT_ORDER.filter(id=>!!spots[id]),error:gltf?'':String('Knight.glb load failed')};
+  globalThis.__highflyP494Npcs=report;
+  for(const [i,id] of HUNT_ORDER.entries()){
+   const spot=spots[id];if(!spot)continue;
+   const anchor=new THREE.Group();anchor.name='HIGHFLY_QUEST_NPC_'+id;
+   anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
+   anchor.rotation.y=Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI;
+   const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
+   billboard.position.y=2.25;billboard.material.depthTest=false;billboard.renderOrder=80;
+   anchor.add(billboard);
+   let n=null,mixer={update(){},stopAllAction(){}},fallback=true,meshCount=0;
+   if(gltf){
+    try{
+     n=cloneSkeleton(gltf.scene);
+     n.name='HIGHFLY_KAYKIT_NPC_'+id;
+     const bounds=new THREE.Box3().setFromObject(n);
+     const h=bounds.getSize(new THREE.Vector3()).y;
+     if(!Number.isFinite(h)||h<1||h>20)throw Error('Invalid Knight 3D bounds '+h);
+     const visual=new THREE.Group();visual.name='ACTUAL_3D_KAYKIT_'+id;
+     visual.scale.setScalar(1.80/h); // Translation and dimensions share the same scale.
+     n.position.set(-(bounds.min.x+bounds.max.x)*.5,-bounds.min.y,-(bounds.min.z+bounds.max.z)*.5);
+     visual.add(n);anchor.add(visual);
+     n.traverse(m=>{
+      if(!m.isMesh)return;
+      m.frustumCulled=false;
+      const body=/^Knight_(Body|Head|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(m.name);
+      m.visible=body;
+      if(body)meshCount++;
+      const base=Array.isArray(m.material)?m.material[0]:m.material;
+      m.material=new THREE.MeshBasicMaterial({
+       map:base?.map??null,color:m.name==='Knight_Head'?0xffffff:
+        [0xd5c9ff,0xe4bb94,0xb5d7c2][i],
+       side:THREE.DoubleSide,transparent:!!base?.transparent,
+       alphaTest:base?.alphaTest??0,depthWrite:true
+      });
+     });
+     if(meshCount!==6)throw Error('KayKit must show 6 original body meshes, got '+meshCount);
+     const idle=gltf.animations.find(a=>a.name==='Idle');
+     mixer=new THREE.AnimationMixer(n);if(idle)mixer.clipAction(idle).play();
+     fallback=false;report.models++;report.visibleMeshes+=meshCount;
+    }catch(err){
+     console.error('[HIGHFLY P494 NPC] 3D failed for '+id,err);
+     // Never claim a real model when the rig is missing; billboard stays visible.
+     for(const child of [...anchor.children])if(child!==billboard)anchor.remove(child);
+     report.error=String(err);n=null;
+    }
    }
-   for(const [i,id] of HUNT_ORDER.entries()){
-    const spot=spots[id];if(!spot)continue;
-    const n=cloneSkeleton(gltf.scene);n.name='HIGHFLY_KAYKIT_NPC_'+id;
-    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
-    anchor.rotation.y=(Math.atan2(spot.point.x-spot.npc.x,spot.point.z-spot.npc.z)+Math.PI);
-    const nativeBox=new THREE.Box3().setFromObject(n);
-    n.position.set(-(nativeBox.min.x+nativeBox.max.x)*.5,
-      -nativeBox.min.y,-(nativeBox.min.z+nativeBox.max.z)*.5);
-    n.scale.setScalar(1.80/profile.naturalHeight);
-    n.traverse(m=>{
-     if(!m.isMesh)return;
-     m.frustumCulled=false;
-     if(/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(m.name))m.visible=false;
-     const base=Array.isArray(m.material)?m.material[0]:m.material;
-     const color=m.name.includes('Head')?0xffffff:[0xc6b6ff,0xe0b592,0x9ccfbe][i];
-     m.material=new THREE.MeshBasicMaterial({map:base?.map??null,color,side:THREE.DoubleSide,
-      transparent:!!base?.transparent,alphaTest:base?.alphaTest??0});
-    });
-    anchor.add(n);
-    const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.position.y=2.35;anchor.add(billboard);
-    const idle=gltf.animations.find(a=>a.name==='Idle');
-    const mixer=new THREE.AnimationMixer(n);
-    if(idle)mixer.clipAction(idle).play();
-    anchor.userData.highflyQuestNpc=id;
-    stage.add(anchor);npcActors.push({id,anchor,mixer,billboard,model:n});
-   }
-   console.info('[HIGHFLY P4.9] KayKit FREE CC0 NPCs',npcActors.length);
-  }catch(e){
-   console.error('[HIGHFLY P493] KayKit model failed; showing NPC name and diagnostic marker',e);
-   for(const id of HUNT_ORDER){
-    const spot=spots[id];if(!spot)continue;
-    const anchor=new THREE.Group();anchor.position.set(spot.npc.x,spot.npc.y,spot.npc.z);
-    // Never create dummy animal geometry: show an explicit nameplate on load failure.
-    const billboard=npcBillboard(HUNT_MISSIONS[id].npc,HUNT_MISSIONS[id].role);
-    billboard.position.y=2.1;anchor.add(billboard);stage.add(anchor);
-    npcActors.push({id,anchor,mixer:{update(){},stopAllAction(){}},billboard,model:anchor,fallback:true});
-   }
+   stage.add(anchor);
+   if(fallback)report.fallbacks++;
+   npcActors.push({id,anchor,mixer,billboard,model:n??anchor,fallback,meshCount});
   }
+  console.info('[HIGHFLY P494 NPC QA]',JSON.stringify(report));
  }
+
  loadKaykitNpcs();
  const prior=game.update;
  game.update=function(realDt){
