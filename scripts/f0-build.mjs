@@ -331,6 +331,7 @@ copy(path.join(ROOT,'src/highfly/qa-p494-visual-entry.mjs'),loc('src/highfly/qa-
 copy(path.join(ROOT,'src/highfly/qa-p494-visual-browser.mjs'),loc('scripts/qa-p494-visual-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p501-stair-apron.mjs'),loc('src/highfly/qa-p501-stair-apron.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p503-grass.mjs'),loc('src/highfly/qa-p503-grass.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p504-hdr.mjs'),loc('src/highfly/qa-p504-hdr.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('scripts/qa-p495-stairs.mjs'));
 
