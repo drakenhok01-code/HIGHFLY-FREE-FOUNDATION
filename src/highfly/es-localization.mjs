@@ -175,7 +175,71 @@ const PAIRS=[
  ["Eight voices. The whole Vale sings, from the mountains to the sea.","Ocho voces. Todo el Valle canta, desde las montañas hasta el mar."],
  ["The graphics device was reset. Click to reload; what you have done is kept.","Se reinició el sistema gráfico. Tocá para recargar: tu progreso sigue guardado."],
 ];
-export const SPANISH=new Map(PAIRS);
+// P5.2.1: exact unsung loading tips, world markers, in-game guide.
+const EXTRA_PAIRS=[
+ ["A bolt met with the blade goes back where it came from.","Un proyectil golpeado con la espada vuelve hacia su atacante."],
+ ["Blows landed without one taken build cadence. One hit and it is lost.","Los golpes consecutivos aumentan tu cadencia. Si recibís daño, se reinicia."],
+ ["R hums the refrain and mends you. It comes back at spires, bells and pylons.","Usá Curación para recuperar vida. Sus cargas se recuperan en agujas, campanas y pilares."],
+ ["A blow slipped at the last instant opens a riposte.","Esquivá justo antes de recibir un golpe para habilitar un contraataque."],
+ ["A chorister's ward goes when the singer is broken.","La protección del cantor desaparece cuando lo derrotás."],
+ ["There is a reliquary on every mesa, off the paths.","Hay un relicario en cada meseta, lejos de los caminos."],
+ ["Light blows ring off a warden's wall of shards. A heavy one cracks it.","Los golpes livianos rebotan contra el guardián. Un golpe fuerte rompe su defensa."],
+ ["H holds the world still for a picture.","H activa el modo fotografía y congela el mundo."],
+ ["The Petal Court","El Patio de los Pétalos"],["The Aurel Court","El Patio de Aurel"],
+ ["The Lantern Court","El Patio de los Faroles"],["The Reed Court","El Patio de los Juncos"],
+ ["The Orchard Court","El Patio del Huerto"],["The Dawn Terrace","La Terraza del Alba"],
+ ["String of light","Hilo de luz"],["The Vale","El Valle"],
+ ["The blade","La espada"],["Staying alive","Supervivencia"],["Combo and heavy","Combo y golpe fuerte"],
+ ["Falling strike","Ataque descendente"],["Struck back","Proyectil devuelto"],["The last note","La última nota"],
+ ["Dodge roll","Rodar"],["Wards","Protecciones"],["The toll","La campanada"],
+ ["The Shade","La Sombra"],["The rush","La embestida"],["Falling in a court","Caer en un patio"],
+ ["Spires","Agujas"],["Strings of light","Hilos de luz"],["Bells","Campanas"],
+ ["Reliquaries and charms","Relicarios y amuletos"],["Chimes","Campanillas"],
+ ["Song-crystals","Cristales de canción"],["Echoes","Ecos"],["Photo mode","Modo fotografía"],
+ ["Left mouse strikes, three cuts to a combo. Right mouse is the heavy blow: slower, and it cracks a warden's guard.",
+ "Con el botón de ataque podés encadenar tres golpes. El golpe fuerte es más lento, pero rompe la defensa de los guardianes."],
+ ["Strike in the air and he turns and comes down blade first. The higher the fall, the harder it lands.",
+ "Atacá en el aire para descender con la espada. Cuanto mayor sea la altura, más fuerte será el impacto."],
+ ["Blows landed without one taken build cadence in four steps. Each step puts more weight in the blade; one hit taken and it is lost.",
+ "Cada golpe consecutivo aumenta la cadencia hasta cuatro niveles. Al recibir daño, la perdés."],
+ ["A blow slipped at the last instant leaves an opening. Strike at once and the cut lands far harder.",
+ "Esquivá justo antes de recibir daño y atacá enseguida para realizar un contraataque poderoso."],
+ ["A bolt met with the blade goes back at whoever stands nearest its line.",
+ "Podés devolver un proyectil golpeándolo con la espada."],
+ ["A named Mute or a giant that is nearly spent can be ended at a stroke. Stand near and press E.",
+ "Podés rematar a los Silentes con nombre o a los gigantes debilitados. Acercate y pulsá USAR."],
+ ["R hums the note you carry and it mends you. A few to a journey; they return at spires, bells, pylons and with lost notes.",
+ "La curación restaura tu vida. Recuperás sus cargas en agujas, campanas, pilares y al encontrar notas."],
+ ["Ctrl or C. For a moment in the middle of it nothing can touch you.",
+ "Rodá para esquivar; durante una parte del movimiento sos invulnerable."],
+ ["A chorister throws a ward over one of its own. Break the singer and the ward goes with it.",
+ "Los cantores protegen a otros enemigos. Derrotá al cantor para quitar esa barrera."],
+ ["A Toller sends a ring out along the ground. Jump it, or roll through it as it reaches you.",
+ "El Campanero crea una onda circular en el suelo. Saltá o rodá para evitarla."],
+ ["It lets go of its shape and takes it up again at your back. When it vanishes, roll.",
+ "La Sombra se desvanece y reaparece detrás tuyo. Cuando desaparezca, preparate para rodar."],
+ ["A brute that cannot reach you draws a line on the ground and comes down it. Step off the line.",
+ "Los brutos anuncian su embestida con una marca en el suelo. Salí de su trayectoria."],
+ ["A court remembers the wave you reached. You come back to it, not to the beginning.",
+ "Cada patio recuerda la oleada alcanzada. Si caés, no volvés al comienzo del desafío."],
+ ["Clear a court, then strike its spire's notes: press E as each ring of light closes on the shaft.",
+ "Despejá el patio y afiná su aguja con USAR cuando los anillos luminosos se cierren."],
+ ["From any pylon the map can send you along the strings to a court that already sings.",
+ "Los pilares permiten viajar por los hilos de luz hasta patios ya despertados."],
+ ["Each court beyond the water sleeps until its three bells have been rung, out on its mesa.",
+ "Cada patio al otro lado del agua requiere tocar sus tres campanas."],
+ ["One casket on every mesa, off the paths. What it held is worn from the Hero screen, two at a time.",
+ "Hay un relicario por meseta. Equipá sus amuletos desde Personaje, hasta dos por vez."],
+ ["Three small bells to a set. Strike them from the lowest voice to the highest.",
+ "Tocá las tres campanillas desde el tono más grave hasta el más agudo."],
+ ["Clusters of amber in the meadows. A cut breaks one open for what it held.",
+ "Encontrá cristales de ámbar por las praderas. Un golpe permite obtener su contenido."],
+ ["Once the Vale sings, a court will call its guard back at its spire: three harder waves, paid in resonance.",
+ "Cuando el Valle vuelva a cantar, las agujas permitirán desafíos de tres oleadas más difíciles."],
+ ["H holds the world still and frees the camera. Click saves the picture.",
+ "H congela el mundo y libera la cámara. Tocá la pantalla para guardar una fotografía."]
+];
+export const SPANISH=new Map([...PAIRS,...EXTRA_PAIRS]);
 const PATTERNS=[
  [/^Return to (.+)$/,'Volvé con $1'],
  [/^Talk to (.+)$/,'Hablá con $1'],
@@ -189,6 +253,22 @@ export function translateHighfly(text){
  if(typeof text!=='string')return text;
  const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(text),core=m?.[2]??text;
  if(SPANISH.has(core))return (m?.[1]??'')+SPANISH.get(core)+(m?.[3]??'');
+ const bell=/^Bell (\\d+) of 3$/.exec(core);
+ if(bell)return (m?.[1]??'')+'Campana '+bell[1]+' de 3'+(m?.[3]??'');
+ if(core.startsWith('The ')&&SPANISH.has('the '+core.slice(4)))
+  return (m?.[1]??'')+SPANISH.get('the '+core.slice(4)).replace(/^l/, 'L')+(m?.[3]??'');
+ const objective=/^(Ring the bells of |Ride the strings to |Follow the path to |Break the silence at |Tune the spire at )(.+)$/.exec(core);
+ if(objective){
+  const action={
+   'Ring the bells of ':'Tocá las campanas de ',
+   'Ride the strings to ':'Viajá por los hilos de luz hasta ',
+   'Follow the path to ':'Seguí el camino hacia ',
+   'Break the silence at ':'Rompé el silencio en ',
+   'Tune the spire at ':'Afiná la aguja en '
+  }[objective[1]];
+  return (m?.[1]??'')+action+translateHighfly(objective[2])+(m?.[3]??'');
+ }
+
  for(const [re,replacement] of PATTERNS)if(re.test(core))return (m?.[1]??'')+
    core.replace(re,replacement)+(m?.[3]??'');
  return text;
