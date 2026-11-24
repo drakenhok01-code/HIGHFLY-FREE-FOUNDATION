@@ -23,7 +23,7 @@ assert.equal(skyEvents(3.75,.5).eclipse,0,'not before new moon');
 assert.equal(eventPreview('noche',1.05,0,'auto').aurora,0,'manual normal night is starry');
 assert.equal(eventPreview('noche',1.05,0,true).aurora,1,'manual override for video QA');
 assert.equal(eventPreview('auto',0,.25,false).aurora,0);
-assert.equal(eventPreview('eclipse',0,.35,'auto').eclipse,1,'manual eclipse preview');
+assert.equal(eventPreview('eclipse',0,.5,'auto').eclipse,1,'manual eclipse noon peak');
 
 let auroraNights=[],eclipseDays=[];
 for(let d=0;d<64;d++){
@@ -60,7 +60,7 @@ assert.equal(sky.uHFAurora.value,0,'manual normal night is event-free');
 api.setAurora(true);assert.equal(sky.uHFAurora.value,1);
 api.setAurora(false);assert.equal(sky.uHFAurora.value,0);
 api.setAurora('auto');assert.equal(api.auroraSetting,'auto');
-api.select('eclipse');assert.equal(sky.uHFEclipse.value,1);
+api.select('eclipse');assert.equal(sky.uHFEclipse.value,.16);
 api.select('noche');assert.equal(sky.uHFEclipse.value,0);
 // Advance simulated world to day 32 after the direct event assertions.
 for(let d=6;d<32;d++){
