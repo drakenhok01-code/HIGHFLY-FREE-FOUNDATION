@@ -706,3 +706,9 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg .hf-rpg-options-scroll [data-hf-climate-controls]>div{
  max-height:none!important;overflow:visible!important;
 }
+
+#hf-rpg .hf-world-forge-link{display:inline-flex;align-items:center;justify-content:center;
+ flex:none;min-height:38px;border:1px solid #e3c68d;border-radius:10px;background:#513479;
+ color:#fff5cd!important;text-decoration:none;font-weight:800;font-size:12px;padding:8px 12px;
+ touch-action:manipulation}
+#hf-rpg .hf-world-forge-link:focus-visible{outline:2px solid #a4f4ed;outline-offset:2px}
