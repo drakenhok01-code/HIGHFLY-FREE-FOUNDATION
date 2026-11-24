@@ -52,7 +52,7 @@ for(const needle of [
  'hfDusk','hfHoriz','moonDisc','corona',
  "patch('src/engine/pipeline.js'"
 ]) assert.ok(builder.includes(needle),'missing '+needle);
-const p509=builder.slice(builder.indexOf('// P509 SUPREME'),builder.indexOf('// P503: one source-of-truth'));
+const p509=builder.slice(builder.indexOf('// P509 SUPREME'),builder.indexOf('// P510 WORLD ALIVE')>=0?builder.indexOf('// P510 WORLD ALIVE'):builder.indexOf('// P503: one source-of-truth'));
 assert.equal((p509.match(/patch\('src\/engine\/pipeline\.js'/g)||[]).length,10);
 assert.ok(!p509.includes("patch('src/world"),'P509 must not touch water or geometry');
 console.log('[P509 SUPREME SKY QA PASS]',{
