@@ -190,6 +190,7 @@ for(const [fileName,outName,expected] of [
 
 
 copy(path.join(ROOT,'src/highfly/fog.mjs'),loc('src/highfly/fog.mjs'));
+copy(path.join(ROOT,'src/highfly/p506-waterfall-joins.mjs'),loc('src/highfly/p506-waterfall-joins.mjs'));
 copy(path.join(ROOT,'src/highfly/mobile-touch.mjs'),loc('src/game/highfly-touch.mjs'));
 copy(path.join(ROOT,'src/highfly/hud-editor.mjs'),loc('src/highfly/hud-editor.mjs'));
 copy(path.join(ROOT,'src/highfly/hero-portrait.mjs'),loc('src/highfly/hero-portrait.mjs'));
@@ -398,6 +399,16 @@ patch('src/world/arch/sites.js',
         // Original local +X goes uphill (world -X); negative X faces Cantor.
         // The apron top is 5 cm BELOW the first tread to avoid a step snag.
         q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
+// P506 — One unified Android lane, same native P505 quality and resolution.
+// Join elevated water disc to the native waterfall lip in the original
+// transparent WATERFALL MESH.  No additional render passes / shaders;
+// prevent geometry discontinuity without editing the heightfield or pools.
+patch('src/world/waterfalls.js',
+ "import { POOLS, valleyAxisZ } from './layout.js';",
+ "import { POOLS, valleyAxisZ } from './layout.js';\\nimport { appendP506PoolOutflow } from '../highfly/p506-waterfall-joins.mjs';".replaceAll('\\n','\n'));
+patch('src/world/waterfalls.js',
+ "      addFall(p.x + ox * (s - 1.5), p.z + oz * (s - 1.5), ox, oz, 13, p.level - 0.5);",
+ "      appendP506PoolOutflow(p, s, pos, info, idx);\\n      addFall(p.x + ox * (s - 1.5), p.z + oz * (s - 1.5), ox, oz, 13, p.level - 0.5);".replaceAll('\\n','\n'));
 // P504: opt-in packed high-dynamic-range render targets.  The GPU may
 // support R11F_G11F_B10F (4 bytes per pixel) instead of RGBA16F (8 B/px).
 // Test actual framebuffer completeness before use, restore RGBA16F on any
@@ -587,7 +598,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/world/waterfalls.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
