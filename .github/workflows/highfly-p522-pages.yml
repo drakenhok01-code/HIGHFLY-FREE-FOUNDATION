@@ -1,0 +1,81 @@
+name: HIGHFLY P522 - World Forge Native Aerial Preview (Preserve Approved)
+on:
+  push:
+    branches: [p522-world-forge-actual-overview-20261124]
+    paths: ['.github/workflows/highfly-p522-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p522-preserved-preview
+  cancel-in-progress: false
+jobs:
+  stage-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Download verified P522 game + original-world reference
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p522-native-overview-qa
+          run-id: 45500375059
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p522-reviewed-game
+      - name: Download published P521 site with all historical previews
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45497740853
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p521-published-site
+      - name: Verify native reference and preserve all old bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="$RUNNER_TEMP/p522-reviewed-game"
+          test -s "$GAME/index.html"
+          test -s "$GAME/highfly/world-forge.html"
+          test -s "$GAME/highfly/world-forge.js"
+          test -s "$GAME/highfly/native-overview.json"
+          for k in core region; do
+            test -s "$GAME/highfly/native-trees-$k.png"
+            test -s "$GAME/highfly/native-architecture-$k.png"
+          done
+          test -s "$GAME/world/world.json"
+          test -s "$GAME/world/core_h.bin"
+          test -s "$GAME/world/region_h.bin"
+          grep -q 'preview-p522' "$GAME/index.html"
+          grep -q "new URL('../world/" "$GAME/highfly/world-forge.js"
+          SITE="$RUNNER_TEMP/highfly-approved-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p521-published-site/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html preview-p521/index.html; do
+            test -s "$SITE/$rel"
+          done
+          test ! -e "$SITE/preview-p522"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/approved-files.sha256"
+          mkdir "$SITE/preview-p522"
+          cp -a "$GAME/." "$SITE/preview-p522/"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/approved-files.sha256" >/dev/null)
+          test -s "$SITE/preview-p522/highfly/native-overview.json"
+          test -s "$SITE/preview-p522/highfly/native-architecture-core.png"
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "P522 safe append complete: approved main and all older previews byte-for-byte preserved"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage-site
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish standalone native aerial editor, not overwrite any approved version
+        id: deployment
+        uses: actions/deploy-pages@v4
