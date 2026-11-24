@@ -25,6 +25,10 @@ try{
   assert.ok(q.meanAbsRGB<=2.0,'Visible packed-HDR average error too large: '+JSON.stringify(q));
   assert.ok(q.maxAbsRGB<=8,'Visible packed-HDR peak channel error too large: '+JSON.stringify(q));
   assert.equal(q.missingPixels,0,'Packed HDR output unexpectedly black');
+  assert.equal(q.bloomPackedFormat,true,'Bloom chain was not using compact HDR targets');
+  assert.ok(q.bloomMeanAbsRGB<=2.0,'Packed Bloom shader visibly changed average colour: '+JSON.stringify(q));
+  assert.ok(q.bloomMaxAbsRGB<=8,'Packed Bloom shader too much peak colour drift: '+JSON.stringify(q));
+  assert.equal(q.bloomMissingPixels,0,'Packed Bloom shader unexpectedly black');
   console.log('[HIGHFLY P504 WEBGL PACKED-HDR PIXEL COMPARISON PASS]',JSON.stringify(q));
  }else{
   assert.ok(['unsupported','incomplete-fbo','gpu-probe-error'].includes(q.reason),'Unknown GPU format status '+JSON.stringify(q));
