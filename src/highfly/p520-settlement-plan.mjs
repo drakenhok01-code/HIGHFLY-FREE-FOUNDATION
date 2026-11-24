@@ -82,6 +82,12 @@ export function planP520Settlements(world,hunts=null){
  if(!world?.groundHeight)return {placed:[],resources:[],skipped:[{id:'world',reason:'no live terrain'}],regions:[]};
  const placed=[],resources=[],skipped=[],regions=[];
  const protectedZones=[...P520_PROTECTED];
+ // Never bury the three existing animated hunt packs or their quest givers.
+ for(const id of ['wolf','boar','crab']){
+  const spot=hunts?.spots?.[id];
+  if(spot?.point)protectedZones.push({id:'hunt-'+id,x:spot.point.x,z:spot.point.z,r:24});
+  if(spot?.npc)protectedZones.push({id:'hunt-npc-'+id,x:spot.npc.x,z:spot.npc.z,r:7});
+ }
  for(const r of P520_SETTLEMENTS){
   const hunt=r.nearHunt&&hunts?.spots?.[r.nearHunt]?.point;
   const anchor=hunt?{x:hunt.x+r.offset.x,z:hunt.z+r.offset.z}:r.at;
