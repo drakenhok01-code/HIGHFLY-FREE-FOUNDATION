@@ -23,7 +23,7 @@ assert.equal(skyEvents(3.75,.5).eclipse,0,'not before new moon');
 assert.equal(eventPreview('noche',1.05,0,'auto').aurora,0,'manual normal night is starry');
 assert.equal(eventPreview('noche',1.05,0,true).aurora,1,'manual override for video QA');
 assert.equal(eventPreview('auto',0,.25,false).aurora,0);
-assert.equal(eventPreview('eclipse',0,.5,'auto').eclipse,1,'manual eclipse preview');
+assert.equal(eventPreview('eclipse',0,.35,'auto').eclipse,1,'manual eclipse preview');
 
 let auroraNights=[],eclipseDays=[];
 for(let d=0;d<64;d++){
