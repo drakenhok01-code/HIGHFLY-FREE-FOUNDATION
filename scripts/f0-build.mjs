@@ -399,12 +399,6 @@ patch('src/world/arch/sites.js',
         // Original local +X goes uphill (world -X); negative X faces Cantor.
         // The apron top is 5 cm BELOW the first tread to avoid a step snag.
         q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
-// HIGHFLY P506 — lossless CPU visibility check: avoid a square root for
-// each existing rock tile while preserving the same visibility radii, rocks,
-// LOD and renderer. Equal for all non-boundary points; not a new render mode.
-patch('src/world/rocks.js',
- "      const d = Math.hypot(c.cx - p.x, c.cz - p.z);\\n      c.mesh.visible = d < c.reach + CELL * 0.75;\\n      c.twin.visible = d < 96 + CELL * 0.75;".replaceAll('\\n','\n'),
- "      const hfDx=c.cx-p.x, hfDz=c.cz-p.z, hfDistSq=hfDx*hfDx+hfDz*hfDz;\\n      const hfRockRadius=c.reach+CELL*0.75, hfTwinRadius=96+CELL*0.75;\\n      c.mesh.visible=hfDistSq<hfRockRadius*hfRockRadius;\\n      c.twin.visible=hfDistSq<hfTwinRadius*hfTwinRadius;".replaceAll('\\n','\n'));
 // HIGHFLY P506: the source game emits the player death event, displays
 // English death + return text, and emits 'respawn' after checkpoint recovery.
 // Localize the actual event-to-toast path; no gameplay timings or spawn edits.
@@ -622,7 +616,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/world/waterfalls.js','src/world/rocks.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/world/waterfalls.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
