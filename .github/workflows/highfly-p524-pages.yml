@@ -1,0 +1,70 @@
+name: "HIGHFLY P524 - World Forge KayKit FREE CC0 Preview (Preserve Approved)"
+on:
+  push:
+    branches: [p524-world-forge-kaykit-free-buildings-20261124]
+    paths: ['.github/workflows/highfly-p524-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p524-preserved-pages
+  cancel-in-progress: false
+jobs:
+  preserve-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Download fully tested 16-model original KayKit FREE CC0 build
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p524-actual-kaykit-cc0-buildings
+          run-id: 45503682380
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p524-verified-game
+      - name: Download P523 published site to preserve P514 and older previews
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45503244449
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p523-last-published-site
+      - name: Verify CC0 resources, exact world heights and preserve old files
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="$RUNNER_TEMP/p524-verified-game"
+          for rel in index.html highfly/world-forge.html highfly/world-forge.js highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-relief-core.png highfly/native-overview.json highfly/kaykit-free/manifest.json highfly/kaykit-free/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0.txt; do
+            test -s "$GAME/$rel"
+          done
+          grep -q 'preview-p524' "$GAME/index.html"
+          grep -q 'KayKit FREE' "$GAME/highfly/world-forge.js"
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+'/p524-verified-game/highfly/kaykit-free/manifest.json'));if(m.license!=='CC0-1.0'||m.models.length!==16)throw Error('Not all licensed models found');console.log('PASS model license and count')"
+          SITE="$RUNNER_TEMP/highfly-preserved-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p523-last-published-site/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html preview-p521/index.html preview-p522/index.html preview-p523/index.html; do test -s "$SITE/$rel"; done
+          test ! -e "$SITE/preview-p524"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/approved-files.sha256"
+          mkdir "$SITE/preview-p524"
+          cp -a "$GAME/." "$SITE/preview-p524/"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/approved-files.sha256" >/dev/null)
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "PASS: all HIGHFLY approved world files and previews untouched; 16 KayKit CC0 models added only under preview-p524"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: preserve-and-package
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish WORLD FORGE with original Unsung terrain and FREE KayKit buildings
+        id: deployment
+        uses: actions/deploy-pages@v4
