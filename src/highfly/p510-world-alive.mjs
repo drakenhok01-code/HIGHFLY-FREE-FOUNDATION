@@ -80,12 +80,23 @@ export function installP510Astronomy(pipe,options={}){
   if(key>=0 && key!==committedShadow && key!==requestedShadow){
    if(t.hfStartSunBake(key,shadowVector(key)))requestedShadow=key;
   }
-  const result=t.hfAdvanceSunBake(key);
-  if(result?.committed){
-   committedShadow=result.key;requestedShadow=-1;shadowUpdates++;
-  } else if(result?.aborted)requestedShadow=-1;
  }
- const api={enabled:true,update,moonOverride,dispose(){},
+ // Shadow staging is checked PER GAME FRAME, not only when the UI/clock
+ // updates at 8 Hz. The baker itself limits work to one tile/12 frames.
+ // This lets the 45-second x60 test exercise real angle transitions.
+ const advanceShadow=()=>{
+  if(skipShadows)return;
+  const t=options.terrain?.()??win?.__terrain;
+  if(!t?.hfAdvanceSunBake)return;
+  const result=t.hfAdvanceSunBake(desiredShadow);
+  if(result?.committed){committedShadow=result.key;requestedShadow=-1;shadowUpdates++;}
+  else if(result?.aborted)requestedShadow=-1;
+ };
+ pipe.onBeforeScene.push(advanceShadow);
+ const api={enabled:true,update,moonOverride,dispose(){
+  const i=pipe.onBeforeScene.indexOf(advanceShadow);
+  if(i>=0)pipe.onBeforeScene.splice(i,1);
+ },
   get shadowKey(){return desiredShadow},
   get committedShadow(){return committedShadow},
   get shadowUpdates(){return shadowUpdates},
