@@ -10,7 +10,7 @@ export function appendP506PoolOutflow(pool, spillDistance, positions, info, indi
   if (!pool || !Number.isFinite(spillDistance) || !Number.isFinite(width) || width <= 0) return { joined: false, reason: 'invalid' };
   const length = Math.hypot(pool.out?.[0] ?? 0, pool.out?.[1] ?? 0);
   if (!(length > 0) || !Number.isFinite(pool.r) || !Number.isFinite(pool.level)) return { joined: false, reason: 'invalid' };
-  const dx = pool.out[0] / length, dz = pool.out[1] / length;
+  const dx = pool.out[0], dz = pool.out[1]; // match native Unsung's literal outflow vector exactly
   const start = pool.r + 6;        // 4m overlap within native pool.r + 10 water disc
   const end = spillDistance - 1.5; // exact lip used by native Unsung addFall()
   const gap = end - start;
