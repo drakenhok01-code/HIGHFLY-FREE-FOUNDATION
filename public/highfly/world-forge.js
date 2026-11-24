@@ -70,7 +70,7 @@ function loadLocal(){
 }
 function validItem(o){return !!(o&&typeof o.id==='string'&&BY_ID.has(o.type)&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Math.abs(o.x)<8190&&Math.abs(o.z)<8190&&Number.isFinite(o.yaw)&&Number.isFinite(o.scale)&&o.scale>=.5&&o.scale<=3);}
 function loadImage(res,name){
- return fetch(new URL('../../world/'+name,import.meta.url)).then(r=>{if(!r.ok)throw Error('No se encontró '+name+' ('+r.status+')');return r.arrayBuffer();}).then(async buf=>{
+ return fetch(new URL('../world/'+name,import.meta.url)).then(r=>{if(!r.ok)throw Error('No se encontró '+name+' ('+r.status+')');return r.arrayBuffer();}).then(async buf=>{
   const raw=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
   const val=new DataView(raw),out=new Float32Array(res.res*res),factor=(res.max-res.min)/65535;
   if(raw.byteLength!==out.length*2)throw Error('Dimensiones incorrectas de '+name);
@@ -366,7 +366,7 @@ setCategory(category);loadLocal();resize();updateProps();syncTools();
 (async function boot(){
  try{
   if(!('DecompressionStream' in window))throw Error('Tu navegador no admite descompresión gzip; probá Chrome actualizado.');
-  const url=new URL('../../world/world.json',import.meta.url),resp=await fetch(url);
+  const url=new URL('../world/world.json',import.meta.url),resp=await fetch(url);
   if(!resp.ok)throw Error('No se pudo leer el mundo ('+resp.status+')');
   const meta=await resp.json();
   const [core,region]=await Promise.all([loadImage(meta.core,'core_h.bin'),loadImage(meta.region,'region_h.bin')]);
