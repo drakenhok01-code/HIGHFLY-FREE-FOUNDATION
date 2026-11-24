@@ -700,6 +700,11 @@ run('node',['tools/p522-native-world-export.mjs'],origin);
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p522-native-world-raster.py'],origin);
 copy(path.join(ROOT,'scripts/p523-native-terrain-png.py'),loc('tools/p523-native-terrain-png.py'));
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p523-native-terrain-png.py'],origin);
+copy(path.join(ROOT,'scripts/p524-kaykit-free-buildings.mjs'),loc('tools/p524-kaykit-free-buildings.mjs'));
+copy(path.join(ROOT,'scripts/p524-kaykit-thumbnails.py'),loc('tools/p524-kaykit-thumbnails.py'));
+run('node',['tools/p524-kaykit-free-buildings.mjs'],origin);
+run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p524-kaykit-thumbnails.py'],origin);
+if(!fs.existsSync(loc('public/highfly/kaykit-free/manifest.json')))throw Error('P524 real KayKit free CC0 missing');
 for(const name of ['native-terrain-core.png','native-terrain-region.png','native-relief-core.png','native-relief-region.png','native-terrain-manifest.json']){
  if(!fs.existsSync(loc('public/highfly/'+name)))throw Error('P523 robust PNG map missing '+name);
 }

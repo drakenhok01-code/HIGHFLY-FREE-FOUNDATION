@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');
+const editor=read('public/highfly/world-forge.js'),html=read('public/highfly/world-forge.html');
+const runtime=read('src/highfly/p521-world-forge-runtime.mjs'),build=read('scripts/f0-build.mjs'),imp=read('scripts/p524-kaykit-free-buildings.mjs');
+const thumbs=read('scripts/p524-kaykit-thumbnails.py');
+const expected=['archeryrange','barracks','blacksmith','castle','church','home_A','home_B','lumbermill','market','mine','tavern','tower_A','tower_B','watermill','well','windmill'];
+for(const name of expected){
+ const type='kaykit-'+name.toLowerCase().replace('_','-');
+ assert.ok(editor.includes("id:'"+type+"'"),'catalog missing '+type);
+ assert.ok(runtime.includes("'"+type+"'"),'3D runtime missing '+type);
+ assert.ok(imp.includes("'"+name+"'"),'asset import missing '+name);
+}
+assert.equal(expected.length,16);
+assert.match(editor,/cat:'KayKit FREE'/);
+assert.match(editor,/kaykit-free\/thumbs/);
+assert.match(runtime,/KAYKIT_FREE_NAMES/);
+assert.match(runtime,/new THREE\.MeshBasicMaterial/);
+assert.match(runtime,/world\.addLazy/);
+assert.match(runtime,/GLTFLoader/);
+assert.match(runtime,/building_.*_red\.gltf/);
+assert.match(imp,/84fa4e91af6a88989be7c99e0891cede11f2ca38/);
+assert.match(imp,/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0/);
+assert.match(thumbs,/accessor/);
+assert.match(thumbs,/np\.argsort/);
+assert.match(html,/WORLD FORGE · V0\.4/);
+assert.match(build,/p524-kaykit-free-buildings/);
+assert.match(build,/p524-kaykit-thumbnails/);
+assert.ok(!imp.includes('source pack')&&!imp.includes('KayKit SOURCE'));
+assert.ok(!runtime.includes('models/kaykit-source'));
+assert.match(editor,/loadHeightPNG/);
+assert.ok(!editor.includes('DecompressionStream'));
+console.log('[P524 CC0 FREE] Model-driven 16-building catalogue/thumbnail/game-runtime bridge PASS');

@@ -16,7 +16,23 @@ const BOUNDS=Object.freeze({
  'floor-stone':[4,4],'floor-earth':[4,4],'floor-wood':[4,4],
  lantern:[1.5,1.5],well:[4,4],fence:[4,.4],barrel:[1.1,1.1],
  bench:[3,1.4],tree:[3,3],rock:[3,2.5],ore:[3,3],
- 'npc-merchant':[1,1],'npc-guard':[1,1],'npc-artisan':[1,1]
+ 'npc-merchant':[1,1],'npc-guard':[1,1],'npc-artisan':[1,1],
+ 'kaykit-archeryrange':[16,13],
+ 'kaykit-barracks':[14,12],
+ 'kaykit-blacksmith':[12,12],
+ 'kaykit-castle':[23,23],
+ 'kaykit-church':[13,13],
+ 'kaykit-home-a':[10,9],
+ 'kaykit-home-b':[10,9],
+ 'kaykit-lumbermill':[14,12],
+ 'kaykit-market':[13,11],
+ 'kaykit-mine':[13,12],
+ 'kaykit-tavern':[13,12],
+ 'kaykit-tower-a':[8,8],
+ 'kaykit-tower-b':[8,8],
+ 'kaykit-watermill':[12,12],
+ 'kaykit-well':[6,6],
+ 'kaykit-windmill':[12,12],
 });
 const PROTECTED=[
  [-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],
@@ -24,6 +40,19 @@ const PROTECTED=[
  [-179,-459,20]
 ];
 const num=x=>typeof x==='number'&&Number.isFinite(x);
+const KAYKIT_FREE_NAMES=Object.freeze({
+ 'kaykit-archeryrange':'archeryrange','kaykit-barracks':'barracks',
+ 'kaykit-blacksmith':'blacksmith','kaykit-castle':'castle',
+ 'kaykit-church':'church','kaykit-home-a':'home_A','kaykit-home-b':'home_B',
+ 'kaykit-lumbermill':'lumbermill','kaykit-market':'market',
+ 'kaykit-mine':'mine','kaykit-tavern':'tavern',
+ 'kaykit-tower-a':'tower_A','kaykit-tower-b':'tower_B',
+ 'kaykit-watermill':'watermill','kaykit-well':'well','kaykit-windmill':'windmill'
+});
+// Pinned public CC0 glTF, not privately purchased SOURCE content.
+// All model files and their legal licence are shipped by build P524.
+const kaykitFreeUrl=type=>import.meta.env.BASE_URL+'highfly/kaykit-free/building_'+KAYKIT_FREE_NAMES[type]+'_red.gltf';
+
 export function validateWorldForgeLayout(data){
  if(!data||data.schema!==1||data.world!=='unsung-vale'||!Array.isArray(data.objects)||data.objects.length>2500)
   return {ok:false,reason:'invalid layout/schema/size',objects:[]};
@@ -164,7 +193,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
  const loaded=loadedLayout(storage);
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
- const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],skipped=[];
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],skipped=[];
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
   if(!byChunk.has(key))byChunk.set(key,new MeshBuilder());
   return byChunk.get(key);
@@ -173,6 +202,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
+  if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){kaykitBuildings.push({o,fp});continue;}
   if(o.type==='ore'||o.type==='tree')resources.push({...o,y:fp.y});
   const builder=add(o);
   if(['guild','forge','inn','house','timber','market','mill','granary','warehouse','fishery','ranger'].includes(o.type))
@@ -192,7 +222,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   x:o.x,y:o.y,z:o.z,charges:8,available:true}));
  world.highflyInteractables=[...(world.highflyInteractables??[]),...nodes];
  let actors=[],disposed=false;
- const readyPromise=people.length?new GLTFLoader()
+ const peopleReadyPromise=people.length?new GLTFLoader()
   .loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb')
   .then(gltf=>{
    if(disposed)return;
@@ -218,6 +248,55 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    }
   })
   .catch(err=>console.warn('[HIGHFLY WORLD FORGE] NPC model failed',err)):Promise.resolve();
+
+ // KayKit FREE (CC0): reuse glTF scene per type, but create fresh transforms for each
+ // world-placed prefab. Static collision uses actual mesh triangles in world space.
+ const kaykitObjects=[],kaykitFailures=[];
+ const loader=new GLTFLoader(),prefabLoads=new Map();
+ const getPrefab=type=>{
+  if(!prefabLoads.has(type))prefabLoads.set(type,loader.loadAsync(kaykitFreeUrl(type)));
+  return prefabLoads.get(type);
+ };
+ const buildingsReadyPromise=Promise.allSettled(kaykitBuildings.slice(0,160).map(async ({o,fp})=>{
+  const gltf=await getPrefab(o.type);
+  if(disposed)return;
+  const scene=gltf.scene.clone(true);
+  const box=new THREE.Box3().setFromObject(scene);
+  const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  if(size.x<.01||size.z<.01)throw Error('Modelo KayKit sin volumen '+o.type);
+  const scale=Math.min(fp.w/size.x,fp.d/size.z);
+  const anchor=new THREE.Group();
+  anchor.name='HIGHFLY_KAYKIT_FREE_'+o.type+'_'+o.id;
+  anchor.position.set(o.x,fp.y+.03,o.z);anchor.rotation.y=o.yaw;
+  scene.scale.setScalar(scale);
+  scene.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
+  scene.traverse(mesh=>{
+   if(!mesh.isMesh)return;
+   const old=Array.isArray(mesh.material)?mesh.material[0]:mesh.material;
+   mesh.material=new THREE.MeshBasicMaterial({
+    map:old?.map??null,
+    color:0xfff5e7,
+    side:THREE.FrontSide
+   });
+   mesh.frustumCulled=true;
+  });
+  anchor.add(scene);group.add(anchor);anchor.updateMatrixWorld(true);
+  // Actual meshes, exact scale and correct terrain y, not a fake stone cube.
+  let added=0;
+  scene.traverse(mesh=>{
+   if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
+   const geom=mesh.geometry.clone().applyMatrix4(mesh.matrixWorld);
+   if(geom.index?.count>120000)return;
+   // Only collision for interactive proximity; BVHs can remain immutable until reload.
+   world.addLazy(o.x,o.z,Math.max(fp.w,fp.d)*.7,()=>geom);
+   collisions.push(geom);added++;
+  });
+  kaykitObjects.push({anchor,o,colliders:added});
+ })).then(results=>{
+  results.forEach((v,i)=>{if(v.status==='rejected')kaykitFailures.push({id:kaykitBuildings[i]?.o.id,error:String(v.reason)});});
+  console.info('[HIGHFLY KAYKIT FREE CC0]',kaykitObjects.length,'real medieval models,',kaykitFailures.length,'load failures');
+ }).catch(err=>console.error('[HIGHFLY KAYKIT FREE]',err));
+ const readyPromise=Promise.all([peopleReadyPromise,buildingsReadyPromise]);
  let lastUpdate=game.update;
  game.update=function(realDt){
   const result=lastUpdate.call(this,realDt);
@@ -228,13 +307,14 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   return result;
  };
- const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,readyPromise,
+ const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,kaykitObjects,kaykitFailures,readyPromise,
   get npcCount(){return actors.length;},
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
    disposed=true;game.update=lastUpdate;
    world.highflyInteractables=(world.highflyInteractables??[]).filter(n=>!nodes.includes(n));
    for(const a of actors){group.remove(a.anchor);a.mixer.stopAllAction();}
+   for(const k of kaykitObjects){group.remove(k.anchor);}
    // World collision is deliberately kept until page reload: no orphan BVH edits.
   }};
  game.__hfP521WorldForge=api;globalThis.__hfP521WorldForge=api;
