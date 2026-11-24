@@ -44,6 +44,9 @@ export function installP508WorldClock(pipe,options={}){
  let eclipseStart=clockStart,eclipseOffset=0;
  let phaseNow=.75;
  let moonIndex=0;
+ // P514: hidden/mini/full diagnostics without changing the sampling engine.
+ let diagMode=['hidden','mini','full'].includes(search.get('hfdiag'))?search.get('hfdiag'):'hidden';
+ let diagMini=null,diagBtn=null,diagCss=null,lastDiagPaint=0;
  let lastSync=-Infinity,draws=0;
  const baseSun=pipe.sky.sunColor.clone();
  const grade=pipe.skyPass.uniforms.uHFGrade.value;
@@ -87,6 +90,11 @@ export function installP508WorldClock(pipe,options={}){
      const desc=name+' · Luna y estrellas habitualmente; eventos raros.';
      if(eventLabel.textContent!==desc)eventLabel.textContent=desc;
    }
+   if(diagMini&&diagMode==='mini'&&now-lastDiagPaint>=750){
+     lastDiagPaint=now;
+     const fps=win?.__hfP505Pacing?.fps??win?.__hfGpuStats?.fps??win?.__gov?.fps??0;
+     diagMini.textContent='FPS '+(Number.isFinite(fps)&&fps>0?Math.round(fps):'—');
+   }
    draws++;
  };
  const select=(next)=>{
@@ -105,10 +113,18 @@ export function installP508WorldClock(pipe,options={}){
    eclipseOffset+=(now-eclipseStart)*speed;eclipseStart=now;
    speed=value===60?60:1;lastSync=-Infinity;update();syncButtons();return speed;
  };
+ const setDiagnostics=(value)=>{
+   if(!['hidden','mini','full'].includes(value))return false;
+   diagMode=value;
+   if(doc?.body)doc.body.setAttribute('data-hf-diag',diagMode);
+   syncButtons();return true;
+ };
+ const cycleDiagnostics=()=>setDiagnostics(diagMode==='hidden'?'mini':diagMode==='mini'?'full':'hidden');
  const setMoon=(value)=>{
    if(astronomy.enabled)astronomy.moonOverride(value);lastSync=-Infinity;update();syncButtons();return value;
  };
- const api={enabled:true,select,setAurora,setSpeed,setMoon,update,dispose,
+ const api={enabled:true,select,setAurora,setSpeed,setMoon,setDiagnostics,cycleDiagnostics,update,dispose,
+  get diagnostics(){return diagMode},
   get speed(){return speed},get astronomy(){return astronomy},get phase(){return phaseNow},
   get mode(){return mode},get aurora(){return activeAurora>0},get eclipse(){return activeEclipse>0},
   get event(){return lastEvent},get auroraSetting(){return auroraOverride},
@@ -130,8 +146,26 @@ export function installP508WorldClock(pipe,options={}){
   }
   if(fastButton)fastButton.textContent=speed===60?'⏩ Ciclo x60 ✓':'⏱ Ciclo normal';
   if(lunarButton)lunarButton.textContent='🌕 Luna: '+['Auto','Nueva','Creciente','Llena','Menguante'][moonIndex];
+  if(diagBtn)diagBtn.textContent='📊 FPS: '+({hidden:'oculto',mini:'mini',full:'completo'}[diagMode]);
  }
  if(doc?.body){
+  doc.body.setAttribute('data-hf-diag',diagMode);
+  diagCss=doc.createElement('style');
+  diagCss.id='hf-p514-diagnostics-style';
+  diagCss.textContent=`
+    body:not([data-hf-diag="full"]) #hf-p498-frame-debug,
+    body:not([data-hf-diag="full"]) #hf-p505-pacing,
+    body:not([data-hf-diag="full"]) #hf-p499-perf,
+    body:not([data-hf-diag="full"]) #hf-p501-stage-profiler,
+    body:not([data-hf-diag="full"]) #hf-p502-fpsaudit { display:none !important; }
+    body:not([data-hf-diag="mini"]) #hf-p514-fps-mini { display:none !important; }
+  `;
+  doc.body.appendChild(diagCss);
+  diagMini=doc.createElement('div');
+  diagMini.id='hf-p514-fps-mini';
+  diagMini.textContent='FPS —';
+  diagMini.style.cssText='position:fixed;right:8px;bottom:7px;z-index:99994;pointer-events:none;background:#0c0f24bd;border:1px solid #72bcb9;border-radius:14px;color:#edffff;font:600 11px/1.2 system-ui,sans-serif;padding:4px 8px';
+  doc.body.appendChild(diagMini);
   root=doc.createElement('div');root.id='hf-p508-climate';
   root.style.cssText='position:fixed;top:6px;right:6px;z-index:99996;color:#f7f1ff;font:12px/1.3 system-ui,sans-serif;pointer-events:auto;max-width:260px';
   const open=doc.createElement('button');
@@ -160,6 +194,11 @@ export function installP508WorldClock(pipe,options={}){
   lunarButton.style.cssText='margin:6px 0 0 5px;padding:6px 9px;border-radius:9px;background:#31265dcc;color:#fff;border:1px solid #a18edb;font:11px system-ui';
   lunarButton.addEventListener('click',()=>{moonIndex=(moonIndex+1)%lunarStates.length;setMoon(lunarStates[moonIndex]);});
   panel.appendChild(lunarButton);
+  diagBtn=doc.createElement('button');diagBtn.type='button';
+  diagBtn.id='hf-p514-debug-toggle';
+  diagBtn.style.cssText='margin:6px 0 0 5px;padding:6px 9px;border-radius:9px;background:#2a364acc;color:#e9f8ff;border:1px solid #7da6c1;font:11px system-ui';
+  diagBtn.addEventListener('click',cycleDiagnostics);
+  panel.appendChild(diagBtn);
   toggle=doc.createElement('button');toggle.type='button';
   toggle.style.cssText='margin-top:7px;padding:6px 9px;border-radius:9px;background:#184d4ee8;color:#e3ffff;border:1px solid #60c9b2;font:11px system-ui';
   toggle.addEventListener('click',()=>setAurora(auroraOverride==='auto'?true:auroraOverride===true?false:'auto'));
@@ -177,7 +216,8 @@ export function installP508WorldClock(pipe,options={}){
   playing=false;const i=pipe.onBeforeScene.indexOf(update);if(i>=0)pipe.onBeforeScene.splice(i,1);
   pipe.sky.sunColor.copy(baseSun);
   grade.set(0,0,1,0);tonemapGrade.copy(grade);
-  root?.remove();
+  root?.remove();diagMini?.remove();diagCss?.remove();
+  if(doc?.body)doc.body.removeAttribute('data-hf-diag');
  }
  if(win){win.__hfP508Climate=api;win.__hfP510Climate=api;}
  return api;
