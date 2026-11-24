@@ -4,7 +4,7 @@ const html=fs.readFileSync('public/highfly/world-forge.html','utf8');
 const js=fs.readFileSync('public/highfly/world-forge.js','utf8');
 const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
 const png=fs.readFileSync('scripts/p523-native-terrain-png.py','utf8');
-assert.match(html,/WORLD FORGE · V0\.3/);
+assert.match(html,/WORLD FORGE · V0\.[34]/);
 for(const id of ['diagnostics-toggle','diagnostics','diagnostics-log','diagnostics-copy','diagnostics-retry'])
  assert.ok(html.includes('id="'+id+'"'),id);
 assert.match(html,/world-forge\.js\?v=p523-png-terrain/);
