@@ -11,7 +11,7 @@ export function installP505FramePacing(pipe,options={}){
  const perf=options.perf??globalThis.performance;
  const MAX=360;
  const samples=[],cpuSamples=[];
- const stats={ready:false,frames:0,fps:0,medianMs:0,p90Ms:0,p99Ms:0,medianCpuMs:0,
+ const stats={ready:false,frames:0,fps:0,medianMs:0,p90Ms:0,p99Ms:0,medianCpuMs:0,meanFps:0,p99Fps:0,steady50:false,steady60:false,
   over20Percent:0,over33Percent:0,gapCount:0,sampleCount:0,
   // Chrome hides EXT_disjoint_timer_query on many S23 devices.
   gpuMs:null,gpuAvailable:false
@@ -28,6 +28,11 @@ export function installP505FramePacing(pipe,options={}){
   stats.ready=a.length>24;
   stats.fps=m?Math.round(1000/m):0;
   stats.medianMs=Math.round(m*10)/10;
+  const totalMs=a.reduce((acc,x)=>acc+x,0);
+  stats.meanFps=totalMs?Math.round(1000*a.length/totalMs):0;
+  stats.p99Fps=median(a,.99)>0?Math.round(1000/median(a,.99)):0;
+  stats.steady50=a.length>=120&&a.every(ms=>ms<=20);
+  stats.steady60=a.length>=120&&a.every(ms=>ms<=1000/60+0.5);
   stats.p90Ms=Math.round(median(a,.9)*10)/10;
   stats.p99Ms=Math.round(median(a,.99)*10)/10;
   stats.medianCpuMs=Math.round(median(b)*10)/10;
@@ -53,7 +58,8 @@ export function installP505FramePacing(pipe,options={}){
      if(panel){
       const q=stats;
       panel.textContent='HIGHFLY · RITMO REAL ANDROID\n'+
-       q.fps+' FPS · '+q.medianMs+' ms mediana\n'+
+       q.fps+' FPS mediana · '+q.meanFps+' FPS promedio\n'+
+       '1% LOW '+q.p99Fps+' FPS · '+(q.steady60?'60 ESTABLE':q.steady50?'50 ESTABLE':'SIN 50 SOSTENIDOS')+'\n'+
        'p90 '+q.p90Ms+' ms | p99 '+q.p99Ms+' ms\n'+
        'Render CPU '+q.medianCpuMs+' ms\n'+
        'Frames >20ms '+q.over20Percent+'% | >33ms '+q.over33Percent+'%\n'+
