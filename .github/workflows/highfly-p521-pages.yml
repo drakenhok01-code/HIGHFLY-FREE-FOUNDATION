@@ -1,0 +1,86 @@
+name: HIGHFLY P521 - World Forge Standalone Preview (Preserve All Older Builds)
+on:
+  push:
+    branches: [p521-world-forge-lite-20261124]
+    paths: ['.github/workflows/highfly-p521-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p521-safe-preview
+  cancel-in-progress: false
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked icon tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Test editor, localization, resume and native gameplay
+        run: |
+          node --check public/highfly/world-forge.js
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --check src/highfly/p521-resume-position.mjs
+          node --test tests/p521-world-forge.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Compile independent P521 world and editor
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p521/ npm run build
+          npm run qa:dist
+          test -s dist/index.html
+          test -s dist/highfly/world-forge.html
+          test -s dist/highfly/world-forge.js
+          grep -q 'preview-p521' dist/index.html
+          grep -q 'installHighflyResume' .work/unsung/src/main.js
+          grep -q 'installHighflyWorldForge' .work/unsung/src/main.js
+          grep -q 'hf-rpg-options-scroll' .work/unsung/src/highfly/premium-rpg.css
+          grep -q 'highfly-unsung-resume-v1' .work/unsung/src/game/game.js
+      - name: Restore last successful fully approved site including P520 experiment
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45493256839
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p520-site-artifact
+      - name: Append P521 while verifying every original file hash remains unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE="$RUNNER_TEMP/highfly-preserved-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p520-site-artifact/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html; do test -s "$SITE/$rel"; done
+          test ! -e "$SITE/preview-p521"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/approved-hashes.sha256"
+          mkdir "$SITE/preview-p521"
+          cp -a dist/. "$SITE/preview-p521/"
+          for rel in index.html highfly/world-forge.html highfly/world-forge.js; do test -s "$SITE/preview-p521/$rel"; done
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/approved-hashes.sha256" >/dev/null)
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "All prior approved and P520 files retained byte-for-byte"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish only preview-p521 with WORLD FORGE
+        id: deployment
+        uses: actions/deploy-pages@v4
