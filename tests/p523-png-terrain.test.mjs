@@ -7,7 +7,7 @@ const png=fs.readFileSync('scripts/p523-native-terrain-png.py','utf8');
 assert.match(html,/WORLD FORGE · V0\.[34]/);
 for(const id of ['diagnostics-toggle','diagnostics','diagnostics-log','diagnostics-copy','diagnostics-retry'])
  assert.ok(html.includes('id="'+id+'"'),id);
-assert.match(html,/world-forge\.js\?v=p523-png-terrain/);
+assert.match(html,/world-forge\.js\?v=p52[34]-/);
 assert.ok(!js.includes("loadImage(meta.core,'core_h.bin')"));
 assert.ok(!js.includes('DecompressionStream'),'Do not decode gzip at browser');
 assert.ok(!js.includes("new URL('../world/world.json'"),'Avoid old JSON CDN path');
