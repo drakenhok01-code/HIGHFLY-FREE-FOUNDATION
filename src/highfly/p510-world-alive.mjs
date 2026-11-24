@@ -20,18 +20,13 @@ export function solarVector(phase){
  const inv=1/SQRT(x*x+y*y+z*z);
  return [x*inv,y*inv,z*inv];
 }
-/** Manual eclipse preview: keep the dark solar disc ABOVE the iconic valley
- * arch (the east-facing +X skyline). Automatic rare eclipses retain the
- * normal continuous noon solar orbit; no sudden sunlight teleport in Auto.
- * This is visual only; the five keyframed terrain shadows are untouched.
+/** P513: during an eclipse day both the sun and lunar occluder follow the
+ * authentic orbital track. At phase .35 the sun is ~31 degrees high over the
+ * eastern valley arch, then it rises and continues to sunset normally.
+ * Retained helper name for P512 migration; no static position anymore.
  */
 export function eclipseDisplayVector(phase,mode='auto'){
- if(mode!=='eclipse')return solarVector(phase);
- const elevation=0.52; // approx. 31 degrees; clearly visible above the arch
- const horizontal=Math.sqrt(1-elevation*elevation);
- const eastX=0.993,eastZ=0.12;
- const inv=1/Math.hypot(eastX,eastZ);
- return [eastX*inv*horizontal,elevation,eastZ*inv*horizontal];
+ return solarVector(phase);
 }
 export function lunarVector(phase){
  // Antiphase to sun. At sunset moon rises on the opposite horizon.
@@ -87,7 +82,8 @@ export function installP510Astronomy(pipe,options={}){
   visualUpdates++;
   if(skipShadows)return;
   const t=options.terrain?.()??win?.__terrain;
-  const key=mode==='eclipse'?2:shadowKey(phase);
+  // The eclipse day uses the same staged solar shadow positions as any day.
+  const key=shadowKey(phase);
   desiredShadow=key;
   if(!t?.hfStartSunBake||!t?.hfAdvanceSunBake)return;
   // Build the *next* paired terrain shadow maps offscreen. At most one tile
