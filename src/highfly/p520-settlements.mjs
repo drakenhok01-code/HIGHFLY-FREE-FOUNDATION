@@ -79,7 +79,7 @@ function resourceProp(b,p){
  });
 }
 function entrance(p,W){
- const d=p.d*.5+2.8,dx=-Math.sin(p.yaw||0)*d,dz=Math.cos(p.yaw||0)*d;
+ const d=p.d*.5+2.8,dx=Math.sin(p.yaw||0)*d,dz=Math.cos(p.yaw||0)*d;
  const x=p.x+dx,z=p.z+dz;
  const y=Number(W.groundHeight(x,z));
  return {x,y:Number.isFinite(y)?y:p.y,z};
