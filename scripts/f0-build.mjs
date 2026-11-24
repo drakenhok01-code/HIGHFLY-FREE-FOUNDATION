@@ -493,6 +493,18 @@ patch('src/engine/pipeline.js',"  float disc = 1.0 - smoothstep(0.0046, 0.0054, 
 patch('src/engine/pipeline.js',"  float hfOcc=1.0-smoothstep(0.00485,0.00528,ang);","  float hfOcc=1.0-smoothstep(0.0127,0.0138,ang);");
 patch('src/engine/pipeline.js',"    float corona=exp(-pow((ang-0.00543)/0.00155,2.0));","    // Eclipse ring sized to the actual larger solar disc.\n    float corona=exp(-pow((ang-0.01425)/0.00245,2.0));\n    corona+=0.12*exp(-pow((ang-0.0205)/0.006,2.0));");
 patch('src/engine/pipeline.js',"  float hfFacing=pow(max(0.0,dot(rd,uSunDir)),8.0);","  float hfFacing=pow(max(0.0,dot(rd,uHFVisualSunDir)),8.0);");
+// P512 ECLIPSE FINAL — 21%-larger sun, arch-facing manual eclipse, red atmospheric grade.
+// Reuses original sky + tonemap only; NO added GPU passes, shadow recalculation,
+// texture changes, extra geometries, or quality/resolution adjustments.
+patch('src/engine/pipeline.js',"  float disc=1.0-smoothstep(0.0128,0.0140,ang);","  // P512: 21 percent wider sun, same sky shader and single render pass.\\n  float disc=1.0-smoothstep(0.0156,0.0170,ang);");
+patch('src/engine/pipeline.js',"  float limb=1.0-0.22*sq(ang/0.0140);","  float limb=1.0-0.22*sq(ang/0.0170);");
+patch('src/engine/pipeline.js',"  float hfOcc=1.0-smoothstep(0.0127,0.0138,ang);","  float hfOcc=1.0-smoothstep(0.0154,0.0168,ang);");
+patch('src/engine/pipeline.js',"    float corona=exp(-pow((ang-0.01425)/0.00245,2.0));","    float corona=exp(-pow((ang-0.01740)/0.00280,2.0));");
+patch('src/engine/pipeline.js',"    corona+=0.12*exp(-pow((ang-0.0205)/0.006,2.0));","    corona+=0.18*exp(-pow((ang-0.0240)/0.0068,2.0));");
+patch('src/engine/pipeline.js',"    col+=vec3(2.1,1.55,0.91)*corona*uHFEclipse;","    // Burnt copper / ruby corona, distinctive celestial event.\\n    col+=vec3(2.35,0.94,0.54)*corona*uHFEclipse;");
+patch('src/engine/pipeline.js',"    col=mix(col,vec3(0.001,0.003,0.009),uHFEclipse*hfOcc);","    col=mix(col,vec3(0.008,0.0015,0.002),uHFEclipse*hfOcc);");
+patch('src/engine/pipeline.js',"  c=mix(c,c*vec3(0.34,0.43,0.59),uHFEclipse*0.72);","  // P512: eclipse casts an ominous ruby-red atmospheric veil.\n  // The existing tonemap grades terrain, vegetation, water and clouds.\n  c=mix(c,c*vec3(0.69,0.27,0.31)+vec3(0.017,0.004,0.006),uHFEclipse*0.82);");
+patch('src/engine/pipeline.js',"  col=mix(col,col*vec3(0.052,0.080,0.15),hfNight);","  col=mix(col,col*vec3(0.052,0.080,0.15),hfNight);\n  // A reddish umbra spills across the existing atmosphere during eclipses.\n  float hfEclipseHorizon=1.0-smoothstep(0.02,0.75,max(0.0,rd.y));\n  vec3 hfRubySky=col*vec3(0.83,0.32,0.39)+vec3(0.075,0.014,0.022)*hfEclipseHorizon;\n  col=mix(col,hfRubySky,uHFEclipse*0.76);");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
