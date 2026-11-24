@@ -1,8 +1,30 @@
-/* HIGHFLY WORLD FORGE V0.2
+/* HIGHFLY WORLD FORGE V0.3
  * No game engine / combat / WebGL. Actual frozen 16-bit Unsung heightmaps.
  * Same-origin localStorage layout is read by the isolated game preview.
  */
 const $=id=>document.getElementById(id);
+// Autodiagnóstico visible, copiable y sin datos personales.
+// Nunca registra coordenadas del usuario ni contenido del guardado local.
+const HEALTH={version:'P523 PNG-only',phase:'init',entries:[],errors:[],started:Date.now()};
+function diagnose(label,details='',ok=true){
+ const line=(ok?'✓ ':'✕ ')+label+(details?' — '+details:'');
+ HEALTH.entries.push(line);if(!ok)HEALTH.errors.push(line);
+ if($('diagnostics-log'))$('diagnostics-log').textContent=[
+  'HIGHFLY WORLD FORGE P5.2.3',
+  'Página: '+location.pathname,'Dispositivo: '+navigator.userAgent.slice(0,170),
+  'Fase: '+HEALTH.phase,'','ARCHIVOS CARGADOS',...HEALTH.entries,'',
+  'Objetivo: alturas Unsung 2048×2048, PNG de 16 bits sin depender de gzip del navegador.'
+ ].join('\n');
+ if(!ok)$('diagnostics').hidden=false;
+ console[ok?'info':'error']('[FORGE DIAG]',line);
+}
+window.__highflyWorldForgeDiagnosis=HEALTH;
+$('diagnostics-toggle').onclick=()=>{$('diagnostics').hidden=!$('diagnostics').hidden;};
+$('diagnostics-close').onclick=()=>{$('diagnostics').hidden=true;};
+$('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('diagnostics-log').textContent);safe('✓ Informe copiado');}catch{safe('Seleccioná el informe del panel y copialo manualmente.')}};
+$('diagnostics-retry').onclick=()=>location.reload();
+diagnose('Editor iniciado','v0.3, sin WebGL ni IA del juego');
+
 const STORE='hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
@@ -122,14 +144,25 @@ function loadLocal(){
  $('items').textContent=objects.length+' elementos';
 }
 function validItem(o){return !!(o&&typeof o.id==='string'&&BY_ID.has(o.type)&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Math.abs(o.x)<8190&&Math.abs(o.z)<8190&&Number.isFinite(o.yaw)&&Number.isFinite(o.scale)&&o.scale>=.5&&o.scale<=3);}
-function loadImage(res,name){
- return fetch(new URL('../world/'+name,import.meta.url)).then(r=>{if(!r.ok)throw Error('No se encontró '+name+' ('+r.status+')');return r.arrayBuffer();}).then(async buf=>{
-  const raw=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
-  const val=new DataView(raw),out=new Float32Array(res.res*res),factor=(res.max-res.min)/65535;
-  if(raw.byteLength!==out.length*2)throw Error('Dimensiones incorrectas de '+name);
-  for(let i=0;i<out.length;i++)out[i]=res.min+val.getUint16(i*2,true)*factor;
-  return out;
- });
+async function loadHeightPNG(meta,name){
+ const where=new URL('./native-terrain-'+name+'.png',import.meta.url);
+ const image=await imageFrom(where);
+ const m=meta[name],size=m.res;
+ if(image.naturalWidth!==size||image.naturalHeight!==size)
+  throw Error(name+' tamaño PNG '+image.naturalWidth+'x'+image.naturalHeight+' ≠ '+size+'x'+size+' ('+where+')');
+ const el=document.createElement('canvas');el.width=el.height=size;
+ const context=el.getContext('2d',{willReadFrequently:true});
+ if(!context)throw Error('Sin acceso a Canvas2D para '+name);
+ context.drawImage(image,0,0);
+ const pixels=context.getImageData(0,0,size,size).data;
+ if(pixels[2]!==165||pixels[3]!==255)throw Error('Firma de altura '+name+' inválida: '+pixels[2]+'/'+pixels[3]);
+ const out=new Float32Array(size*size),factor=(m.max-m.min)/65535;
+ for(let j=0,k=0;j<out.length;j++,k+=4){
+  const n=pixels[k]*256+pixels[k+1];
+  out[j]=m.min+n*factor;
+ }
+ diagnose('Alturas '+name,where.pathname+' · '+size+'×'+size+' · '+out.byteLength+' bytes decodificados');
+ return out;
 }
 function sample(data,m,x,z){
  const f=(x/m.size+.5)*m.res-.5,g=(z/m.size+.5)*m.res-.5,ix=clamp(Math.floor(f),0,m.res-2),iz=clamp(Math.floor(g),0,m.res-2);
@@ -459,24 +492,45 @@ for(const cat of [...new Set(CATALOG.map(x=>x.cat))]){
 setCategory(category);loadLocal();resize();updateProps();syncTools();
 (async function boot(){
  try{
-  if(!('DecompressionStream' in window))throw Error('Tu navegador no admite descompresión gzip; probá Chrome actualizado.');
-  const url=new URL('../world/world.json',import.meta.url),resp=await fetch(url);
-  if(!resp.ok)throw Error('No se pudo leer el mundo ('+resp.status+')');
-  const meta=await resp.json();
-  const [core,region]=await Promise.all([loadImage(meta.core,'core_h.bin'),loadImage(meta.region,'region_h.bin')]);
+  HEALTH.phase='PNG original sin gzip';
+  const url=new URL('./native-terrain-manifest.json',import.meta.url);
+  const resp=await fetch(url,{cache:'no-cache'});
+  diagnose('Manifest HTTP',url.pathname+' · '+resp.status,resp.ok);
+  if(!resp.ok)throw Error('No se pudo leer el manifiesto de alturas PNG ('+resp.status+')');
+  const manifest=await resp.json(),meta=manifest.meta;
+  if(manifest.schema!==3||!meta?.core||!meta?.region||
+     meta.core.res!==2048||meta.region.res!==2048)throw Error('Manifiesto de alturas incorrecto');
+  diagnose('Fuente original','Unsung core 2048² y región 2048²; no se usan archivos .bin desde el navegador');
+  const [core,region]=await Promise.all([loadHeightPNG(meta,'core'),loadHeightPNG(meta,'region')]);
   mapData={meta,core,region};
   safe('Preparando mapa aéreo…');
   await new Promise(resolve=>setTimeout(resolve,25));
-  regionMap=makeTopo(region,meta.region,590);coreMap=makeTopo(core,meta.core,700);
+  [coreMap,regionMap]=await Promise.all([
+   imageFrom(new URL('./native-relief-core.png',import.meta.url)),
+   imageFrom(new URL('./native-relief-region.png',import.meta.url))
+  ]);
+  diagnose('Relieve aéreo','2 PNG originales decodificados: core y región');
   for(const o of objects)o.y=heightAt(o.x,o.z);
-  safe('✓ Alturas reales cargadas. Preparando árboles y edificaciones originales…');
+  HEALTH.phase='Relieve auténtico visible';
+  safe('✓ Mapa original cargado: alturas y relieve. Cargando construcciones y árboles nativos…');
   draw();
   try{
    const full=await loadNativeReference();
+   HEALTH.phase='Editor operativo completo';
+   diagnose('Arquitectura, vegetación y caminos',full.trees.length+' árboles, '+full.structureMeshes+' mallas, '+full.routes.length+' caminos');
    safe('✓ MUNDO ORIGINAL VISIBLE: '+full.trees.length.toLocaleString('es-AR')+' árboles y arquitectura auténtica de Unsung. Edición liviana sin abrir el RPG.');
   }catch(nativeError){
+   diagnose('Referencias originales',nativeError.message,false);
    console.error('[HIGHFLY WORLD FORGE NATIVE]',nativeError);
-   safe('El mapa topográfico está disponible, pero faltan referencias originales: '+nativeError.message);
+   safe('El terreno original está visible, pero falló una capa. Abrí 🩺 Diagnóstico.');
   }
- }catch(err){safe('ERROR DE MAPA: '+err.message+'. El editor necesita los archivos originales de Unsung.');console.error(err);}
+ }catch(err){
+  HEALTH.phase='Fallo de alturas / mapa';
+  diagnose('MAPA ORIGINAL',err.message,false);
+  safe('ERROR DE MAPA: '+err.message+'. Abrí 🩺 Diagnóstico y copiá el informe.');
+  console.error(err);
+  // Even on a terrain PNG error, retain the native structures/trees so editor is never blank.
+  try{const full=await loadNativeReference();diagnose('Referencias originales en modo degradado',full.trees.length+' árboles');}
+  catch(fallback){diagnose('Referencias originales',fallback.message,false);}
+ }
 })();
