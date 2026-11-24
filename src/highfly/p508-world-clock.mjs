@@ -5,6 +5,7 @@
  * shadow atlas and avoids an expensive new static-map bake each animation frame.
  */
 import {installP510Astronomy} from './p510-world-alive.mjs';
+import {eventPreview} from './p511-sky-events.mjs';
 export const DAY_MS=45*60*1000;
 export const PHASES=Object.freeze(['amanecer','dia','atardecer','noche']);
 export const GRADE=Object.freeze({
@@ -34,7 +35,9 @@ export function installP508WorldClock(pipe,options={}){
  const search=new URLSearchParams(options.search??win?.location?.search??'');
  let mode=search.get('hftime')||'atardecer';
  if(mode!=='auto'&&mode!=='eclipse'&&!PHASES.includes(mode))mode='atardecer';
- let aurora=search.get('hfaurora')!=='0',playing=true;
+ // Aurora defaults to scheduled rare events; force/off are QA overrides.
+ let auroraOverride=search.get('hfaurora')==='1'?true:search.get('hfaurora')==='0'?false:'auto',playing=true;
+ let activeAurora=0,activeEclipse=0,lastEvent=null;
  let clockStart=options.now?.()??globalThis.performance?.now?.()??0;
  let speed=search.get('hffast')==='1'?60:1,clockOffset=0;
  let phaseNow=.75;
@@ -56,18 +59,26 @@ export function installP508WorldClock(pipe,options={}){
    const active=mode==='auto'?phaseGrade(phaseNow):mode==='eclipse'?GRADE.dia:GRADE[mode];
    grade.set(active[0],active[1],active[2],active[3]);
    tonemapGrade.copy(grade);
-   pipe.skyPass.uniforms.uHFAurora.value=aurora?1:0;
-   if(pipe.skyPass.uniforms.uHFEclipse)pipe.skyPass.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
-   if(pipe.tonemap.uniforms.uHFEclipse)pipe.tonemap.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
+   lastEvent=eventPreview(mode,elapsed/DAY_MS,phaseNow,auroraOverride);
+   activeAurora=lastEvent.aurora;
+   activeEclipse=lastEvent.eclipse;
+   pipe.skyPass.uniforms.uHFAurora.value=activeAurora;
+   if(pipe.skyPass.uniforms.uHFEclipse)pipe.skyPass.uniforms.uHFEclipse.value=activeEclipse;
+   if(pipe.tonemap.uniforms.uHFEclipse)pipe.tonemap.uniforms.uHFEclipse.value=activeEclipse;
    pipe.skyPass.uniforms.uHFClock.value=now/1000;
    if(astronomy.enabled)astronomy.update({
-     phase:phaseNow,mode,
+     phase:phaseNow,mode,eclipse:activeEclipse,
      worldDays:mode==='auto'?(elapsed/DAY_MS):0,
      nowMs:now
    });
    // Change intensity, never sun direction: original precomputed terrain
    // and static shadows remain aligned in all four phases.
-   pipe.sky.sunColor.copy(baseSun).multiplyScalar((1-0.86*active[3]+0.08*active[1])*(mode==='eclipse'?.30:1));
+   pipe.sky.sunColor.copy(baseSun).multiplyScalar((1-0.86*active[3]+0.08*active[1])*(1-0.70*activeEclipse));
+   if(eventLabel){
+     const name=activeEclipse>.01?'🌑 Eclipse especial':activeAurora>.01?'✨ Aurora boreal':'🌙 Cielo normal';
+     const desc=name+' · Luna y estrellas habitualmente; eventos raros.';
+     if(eventLabel.textContent!==desc)eventLabel.textContent=desc;
+   }
    draws++;
  };
  const select=(next)=>{
@@ -75,7 +86,10 @@ export function installP508WorldClock(pipe,options={}){
    if(next==='auto'&&mode!=='auto'){clockStart=rt();clockOffset=0;}
    mode=next;lastSync=-Infinity;update();syncButtons();return true;
  };
- const setAurora=(value)=>{aurora=!!value;lastSync=-Infinity;update();syncButtons();};
+ const setAurora=(value)=>{
+   auroraOverride=value==='auto'?'auto':!!value;
+   lastSync=-Infinity;update();syncButtons();return auroraOverride;
+ };
  const setSpeed=(value)=>{
    const now=rt();
    clockOffset+=(now-clockStart)*speed;clockStart=now;
@@ -86,12 +100,13 @@ export function installP508WorldClock(pipe,options={}){
  };
  const api={enabled:true,select,setAurora,setSpeed,setMoon,update,dispose,
   get speed(){return speed},get astronomy(){return astronomy},get phase(){return phaseNow},
-  get mode(){return mode},get aurora(){return aurora},get eclipse(){return mode==='eclipse'}, 
+  get mode(){return mode},get aurora(){return activeAurora>0},get eclipse(){return activeEclipse>0},
+  get event(){return lastEvent},get auroraSetting(){return auroraOverride},
   get grade(){return [grade.x,grade.y,grade.z,grade.w]},
   get updates(){return draws}
  };
  pipe.onBeforeScene.push(update);
- let panel=null,root=null,buttons=[],toggle=null,fastButton=null,lunarButton=null;
+ let panel=null,root=null,buttons=[],toggle=null,fastButton=null,lunarButton=null,eventLabel=null;
  function syncButtons(){
   for(const item of buttons){
    const selected=item.value===mode;
@@ -100,8 +115,8 @@ export function installP508WorldClock(pipe,options={}){
    item.node.style.borderColor=selected?'#d9b866':'#63618e';
   }
   if(toggle){
-    toggle.textContent='Aurora '+(aurora?'✓':'—');
-    toggle.setAttribute('aria-pressed',String(aurora));
+    toggle.textContent='✨ Aurora: '+(auroraOverride==='auto'?'evento raro':auroraOverride?'FORZAR':'apagada');
+    toggle.setAttribute('aria-pressed',String(activeAurora>0));
   }
   if(fastButton)fastButton.textContent=speed===60?'⏩ Ciclo x60 ✓':'⏱ Ciclo normal';
   if(lunarButton)lunarButton.textContent='🌕 Luna: '+['Auto','Nueva','Creciente','Llena','Menguante'][moonIndex];
@@ -137,8 +152,12 @@ export function installP508WorldClock(pipe,options={}){
   panel.appendChild(lunarButton);
   toggle=doc.createElement('button');toggle.type='button';
   toggle.style.cssText='margin-top:7px;padding:6px 9px;border-radius:9px;background:#184d4ee8;color:#e3ffff;border:1px solid #60c9b2;font:11px system-ui';
-  toggle.addEventListener('click',()=>setAurora(!aurora));panel.appendChild(toggle);
-  const note=doc.createElement('div');note.textContent='P5.1.0: sol/luna en órbita · sombras por ángulos, progresivas · sin nuevas pasadas de cielo.';
+  toggle.addEventListener('click',()=>setAurora(auroraOverride==='auto'?true:auroraOverride===true?false:'auto'));
+  panel.appendChild(toggle);
+  eventLabel=doc.createElement('div');
+  eventLabel.style.cssText='font-size:10px;color:#a3e7e5;margin-top:5px';
+  panel.appendChild(eventLabel);
+  const note=doc.createElement('div');note.textContent='P5.1.1: luna y estrellas cada noche · aurora tras lunas especiales · eclipse muy raro. Botón Aurora: auto/forzar/apagar.';
   note.style.cssText='font-size:10px;color:#c9c2d9;margin-top:6px';panel.appendChild(note);
   open.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';open.setAttribute('aria-expanded',String(panel.style.display!=='none'));});
   root.append(open,panel);doc.body.appendChild(root);syncButtons();
