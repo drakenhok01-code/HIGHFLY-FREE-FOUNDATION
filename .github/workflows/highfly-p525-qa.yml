@@ -45,6 +45,19 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs';const f=JSON.parse(fs.readFileSync('dist/highfly/kaykit-free/manifest.json'));if(f.models.length!==16||f.license!=='CC0-1.0')throw Error('Official CC0 pack incomplete');console.log('[P525 KAYKIT]',f.models.length,'free authentic CC0 models')"
           ! grep -q 'DecompressionStream' dist/highfly/world-forge-3d.js
           ! git diff --name-only | grep -qE '^src/world/(layout|terrain|arch)/'
+      - name: Real Chrome WebGL smoke test — 3D world must render before release
+        run: |
+          cp tests/p525-browser-smoke.mjs .work/unsung/tools/p525-browser-smoke.mjs
+          cd .work/unsung
+          node tools/p525-browser-smoke.mjs
+      - name: Preserve screenshot of native 3D editor from CI browser
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p525-3d-browser-screenshot
+          path: .work/unsung/p525-editor-3d-smoke.png
+          if-no-files-found: warn
+          retention-days: 5
       - name: Save complete separate 3D preview artifact (no site overwrite)
         uses: actions/upload-artifact@v4
         with:
