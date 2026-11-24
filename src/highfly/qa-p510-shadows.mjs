@@ -14,7 +14,7 @@ const uniforms={
 const terrain={
  coreRes:256,regionRes:256,coreSize:1024,regionSize:4096,
  texHCore:{name:'hcore'},texHRegion:{name:'hregion'},
- sCore:oldCore,sRegion:oldRegion,uniforms,_queue:[],
+ sCore:oldCore,sRegion:oldRegion,uniforms:fakeTextures,_queue:[],
  shadowBake:{uniforms,renderRegion(renderer,target,x,y,width,height){
    assert.equal(renderer,pipe.renderer);
    assert.notEqual(target,oldCore);assert.notEqual(target,oldRegion);
