@@ -15,14 +15,14 @@ for(let i=0;i<=300;i++){
  const e=manualEclipseStrength(p);
  assert.ok(e>=0&&e<=1,'totality envelope range');
 }
-assert.equal(manualEclipseStrength(.315),1);
-assert.equal(manualEclipseStrength(.35),1);
-assert.equal(manualEclipseStrength(.42),1);
-assert.equal(manualEclipseStrength(.5),0,'eclipse day ends totality before noon');
-assert.equal(manualEclipseStrength(.25),0,'no totality before sunrise');
-assert.equal(manualEclipseStrength(.75),0,'no eclipse during sunset');
-assert.equal(eventPreview('eclipse',0,.35,'auto').eclipse,1);
-assert.equal(eventPreview('eclipse',0,.5,'auto').eclipse,0);
+assert.equal(manualEclipseStrength(.25),.16,'partial eclipse visible at sunrise');
+assert.ok(manualEclipseStrength(.315)>.16&&manualEclipseStrength(.315)<1);
+assert.ok(manualEclipseStrength(.35)>.16&&manualEclipseStrength(.35)<1);
+assert.equal(manualEclipseStrength(.5),1,'totality at high noon');
+assert.equal(manualEclipseStrength(.75),.16,'partial eclipse visible at sunset');
+assert.equal(manualEclipseStrength(.8),0,'eclipse day finishes at sunset');
+assert.equal(eventPreview('eclipse',0,.35,'auto').eclipse,manualEclipseStrength(.35));
+assert.equal(eventPreview('eclipse',0,.5,'auto').eclipse,1);
 assert.equal(skyEvents(4.75,.5).eclipse,1,'rare automatic events unchanged');
 const arch=solarVector(.35);
 assert.ok(arch[0]>.8 && arch[1]>.49 && arch[1]<.6,'eclipse passes above east arch');
@@ -39,8 +39,8 @@ let time=0;
 const api=installP508WorldClock(pipe,{now:()=>time,search:'?hftime=eclipse&hffast=1&hfaurora=auto'});
 assert.equal(api.mode,'eclipse');
 assert.equal(api.speed,60);
-assert.ok(Math.abs(api.phase-.315)<1e-10);
-assert.equal(sky.uHFEclipse.value,1);
+assert.ok(Math.abs(api.phase-.25)<1e-10);
+assert.equal(sky.uHFEclipse.value,.16);
 const results=[];
 for(let k=0;k<=90;k++){
  time=k*500;api.update();
@@ -50,16 +50,16 @@ for(let k=0;k<=90;k++){
  assert.ok(Math.abs(sky.uHFEclipse.value-pipe.tonemap.uniforms.uHFEclipse.value)<1e-9);
  assert.deepEqual(api.grade,phaseGrade(api.phase));
 }
-assert.ok(results.some(x=>x.phase>.345&&x.phase<.355&&x.force>.99),'totality near eastern valley arch');
-assert.ok(results.some(x=>x.phase>.46&&x.phase<.49&&x.force<1&&x.force>0),'eclipse fades into daylight');
-assert.ok(results.some(x=>x.phase>.51&&x.phase<.55&&x.force===0),'ordinary daylight after eclipse');
+assert.ok(results.some(x=>x.phase>.345&&x.phase<.355&&x.force>.35),'partial eclipse above eastern valley arch');
+assert.ok(results.some(x=>x.phase>.49&&x.phase<.51&&x.force>.99),'maximum eclipse at noon');
+assert.ok(results.some(x=>x.phase>.60&&x.phase<.64&&x.force>.5),'eclipse still visible in the afternoon');
 assert.ok(results.some(x=>x.phase>.72&&x.phase<.77&&x.x<-.85),'eclipse SUN follows west toward sunset');
 assert.ok(results.some(x=>x.phase>.48&&x.phase<.53&&x.y>.93),'sun rises to high noon');
 const before=api.phase;
 api.setSpeed(1);
 assert.ok(Math.abs(api.phase-before)<1e-8,'speed toggle must not teleport sun');
 api.select('eclipse');
-assert.ok(Math.abs(api.phase-.315)<1e-10,'reselecting eclipse restarts moving event');
+assert.ok(Math.abs(api.phase-.25)<1e-10,'reselecting eclipse restarts at sunrise');
 api.select('noche');
 assert.equal(sky.uHFEclipse.value,0);
 assert.deepEqual(api.grade,GRADE.noche);
@@ -68,7 +68,7 @@ api.dispose();
 // P513 only changes native sky/tonemap shader fragments; no added GPU passes.
 const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
 const a=build.indexOf('// P513 CELESTIAL HERO SCALE');
-const b=build.indexOf('// P503: one source-of-truth',a);
+const b=build.indexOf('// P514 MOON FINAL',a);
 assert.ok(a>0&&b>a);
 const section=build.slice(a,b);
 assert.equal((section.match(/patch\('src\/engine\/pipeline\.js'/g)||[]).length,9);
