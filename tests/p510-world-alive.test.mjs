@@ -61,7 +61,7 @@ api.select('noche');assert.equal(api.phase,0);
 api.setMoon(.25);assert.equal(uniforms.uHFMoonPhase.value,.25);
 api.setMoon(.5);assert.equal(uniforms.uHFMoonPhase.value,.5);
 api.select('eclipse');
-assert.equal(uniforms.uHFEclipse.value,1);
+assert.equal(uniforms.uHFEclipse.value,.16);
 assert.equal(uniforms.uHFMoonPhase.value,0);
 assert.ok(Math.abs(uniforms.uHFVisualSunDir.value.x-uniforms.uHFMoonDir.value.x)<1e-9,'moon aligns with sun for eclipse');
 api.select('dia');assert.equal(uniforms.uHFEclipse.value,0);
