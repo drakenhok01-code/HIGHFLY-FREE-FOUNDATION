@@ -253,7 +253,7 @@ export function translateHighfly(text){
  if(typeof text!=='string')return text;
  const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(text),core=m?.[2]??text;
  if(SPANISH.has(core))return (m?.[1]??'')+SPANISH.get(core)+(m?.[3]??'');
- const bell=/^Bell (\\d+) of 3$/.exec(core);
+ const bell=/^Bell (\d+) of 3$/.exec(core);
  if(bell)return (m?.[1]??'')+'Campana '+bell[1]+' de 3'+(m?.[3]??'');
  if(core.startsWith('The ')&&SPANISH.has('the '+core.slice(4)))
   return (m?.[1]??'')+SPANISH.get('the '+core.slice(4)).replace(/^l/, 'L')+(m?.[3]??'');
