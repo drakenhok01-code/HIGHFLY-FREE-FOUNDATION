@@ -20,6 +20,19 @@ export function solarVector(phase){
  const inv=1/SQRT(x*x+y*y+z*z);
  return [x*inv,y*inv,z*inv];
 }
+/** Manual eclipse preview: keep the dark solar disc ABOVE the iconic valley
+ * arch (the east-facing +X skyline). Automatic rare eclipses retain the
+ * normal continuous noon solar orbit; no sudden sunlight teleport in Auto.
+ * This is visual only; the five keyframed terrain shadows are untouched.
+ */
+export function eclipseDisplayVector(phase,mode='auto'){
+ if(mode!=='eclipse')return solarVector(phase);
+ const elevation=0.52; // approx. 31 degrees; clearly visible above the arch
+ const horizontal=Math.sqrt(1-elevation*elevation);
+ const eastX=0.993,eastZ=0.12;
+ const inv=1/Math.hypot(eastX,eastZ);
+ return [eastX*inv*horizontal,elevation,eastZ*inv*horizontal];
+}
 export function lunarVector(phase){
  // Antiphase to sun. At sunset moon rises on the opposite horizon.
  const a=(n01(phase)-.25)*TAU+Math.PI;
@@ -63,7 +76,7 @@ export function installP510Astronomy(pipe,options={}){
  if(auroraAxis?.set) auroraAxis.set(.993,.12); // valley arch / startup view (east)
  function moonOverride(v){phaseOverride=v===null?null:((v%1)+1)%1;return phaseOverride;}
  function update({phase,mode='auto',eclipse=0,worldDays=0,nowMs=now()}){
-  const sun=solarVector(phase);
+  const sun=eclipseDisplayVector(phase,mode);
   const alignment=mode==='eclipse'||eclipse>0.001;
   const moon=alignment?sun:lunarVector(phase);
   const moonAge=alignment?0:(phaseOverride??lunarPhase(worldDays));
