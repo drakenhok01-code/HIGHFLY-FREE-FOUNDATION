@@ -53,6 +53,8 @@ jobs:
           node --test tests/p503-native-performance.test.mjs
           node --test tests/p504-native-hdr.test.mjs
           node --check src/highfly/p504-hdr-options.mjs
+          node --check src/highfly/qa-p504-hdr-entry.mjs
+          node --check src/highfly/qa-p504-browser.mjs
           node --check src/highfly/p503-opaque-copy.mjs
           node --check src/highfly/p502-fps-audit.mjs
           node --check src/highfly/p501-stage-profiler.mjs
@@ -97,6 +99,9 @@ jobs:
           grep -q 'selectP504HdrFormat' .work/unsung/src/engine/pipeline.js
           grep -q 'this.pipe._hfCompactHdr' .work/unsung/src/engine/post.js
           node .work/unsung/src/highfly/qa-p504-hdr.mjs
+          test -s .work/unsung/qa-p504-hdr.html
+          test -s .work/unsung/src/highfly/qa-p504-hdr-entry.mjs
+          test -s .work/unsung/src/highfly/qa-p504-browser.mjs
           test -s .work/unsung/src/highfly/qa-p503-grass.mjs
           grep -q 'installP503OpaqueCopy' .work/unsung/src/main.js
           grep -q 'c._hfCellX!==ci' .work/unsung/src/world/flora/grass.js
@@ -160,6 +165,7 @@ jobs:
           node src/highfly/qa-p495-stairs.mjs
           node scripts/qa-rpg-browser.mjs
           node scripts/qa-p494-visual-browser.mjs
+          node src/highfly/qa-p504-browser.mjs
           test -s qa-p494-real-wildlife.png
           test -s qa-p494-real-wildlife.json
           # Fully integrated world still requires verification on a real device.
