@@ -73,7 +73,7 @@ export function installP505FramePacing(pipe,options={}){
   doc.body.appendChild(panel);
  }
  return {enabled:true,stats,dispose(){
-  active=false;if(pipe.render===wrapped)pipe.render=old;
+  if(pipe.render===wrapped)pipe.render=old;
   panel?.remove();if(win?.__hfP505Pacing===stats)delete win.__hfP505Pacing;
  }};
 }
