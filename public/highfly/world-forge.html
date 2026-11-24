@@ -45,7 +45,7 @@ aside h2{font-size:12px;color:var(--gold);padding:9px 10px 6px;margin:0}
 <body>
 <div id="app">
 <header>
- <div class="brand">✦ HIGHFLY <small>WORLD FORGE · V0.1</small></div>
+ <div class="brand">✦ HIGHFLY <small>WORLD FORGE · V0.2</small></div>
  <div class="head-actions">
   <button id="undo" title="Deshacer">↶</button><button id="redo" title="Rehacer">↷</button>
   <button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
@@ -61,10 +61,10 @@ aside h2{font-size:12px;color:var(--gold);padding:9px 10px 6px;margin:0}
 </aside>
 <div id="viewport">
  <canvas id="map" aria-label="Mapa real de altura de Unsung, editor aéreo"></canvas>
- <div class="toolbar"><button id="select" class="active">▣ Seleccionar</button><button id="pan">✋ Mover mapa</button><button id="grid">▦ Cuadrícula</button><button id="zoom-in">＋</button><button id="zoom-out">－</button><button id="home">⌖ Inicio</button></div>
- <div id="hud"><div id="coord">X — · Z —</div><div id="height">Altura real: —</div><div id="items">0 objetos</div></div>
- <div id="status">Cargando mapa auténtico de Unsung…</div>
- <div id="info">Piso: arrastrá para trazar camino · Rueda o pellizco: zoom</div>
+ <div class="toolbar"><button id="select" class="active">▣ Seleccionar</button><button id="pan">✋ Mover mapa</button><button id="grid">▦ Cuadrícula</button><button id="layer-native" class="active" title="Construcciones originales de Unsung">🏛️ Edificios</button><button id="layer-forest" class="active" title="Árboles reales de Unsung">🌳 Árboles</button><button id="layer-paths" class="active" title="Caminos, agua y plazas existentes">🛤️ Caminos</button><button id="zoom-in">＋</button><button id="zoom-out">－</button><button id="home">⌖ Inicio</button><button id="full-world">🗺 Mundo</button><button id="core-world">🌄 Valle</button></div>
+ <div id="hud"><div id="coord">X — · Z —</div><div id="height">Altura real: —</div><div id="items">0 objetos</div><div id="native-count">Referencias originales: cargando…</div></div>
+ <div id="status">Cargando alturas, arquitectura y árboles originales de Unsung…</div>
+ <div id="info">Mapa auténtico + edificaciones y árboles preexistentes · Rueda o pellizco: zoom</div>
 </div>
 </main>
 <input id="io-file" type="file" accept="application/json,.json">
