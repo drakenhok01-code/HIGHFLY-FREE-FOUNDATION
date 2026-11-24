@@ -27,7 +27,7 @@ assert.equal(api.enabled,true);
 assert.equal(api.select('eclipse'),true);
 assert.equal(api.eclipse,true);
 assert.equal(api.mode,'eclipse');
-assert.deepEqual(api.grade,GRADE.dia);
+assert.deepEqual(api.grade,phaseGrade(api.phase)); // P513 eclipse is a travelling solar day
 assert.equal(pipe.skyPass.uniforms.uHFEclipse.value,1);
 assert.equal(pipe.tonemap.uniforms.uHFEclipse.value,1);
 assert.ok(color.v<.4,'Eclipse must dim direct sunlight without altering shadow direction');
