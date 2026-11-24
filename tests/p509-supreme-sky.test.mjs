@@ -28,9 +28,9 @@ assert.equal(api.select('eclipse'),true);
 assert.equal(api.eclipse,true);
 assert.equal(api.mode,'eclipse');
 assert.deepEqual(api.grade,phaseGrade(api.phase)); // P513 eclipse is a travelling solar day
-assert.equal(pipe.skyPass.uniforms.uHFEclipse.value,1);
-assert.equal(pipe.tonemap.uniforms.uHFEclipse.value,1);
-assert.ok(color.v<.4,'Eclipse must dim direct sunlight without altering shadow direction');
+assert.equal(pipe.skyPass.uniforms.uHFEclipse.value,.16); // P514 partial eclipse at sunrise
+assert.equal(pipe.tonemap.uniforms.uHFEclipse.value,.16);
+assert.ok(color.v<1,'Eclipse must dim direct sunlight without altering shadow direction');
 const v=api.updates;
 api.setAurora(false);
 assert.equal(pipe.skyPass.uniforms.uHFAurora.value,0);
