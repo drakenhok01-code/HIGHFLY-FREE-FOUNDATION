@@ -698,6 +698,11 @@ copy(path.join(ROOT,'scripts/p522-native-world-export.mjs'),loc('tools/p522-nati
 copy(path.join(ROOT,'scripts/p522-native-world-raster.py'),loc('tools/p522-native-world-raster.py'));
 run('node',['tools/p522-native-world-export.mjs'],origin);
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p522-native-world-raster.py'],origin);
+copy(path.join(ROOT,'scripts/p523-native-terrain-png.py'),loc('tools/p523-native-terrain-png.py'));
+run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p523-native-terrain-png.py'],origin);
+for(const name of ['native-terrain-core.png','native-terrain-region.png','native-relief-core.png','native-relief-region.png','native-terrain-manifest.json']){
+ if(!fs.existsSync(loc('public/highfly/'+name)))throw Error('P523 robust PNG map missing '+name);
+}
 for(const name of ['native-overview.json','native-architecture-core.png','native-architecture-region.png','native-trees-core.png','native-trees-region.png']){
  if(!fs.existsSync(loc('public/highfly/'+name)))throw Error('P522 required original-world visual layer missing: '+name);
 }
