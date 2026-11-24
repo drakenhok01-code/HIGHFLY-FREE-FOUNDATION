@@ -484,6 +484,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<input id="hf-p492-sens" type="range" min="0.3" max="2.5" step="0.05" value="'+sensitivity.toFixed(2)+'" data-hf-camera-sensitivity aria-label="Sensibilidad de cámara"/>'+
     '<button type="button" data-hf-camera-invert aria-pressed="'+invert+'">Invertir cámara vertical: '+(invert?'SÍ':'NO')+'</button>'+
     '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
+    '<div class="hf-rpg-rule"></div><div class="hf-rpg-options"><div><b>🌌 MUNDO Y CLIMA</b><small>Fenómenos del cielo, luna, ciclo de 45 minutos y herramientas de prueba. No se muestran en el HUD.</small></div>'+ 
+    '<div data-hf-climate-controls aria-label="Ajustes del mundo y clima"></div></div>'+ 
     '<div class="hf-rpg-rule"></div>'+button('✧ EDITAR HUD 3.1','data-hf-action="edit-hud"','is-primary')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
@@ -498,6 +500,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<button class="hf-rpg-close" type="button" data-hf-action="close" aria-label="Cerrar menú">×</button></header>'+
    '<div class="hf-rpg-content">'+body()+'</div>'+ (local.toast?'<div class="hf-p41-toast" role="status" aria-live="polite">'+safe(local.toast)+'</div>':'')+
    '<footer class="hf-rpg-footer" aria-hidden="true"></footer></div>'+systemLayer();
+  // P515: existing CLIMA controls are real, not a duplicated settings mock.
+  if(local.tab==='opciones')globalThis.__hfP508Climate?.mountControls?.(root.querySelector('[data-hf-climate-controls]'));
   // Restore scroll state across selection/render updates. No inaccessible
   // information at the end of bag/forge/skills panels.
   const scrollTargets={
