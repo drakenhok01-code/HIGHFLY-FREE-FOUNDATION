@@ -1,6 +1,7 @@
 /** Real WebGL2 HDR texture pipeline A/B, never a mock renderer. */
 import * as THREE from 'three';
 import {selectP504HdrFormat} from './p504-hdr-options.mjs';
+import {BloomPass} from '../engine/post.js';
 const stats={ready:false,packed:false,reason:'',meanAbsRGB:null,maxAbsRGB:null,missingPixels:null,width:320,height:180};
 window.__hfP504VisualQA=stats;
 let renderer=null;
@@ -43,6 +44,29 @@ try{
    if(bb[i]===0&&bb[i+1]===0&&bb[i+2]===0)missing++;
   }
   stats.meanAbsRGB=Math.round(sum/count*1000)/1000;stats.maxAbsRGB=max;stats.missingPixels=missing;
+  // P505: test the ACTUAL imported Unsung bloom shader and its complete
+  // six-down/five-up chain in RGBA16F vs RGB11F. Compare the display-tonemapped
+  // pixel outputs; never infer visual equality from format flags.
+  const bloomOriginal=new BloomPass(),bloomPacked=new BloomPass();
+  bloomPacked._hfCompactHdr=opts.options;
+  bloomOriginal.setSize(W,H);bloomPacked.setSize(W,H);
+  const texOriginal=bloomOriginal.render(renderer,packed.texture);
+  const texPacked=bloomPacked.render(renderer,packed.texture);
+  const bloomA=snap({texture:texOriginal}),bloomB=snap({texture:texPacked});
+  let bloomSum=0,bloomMax=0,bloomCount=0,bloomMissing=0;
+  for(let i=0;i<bloomA.length;i+=4){
+   for(let j=0;j<3;j++){const d=Math.abs(bloomA[i+j]-bloomB[i+j]);
+    bloomSum+=d;bloomMax=Math.max(bloomMax,d);bloomCount++;}
+   if(bloomB[i]===0&&bloomB[i+1]===0&&bloomB[i+2]===0) bloomMissing++;
+  }
+  stats.bloomMeanAbsRGB=Math.round(bloomSum/bloomCount*1000)/1000;
+  stats.bloomMaxAbsRGB=bloomMax;stats.bloomMissingPixels=bloomMissing;
+  stats.bloomPackedFormat=bloomPacked.mips.every(t=>t.texture.type===THREE.UnsignedInt101111Type);
+  for(const pass of [bloomOriginal,bloomPacked]){
+   pass.mips?.forEach(t=>t.dispose());pass.ups?.forEach(t=>t.dispose());
+   pass.down.dispose();pass.up.dispose();
+  }
+
   screen.dispose();reference.dispose();packed.dispose();show.dispose();plane.dispose();
  }
  stats.ready=true;
