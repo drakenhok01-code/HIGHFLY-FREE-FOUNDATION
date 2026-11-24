@@ -505,6 +505,17 @@ patch('src/engine/pipeline.js',"    col+=vec3(2.1,1.55,0.91)*corona*uHFEclipse;"
 patch('src/engine/pipeline.js',"    col=mix(col,vec3(0.001,0.003,0.009),uHFEclipse*hfOcc);","    col=mix(col,vec3(0.008,0.0015,0.002),uHFEclipse*hfOcc);");
 patch('src/engine/pipeline.js',"  c=mix(c,c*vec3(0.34,0.43,0.59),uHFEclipse*0.72);","  // P512: eclipse casts an ominous ruby-red atmospheric veil.\n  // The existing tonemap grades terrain, vegetation, water and clouds.\n  c=mix(c,c*vec3(0.69,0.27,0.31)+vec3(0.017,0.004,0.006),uHFEclipse*0.82);");
 patch('src/engine/pipeline.js',"  col=mix(col,col*vec3(0.052,0.080,0.15),hfNight);","  col=mix(col,col*vec3(0.052,0.080,0.15),hfNight);\n  // A reddish umbra spills across the existing atmosphere during eclipses.\n  float hfEclipseHorizon=1.0-smoothstep(0.02,0.75,max(0.0,rd.y));\n  vec3 hfRubySky=col*vec3(0.83,0.32,0.39)+vec3(0.075,0.014,0.022)*hfEclipseHorizon;\n  col=mix(col,hfRubySky,uHFEclipse*0.76);");
+// P513 CELESTIAL HERO SCALE: 3x solar / 3.5x moon / 4x eclipse
+// NO new passes, assets, pixel-scale reductions or global shadow upgrades.
+patch('src/engine/pipeline.js',"  float disc=1.0-smoothstep(0.0156,0.0170,ang);","  // P513 anime celestial: sun 3x P512, eclipse totality 4x P512.\n  // Radius changes only inside the existing native sky shader.\n  float hfHeroRadius=mix(0.0510,0.0680,clamp(uHFEclipse,0.0,1.0));\n  float disc=1.0-smoothstep(hfHeroRadius-0.0024,hfHeroRadius,ang);");
+patch('src/engine/pipeline.js',"  float limb=1.0-0.22*sq(ang/0.0170);","  float limb=1.0-0.16*sq(ang/max(hfHeroRadius,0.001));");
+patch('src/engine/pipeline.js',"  float hfOcc=1.0-smoothstep(0.0154,0.0168,ang);","  float hfOcc=1.0-smoothstep(hfHeroRadius-0.0029,hfHeroRadius-0.0014,ang);");
+patch('src/engine/pipeline.js',"    float corona=exp(-pow((ang-0.01740)/0.00280,2.0));","    float corona=exp(-pow((ang-(hfHeroRadius+0.0016))/0.0095,2.0));");
+patch('src/engine/pipeline.js',"    corona+=0.18*exp(-pow((ang-0.0240)/0.0068,2.0));","    corona+=0.18*exp(-pow((ang-(hfHeroRadius+0.025))/0.021,2.0));");
+patch('src/engine/pipeline.js',"    if(md>0.9980){","    if(md>0.9850){ // enlarged phase-textured moon, roughly 3.5x P511 angular diameter");
+patch('src/engine/pipeline.js',"        vec2 uv=vec2(dot(rd,right),dot(rd,moonUp))/0.045;","        vec2 uv=vec2(dot(rd,right),dot(rd,moonUp))/0.1575;");
+patch('src/engine/pipeline.js',"        float disk=smoothstep(0.99882,0.99904,md);","        float disk=1.0-smoothstep(0.91,1.02,r2);");
+patch('src/engine/pipeline.js',"      col+=vec3(0.86,0.94,1.18)*moonGlow*hfNight;","      // Moon relief is preserved at this scale; no external albedo texture.\n      col+=vec3(0.86,0.94,1.18)*moonGlow*hfNight;");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
