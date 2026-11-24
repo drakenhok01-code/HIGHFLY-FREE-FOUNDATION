@@ -3,6 +3,10 @@
  * Unknown strings are reported in ?hfi18nqa=1 rather than incorrectly invented.
  */
 const PAIRS=[
+ ['The note falters','Has caído'],
+ ['You will wake at the last safe place','Reaparecerás en el último lugar seguro.'],
+ ['Cadence','Cadencia'],
+ ['The refrain','El estribillo'],
  ['The Petal Court answers. Far to the east, a second voice stirs.','El Patio de los Pétalos responde. Más al este, despierta una segunda voz.'],
  ['Two voices now. Across the water the old bridge remembers its shape.','Ya son dos voces. Al otro lado del agua, el viejo puente recupera su forma.'],
  ['The Lantern Court burns again. The string runs on, south across the lake.','El Patio de los Faroles vuelve a brillar. El camino de luz sigue al sur, cruzando el lago.'],
