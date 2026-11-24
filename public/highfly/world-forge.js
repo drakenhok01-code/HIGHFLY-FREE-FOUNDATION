@@ -1,4 +1,4 @@
-/* HIGHFLY WORLD FORGE V0.3
+/* HIGHFLY WORLD FORGE V0.4
  * No game engine / combat / WebGL. Actual frozen 16-bit Unsung heightmaps.
  * Same-origin localStorage layout is read by the isolated game preview.
  */
@@ -23,7 +23,7 @@ $('diagnostics-toggle').onclick=()=>{$('diagnostics').hidden=!$('diagnostics').h
 $('diagnostics-close').onclick=()=>{$('diagnostics').hidden=true;};
 $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('diagnostics-log').textContent);safe('✓ Informe copiado');}catch{safe('Seleccioná el informe del panel y copialo manualmente.')}};
 $('diagnostics-retry').onclick=()=>location.reload();
-diagnose('Editor iniciado','v0.3, sin WebGL ni IA del juego');
+diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
 const STORE='hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
@@ -39,6 +39,22 @@ const CATALOG=[
  {id:'warehouse',label:'Almacén',icon:'📦',cat:'Edificios',w:11,d:9,h:7},
  {id:'fishery',label:'Pesquería',icon:'🎣',cat:'Edificios',w:10,d:8,h:7},
  {id:'ranger',label:'Refugio',icon:'🏕️',cat:'Edificios',w:9,d:8,h:6},
+ {id:'kaykit-archeryrange',label:"Campo de tiro",icon:"🏹",cat:'KayKit FREE',w:16,d:13,h:10,free:'building_archeryrange_red'},
+ {id:'kaykit-barracks',label:"Cuartel",icon:"🛡️",cat:'KayKit FREE',w:14,d:12,h:10,free:'building_barracks_red'},
+ {id:'kaykit-blacksmith',label:"Herrería KayKit",icon:"⚒️",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_blacksmith_red'},
+ {id:'kaykit-castle',label:"Castillo",icon:"🏰",cat:'KayKit FREE',w:23,d:23,h:10,free:'building_castle_red'},
+ {id:'kaykit-church',label:"Templo medieval",icon:"⛪",cat:'KayKit FREE',w:13,d:13,h:10,free:'building_church_red'},
+ {id:'kaykit-home-a',label:"Casa medieval A",icon:"🏠",cat:'KayKit FREE',w:10,d:9,h:10,free:'building_home_A_red'},
+ {id:'kaykit-home-b',label:"Casa medieval B",icon:"🏘️",cat:'KayKit FREE',w:10,d:9,h:10,free:'building_home_B_red'},
+ {id:'kaykit-lumbermill',label:"Aserradero",icon:"🪵",cat:'KayKit FREE',w:14,d:12,h:10,free:'building_lumbermill_red'},
+ {id:'kaykit-market',label:"Mercado KayKit",icon:"🛍️",cat:'KayKit FREE',w:13,d:11,h:10,free:'building_market_red'},
+ {id:'kaykit-mine',label:"Entrada de mina",icon:"⛏️",cat:'KayKit FREE',w:13,d:12,h:10,free:'building_mine_red'},
+ {id:'kaykit-tavern',label:"Taberna",icon:"🍻",cat:'KayKit FREE',w:13,d:12,h:10,free:'building_tavern_red'},
+ {id:'kaykit-tower-a',label:"Torre de vigía A",icon:"🗼",cat:'KayKit FREE',w:8,d:8,h:10,free:'building_tower_A_red'},
+ {id:'kaykit-tower-b',label:"Torre de vigía B",icon:"🗼",cat:'KayKit FREE',w:8,d:8,h:10,free:'building_tower_B_red'},
+ {id:'kaykit-watermill',label:"Molino de agua",icon:"🌊",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_watermill_red'},
+ {id:'kaykit-well',label:"Pozo KayKit",icon:"🪣",cat:'KayKit FREE',w:6,d:6,h:10,free:'building_well_red'},
+ {id:'kaykit-windmill',label:"Molino de viento",icon:"🌾",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_windmill_red'},
  {id:'floor-stone',label:'Empedrado',icon:'▩',cat:'Pisos',w:4,d:4,h:.12,floor:true},
  {id:'floor-earth',label:'Sendero de tierra',icon:'🟫',cat:'Pisos',w:4,d:4,h:.12,floor:true},
  {id:'floor-wood',label:'Tablas de madera',icon:'🟨',cat:'Pisos',w:4,d:4,h:.12,floor:true},
@@ -361,6 +377,12 @@ function renderCatalog(){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
   const label=document.createElement('span');label.textContent=it.label;
+  if(it.free){
+   const img=document.createElement('img');img.alt=it.label;img.loading='lazy';
+   img.src=new URL('./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
+   img.onerror=()=>{img.hidden=true;st.hidden=false;};
+   st.hidden=true;btn.append(img);
+  }
   btn.append(st,label);btn.title=it.label;btn.onclick=()=>{selectedAsset=it.id;tool='place';selectedId=null;syncTools();updateProps();renderCatalog();safe('Elegiste '+it.label+'. Tocá el mapa para colocarlo.');draw();};
   root.append(btn);
  }
