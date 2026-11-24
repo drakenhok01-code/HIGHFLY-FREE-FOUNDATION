@@ -55,6 +55,7 @@ jobs:
           node --test tests/p505-mobile-pacing-bloom.test.mjs
           node --test tests/p506-waterfall-joins.test.mjs
           node --test tests/p506-mobile-grid-performance.test.mjs
+          node --test tests/p506-death-and-rocks.test.mjs
           node --check src/highfly/p506-waterfall-joins.mjs
           node --check src/highfly/p505-frame-pacing.mjs
           node --check src/highfly/p504-hdr-options.mjs
@@ -285,9 +286,13 @@ jobs:
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p503/index.html" | cut -d' ' -f1)" = "$P503_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p504/index.html" | cut -d' ' -f1)" = "$P504_HASH"
           test "$(sha256sum "$RUNNER_TEMP/highfly-approved-site/preview-p505/index.html" | cut -d' ' -f1)" = "$P505_HASH"
+          # Remove ONLY superseded P5.0.5 Pages files, after integrity checks.
+          # P5.0.6 is now backed up on a separate pinned source branch.
+          rm -rf "$RUNNER_TEMP/highfly-approved-site/preview-p505"
+          test ! -e "$RUNNER_TEMP/highfly-approved-site/preview-p505"
           touch "$RUNNER_TEMP/highfly-approved-site/.nojekyll"
           mv "$RUNNER_TEMP/highfly-approved-site" dist-pages
-          echo "Approved root and P5.0.4 preserved; only /preview-p506/ added."
+          echo "Approved root, older releases and ONLY current /preview-p506/ preserved; superseded P505 preview removed."
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -302,3 +307,26 @@ jobs:
       - name: Publish approved site + existing previews + new P5.0.6 preview
         id: deployment
         uses: actions/deploy-pages@v4
+
+  retire_previous_backup:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete ONLY superseded P5.0.5 backup after successful P5.0.6 deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HF_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          GOOD_SHA="$(gh api "repos/$HF_REPO/git/ref/heads/backup-p506-android-video-approved-20261124" --jq '.object.sha')"
+          test "$GOOD_SHA" = "4312ec200d4e2f10036626f55175ee0a493e7a1b"
+          OLD="repos/$HF_REPO/git/refs/heads/backup-p505-normal-approved-20261124"
+          if gh api "repos/$HF_REPO/git/ref/heads/backup-p505-normal-approved-20261124" >/dev/null 2>&1; then
+            gh api --method DELETE "$OLD"
+            echo "Deleted only old P505 backup ref; immutable P506 recovery branch remains intact."
+          else
+            echo "Old P505 backup branch already absent."
+          fi
