@@ -23,7 +23,7 @@ assert.match(imp,/84fa4e91af6a88989be7c99e0891cede11f2ca38/);
 assert.match(imp,/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0/);
 assert.match(thumbs,/accessor/);
 assert.match(thumbs,/np\.argsort/);
-assert.match(html,/WORLD FORGE · V0\.4/);
+assert.match(html,/WORLD FORGE · V0\.[45]/);
 assert.match(build,/p524-kaykit-free-buildings/);
 assert.match(build,/p524-kaykit-thumbnails/);
 assert.ok(!imp.includes('source pack')&&!imp.includes('KayKit SOURCE'));

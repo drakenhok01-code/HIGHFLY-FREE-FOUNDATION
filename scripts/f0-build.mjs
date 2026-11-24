@@ -343,7 +343,9 @@ copy(path.join(ROOT,'src/highfly/p508-world-clock.mjs'),loc('src/highfly/p508-wo
 copy(path.join(ROOT,'src/highfly/p510-world-alive.mjs'),loc('src/highfly/p510-world-alive.mjs'));
 copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky-events.mjs'));
 for(const name of ['p521-world-forge-runtime','p521-resume-position'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
-for(const name of ['world-forge.html','world-forge.js'])copy(path.join(ROOT,'public/highfly/'+name),loc('public/highfly/'+name));
+for(const name of ['world-forge.html','world-forge.js','world-forge-3d.html'])copy(path.join(ROOT,'public/highfly/'+name),loc('public/highfly/'+name));
+copy(path.join(ROOT,'src/highfly/p525-world-forge-3d.mjs'),loc('src/highfly/p525-world-forge-3d.mjs'));
+
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p510-shadows.mjs'),loc('src/highfly/qa-p510-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
@@ -694,9 +696,15 @@ const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
 if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Error('World generation diff not limited to 3 Pages URLs');
 run('npm',['ci','--no-audit','--no-fund'],origin);
+// Vite 8 no longer ships esbuild; pin only this standalone editor bundler in the disposable checkout.
+run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2'],origin);
+// Bundle only the standalone 3D editor's three.js dependencies. No game engine boot.
+run('node_modules/esbuild/bin/esbuild',['src/highfly/p525-world-forge-3d.mjs','--bundle','--platform=browser','--format=esm','--target=es2020','--minify','--outfile=public/highfly/world-forge-3d.js'],origin);
+if(!fs.existsSync(loc('public/highfly/world-forge-3d.js')))throw Error('WORLD FORGE 3D bundle not generated');
 copy(path.join(ROOT,'scripts/p522-native-world-export.mjs'),loc('tools/p522-native-world-export.mjs'));
 copy(path.join(ROOT,'scripts/p522-native-world-raster.py'),loc('tools/p522-native-world-raster.py'));
 run('node',['tools/p522-native-world-export.mjs'],origin);
+for(const n of ['native-architecture-3d.json','native-architecture-3d.bin'])if(!fs.existsSync(loc('public/highfly/'+n)))throw Error('Original Unsung 3D architecture missing '+n);
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p522-native-world-raster.py'],origin);
 copy(path.join(ROOT,'scripts/p523-native-terrain-png.py'),loc('tools/p523-native-terrain-png.py'));
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p523-native-terrain-png.py'],origin);

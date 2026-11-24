@@ -86,6 +86,13 @@ const ZONES=[
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
+try{
+ const previous=JSON.parse(localStorage.getItem('hf-world-forge-view-v1')||'null');
+ if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
+  view.x=previous.x;view.z=previous.z;view.zoom=2.1;
+ }
+}catch{}
+
 const layers={native:true,forest:true,paths:true};
 const nativeImages={};let nativeTreeGrid=new Map();
 const nativeCell=32,nativeKey=(x,z)=>Math.floor(x/nativeCell)+','+Math.floor(z/nativeCell);
@@ -498,6 +505,11 @@ $('io-file').onchange=async e=>{
   saveLocal();updateProps();draw();safe('✓ Importados '+objects.length+' elementos. Ya están listos para el mapa del juego.');
  }catch(err){safe('No se pudo importar: '+err.message);}
  e.target.value='';
+};
+$('view-3d').onclick=()=>{
+ saveLocal(false);
+ try{localStorage.setItem('hf-world-forge-view-v1',JSON.stringify({x:view.x,z:view.z}));}catch{}
+ location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
 window.addEventListener('keydown',e=>{

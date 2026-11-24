@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<title>HIGHFLY WORLD FORGE 3D · Mundo original</title>
+<style>
+:root{color-scheme:dark;--bg:#17142b;--gold:#efd39a;--lilac:#c6aaff}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#0b1018;color:#f6f1ff;font:12px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{background:#242039;color:white;border:1px solid #6b5c87;border-radius:8px;padding:7px 10px;cursor:pointer;touch-action:manipulation;white-space:nowrap}button.on,button.selected{background:#4d3573;border-color:#dfbf8e}button:disabled{opacity:.5}button:focus-visible{outline:2px solid #9ef7ed}
+#app{height:100dvh;display:flex;flex-direction:column}
+header{flex:none;min-height:44px;background:#19122e;border-bottom:1px solid #614987;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 10px}
+.brand{font-size:14px;font-weight:900;color:var(--gold);letter-spacing:.04em}.brand small{display:block;color:#b6a9e5;font-size:10px;font-weight:600}
+#head-actions{display:flex;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:thin}
+main{display:flex;min-height:0;flex:1}
+aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;display:flex;flex-direction:column;min-height:0}
+#cats{display:flex;gap:4px;padding:8px;overflow-x:auto;scrollbar-width:thin}
+#cats button{font-size:11px;padding:6px 8px}
+#search{margin:0 8px 6px;padding:7px;border-radius:7px;background:#120f20;color:#eee;border:1px solid #5d5078;width:calc(100% - 16px)}
+#catalog{flex:1;overflow-y:auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:5px;padding:5px 8px;overscroll-behavior:contain;touch-action:pan-y}
+.asset{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:94px;white-space:normal;text-align:center;padding:5px 3px;background:#272137;border-color:#574a6d}
+.asset img{width:87px;height:62px;max-width:95%;object-fit:contain}
+.asset .emoji{font-size:26px}
+.asset span{font-size:11px}
+#props{border-top:1px solid #574a6d;padding:8px;min-height:100px;max-height:35%;overflow:auto;touch-action:pan-y}
+#props strong{display:block;color:var(--gold);font-size:12px}
+#props small{display:block;color:#cbb8d7;margin:3px 0 6px}
+#prop-actions{display:flex;gap:5px;flex-wrap:wrap}
+#prop-actions button{padding:6px 7px}
+#canvas-holder{position:relative;flex:1;min-width:0;min-height:0;overflow:hidden;background:linear-gradient(#b2d0e7,#577e92)}
+#canvas-holder canvas{display:block;width:100%;height:100%;touch-action:none}
+.toolbar{position:absolute;top:9px;left:9px;right:8px;display:flex;flex-wrap:wrap;gap:5px;z-index:3;pointer-events:none}
+.toolbar button{pointer-events:auto;background:#201a33e9;backdrop-filter:blur(5px)}
+#top-info{position:absolute;top:55px;right:10px;z-index:2;background:#1a1c2acb;padding:8px 10px;border-radius:8px;text-align:right;max-width:260px;pointer-events:none;text-shadow:0 1px 2px #000}
+#status{position:absolute;bottom:8px;left:10px;right:10px;max-width:max-content;background:#171a29df;border:1px solid #84749e;border-radius:8px;padding:7px 10px;z-index:2;pointer-events:none}
+#tips{position:absolute;bottom:9px;right:10px;text-align:right;text-shadow:0 1px 2px #0a101a;color:#fff3dc;pointer-events:none;font-size:11px}
+#diagnostics{position:absolute;top:55px;right:10px;width:min(530px,85%);max-height:70%;overflow:auto;background:#141625f3;color:#c2e6e4;border:1px solid #9c8caf;border-radius:12px;padding:12px;z-index:20;user-select:text;touch-action:pan-y}
+#diagnostics[hidden]{display:none}
+#log{font:11px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+#file{display:none}
+@media(max-width:820px){aside{width:168px}header{padding:3px 6px;min-height:39px}.brand{font-size:10px}.brand small{font-size:8px}button{font-size:10px;padding:6px}.asset{min-height:77px}.asset img{width:75px;height:53px}.toolbar{gap:3px;top:5px;left:4px}.toolbar button{padding:5px}#props{padding:6px}#tips{display:none}#top-info{font-size:10px;top:91px}}
+@media(max-height:450px){header{min-height:37px}.asset{min-height:60px}#top-info{display:none}#props{max-height:30%;min-height:65px}}
+</style>
+</head><body>
+<div id="app">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE · 3D V0.5</small></div><div id="head-actions">
+<button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
+<button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
+<button id="play">▶ Ver en RPG</button>
+</div></header>
+<main><aside>
+<div id="cats"></div><input id="search" placeholder="Buscar edificios, pisos, NPC…" aria-label="Buscar objetos"/>
+<div id="catalog"></div>
+<div id="props"><strong>EDITOR TRIDIMENSIONAL</strong><small>Elegí un objeto y tocá el terreno para colocarlo. Seleccionalo y usá MOVER, GIRAR o ESCALA. La cámara es independiente del juego.</small>
+<div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="remove">🗑 Borrar</button></div>
+</div></aside>
+<section id="canvas-holder">
+<div class="toolbar">
+<button id="orbit" class="on">✋ Cámara</button>
+<button id="select">▣ Selección</button>
+<button id="move">↔ Mover</button><button id="rotate">⟳ Girar</button><button id="scale">◩ Escala</button>
+<button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button>
+<button id="home">⌖ Inicio</button><button id="trees" class="on">🌳 Árboles</button>
+<button id="original" class="on">🏛️ Original</button><button id="water" class="on">🌊 Agua</button>
+</div>
+<div id="top-info"><div id="coords">X — / Z —</div><div id="metrics">3D editor · mapa auténtico</div></div>
+<div id="status">Preparando terreno 3D original…</div>
+<div id="tips">PC: botón derecho para mover mapa; izquierdo para orbitar · Android: dos dedos para mover/zoom</div>
+<div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
+</section></main><input type="file" id="file" accept=".json,application/json"/>
+</div>
+<script type="module" src="./world-forge-3d.js?v=p525"></script>
+</body></html>

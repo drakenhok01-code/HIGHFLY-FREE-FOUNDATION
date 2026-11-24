@@ -1,0 +1,71 @@
+name: "HIGHFLY P525 - Native 3D World Forge Safe Preview Release"
+on:
+  push:
+    branches: [p525-world-forge-native-3d-editor-20261124]
+    paths: ['.github/workflows/highfly-p525-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p525-pages-safe
+  cancel-in-progress: false
+jobs:
+  stage-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Download FULL P525 editor validated in real Chrome/WebGL
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p525-native-3d-world-forge
+          run-id: 45508913902
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p525-chrome-validated
+      - name: Recover last P524 published site, including ALL stable games and older previews
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45504183229
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p524-approved-site
+      - name: Verify real original 3D assets and checksum preserve EVERY older file
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="$RUNNER_TEMP/p525-chrome-validated"
+          for path in index.html highfly/world-forge.html highfly/world-forge.js highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/native-architecture-3d.bin highfly/native-architecture-3d.json highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-overview.json highfly/kaykit-free/manifest.json highfly/kaykit-free/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0.txt; do
+            test -s "$GAME/$path" || { echo "MISSING P525 $path"; exit 1; }
+          done
+          grep -q 'preview-p525' "$GAME/index.html"
+          grep -q 'world-forge-3d.html' "$GAME/highfly/world-forge.js"
+          grep -q 'world-forge-3d.js' "$GAME/highfly/world-forge-3d.html"
+          GAME="$GAME" node --input-type=module -e "import fs from 'node:fs';const p=process.env.GAME;const a=JSON.parse(fs.readFileSync(p+'/highfly/native-architecture-3d.json'));const f=JSON.parse(fs.readFileSync(p+'/highfly/kaykit-free/manifest.json'));if(a.meshes.length!==73||a.totalTriangles<800000||fs.statSync(p+'/highfly/native-architecture-3d.bin').size!==a.byteLength||f.license!=='CC0-1.0'||f.models.length!==16)throw Error('P525 unverified original world or KayKit FREE');console.log('PASS P525 real 3D Unsung 73 native meshes, 16 KayKit FREE/CC0 models')"
+          SITE="$RUNNER_TEMP/highfly-historical-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p524-approved-site/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html preview-p521/index.html preview-p522/index.html preview-p523/index.html preview-p524/index.html; do test -s "$SITE/$rel"; done
+          test ! -e "$SITE/preview-p525"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/unchanged-previous-versions.sha256"
+          mkdir "$SITE/preview-p525"
+          cp -a "$GAME/." "$SITE/preview-p525/"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/unchanged-previous-versions.sha256" >/dev/null)
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "PASS all older HIGHFLY versions byte-identical; added P525 native 3D editor only"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage-site
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish self-contained authentic 3D Unsung editor and its 2D fallback
+        id: deployment
+        uses: actions/deploy-pages@v4
