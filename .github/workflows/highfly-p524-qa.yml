@@ -1,4 +1,4 @@
-name: HIGHFLY P524: Original KayKit FREE CC0 + Map QA (No Deploy)
+name: "HIGHFLY P524 - Original KayKit FREE CC0 + Map QA (No Deploy)"
 on:
   push:
     branches: [p524-world-forge-kaykit-free-buildings-20261124]
