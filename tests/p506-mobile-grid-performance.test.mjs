@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {installP505FramePacing} from '../src/highfly/p505-frame-pacing.mjs';
 
 function nativeGrid(camX, camZ, S, n, i, j) {
   const bi=Math.floor(camX/S)-(n>>1), bj=Math.floor(camZ/S)-(n>>1);
@@ -38,4 +39,20 @@ test('P506 patch is CPU-only and preserves native quality profile and waterfall 
   assert.doesNotMatch(b,/patch\('src\/world\/water\.js'/);
   const g=fs.readFileSync('src/highfly/visual-profile.mjs','utf8');
   assert.match(g,/renderScale: 1, minRenderScale: 1, targetFps: 0/);
+});
+
+test('P506 sustained FPS is checked by all actual frame intervals, not median peaks',()=>{
+  let t=0;
+  const win={__game:{state:'playing'}},pipe={render(){t+=3;}};
+  const ctrl=installP505FramePacing(pipe,{search:'?hfpace=1',win,doc:{},perf:{now:()=>t}});
+  for(let n=0;n<240;n++){t+=15;pipe.render();}
+  assert.equal(ctrl.stats.ready,true);
+  assert.equal(ctrl.stats.steady50,true,'every sample within 20 ms');
+  assert.equal(ctrl.stats.steady60,false,'18 ms frame delivery does NOT mean 60 steady');
+  assert.ok(ctrl.stats.meanFps>=50 && ctrl.stats.meanFps<=57);
+  for(let n=0;n<400;n++){t+=n%16===0?35:14;pipe.render();}
+  assert.equal(ctrl.stats.steady50,false,'one slow frame invalidates fixed 50 FPS');
+  assert.ok(ctrl.stats.meanFps>0);
+  assert.ok(ctrl.stats.p99Fps<50);
+  ctrl.dispose();
 });
