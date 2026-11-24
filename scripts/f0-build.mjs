@@ -694,6 +694,13 @@ const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
 if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Error('World generation diff not limited to 3 Pages URLs');
 run('npm',['ci','--no-audit','--no-fund'],origin);
+copy(path.join(ROOT,'scripts/p522-native-world-export.mjs'),loc('tools/p522-native-world-export.mjs'));
+copy(path.join(ROOT,'scripts/p522-native-world-raster.py'),loc('tools/p522-native-world-raster.py'));
+run('node',['tools/p522-native-world-export.mjs'],origin);
+run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p522-native-world-raster.py'],origin);
+for(const name of ['native-overview.json','native-architecture-core.png','native-architecture-region.png','native-trees-core.png','native-trees-region.png']){
+ if(!fs.existsSync(loc('public/highfly/'+name)))throw Error('P522 required original-world visual layer missing: '+name);
+}
 run('npm',['run','build','--','--base',pagesBase],origin);
 if(!fs.existsSync(loc('dist/index.html')))throw Error('No Vite output');
 fs.cpSync(loc('dist'),output,{recursive:true});
