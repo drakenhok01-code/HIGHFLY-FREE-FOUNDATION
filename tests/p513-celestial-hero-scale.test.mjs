@@ -5,9 +5,9 @@ import {solarVector,eclipseDisplayVector,lunarVector} from '../src/highfly/p510-
 import {manualEclipseStrength,eventPreview,skyEvents} from '../src/highfly/p511-sky-events.mjs';
 
 // User-approved anime scale factors relative to approved P512.
-assert.equal(.0510/.0170,3);
-assert.equal(.1575/.045,3.5);
-assert.equal(.0680/.0170,4);
+assert.ok(Math.abs(.0510/.0170-3)<1e-12);
+assert.ok(Math.abs(.1575/.045-3.5)<1e-12);
+assert.ok(Math.abs(.0680/.0170-4)<1e-12);
 for(let i=0;i<=300;i++){
  const p=i/300;
  assert.deepEqual(eclipseDisplayVector(p,'eclipse'),solarVector(p),'manual eclipse must follow sun');
@@ -39,7 +39,7 @@ let time=0;
 const api=installP508WorldClock(pipe,{now:()=>time,search:'?hftime=eclipse&hffast=1&hfaurora=auto'});
 assert.equal(api.mode,'eclipse');
 assert.equal(api.speed,60);
-assert.equal(api.phase,.315);
+assert.ok(Math.abs(api.phase-.315)<1e-10);
 assert.equal(sky.uHFEclipse.value,1);
 const results=[];
 for(let k=0;k<=90;k++){
@@ -59,7 +59,7 @@ const before=api.phase;
 api.setSpeed(1);
 assert.ok(Math.abs(api.phase-before)<1e-8,'speed toggle must not teleport sun');
 api.select('eclipse');
-assert.equal(api.phase,.315,'reselecting eclipse restarts moving event');
+assert.ok(Math.abs(api.phase-.315)<1e-10,'reselecting eclipse restarts moving event');
 api.select('noche');
 assert.equal(sky.uHFEclipse.value,0);
 assert.deepEqual(api.grade,GRADE.noche);
