@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {solarVector,eclipseDisplayVector,lunarPhase} from '../src/highfly/p510-world-alive.mjs';
-import {installP508WorldClock,DAY_MS,GRADE} from '../src/highfly/p508-world-clock.mjs';
+import {installP508WorldClock,DAY_MS,GRADE,phaseGrade} from '../src/highfly/p508-world-clock.mjs';
 import {skyEvents} from '../src/highfly/p511-sky-events.mjs';
 
-// P512: manual eclipse is deliberately visible ABOVE the eastern valley arch.
+// P513 migration: manual eclipse TRAVELS past the eastern valley arch at phase .35.
 const arch=[0.993,0,0.12];
-const manual=eclipseDisplayVector(.5,'eclipse');
+const manual=eclipseDisplayVector(.35,'eclipse');
 const horizontal=Math.hypot(manual[0],manual[2]);
 const archFacing=(manual[0]*arch[0]+manual[2]*arch[2])/(Math.hypot(arch[0],arch[2])*horizontal);
 assert.ok(Math.abs(Math.hypot(...manual)-1)<1e-10);
 assert.ok(manual[1]>=.47&&manual[1]<=.58,'eclipse must be well above horizon');
-assert.ok(archFacing>.999,'eclipse must face the main valley arch');
+assert.ok(archFacing>.99,'eclipse passes near the main valley arch');
 assert.ok(manual[0]>.82&&manual[2]>.07,'eastern arch, not the southern aurora');
 for(const phase of [0,.125,.25,.375,.5,.625,.75,.875,1]){
  const normal=solarVector(phase),auto=eclipseDisplayVector(phase,'auto');
@@ -38,13 +38,13 @@ assert.equal(sky.uHFEclipse.value,1);
 assert.equal(pipe.tonemap.uniforms.uHFEclipse.value,1);
 assert.equal(sky.uHFMoonPhase.value,0);
 assert.ok(sky.uHFVisualSunDir.value.x>.82);
-assert.ok(Math.abs(sky.uHFVisualSunDir.value.y-.52)<1e-8);
+assert.ok(sky.uHFVisualSunDir.value.y>.30&&sky.uHFVisualSunDir.value.y<.43);
 assert.ok(Math.abs(sky.uHFVisualSunDir.value.x-sky.uHFMoonDir.value.x)<1e-8);
 assert.ok(Math.abs(sky.uHFVisualSunDir.value.y-sky.uHFMoonDir.value.y)<1e-8);
 assert.ok(color.v<.35,'eclipse dims light');
 ui.select('dia');
 assert.equal(sky.uHFEclipse.value,0);
-assert.deepEqual(ui.grade,GRADE.dia);
+assert.deepEqual(ui.grade,phaseGrade(ui.phase));
 ui.select('atardecer');
 assert.ok(sky.uHFVisualSunDir.value.x<-.9);
 ui.select('auto');
