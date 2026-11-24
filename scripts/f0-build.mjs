@@ -399,6 +399,12 @@ patch('src/world/arch/sites.js',
         // Original local +X goes uphill (world -X); negative X faces Cantor.
         // The apron top is 5 cm BELOW the first tread to avoid a step snag.
         q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
+// HIGHFLY P506: the source game emits the player death event, displays
+// English death + return text, and emits 'respawn' after checkpoint recovery.
+// Localize the actual event-to-toast path; no gameplay timings or spawn edits.
+patch('src/ui/ui.js',
+ "    if (type === 'player' && d.type === 'death' && !g.cine) this.toast('The note falters', 'You will wake at the last safe place');",
+ "    if (type === 'player' && d.type === 'death' && !g.cine) this.toast('Has caído', 'Reaparecerás en el último lugar seguro.');\\n    if (type === 'respawn' && !g.cine) this.toast('Has reaparecido', 'Regresaste al último lugar seguro.');".replaceAll('\\n','\n'));
 // P506 — One unified Android lane, same native P505 quality and resolution.
 // Join elevated water disc to the native waterfall lip in the original
 // transparent WATERFALL MESH.  No additional render passes / shaders;
