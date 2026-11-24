@@ -29,7 +29,7 @@ assert.match(opts,/hf-rpg-options-scroll/);assert.match(opts,/highfly\/world-for
 assert.match(css,/hf-rpg-options-scroll/);assert.match(css,/overflow-y:auto!important/);
 assert.ok(!editor.includes('WebGLRenderer'),'Editor must be lightweight and not boot native renderer');
 assert.ok(!editor.includes('Enemies('),'Editor must not load native enemies');
-assert.ok(!runtime.includes('KayKit SOURCE'),'No SOURCE asset references');
+assert.ok(!runtime.includes('models/kaykit-source'),'No SOURCE asset references');
 
 for(const phrase of [
   'A bolt met with the blade goes back where it came from.',
