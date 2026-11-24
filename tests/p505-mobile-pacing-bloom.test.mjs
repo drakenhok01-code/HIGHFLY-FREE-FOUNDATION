@@ -26,7 +26,7 @@ test('pacing metrics distinguish dropped vs regular frame delivery and restore w
  assert.equal(ctrl.enabled,true);
  assert.notEqual(pipe.render,original);
  for(let i=0;i<190;i++){
-  clock+=(i%7===0?29:12.7);
+  clock+=(i%7===0?34:12.7);
   assert.equal(pipe.render(),17);
  }
  assert.equal(calls,190);
