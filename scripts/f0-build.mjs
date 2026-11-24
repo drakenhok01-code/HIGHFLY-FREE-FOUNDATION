@@ -463,6 +463,18 @@ patch('src/world/flora/grass.js',
 patch('src/world/flora/grass.js',
  "      c.mesh.position.set(x, y, z);\\n      c.mesh.updateMatrixWorld();".replaceAll('\\n','\n'),
  "      if(c.mesh.position.x!==x||c.mesh.position.y!==y||c.mesh.position.z!==z){\\n        c.mesh.position.set(x, y, z);\\n        c.mesh.updateMatrixWorld();\\n      }".replaceAll('\\n','\n'));
+// P506 performance: calculate wrapped vegetation grid origins once per update,
+// not for every grass / flower cell. Height caching and pixels stay unchanged.
+patch('src/world/flora/grass.js',
+ "    const cam = _v.setFromMatrixPosition(camera.matrixWorld), k = this.scale ?? 1;\\n    for (const c of this.cells) {".replaceAll('\\n','\n'),
+ `    const cam = _v.setFromMatrixPosition(camera.matrixWorld), k = this.scale ?? 1;
+    const hfGrassNX=this.n, hfFlowerNX=Math.ceil((this.radius*2)/FCELL)+1;
+    const hfGrassX=Math.floor(cam.x/CELL)-(hfGrassNX>>1), hfGrassZ=Math.floor(cam.z/CELL)-(hfGrassNX>>1);
+    const hfFlowerX=Math.floor(cam.x/FCELL)-(hfFlowerNX>>1), hfFlowerZ=Math.floor(cam.z/FCELL)-(hfFlowerNX>>1);
+    for (const c of this.cells) {`);
+patch('src/world/flora/grass.js',
+ "      const S = c.size, n = c.n, bi = Math.floor(cam.x / S) - (n >> 1), bj = Math.floor(cam.z / S) - (n >> 1);",
+ "      const S = c.size, n = c.n, bi = c.grass ? hfGrassX : hfFlowerX, bj = c.grass ? hfGrassZ : hfFlowerZ;");
 // P499: mobile TAA saves eight neighbourhood texture fetches per physical
 // pixel, but keeps identical 3D geometry, output/scene resolution, fog, shadows,
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
