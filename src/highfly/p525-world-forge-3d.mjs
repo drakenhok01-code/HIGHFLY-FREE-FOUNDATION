@@ -317,7 +317,7 @@ function showProps(){
  $('props').querySelector('small').textContent=o?('X '+o.x+' · Z '+o.z+' · Suelo '+o.y.toFixed(1)+' · Giro '+Math.round(o.yaw*180/Math.PI)+'° · Tamaño '+o.scale.toFixed(2)):(chosen?'Tocá el terreno para colocarlo. Para orbitar, elegí Cámara.':'Seleccioná un edificio del catálogo; la cámara puede orbitar y acercarse.');
 }
 function switchMode(next){
- mode=next;
+ mode=next;if(ghost)ghost.visible=next==='place';
  for(const id of ['orbit','select','move','rotate','scale'])$(id).classList.toggle('on',id===mode);
  orbit.enabled=mode==='orbit'||mode==='select';
  if(gizmo){
@@ -327,7 +327,37 @@ function switchMode(next){
  }
  render();
 }
-function selectAsset(id){chosen=id;selected=null;if(gizmo)gizmo.detach();switchMode('place');drawCatalog();showProps();status('Elegiste '+BY_ID.get(id).label+' · Tocá terreno libre para colocarlo.');}
+async function createGhost(id){
+ if(ghost){scene.remove(ghost);ghost=null;}
+ const a=BY_ID.get(id);if(!a)return;
+ const group=new THREE.Group();group.visible=false;group.userData.ghostFor=id;ghost=group;
+ const cube=new THREE.Mesh(new THREE.BoxGeometry(a.w,2.1,a.d),new THREE.MeshBasicMaterial({color:0x88ffe0,transparent:true,opacity:.6,wireframe:true}));
+ cube.position.y=1.05;group.add(cube);scene.add(group);
+ if(a.model){
+  const model=await getGLTF(a);
+  if(!model||ghost!==group)return;
+  const clone=model.clone(true),box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  const factor=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z));
+  clone.scale.setScalar(factor);clone.position.set(-center.x*factor,-box.min.y*factor,-center.z*factor);
+  clone.traverse(node=>{if(!node.isMesh)return;
+   const copy=(mat)=>{const m=mat.clone();m.transparent=true;m.opacity=.56;m.depthWrite=false;return m;};
+   node.material=Array.isArray(node.material)?node.material.map(copy):copy(node.material);
+  });
+  group.add(clone);cube.visible=false;render();
+ }
+}
+function previewGhost(ev){
+ if(mode!=='place'||!chosen||!ghost)return;
+ const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
+ const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
+ ghost.position.set(x,elevation(x,z)+.2,z);ghost.visible=true;
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1});
+ const outline=ghost.children[0];
+ if(outline?.material?.color)outline.material.color.setHex(check.ok?0x88ffe0:0xff6b89);
+ status(check.ok?'Vista previa: '+a.label+' · X '+x+' Z '+z:'No se puede colocar aquí: '+check.why);
+ render();
+}
+function selectAsset(id){chosen=id;selected=null;if(gizmo)gizmo.detach();switchMode('place');drawCatalog();showProps();status('Elegiste '+BY_ID.get(id).label+' · Tocá terreno libre para colocarlo.');createGhost(id);}
 function drawCatalog(){
  $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
  for(const a of base.filter(a=>a.cat===category&&a.label.toLowerCase().includes(find))){
@@ -367,7 +397,7 @@ function clickPlaced(ev){
  return null;
 }
 function selectObject(id){
- chosen=null;selected=id;drawCatalog();showProps();switchMode('move');
+ chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();switchMode('move');
 }
 function transform(action){
  const o=records.find(v=>v.id===selected);if(!o)return;
@@ -420,6 +450,7 @@ function bindUI(){
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
+  if(mode==='place')previewGhost(e);
   if(mode==='place'&&dragPainting&&(e.buttons&1)){const h=hitTerrain(e);if(h&&lastPaint){paintLine(lastPaint,h);lastPaint=h;}}
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
