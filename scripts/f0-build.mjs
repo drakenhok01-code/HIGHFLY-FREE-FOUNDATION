@@ -438,6 +438,9 @@ patch('src/engine/post.js',
 patch('src/engine/post.js',
  "      this.ups.push(makeTarget(w, h));",
  "      this.ups.push(makeTarget(w, h, this._hfCompactHdr));");
+// P507: keep P506's Spanish death and checkpoint notifications.
+// This only changes strings; all native damage, respawn and timers remain intact.
+patch('src/ui/ui.js',"    if (type === 'player' && d.type === 'death' && !g.cine) this.toast('The note falters', 'You will wake at the last safe place');","    if (type === 'player' && d.type === 'death' && !g.cine) this.toast('Has caído', 'Reaparecerás en el último lugar seguro.');\n    if (type === 'respawn' && !g.cine) this.toast('Has reaparecido', 'Regresaste al último lugar seguro.');");
 // P507 SUPREMA: exact sky environment GPU pass deduplication.
 // The resolve shader reads cloud textures/blend/atmosphere, not cloudTime.
 // NO reduced resolution, cloud quality, shadows, or lost visual effects.
