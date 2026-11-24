@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p498-android-resolution.mjs','p499-native-profiler.mjs','p501-stage-profiler.mjs','p502-fps-audit.mjs','p503-opaque-copy.mjs','p504-hdr-options.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p498-android-resolution.mjs','p499-native-profiler.mjs','p501-stage-profiler.mjs','p502-fps-audit.mjs','p503-opaque-copy.mjs','p504-hdr-options.mjs','p505-frame-pacing.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -377,7 +377,7 @@ copy(path.join(ROOT,'src/highfly/qa-rpg.html'),loc('qa-rpg.html'));
 copy(path.join(ROOT,'src/highfly/dash.mjs'),loc('src/game/highfly-dash.mjs'));
 
 patch('src/main.js',"import { FILM } from './engine/quality.js';",
- "import { FILM } from './engine/quality.js';\\nimport { installAndroidPhysicalResolution } from './highfly/p498-android-resolution.mjs';\\nimport { installP499GpuDiagnostics } from './highfly/p499-native-profiler.mjs';\\nimport { installP501StageProfiler } from './highfly/p501-stage-profiler.mjs';\\nimport { installP502AutoProfiler } from './highfly/p502-fps-audit.mjs';\\nimport { installP503OpaqueCopy } from './highfly/p503-opaque-copy.mjs';\\nimport { installHighflyFog } from './highfly/fog.mjs';\\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';\\nimport { installHighflyGraphics } from './highfly/visual-profile.mjs';\\nimport { installSpanishLocalization, translateHighfly } from './highfly/es-localization.mjs';\\nimport { installProfessionYard } from './highfly/profession-yard.mjs';\nimport { installPremiumRpgUI } from './highfly/premium-rpg.mjs';\nimport { installP49Hunts } from './highfly/p49-hunt-world.mjs';\nimport { installHighflyKayKitPeople } from './highfly/p492-kaykit-people.mjs';\nimport { installP493Interaction } from './highfly/p493-interaction.mjs';\nimport { installP493PortalVisuals } from './highfly/p493-portal.mjs';\nimport { installHighflyIntro } from './highfly/phoenix-intro.mjs';".replaceAll('\\n','\n'));
+ "import { FILM } from './engine/quality.js';\\nimport { installAndroidPhysicalResolution } from './highfly/p498-android-resolution.mjs';\\nimport { installP499GpuDiagnostics } from './highfly/p499-native-profiler.mjs';\\nimport { installP501StageProfiler } from './highfly/p501-stage-profiler.mjs';\\nimport { installP502AutoProfiler } from './highfly/p502-fps-audit.mjs';\\nimport { installP503OpaqueCopy } from './highfly/p503-opaque-copy.mjs';\\nimport { installP505FramePacing } from './highfly/p505-frame-pacing.mjs';\\nimport { installHighflyFog } from './highfly/fog.mjs';\\nimport { KayKitFreeHero } from './highfly/kaykit-free-hero.mjs';\\nimport { installHighflyGraphics } from './highfly/visual-profile.mjs';\\nimport { installSpanishLocalization, translateHighfly } from './highfly/es-localization.mjs';\\nimport { installProfessionYard } from './highfly/profession-yard.mjs';\nimport { installPremiumRpgUI } from './highfly/premium-rpg.mjs';\nimport { installP49Hunts } from './highfly/p49-hunt-world.mjs';\nimport { installHighflyKayKitPeople } from './highfly/p492-kaykit-people.mjs';\nimport { installP493Interaction } from './highfly/p493-interaction.mjs';\nimport { installP493PortalVisuals } from './highfly/p493-portal.mjs';\nimport { installHighflyIntro } from './highfly/phoenix-intro.mjs';".replaceAll('\\n','\n'));
 patch('src/main.js',"const settings = new Settings(pipe.renderer);",
  "const settings = new Settings(pipe.renderer);\\nwindow.__hfGraphics=installHighflyGraphics(pipe,settings,location.search);".replaceAll('\\n','\n'));
 // P498 — actual Android drawing pixels instead of CSS pixels.
@@ -421,6 +421,22 @@ patch('src/engine/pipeline.js',
 patch('src/engine/post.js',
  "    this.history = [makeTarget(w, h), makeTarget(w, h)];",
  "    this.history = [makeTarget(w, h, this.pipe._hfCompactHdr), makeTarget(w, h, this.pipe._hfCompactHdr)];");
+// P505: optional RGB11F bloom mip chain. Bloom's shaders use only .rgb,
+// and explicitly write opaque alpha 1, so packing does not remove any
+// material transparency or alter the viewport. Requires BOTH ?hfcompact=1
+// AND ?hfbloomcompact=1. Normal play is pixel-identical to approved P504.
+patch('src/engine/pipeline.js',
+ "    this.bloom = new BloomPass();",
+ `    this.bloom = new BloomPass();
+    this.bloom._hfCompactHdr=this._hfHdrFormat?.enabled &&
+      new URLSearchParams(globalThis.location?.search||'').get('hfbloomcompact')==='1'
+        ? this._hfCompactHdr : undefined;`);
+patch('src/engine/post.js',
+ "      this.mips.push(makeTarget(w, h));",
+ "      this.mips.push(makeTarget(w, h, this._hfCompactHdr));");
+patch('src/engine/post.js',
+ "      this.ups.push(makeTarget(w, h));",
+ "      this.ups.push(makeTarget(w, h, this._hfCompactHdr));");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
@@ -451,7 +467,7 @@ patch('src/engine/post.js',
  "      defines: new URLSearchParams(globalThis.location?.search||'').get('hfperf')==='reference' ? pipe.depthDefines : {...pipe.depthDefines,HF_S23_NATIVE_TAA:1},\\n      uniforms: {\\n        uCurrent: { value: null }, uHistory: { value: null }, uDepth: { value: null }, ...pipe.camUniforms,".replaceAll('\\n','\n'));
 // Preserve actual full-resolution 3D, masks and scene. Merely track frame time.
 patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});",
- "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nwindow.__hfP499Perf=installP499GpuDiagnostics(pipe,{search:location.search});\\nwindow.__hfP501Profiler=installP501StageProfiler(pipe,{search:location.search});\\nwindow.__hfP502Audit=installP502AutoProfiler(pipe,{search:location.search});\\nwindow.__hfP503Copy=installP503OpaqueCopy(pipe,{search:location.search});".replaceAll('\\n','\n'));
+ "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nwindow.__hfP499Perf=installP499GpuDiagnostics(pipe,{search:location.search});\\nwindow.__hfP501Profiler=installP501StageProfiler(pipe,{search:location.search});\\nwindow.__hfP502Audit=installP502AutoProfiler(pipe,{search:location.search});\\nwindow.__hfP503Copy=installP503OpaqueCopy(pipe,{search:location.search});\\nwindow.__hfP505PacingControl=installP505FramePacing(pipe,{search:location.search});".replaceAll('\\n','\n'));
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
