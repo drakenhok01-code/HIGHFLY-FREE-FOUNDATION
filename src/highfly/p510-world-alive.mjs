@@ -62,9 +62,11 @@ export function installP510Astronomy(pipe,options={}){
  const auroraAxis=uniforms.uHFAuroraAxis?.value;
  if(auroraAxis?.set) auroraAxis.set(.993,.12); // valley arch / startup view (east)
  function moonOverride(v){phaseOverride=v===null?null:((v%1)+1)%1;return phaseOverride;}
- function update({phase,mode='auto',worldDays=0,nowMs=now()}){
-  const sun=solarVector(phase),moon=mode==='eclipse'?sun:lunarVector(phase);
-  const moonAge=mode==='eclipse'?0:(phaseOverride??lunarPhase(worldDays));
+ function update({phase,mode='auto',eclipse=0,worldDays=0,nowMs=now()}){
+  const sun=solarVector(phase);
+  const alignment=mode==='eclipse'||eclipse>0.001;
+  const moon=alignment?sun:lunarVector(phase);
+  const moonAge=alignment?0:(phaseOverride??lunarPhase(worldDays));
   uniforms.uHFVisualSunDir.value.set(...sun);
   uniforms.uHFMoonDir.value.set(...moon);
   uniforms.uHFMoonPhase.value=moonAge;
