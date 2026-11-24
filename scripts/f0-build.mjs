@@ -335,6 +335,7 @@ copy(path.join(ROOT,'src/highfly/qa-p504-hdr.mjs'),loc('src/highfly/qa-p504-hdr.
 copy(path.join(ROOT,'src/highfly/qa-p504-hdr.html'),loc('qa-p504-hdr.html'));
 copy(path.join(ROOT,'src/highfly/qa-p504-hdr-entry.mjs'),loc('src/highfly/qa-p504-hdr-entry.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p504-browser.mjs'),loc('src/highfly/qa-p504-browser.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p507-sky.mjs'),loc('src/highfly/qa-p507-sky.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('scripts/qa-p495-stairs.mjs'));
 
@@ -437,6 +438,11 @@ patch('src/engine/post.js',
 patch('src/engine/post.js',
  "      this.ups.push(makeTarget(w, h));",
  "      this.ups.push(makeTarget(w, h, this._hfCompactHdr));");
+// P507 SUPREMA: exact sky environment GPU pass deduplication.
+// The resolve shader reads cloud textures/blend/atmosphere, not cloudTime.
+// NO reduced resolution, cloud quality, shadows, or lost visual effects.
+patch('src/engine/sky.js',"  invalidate() { this.ready = false; }","  invalidate() { this.ready = false; this._hfP507EnvDirty = true; }");
+patch('src/engine/sky.js',"    this.uniforms.uCloudMix.value = this.mix;\n    this.resolve.render(this.renderer, this.env);\n    if (this._needSH && this.mix >= 1) { this._needSH = false; this._computeSHAsync(); }","    this.uniforms.uCloudMix.value = this.mix;\n    // No approximation: identical sky inputs yield identical env texels\n    // and mipmaps. The in-progress cloudRaw tile sweep is NOT sampled here.\n    const hfA = this.uniforms.uCloudA.value;\n    const hfB = this.uniforms.uCloudB.value;\n    const hfAtmo = this.uniforms.uSkyAtmo.value;\n    if (this._hfP507EnvDirty || this._hfP507EnvMix !== this.mix ||\n        this._hfP507EnvA !== hfA || this._hfP507EnvB !== hfB ||\n        this._hfP507EnvAtmo !== hfAtmo) {\n      this.resolve.render(this.renderer, this.env);\n      this._hfP507EnvMix = this.mix;\n      this._hfP507EnvA = hfA; this._hfP507EnvB = hfB;\n      this._hfP507EnvAtmo = hfAtmo;\n      this._hfP507EnvDirty = false;\n      this._hfP507EnvDraws = (this._hfP507EnvDraws || 0) + 1;\n    } else {\n      this._hfP507EnvSkips = (this._hfP507EnvSkips || 0) + 1;\n    }\n    if (this._needSH && this.mix >= 1) { this._needSH = false; this._computeSHAsync(); }");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
@@ -471,6 +477,7 @@ patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{s
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
+patch('src/main.js',"window.__highflyFog = installHighflyFog(pipe);","window.__highflyFog = installHighflyFog(pipe);\nwindow.__hfP507Sky = pipe.sky;");
 patch('src/main.js',"const ui = new UI({ game, settings, apply, story });",
  "window.__hfNativeSettings=settings;\\nwindow.__hfApplySettings=apply;\\nconst ui = new UI({ game, settings, apply, story });".replaceAll('\\n','\n'));
 patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);\nwindow.__highflyRpg=installPremiumRpgUI(game);\ngame.__highflyRpg=window.__highflyRpg;\nwindow.__highflyHunts=installP49Hunts(game);\nwindow.__highflyKayKitPeople=installHighflyKayKitPeople(game);\nwindow.__highflyP493Interaction=installP493Interaction(game);\nwindow.__highflyP493Portals=installP493PortalVisuals(game);\nwindow.__highflyIntro=installHighflyIntro();");
@@ -587,7 +594,7 @@ patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.h
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/engine/sky.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
