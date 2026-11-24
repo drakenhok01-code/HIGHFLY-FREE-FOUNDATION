@@ -337,6 +337,8 @@ copy(path.join(ROOT,'src/highfly/qa-p504-hdr-entry.mjs'),loc('src/highfly/qa-p50
 copy(path.join(ROOT,'src/highfly/qa-p504-browser.mjs'),loc('src/highfly/qa-p504-browser.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p507-sky.mjs'),loc('src/highfly/qa-p507-sky.mjs'));
 copy(path.join(ROOT,'src/highfly/p508-world-clock.mjs'),loc('src/highfly/p508-world-clock.mjs'));
+copy(path.join(ROOT,'src/highfly/p510-world-alive.mjs'),loc('src/highfly/p510-world-alive.mjs'));
+copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('scripts/qa-p495-stairs.mjs'));
 
@@ -469,6 +471,17 @@ patch('src/engine/pipeline.js',"  if(hfNight>0.005 && rd.y>0.0){\n    float md=d
 patch('src/engine/pipeline.js',"  col += uSunColor * (1.0-uHFGrade.w) * disc * limb * 260.0 * s.a * step(0.0, rd.y + 0.004);","  // Eclipse is a shader-only optional event: a moon-sized occluder and\n  // a subtle corona; NO moving shadows or extra depth/render passes.\n  float hfOcc=1.0-smoothstep(0.00485,0.00528,ang);\n  col+=uSunColor*(1.0-uHFGrade.w)*disc*limb*260.0*s.a*\n       (1.0-uHFEclipse*hfOcc)*step(0.0,rd.y+0.004);\n  if(uHFEclipse>0.001){\n    float corona=exp(-pow((ang-0.00543)/0.00155,2.0));\n    col+=vec3(2.1,1.55,0.91)*corona*uHFEclipse;\n  }");
 patch('src/engine/pipeline.js',"  col += uSunColor * (1.0-uHFGrade.w) * au * mix(0.3, 1.0, s.a) * smoothstep(-0.03, 0.01, rd.y);","  col += uSunColor * (1.0-uHFGrade.w) * (1.0-0.88*uHFEclipse) * au * mix(0.3, 1.0, s.a) * smoothstep(-0.03, 0.01, rd.y);");
 patch('src/engine/pipeline.js',"  c=mix(c,c*vec3(0.98,1.03,1.07),uHFGrade.y*0.14);\n  c = agx(c * uExposure);","  c=mix(c,c*vec3(0.98,1.03,1.07),uHFGrade.y*0.14);\n  // Full-image dusk grade in existing native tonemap; no postprocess layer.\n  c=mix(c,c*vec3(1.26,0.79,0.87),uHFGrade.z*0.65);\n  c=mix(c,c*vec3(0.34,0.43,0.59),uHFEclipse*0.72);\n  c = agx(c * uExposure);");
+// P510 WORLD ALIVE: orbiting visual sun, lunar phases, arch-centered auroras.
+// Preserve P507 sky cache and original renderer passes. Texture shadow stages
+// are isolated in a separate module and only update on discrete solar angles.
+patch('src/engine/pipeline.js',"uniform float uHFEclipse;\nfloat hfHash","uniform float uHFEclipse;\nuniform vec3 uHFVisualSunDir;\nuniform vec3 uHFMoonDir;\nuniform float uHFMoonPhase;\nuniform vec2 uHFAuroraAxis;\nfloat hfHash");
+patch('src/engine/pipeline.js',"uHFAurora: { value: 1 }, uHFEclipse: { value: 0 } },","uHFAurora: { value: 1 }, uHFEclipse: { value: 0 },\n      uHFVisualSunDir: { value: new THREE.Vector3(1,0.2,0.2).normalize() },\n      uHFMoonDir: { value: new THREE.Vector3(0.2,0.7,0.2).normalize() },\n      uHFMoonPhase: { value: 0.5 },\n      uHFAuroraAxis: { value: new THREE.Vector2(0.993,0.12).normalize() } },");
+patch('src/engine/pipeline.js',"float ang = acos(clamp(dot(rd, uSunDir), -1.0, 1.0));","float ang = acos(clamp(dot(rd, uHFVisualSunDir), -1.0, 1.0));");
+patch('src/engine/pipeline.js',"float hfSector=dot(normalize(rd.xz),vec2(0.458,0.889));","float hfSector=dot(normalize(rd.xz),uHFAuroraAxis);");
+patch('src/engine/pipeline.js',"  if(hfNight>0.005 && rd.y>0.0){\n    float md=dot(rd,normalize(vec3(-0.51,0.39,-0.77)));\n    float moonDisc=smoothstep(0.99947,0.99982,md);\n    float moonHalo=pow(max(md,0.0),120.0)*0.060;\n    float maria=0.88+0.12*sin(rd.x*1200.0+sin(rd.y*830.0)*0.7)*sin(rd.z*930.0);\n    col+=vec3(0.80,0.90,1.12)*(moonDisc*maria*0.93+moonHalo)*hfNight;\n  }","  // P510: full moon orbit and actual terminator over the lunar disc.\n  if(hfNight>0.003 && rd.y>0.0){\n    vec3 moonDir=normalize(uHFMoonDir);\n    float md=dot(rd,moonDir);\n    float moonDisc=smoothstep(0.99944,0.99979,md);\n    vec3 right=normalize(cross(vec3(0.0,1.0,0.0),moonDir));\n    vec3 moonUp=normalize(cross(moonDir,right));\n    float moonX=dot(rd,right)/0.032,moonY=dot(rd,moonUp)/0.032;\n    float halfCircle=sqrt(max(0.0,1.0-moonY*moonY));\n    float boundary=cos(uHFMoonPhase*6.2831853)*halfCircle;\n    float lunarLit=uHFMoonPhase<0.5\n       ?smoothstep(-0.045,0.045,moonX-boundary)\n       :smoothstep(-0.045,0.045,-moonX-boundary);\n    float maria=0.85+0.15*sin(rd.x*1200.0+sin(rd.y*830.0)*0.7)*sin(rd.z*930.0);\n    float halo=pow(max(md,0.0),200.0)*0.030;\n    col+=vec3(0.84,0.92,1.16)*(moonDisc*maria*lunarLit*1.25+halo)*hfNight;\n  }");
+patch('src/engine/pipeline.js',"col+=vec3(2.1,1.55,0.91)*corona*uHFEclipse;","col+=vec3(2.1,1.55,0.91)*corona*uHFEclipse;\n    col=mix(col,vec3(0.001,0.003,0.009),uHFEclipse*hfOcc);");
+patch('src/engine/pipeline.js',"step(0.992,seed)","step(0.989,seed)");
+patch('src/main.js',"window.__terrain = terrain;","window.__terrain = terrain;\nwindow.__hfP510ShadowCache=installP510StagedShadows(terrain,pipe);");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
@@ -501,6 +514,7 @@ patch('src/engine/post.js',
 patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});",
  "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nwindow.__hfP499Perf=installP499GpuDiagnostics(pipe,{search:location.search});\\nwindow.__hfP501Profiler=installP501StageProfiler(pipe,{search:location.search});\\nwindow.__hfP502Audit=installP502AutoProfiler(pipe,{search:location.search});\\nwindow.__hfP503Copy=installP503OpaqueCopy(pipe,{search:location.search});\\nwindow.__hfP505PacingControl=installP505FramePacing(pipe,{search:location.search});".replaceAll('\\n','\n'));
 patch('src/main.js',"import { installHighflyGraphics } from './highfly/visual-profile.mjs';","import { installHighflyGraphics } from './highfly/visual-profile.mjs';\nimport { installP508WorldClock } from './highfly/p508-world-clock.mjs';");
+patch('src/main.js',"import { installP508WorldClock } from './highfly/p508-world-clock.mjs';","import { installP508WorldClock } from './highfly/p508-world-clock.mjs';\nimport { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';");
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
