@@ -78,6 +78,31 @@ export function findSafeSite(world,wish,w,d,yaw,protectedZones=[],placed=[],radi
  }
  return null;
 }
+function findSafeCoastalPlot(world,shore,w,d,yaw,protectedZones,placed){
+ // A harbour must stand on DRY ground near the actual zero-level sea,
+ // never on water, steep cliffs, or the cangrejo / Mira combat zone.
+ for(let ring=34;ring<=150;ring+=8){
+  const n=Math.max(24,Math.ceil(2*Math.PI*ring/7));
+  for(let i=0;i<n;i++){
+   const a=2*Math.PI*i/n;
+   const point={x:shore.x+Math.cos(a)*ring,z:shore.z+Math.sin(a)*ring};
+   const good=safe(world,point,w,d,yaw,protectedZones,placed,3);
+   if(!good||good.y>34)continue;
+   let coastal=false;
+   for(const step of [12,24,38,52]){
+    if(coastal)break;
+    for(let j=0;j<12;j++){
+     const theta=2*Math.PI*j/12;
+     const x=point.x+Math.cos(theta)*step,z=point.z+Math.sin(theta)*step;
+     const h=world.groundHeight(x,z),wet=world.waterLevel?.(x,z);
+     if(finite(h)&&finite(wet)&&Math.abs(wet)<.05&&h<-.10){coastal=true;break;}
+    }
+   }
+   if(coastal)return good;
+  }
+ }
+ return null;
+}
 export function planP520Settlements(world,hunts=null){
  if(!world?.groundHeight)return {placed:[],resources:[],skipped:[{id:'world',reason:'no live terrain'}],regions:[]};
  const placed=[],resources=[],skipped=[],regions=[];
@@ -92,16 +117,23 @@ export function planP520Settlements(world,hunts=null){
   const hunt=r.nearHunt&&hunts?.spots?.[r.nearHunt]?.point;
   const anchor=hunt?{x:hunt.x+r.offset.x,z:hunt.z+r.offset.z}:r.at;
   // A whole region is skipped when its requested district cannot be placed.
-  let regionCount=0;
+  let regionCount=0,coastalFirst=null;
   for(const def of r.buildings){
    const wish={x:anchor.x+def.dx,z:anchor.z+def.dz};
-   const found=findSafeSite(world,wish,def.w,def.d,def.yaw,protectedZones,placed,24);
+   const useCoast=r.kind==='port'&&hunt&&hunt.y<45;
+   const found=useCoast
+     ?(coastalFirst?findSafeSite(world,{x:coastalFirst.x+def.dx,z:coastalFirst.z+def.dz},
+         def.w,def.d,def.yaw,protectedZones,placed,38):
+       findSafeCoastalPlot(world,hunt,def.w,def.d,def.yaw,protectedZones,placed))
+     :findSafeSite(world,wish,def.w,def.d,def.yaw,protectedZones,placed,24);
    if(!found){skipped.push({id:r.id+'/'+def.id,reason:'slope/water/obstacle/protected area'});continue;}
    const obj={...def,id:r.id+'/'+def.id,region:r.id,regionName:r.name,...found};
    placed.push(obj);regionCount++;
+   if(r.kind==='port'&&!coastalFirst)coastalFirst=found;
   }
   for(const node of r.resources??[]){
-   const wish={x:anchor.x+node.dx,z:anchor.z+node.dz};
+   const resourceAnchor=r.kind==='port'&&coastalFirst?coastalFirst:anchor;
+   const wish={x:resourceAnchor.x+node.dx,z:resourceAnchor.z+node.dz};
    const found=findSafeSite(world,wish,2,2,0,protectedZones,placed,12);
    if(!found){skipped.push({id:r.id+'/'+node.id,reason:'resource terrain unsafe'});continue;}
    resources.push({...node,id:'hf-p520-'+r.id+'-'+node.id,region:r.id,...found,available:true});
