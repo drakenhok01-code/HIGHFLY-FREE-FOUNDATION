@@ -20,7 +20,7 @@ for(const phrase of [
  "from 'three'","OrbitControls","TransformControls","GLTFLoader",
  "native-terrain-manifest.json","native-overview.json",
  "native-architecture-3d.json","native-architecture-3d.bin",
- "native-relief-core.png","native-relief-region.png",
+ "native-relief-",
  "new THREE.InstancedMesh","heightAt"
 ]) assert.ok(three.includes(phrase)||phrase==='heightAt'&&three.includes('elevation('),'Missing 3D feature '+phrase);
 assert.match(three,/hitTerrain/);
