@@ -1,0 +1,90 @@
+name: HIGHFLY P5.2.0 - Separate Android Settlement Preview (Preserve Approved)
+on:
+  push:
+    branches: [p520-settlements-ai-lab-20261124]
+    paths: ['.github/workflows/highfly-p520-preserved-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p520-preserved-pages-deploy
+  cancel-in-progress: true
+jobs:
+  build-and-preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked graphic tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: No change to original gameplay or terrain
+        run: |
+          node --check src/highfly/p520-settlement-plan.mjs
+          node --check src/highfly/p520-settlements.mjs
+          node --test tests/p520-settlements-plan.test.mjs tests/p514-moon-eclipse-final.test.mjs tests/p515-climate-options.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Compile real Unsung P5.2.0 at separate preview URL
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p520/ npm run build
+          npm run qa:dist
+          node scripts/qa-p520-real-terrain.mjs
+          test -s dist/P520_WORLD_LAYOUT_AUDIT.json
+          test -s dist/index.html
+          grep -q 'preview-p520' dist/index.html
+          test -s .work/unsung/src/highfly/p520-settlement-plan.mjs
+          test -s .work/unsung/src/highfly/p520-settlements.mjs
+          grep -q "hfcities" .work/unsung/src/main.js
+          ! git diff --name-only | grep -qE '^src/world/(layout|terrain|arch)/'
+      - name: Download last approved Pages site (P5.1.4)
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45485931906
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/approved-p514-artifact
+      - name: Add ONLY preview-p520 and assert all prior bytes preserved
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE="$RUNNER_TEMP/approved-p514-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/approved-p514-artifact/artifact.tar" -C "$SITE"
+          test -s "$SITE/index.html"
+          test -s "$SITE/preview-v3/index.html"
+          test -s "$SITE/preview-p513/index.html"
+          test -s "$SITE/preview-p514/index.html"
+          test ! -e "$SITE/preview-p520"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/original-files.sha256"
+          mkdir "$SITE/preview-p520"
+          cp -a dist/. "$SITE/preview-p520/"
+          test -s "$SITE/preview-p520/P520_WORLD_LAYOUT_AUDIT.json"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/original-files.sha256" > /dev/null)
+          test -s "$SITE/index.html"
+          test -s "$SITE/preview-p514/index.html"
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "PASS: all approved root and historical preview file checksums preserved"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build-and-preserve
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish separate /preview-p520 without changing approved root
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -339,6 +339,7 @@ copy(path.join(ROOT,'src/highfly/qa-p507-sky.mjs'),loc('src/highfly/qa-p507-sky.
 copy(path.join(ROOT,'src/highfly/p508-world-clock.mjs'),loc('src/highfly/p508-world-clock.mjs'));
 copy(path.join(ROOT,'src/highfly/p510-world-alive.mjs'),loc('src/highfly/p510-world-alive.mjs'));
 copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky-events.mjs'));
+for(const name of ['p520-settlement-plan','p520-settlements'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p510-shadows.mjs'),loc('src/highfly/qa-p510-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
@@ -551,6 +552,8 @@ patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{s
  "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nwindow.__hfP499Perf=installP499GpuDiagnostics(pipe,{search:location.search});\\nwindow.__hfP501Profiler=installP501StageProfiler(pipe,{search:location.search});\\nwindow.__hfP502Audit=installP502AutoProfiler(pipe,{search:location.search});\\nwindow.__hfP503Copy=installP503OpaqueCopy(pipe,{search:location.search});\\nwindow.__hfP505PacingControl=installP505FramePacing(pipe,{search:location.search});".replaceAll('\\n','\n'));
 patch('src/main.js',"import { installHighflyGraphics } from './highfly/visual-profile.mjs';","import { installHighflyGraphics } from './highfly/visual-profile.mjs';\nimport { installP508WorldClock } from './highfly/p508-world-clock.mjs';");
 patch('src/main.js',"import { installP508WorldClock } from './highfly/p508-world-clock.mjs';","import { installP508WorldClock } from './highfly/p508-world-clock.mjs';\nimport { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';");
+patch('src/main.js',"import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';",
+ "import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';\nimport { installP520Settlements } from './highfly/p520-settlements.mjs';");
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
@@ -559,6 +562,8 @@ patch('src/main.js',"window.__hfP507Sky = pipe.sky;","window.__hfP507Sky = pipe.
 patch('src/main.js',"const ui = new UI({ game, settings, apply, story });",
  "window.__hfNativeSettings=settings;\\nwindow.__hfApplySettings=apply;\\nconst ui = new UI({ game, settings, apply, story });".replaceAll('\\n','\n'));
 patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=installSpanishLocalization(document,location.search);\nwindow.__highflyRpg=installPremiumRpgUI(game);\ngame.__highflyRpg=window.__highflyRpg;\nwindow.__highflyHunts=installP49Hunts(game);\nwindow.__highflyKayKitPeople=installHighflyKayKitPeople(game);\nwindow.__highflyP493Interaction=installP493Interaction(game);\nwindow.__highflyP493Portals=installP493PortalVisuals(game);\nwindow.__highflyIntro=installHighflyIntro();");
+patch('src/main.js',"window.__highflyIntro=installHighflyIntro();",
+ "window.__highflyIntro=installHighflyIntro();\nif(params.get('hfcities')==='1')window.__hfP520Settlements=installP520Settlements(game,{enabled:true});");
 // Reset TAA history whenever the dynamic-resolution governor changes pixel count.
 patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
  "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");

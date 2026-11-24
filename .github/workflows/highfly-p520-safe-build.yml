@@ -1,0 +1,53 @@
+name: HIGHFLY P5.2.0 Settlements - Protected QA Build (No Deploy)
+on:
+  push:
+    branches: [p520-settlements-ai-lab-20261124]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: highfly-p520-qa
+  cancel-in-progress: true
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install image tools used by locked HIGHFLY build
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Syntax and non-destructive planning gates
+        run: |
+          node --check src/highfly/p520-settlement-plan.mjs
+          node --check src/highfly/p520-settlements.mjs
+          node --check scripts/f0-build.mjs
+          node --test tests/p520-settlements-plan.test.mjs
+          node --test tests/p514-moon-eclipse-final.test.mjs tests/p515-climate-options.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Build real Unsung using pinned MIT source, not mock geometry
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p520/ npm run build
+          npm run qa:dist
+          node scripts/qa-p520-real-terrain.mjs
+          test -s dist/P520_WORLD_LAYOUT_AUDIT.json
+          test -s dist/index.html
+          test -s .work/unsung/src/highfly/p520-settlements.mjs
+          test -s .work/unsung/src/highfly/p520-settlement-plan.mjs
+          grep -q 'installP520Settlements' .work/unsung/src/main.js
+          grep -q "hfcities" .work/unsung/src/main.js
+          grep -Rql 'HIGHFLY_P520_NPC_' dist/assets
+          ! git diff --name-only | grep -qE '^src/world/(layout|terrain|arch)/'
+      - name: Upload isolated test build (no Pages publication)
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p520-sandbox-build
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
