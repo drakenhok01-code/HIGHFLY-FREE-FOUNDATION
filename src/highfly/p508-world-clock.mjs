@@ -60,7 +60,7 @@ export function installP508WorldClock(pipe,options={}){
    if(pipe.skyPass.uniforms.uHFEclipse)pipe.skyPass.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
    if(pipe.tonemap.uniforms.uHFEclipse)pipe.tonemap.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
    pipe.skyPass.uniforms.uHFClock.value=now/1000;
-   astronomy.update({
+   if(astronomy.enabled)astronomy.update({
      phase:phaseNow,mode,
      worldDays:mode==='auto'?(elapsed/DAY_MS):0,
      nowMs:now
@@ -82,7 +82,7 @@ export function installP508WorldClock(pipe,options={}){
    speed=value===60?60:1;lastSync=-Infinity;update();syncButtons();return speed;
  };
  const setMoon=(value)=>{
-   astronomy.moonOverride(value);lastSync=-Infinity;update();syncButtons();return value;
+   if(astronomy.enabled)astronomy.moonOverride(value);lastSync=-Infinity;update();syncButtons();return value;
  };
  const api={enabled:true,select,setAurora,setSpeed,setMoon,update,dispose,
   get speed(){return speed},get astronomy(){return astronomy},get phase(){return phaseNow},
