@@ -468,7 +468,7 @@ patch('src/world/flora/grass.js',
 patch('src/world/flora/grass.js',
  "    const cam = _v.setFromMatrixPosition(camera.matrixWorld), k = this.scale ?? 1;\\n    for (const c of this.cells) {".replaceAll('\\n','\n'),
  `    const cam = _v.setFromMatrixPosition(camera.matrixWorld), k = this.scale ?? 1;
-    const hfGrassNX=this.n, hfFlowerNX=Math.ceil((this.radius*2)/FCELL)+1;
+    const hfGrassNX=this.n??this.cells[0]?.n??1, hfFlowerNX=Math.ceil((this.radius*2)/FCELL)+1;
     const hfGrassX=Math.floor(cam.x/CELL)-(hfGrassNX>>1), hfGrassZ=Math.floor(cam.z/CELL)-(hfGrassNX>>1);
     const hfFlowerX=Math.floor(cam.x/FCELL)-(hfFlowerNX>>1), hfFlowerZ=Math.floor(cam.z/FCELL)-(hfFlowerNX>>1);
     for (const c of this.cells) {`);
