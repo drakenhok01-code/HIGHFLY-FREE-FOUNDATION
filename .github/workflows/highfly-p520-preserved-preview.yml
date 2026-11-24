@@ -11,7 +11,7 @@ permissions:
   id-token: write
 concurrency:
   group: highfly-p520-preserved-pages-deploy
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build-and-preserve:
     runs-on: ubuntu-latest
