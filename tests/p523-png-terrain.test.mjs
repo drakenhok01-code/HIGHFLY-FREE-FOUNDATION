@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const html=fs.readFileSync('public/highfly/world-forge.html','utf8');
+const js=fs.readFileSync('public/highfly/world-forge.js','utf8');
+const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
+const png=fs.readFileSync('scripts/p523-native-terrain-png.py','utf8');
+assert.match(html,/WORLD FORGE · V0\.3/);
+for(const id of ['diagnostics-toggle','diagnostics','diagnostics-log','diagnostics-copy','diagnostics-retry'])
+ assert.ok(html.includes('id="'+id+'"'),id);
+assert.match(html,/world-forge\.js\?v=p523-png-terrain/);
+assert.ok(!js.includes("loadImage(meta.core,'core_h.bin')"));
+assert.ok(!js.includes('DecompressionStream'),'Do not decode gzip at browser');
+assert.ok(!js.includes("new URL('../world/world.json'"),'Avoid old JSON CDN path');
+assert.match(js,/loadHeightPNG/);
+assert.match(js,/native-terrain-manifest\.json/);
+assert.match(js,/native-relief-core\.png/);
+assert.match(js,/native-relief-region\.png/);
+assert.match(js,/loadNativeReference/);
+assert.match(js,/window\.__highflyWorldForgeDiagnosis/);
+assert.match(js,/nativeImages\['native-trees-core'\]/);
+assert.match(js,/nativeImages\['native-architecture-core'\]/);
+assert.match(build,/p523-native-terrain-png\.py/);
+assert.match(png,/gzip\.decompress/);
+assert.match(png,/np\.array_equal\(recovered,quant\)/);
+assert.match(png,/native-terrain-manifest\.json/);
+for(const [key,val] of [['core',2048],['region',16384]])assert.ok(png.includes("'"+key+"'")||png.includes("'"+key+"','region'"),key);
+console.log('[P523] PASS robust PNG terrain, diagnostics, original Unsung map overlays and terrain integrity assertions');
