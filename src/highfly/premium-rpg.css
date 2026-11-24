@@ -681,3 +681,10 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg .hf-p492-native-bench button{position:static;border:1px solid #bb9ded;background:#493066;border-radius:12px;font-size:10px;min-height:29px;padding:5px 8px}
 
 
+
+/* P5.1.5 — climate tools live inside Options, fitted for Android landscape. */
+#hf-rpg .hf-climate-settings{align-items:flex-start;flex-wrap:wrap;justify-content:flex-start}
+#hf-rpg .hf-climate-settings>div:first-child{flex:1 1 130px;min-width:115px}
+#hf-rpg [data-hf-climate-controls]{flex:1 1 260px;min-width:min(220px,100%);max-width:100%;box-sizing:border-box}
+#hf-rpg [data-hf-climate-controls]>div{box-sizing:border-box;width:100%;max-height:55vh;overflow:auto}
+#hf-rpg [data-hf-climate-controls] button{touch-action:manipulation;min-height:30px}
