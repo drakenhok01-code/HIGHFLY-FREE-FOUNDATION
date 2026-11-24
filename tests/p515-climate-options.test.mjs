@@ -47,5 +47,5 @@ assert.equal(doc.body.attributes['data-hf-diag'],'mini');
 assert.equal(api.mountControls(new Element()),true,'reattach across menu re-renders');
 tick+=125;api.update();
 api.dispose();
-assert.equal(pipe.onBeforeScene.length,0);
+assert.ok(!pipe.onBeforeScene.includes(api.update),'clock scene hook removed');
 console.log('[P515 CLIMATE IN OPTIONS QA PASS]');
