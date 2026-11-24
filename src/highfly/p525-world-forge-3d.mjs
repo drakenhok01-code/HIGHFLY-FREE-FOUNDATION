@@ -1,0 +1,473 @@
+/* HIGHFLY WORLD FORGE 3D P525 — NO COMBAT, original Unsung elevation/architecture */
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {TransformControls} from 'three/addons/controls/TransformControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1';
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
+const base=[
+ ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
+ ['house','Casa medieval','🏡','Edificios',9,8],['timber','Casa madera','🛖','Edificios',8,8],['market','Mercado','🏪','Edificios',12,9],
+ ['mill','Molino','🌾','Edificios',10,10],['granary','Granero','🌽','Edificios',12,9],['warehouse','Almacén','📦','Edificios',11,9],
+ ['fishery','Pesquería','🎣','Edificios',10,8],['ranger','Refugio','🏕','Edificios',9,8],
+ ['floor-stone','Empedrado','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
+ ['lantern','Farol original','🏮','Decoración',1.5,1.5],['well','Pozo','🕳','Decoración',4,4],
+ ['fence','Valla','🚧','Decoración',4,.4],['barrel','Barril','🛢','Decoración',1.1,1.1],['bench','Banco','🪑','Decoración',3,1.4],
+ ['tree','Árbol','🌳','Naturaleza',3,3],['rock','Roca','🪨','Naturaleza',3,2.5],['ore','Mineral','⛏','Naturaleza',3,3],
+ ['npc-merchant','Comerciante','🧙','NPC',1,1],['npc-guard','Guardia','🛡','NPC',1,1],['npc-artisan','Artesano','🧑','NPC',1,1],
+ ['kaykit-archeryrange','Campo de tiro','🏹','KayKit FREE',16,13,'archeryrange'],
+ ['kaykit-barracks','Cuartel','🛡','KayKit FREE',14,12,'barracks'],
+ ['kaykit-blacksmith','Herrería KayKit','⚒','KayKit FREE',12,12,'blacksmith'],
+ ['kaykit-castle','Castillo','🏰','KayKit FREE',23,23,'castle'],
+ ['kaykit-church','Templo','⛪','KayKit FREE',13,13,'church'],
+ ['kaykit-home-a','Casa A','🏡','KayKit FREE',10,9,'home_A'],['kaykit-home-b','Casa B','🏠','KayKit FREE',10,9,'home_B'],
+ ['kaykit-lumbermill','Aserradero','🪵','KayKit FREE',14,12,'lumbermill'],
+ ['kaykit-market','Mercado KayKit','🏪','KayKit FREE',13,11,'market'],
+ ['kaykit-mine','Mina','⛏','KayKit FREE',13,12,'mine'],
+ ['kaykit-tavern','Taberna','🍻','KayKit FREE',13,12,'tavern'],
+ ['kaykit-tower-a','Torre A','🏰','KayKit FREE',8,8,'tower_A'],
+ ['kaykit-tower-b','Torre B','🏰','KayKit FREE',8,8,'tower_B'],
+ ['kaykit-watermill','Molino de agua','🌊','KayKit FREE',12,12,'watermill'],
+ ['kaykit-well','Pozo KayKit','🪣','KayKit FREE',6,6,'well'],
+ ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
+].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat,w,d,model}));
+const BY_ID=new Map(base.map(a=>[a.id,a]));
+const safety=[[-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],[578,-437,29],[517,437,29],[136,546,29],[-405,435,29],[-1005,-168,47],[-179,-459,20]];
+const logData={phase:'inicio',lines:[],errors:[]};
+const log=(message,detail='',ok=true)=>{
+ const s=(ok?'✓ ':'✕ ')+message+(detail?' — '+detail:'');
+ logData.lines.push(s);if(!ok){logData.errors.push(s);$('diagnostics').hidden=false;}
+ $('log').textContent=['HIGHFLY WORLD FORGE 3D P5.2.5','Estado '+logData.phase,'URL '+location.pathname,'',...logData.lines].join('\n');
+ console[ok?'info':'error']('[HIGHFLY WORLD FORGE 3D]',s);
+};
+const status=s=>$('status').textContent=s;
+window.__highfly3DEditorHealth=logData;
+const url=f=>new URL('./'+f,import.meta.url).href;
+const holder=$('canvas-holder');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xa8c7dd);
+scene.fog=new THREE.Fog(0xa8c7dd,850,6300);
+const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});
+renderer.setPixelRatio(Math.min(1.3,window.devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;
+holder.insertBefore(renderer.domElement,holder.firstChild);
+const cam=new THREE.PerspectiveCamera(54,1,.1,35000);
+const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=false;orbit.minDistance=8;orbit.maxDistance=4500;
+orbit.maxPolarAngle=Math.PI/2-.02;orbit.screenSpacePanning=true;
+orbit.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.PAN,RIGHT:THREE.MOUSE.PAN};
+scene.add(new THREE.HemisphereLight(0xe4f2ff,0x746251,2.15));
+const sun=new THREE.DirectionalLight(0xffedd7,2);sun.position.set(120,350,210);scene.add(sun);
+const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE.Group(),placed:new THREE.Group()};
+Object.values(groups).forEach(g=>scene.add(g));
+const geo={core:null,region:null,near:null};
+const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null;
+let movedPivot={x:-512,z:-70};
+try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
+orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
+const viewCache=new Map(),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+function render(){if(rendering)return;rendering=requestAnimationFrame(()=>{rendering=0;renderer.render(scene,cam);});}
+function fit(){const w=Math.max(4,holder.clientWidth),h=Math.max(4,holder.clientHeight);renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();render();}
+new ResizeObserver(fit).observe(holder);window.addEventListener('resize',fit);
+function loadPicture(name){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error(name+' no se pudo cargar'));img.src=url(name);});}
+async function loadHeights(){
+ const res=await fetch(url('native-terrain-manifest.json'));if(!res.ok)throw Error('Manifiesto alturas HTTP '+res.status);
+ const manifest=await res.json(),meta=manifest.meta;if(manifest.schema!==3||meta.core.res!==2048||meta.region.res!==2048)throw Error('Mapa Unsung 16bit incorrecto');
+ const arrays={};
+ for(const k of ['core','region']){
+  const img=await loadPicture('native-terrain-'+k+'.png'),dim=meta[k].res;
+  if(img.width!==dim||img.height!==dim)throw Error('Imagen alturas tamaño incorrecto '+k);
+  const c=document.createElement('canvas');c.width=c.height=dim;const cc=c.getContext('2d',{willReadFrequently:true});
+  cc.drawImage(img,0,0);const pixels=cc.getImageData(0,0,dim,dim).data;
+  if(pixels[2]!==165||pixels[3]!==255)throw Error('Firma de altura PNG incorrecta '+k);
+  const a=new Float32Array(dim*dim),factor=(meta[k].max-meta[k].min)/65535;
+  for(let i=0,j=0;i<a.length;i++,j+=4)a[i]=meta[k].min+(pixels[j]*256+pixels[j+1])*factor;
+  arrays[k]=a;log('Mapa de alturas '+k,dim+'x'+dim+' muestras originales');
+ }
+ map={meta,core:arrays.core,region:arrays.region};
+}
+function sample(data,m,x,z){
+ const fx=Math.max(0,Math.min(m.res-1.0001,(x/m.size+.5)*m.res-.5));
+ const fz=Math.max(0,Math.min(m.res-1.0001,(z/m.size+.5)*m.res-.5));
+ const ix=Math.min(m.res-2,Math.floor(fx)),iz=Math.min(m.res-2,Math.floor(fz)),tx=fx-ix,tz=fz-iz,k=iz*m.res+ix;
+ return (data[k]*(1-tx)+data[k+1]*tx)*(1-tz)+(data[k+m.res]*(1-tx)+data[k+m.res+1]*tx)*tz;
+}
+function elevation(x,z){
+ if(!map)return 0;
+ const e=Math.max(Math.abs(x),Math.abs(z))/(map.meta.core.size/2);
+ const hr=e<.90?0:sample(map.region,map.meta.region,x,z);if(e>=.985)return hr;
+ const hc=sample(map.core,map.meta.core,x,z);if(e<=.90)return hc;
+ const t=(e-.90)/.085,w=1-t*t*(3-2*t);return hr+(hc-hr)*w;
+}
+function terrain(size,steps,offset=0,ox=0,oz=0){
+ const n=steps+1,pos=new Float32Array(n*n*3),uv=new Float32Array(n*n*2),idx=new Uint32Array(steps*steps*6);let a=0,u=0,k=0;
+ for(let z=0;z<=steps;z++)for(let x=0;x<=steps;x++){
+  const gx=ox+(x/steps-.5)*size,gz=oz+(z/steps-.5)*size;
+  pos[a++]=gx;pos[a++]=elevation(gx,gz)+offset;pos[a++]=gz;
+  uv[u++]=gx/size+.5;uv[u++]=1-(gz/size+.5);
+ }
+ for(let z=0;z<steps;z++)for(let x=0;x<steps;x++){
+  const t=z*n+x;idx[k++]=t;idx[k++]=t+n;idx[k++]=t+1;idx[k++]=t+1;idx[k++]=t+n;idx[k++]=t+n+1;
+ }
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('uv',new THREE.BufferAttribute(uv,2));g.setIndex(new THREE.BufferAttribute(idx,1));g.computeVertexNormals();g.computeBoundingSphere();return g;
+}
+async function drawTerrain(){
+ const textures=await Promise.all(['region','core'].map(async name=>{
+  const t=await new Promise((resolve,reject)=>textureLoader.load(url('native-relief-'+name+'.png'),resolve,undefined,reject));
+  t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());return t;
+ }));
+ const mat=(t)=>new THREE.MeshLambertMaterial({map:t,side:THREE.DoubleSide});
+ geo.region=new THREE.Mesh(terrain(16384,256,-.7),mat(textures[0]));geo.core=new THREE.Mesh(terrain(2048,256,-.15),mat(textures[1]));
+ // Near tile uses same original samples but finer mesh; UVs refer to full 2048m core, not tile.
+ const nearG=terrain(470,170,.18,movedPivot.x,movedPivot.z);
+ const att=nearG.getAttribute('uv'),pp=nearG.getAttribute('position');
+ for(let i=0;i<att.count;i++){att.setXY(i,pp.getX(i)/2048+.5,1-(pp.getZ(i)/2048+.5));}att.needsUpdate=true;
+ geo.near=new THREE.Mesh(nearG,mat(textures[1]));scene.add(geo.region,geo.core,geo.near);
+ log('Terreno real 3D','región 16km, valle 2km, detalle 470m; sin combate ni sombras dinámicas');render();
+}
+function updateNear(){
+ if(!geo.near||!map)return;
+ const x=orbit.target.x,z=orbit.target.z;
+ if(Math.hypot(x-nearFocus[0],z-nearFocus[1])<80)return;
+ nearFocus=[x,z];
+ if(Math.max(Math.abs(x),Math.abs(z))>1050){geo.near.visible=false;return;}geo.near.visible=true;
+ const g=terrain(470,170,.22,snap(x,40),snap(z,40)),u=g.getAttribute('uv'),p=g.getAttribute('position');
+ for(let i=0;i<u.count;i++)u.setXY(i,p.getX(i)/2048+.5,1-(p.getZ(i)/2048+.5));
+ u.needsUpdate=true;geo.near.geometry.dispose();geo.near.geometry=g;render();
+}
+function positionPointer(ev){const a=renderer.domElement.getBoundingClientRect();pointer.set((ev.clientX-a.left)/a.width*2-1,-(ev.clientY-a.top)/a.height*2+1);raycaster.setFromCamera(pointer,cam);}
+function hitTerrain(ev){
+ if(!map||!geo.core)return null;positionPointer(ev);
+ const hits=raycaster.intersectObjects([geo.near,geo.core,geo.region].filter(m=>m&&m.visible),false);
+ for(const hit of hits)if(Math.max(Math.abs(hit.point.x),Math.abs(hit.point.z))<8100){
+  return {x:hit.point.x,z:hit.point.z,y:elevation(hit.point.x,hit.point.z)};
+ }
+ return null;
+}
+function focus(x=-512,z=-70,range=170){
+ const h=elevation(x,z);orbit.target.set(x,h+5,z);cam.position.set(x+range*.59,h+range*.78,z+range*.63);orbit.update();render();
+}
+function originalRender(){
+ if(!overview)return;
+ const waterMat=new THREE.MeshLambertMaterial({color:0x388eab,transparent:true,opacity:.66,depthWrite:false,side:THREE.DoubleSide});
+ const sea=new THREE.Mesh(new THREE.PlaneGeometry(16384,16384).rotateX(-Math.PI/2),waterMat);sea.position.y=-.07;groups.water.add(sea);
+ for(const p of overview.pools||[]){
+  const lake=new THREE.Mesh(new THREE.CircleGeometry(p.r,64).rotateX(-Math.PI/2),waterMat);
+  lake.position.set(p.x,p.level+.03,p.z);groups.water.add(lake);
+ }
+ const treeIndex=new Map();for(const t of overview.trees){
+  const key=Math.floor(t[0]/128)+','+Math.floor(t[1]/128);
+  if(!treeIndex.has(key))treeIndex.set(key,[]);treeIndex.get(key).push(t);
+ }
+ overview.treeIndex=treeIndex;
+ const kinds=[0xd18b69,0xd9acc3,0xc7b9d9,0x416950,0x5d996b],trunk=new THREE.CylinderGeometry(.3,.42,1,5),crown=new THREE.IcosahedronGeometry(1,1),column=new THREE.ConeGeometry(1,1,6);
+ trunk.translate(0,.5,0);column.translate(0,.5,0);
+ for(let k=0;k<5;k++){
+  const stem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),900);
+  const canopy=new THREE.InstancedMesh(k===3?column:crown,new THREE.MeshLambertMaterial({color:kinds[k],flatShading:true}),900);
+  stem.count=0;canopy.count=0;stem.frustumCulled=false;canopy.frustumCulled=false;groups.trees.add(stem,canopy);
+ }
+ updateTrees(true);
+ log('Posiciones de árboles Unsung',overview.trees.length.toLocaleString('es-AR')+' instancias nativas con formas 3D simplificadas');
+}
+const dummy=new THREE.Object3D(),treeKinds=[0,0,0,1,1,2,2,3,3,4,4,4],treeH=[14,8,19,19,13],treeR=[5.2,4.2,6.0,2.2,5.0];
+function updateTrees(force=false){
+ if(!overview?.treeIndex||!map||!groups.trees.visible)return;
+ const x=orbit.target.x,z=orbit.target.z;
+ if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
+ treeFocus=[x,z];
+ const lists=Array.from({length:5},()=>[]),rad=260;
+ for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
+  for(const t of overview.treeIndex.get(i+','+j)||[]){
+   if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
+   const k=treeKinds[t[3]]??4;if(lists[k].length<900)lists[k].push(t);
+  }
+ }
+ for(let kind=0;kind<5;kind++){
+  const stem=groups.trees.children[kind*2],canopy=groups.trees.children[kind*2+1];
+  let i=0;for(const [x,z,s] of lists[kind]){
+   const y=elevation(x,z),h=treeH[kind]*s;
+   dummy.position.set(x,y,z);dummy.scale.set(s*.83,h*.45,s*.83);dummy.rotation.set(0,0,0);dummy.updateMatrix();stem.setMatrixAt(i,dummy.matrix);
+   dummy.position.set(x,y+h*.66,z);dummy.scale.set(treeR[kind]*s,kind===3?h*.66:h*.36,treeR[kind]*s);dummy.updateMatrix();canopy.setMatrixAt(i,dummy.matrix);i++;
+  }
+  stem.count=canopy.count=i;stem.instanceMatrix.needsUpdate=canopy.instanceMatrix.needsUpdate=true;
+ }
+ render();
+}
+async function loadOriginalGeometry(){
+ try{
+  const m=await fetch(url('native-architecture-3d.json')).then(r=>{if(!r.ok)throw Error('Manifiesto edificios '+r.status);return r.json();});
+  const response=await fetch(url('native-architecture-3d.bin'));if(!response.ok)throw Error('Modelo original '+response.status);
+  const bin=await response.arrayBuffer();
+  if(bin.byteLength!==m.byteLength)throw Error('Modelo Unsung tamaño incorrecto '+bin.byteLength+'/'+m.byteLength);
+  const palette=[0xa4a1a0,0xd6d4cb,0xe8bd75,0x92798f,0xb2a79b,0xaaa1a5,0x84b6bf,0x514b53];
+  let total=0;
+  for(const spec of m.meshes){
+   const field=(n,cl)=>{const f=spec.fields[n];return new cl(bin.slice(f.offset,f.offset+f.length));};
+   const pos=field('position',Float32Array),nor=field('normal',Float32Array),mat=field('material',Uint8Array),index=field('index',Uint32Array);
+   if(pos.length/3!==spec.vertices||nor.length!==pos.length||mat.length!==spec.vertices)continue;
+   const color=new Uint8Array(mat.length*3);
+   for(let i=0;i<mat.length;i++){
+    const c=new THREE.Color(palette[mat[i]]??palette[0]);color[3*i]=Math.floor(c.r*255);color[3*i+1]=Math.floor(c.g*255);color[3*i+2]=Math.floor(c.b*255);
+   }
+   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('normal',new THREE.BufferAttribute(nor,3));
+   g.setAttribute('color',new THREE.BufferAttribute(color,3,true));g.setIndex(new THREE.BufferAttribute(index,1));g.computeBoundingSphere();
+   groups.original.add(new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide})));total++;
+  }
+  log('Construcciones originales 3D',total+' mallas reales · '+m.totalTriangles.toLocaleString('es-AR')+' triángulos');render();
+ }catch(e){log('Construcciones nativas 3D',e.message,false);}
+}
+function treeNear(x,z,rad){
+ if(!overview?.treeIndex)return false;
+ for(let i=Math.floor((x-rad-10)/128);i<=Math.floor((x+rad+10)/128);i++)
+ for(let j=Math.floor((z-rad-10)/128);j<=Math.floor((z+rad+10)/128);j++)
+ for(const [tx,tz,s] of overview.treeIndex.get(i+','+j)||[])if(Math.hypot(x-tx,z-tz)<rad+2.5*s)return true;
+ return false;
+}
+function archNear(x,z,rad){
+ if(!architectPixel||Math.max(Math.abs(x),Math.abs(z))>1020)return false;
+ for(const [ax,az] of [[0,0],[-1,-1],[1,1],[1,-1],[-1,1]]){
+  const px=Math.floor(x+1024+ax*rad*.65),pz=Math.floor(z+1024+az*rad*.65);
+  if(px>=0&&px<2048&&pz>=0&&pz<2048&&architectPixel[(pz*2048+px)*4+3]>100)return true;
+ }
+ return false;
+}
+function validPosition(o,id=null){
+ if(!map)return {ok:false,why:'Terreno sin cargar'};
+ const a=BY_ID.get(o.type);if(!a)return {ok:false,why:'Modelo inexistente'};
+ const w=a.w*o.scale,d=a.d*o.scale,c=Math.cos(o.yaw),s=Math.sin(o.yaw),samples=[];
+ for(const [dx,dz] of [[0,0],[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
+  const x=o.x+dx*c-dz*s,z=o.z+dx*s+dz*c;
+  if(Math.max(Math.abs(x),Math.abs(z))>8090)return {ok:false,why:'Fuera del mundo'};
+  const h=elevation(x,z);if(h<-.13)return {ok:false,why:'Terreno sumergido'};
+  samples.push(h);
+ }
+ const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
+ if(!flat&&!npc){
+  if(Math.max(...samples)-Math.min(...samples)>Math.min(3.8,1.2+o.scale*1.1))return {ok:false,why:'Pendiente excesiva'};
+  if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.7))return {ok:false,why:'Zona original protegida'};
+  if(treeNear(o.x,o.z,rad*.5))return {ok:false,why:'Árbol original'};
+  if(archNear(o.x,o.z,rad*.6))return {ok:false,why:'Arquitectura original'};
+  for(const b of records){
+   if(b.id===id||b.id===o.id||b.type.startsWith('floor-')||b.type.startsWith('npc-'))continue;
+   const q=BY_ID.get(b.type);
+   if(Math.hypot(o.x-b.x,o.z-b.z)<(Math.hypot(w,d)+Math.hypot(q.w*b.scale,q.d*b.scale))*.31)return {ok:false,why:'Edificio superpuesto'};
+  }
+ }
+ return {ok:true,y:elevation(o.x,o.z)};
+}
+function save(show=false){
+ try{localStorage.setItem(STORE,JSON.stringify({schema:1,world:'unsung-vale',author:'HIGHFLY WORLD FORGE 3D',objects:records}));if(show)status('✓ Diseño guardado; compartido con vista 2D y RPG');}
+ catch(e){log('Guardar',e.message,false);}
+}
+function recordSnapshot(){history.push(JSON.stringify(records));if(history.length>60)history.shift();redoStack.length=0;}
+function restore(){
+ try{const d=JSON.parse(localStorage.getItem(STORE)||'null');if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));}
+ catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
+}
+const modelUrl=a=>url('kaykit-free/building_'+a.model+'_red.gltf');
+function getGLTF(a){
+ if(!cache.has(a.id))cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>g.scene).catch(err=>{log('KayKit '+a.label,err.message,false);return null;}));
+ return cache.get(a.id);
+}
+function makeModel(a,o){
+ const group=new THREE.Group();
+ if(a.id.startsWith('floor-')){
+  const w=a.w*o.scale,d=a.d*o.scale,points=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+  for(const [x,z] of [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]]){
+   const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;points.push(x,elevation(xx,zz)-o.y+.14,z);
+  }
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
+  geo.setIndex([0,1,2,0,2,3]);geo.computeVertexNormals();
+  group.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:a.id==='floor-stone'?0xbcb3a3:a.id==='floor-earth'?0x98775c:0xb28a60,side:THREE.DoubleSide})));
+  return group;
+ }
+ const m=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale,3*o.scale,a.d*o.scale),new THREE.MeshLambertMaterial({color:0xbaa99c}));
+ m.position.y=1.5*o.scale;group.add(m);
+ if(a.cat==='Edificios'){
+  const roof=new THREE.Mesh(new THREE.ConeGeometry(a.w*o.scale*.72,2.2*o.scale,4),new THREE.MeshLambertMaterial({color:0x795266}));
+  roof.rotation.y=Math.PI/4;roof.position.y=3.9*o.scale;group.add(roof);
+ }
+ return group;
+}
+async function buildPlaced(o){
+ const a=BY_ID.get(o.type);if(!a)return null;
+ const root=new THREE.Group();root.position.set(o.x,elevation(o.x,o.z)+.03,o.z);root.rotation.y=o.yaw;root.userData.placeId=o.id;
+ if(a.model){
+  const original=await getGLTF(a);
+  if(original){
+   const model=original.clone(true),box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+   const scale=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
+   model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);root.add(model);
+  }else root.add(makeModel(a,o));
+ }else root.add(makeModel(a,o));
+ return root;
+}
+async function rebuildPlaced(){
+ const token={};rebuildPlaced.token=token;
+ for(const child of [...groups.placed.children])groups.placed.remove(child);
+ viewCache.clear();selected=null;if(gizmo)gizmo.detach();
+ for(const o of records){
+  const node=await buildPlaced(o);if(rebuildPlaced.token!==token)return;
+  if(node){groups.placed.add(node);viewCache.set(o.id,node);}
+ }
+ render();showProps();
+}
+function showProps(){
+ const o=records.find(x=>x.id===selected),name=o?BY_ID.get(o.type).label:chosen?BY_ID.get(chosen).label:'EDITOR 3D';
+ $('props').querySelector('strong').textContent=name;
+ $('props').querySelector('small').textContent=o?('X '+o.x+' · Z '+o.z+' · Suelo '+o.y.toFixed(1)+' · Giro '+Math.round(o.yaw*180/Math.PI)+'° · Tamaño '+o.scale.toFixed(2)):(chosen?'Tocá el terreno para colocarlo. Para orbitar, elegí Cámara.':'Seleccioná un edificio del catálogo; la cámara puede orbitar y acercarse.');
+}
+function switchMode(next){
+ mode=next;
+ for(const id of ['orbit','select','move','rotate','scale'])$(id).classList.toggle('on',id===mode);
+ orbit.enabled=mode==='orbit'||mode==='select';
+ if(gizmo){
+  if(selected&&['move','rotate','scale'].includes(next)){
+   gizmo.attach(viewCache.get(selected));gizmo.setMode(next==='move'?'translate':next==='rotate'?'rotate':'scale');gizmo.showY=next!=='move';
+  }else gizmo.detach();
+ }
+ render();
+}
+function selectAsset(id){chosen=id;selected=null;if(gizmo)gizmo.detach();switchMode('place');drawCatalog();showProps();status('Elegiste '+BY_ID.get(id).label+' · Tocá terreno libre para colocarlo.');}
+function drawCatalog(){
+ $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
+ for(const a of base.filter(a=>a.cat===category&&a.label.toLowerCase().includes(find))){
+  const el=document.createElement('button');el.className='asset'+(chosen===a.id?' selected':'');
+  if(a.model){
+   const img=document.createElement('img');img.loading='lazy';img.alt=a.label;img.src=url('kaykit-free/thumbs/building_'+a.model+'_red.png');
+   img.onerror=()=>img.replaceWith(document.createTextNode(a.icon));el.append(img);
+  }else{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);}
+  const label=document.createElement('span');label.textContent=a.label;el.append(label);
+  el.onclick=()=>selectAsset(a.id);$('catalog').append(el);
+ }
+}
+function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
+function drawCats(){for(const cat of [...new Set(base.map(x=>x.cat))]){
+ const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
+}setCategory(category);}
+function addAt(x,z){
+ if(!chosen||!map)return false;
+ const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
+ const check=validPosition(o);if(!check.ok){status('No se puede colocar: '+check.why);return false;}
+ if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
+ o.y=check.y;records.push(o);
+ buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){groups.placed.add(root);viewCache.set(o.id,root);render();}});
+ status('Añadido '+a.label+' · X '+o.x+' / Z '+o.z);return true;
+}
+function paintLine(a,b){
+ const steps=Math.max(1,Math.ceil(Math.hypot(a.x-b.x,a.z-b.z)/2));
+ for(let i=0;i<=steps;i++)addAt(a.x+(b.x-a.x)*i/steps,a.z+(b.z-a.z)*i/steps);
+ save();
+}
+function clickPlaced(ev){
+ positionPointer(ev);const hit=raycaster.intersectObjects(groups.placed.children,true);
+ for(const h of hit){
+  let o=h.object;while(o&&!o.userData.placeId)o=o.parent;
+  if(o?.userData.placeId)return o.userData.placeId;
+ }
+ return null;
+}
+function selectObject(id){
+ chosen=null;selected=id;drawCatalog();showProps();switchMode('move');
+}
+function transform(action){
+ const o=records.find(v=>v.id===selected);if(!o)return;
+ const old={...o};recordSnapshot();
+ if(action==='rot-left')o.yaw-=Math.PI/12;else if(action==='rot-right')o.yaw+=Math.PI/12;
+ else if(action==='size-down')o.scale=clamp(o.scale-.1,.5,3);
+ else if(action==='size-up')o.scale=clamp(o.scale+.1,.5,3);
+ const check=validPosition(o,o.id);
+ if(!check.ok){Object.assign(o,old);history.pop();status('No se puede modificar: '+check.why);return;}
+ o.y=check.y;save();rebuildPlaced();
+}
+function remove(){const i=records.findIndex(a=>a.id===selected);if(i<0)return;recordSnapshot();records.splice(i,1);save();rebuildPlaced();}
+function undo(){if(!history.length)return;redoStack.push(JSON.stringify(records));records=JSON.parse(history.pop());save();rebuildPlaced();status('Cambio deshecho');}
+function redo(){if(!redoStack.length)return;history.push(JSON.stringify(records));records=JSON.parse(redoStack.pop());save();rebuildPlaced();status('Cambio recuperado');}
+function exportJSON(){
+ const blob=new Blob([JSON.stringify({schema:1,world:'unsung-vale',objects:records},null,2)],{type:'application/json'});
+ const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
+}
+function bindUI(){
+ $('search').oninput=drawCatalog;
+ $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
+ for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
+ $('home').onclick=()=>focus(-512,-70);
+ $('top').onclick=()=>{const p=orbit.target;cam.position.set(p.x+.1,p.y+270,p.z+.1);orbit.update();render();};
+ $('iso').onclick=()=>{const p=orbit.target;cam.position.set(p.x+140,p.y+150,p.z+140);orbit.update();render();};
+ for(const [id,name] of [['trees','trees'],['original','original'],['water','water']])$(id).onclick=()=>{groups[name].visible=!groups[name].visible;$(id).classList.toggle('on',groups[name].visible);if(name==='trees')updateTrees(true);render();};
+ $('save').onclick=()=>save(true);$('undo').onclick=undo;$('redo').onclick=redo;$('export').onclick=exportJSON;
+ $('import').onclick=()=>$('file').click();
+ $('file').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(d.schema!==1||d.world!=='unsung-vale'||!Array.isArray(d.objects)||d.objects.length>2500||!d.objects.every(o=>BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite)))throw Error('Formato no compatible');
+  recordSnapshot();records=d.objects.map(o=>({...o,y:elevation(o.x,o.z)}));save();rebuildPlaced();status('Plano importado: '+records.length+' piezas');
+ }catch(err){status('Error importando: '+err.message);}e.target.value='';};
+ $('play').onclick=()=>{save();location.href=new URL('../?hfworld=1',import.meta.url).href;};
+ for(const id of ['rot-left','rot-right','size-down','size-up'])$(id).onclick=()=>transform(id);
+ $('remove').onclick=remove;
+ $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
+ $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
+ $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
+ window.addEventListener('keydown',e=>{if(document.activeElement?.tagName==='INPUT')return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();redo();}
+  if(e.key==='Delete'||e.key==='Backspace')remove();
+  if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
+ });
+ const canvas=renderer.domElement;
+ canvas.addEventListener('pointerdown',e=>{
+  if(mode==='place'&&chosen&&e.isPrimary){
+   const h=hitTerrain(e);if(!h)return;
+   recordSnapshot();dragPainting=chosen.startsWith('floor-');lastPaint=h;
+   if(!addAt(h.x,h.z))history.pop();save();
+  }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
+ });
+ canvas.addEventListener('pointermove',e=>{
+  if(mode==='place'&&dragPainting&&(e.buttons&1)){const h=hitTerrain(e);if(h&&lastPaint){paintLine(lastPaint,h);lastPaint=h;}}
+  const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
+ });
+ const end=()=>{dragPainting=false;lastPaint=null;save();};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+}
+function installGizmo(){
+ gizmo=new TransformControls(cam,renderer.domElement);scene.add(gizmo.getHelper());
+ gizmo.setTranslationSnap(1);gizmo.setRotationSnap(Math.PI/12);gizmo.setScaleSnap(.1);
+ let before=null;
+ gizmo.addEventListener('dragging-changed',ev=>{
+  orbit.enabled=!ev.value;
+  if(ev.value){before=JSON.stringify(records);return;}
+  const o=records.find(x=>x.id===selected),root=viewCache.get(selected);if(!o||!root)return;
+  const old={...o};o.x=snap(root.position.x,1);o.z=snap(root.position.z,1);
+  o.yaw=root.rotation.y;o.scale=clamp(Math.round(root.scale.x*100)/100,.5,3);
+  const check=validPosition(o,o.id);
+  if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;status('Ubicación bloqueada: '+check.why);}
+  else{o.y=check.y;root.position.y=o.y;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
+  if(mode==='scale')rebuildPlaced();showProps();render();
+ });
+ gizmo.addEventListener('objectChange',()=>{
+  const obj=viewCache.get(selected);if(obj&&mode==='move')obj.position.y=elevation(obj.position.x,obj.position.z);
+  render();
+ });
+}
+orbit.addEventListener('change',()=>{
+ updateNear();updateTrees();render();
+ $('metrics').textContent=records.length+' piezas propias · cámara '+Math.round(cam.position.distanceTo(orbit.target))+' m';
+ try{localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));}catch{}
+});
+async function boot(){
+ try{
+  logData.phase='datos reales y geometría 3D';drawCats();bindUI();installGizmo();fit();restore();
+  status('Cargando alturas originales de Unsung sin iniciar el RPG…');
+  await loadHeights();await drawTerrain();
+  focus(movedPivot.x,movedPivot.z);updateNear();
+  const data=await fetch(url('native-overview.json'));if(!data.ok)throw Error('Mapa original: HTTP '+data.status);
+  overview=await data.json();
+  const img=await loadPicture('native-architecture-core.png'),c=document.createElement('canvas');c.width=c.height=2048;
+  const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);architectPixel=cx.getImageData(0,0,2048,2048).data;
+  originalRender();await rebuildPlaced();switchMode('orbit');render();
+  status('✓ TERRRENO ORIGINAL 3D + agua + árboles. Cargando arquitectura exacta de Unsung…');
+  await loadOriginalGeometry();
+  logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
+  status('✓ WORLD FORGE 3D listo · Elegí un KayKit FREE, inspeccioná el mundo y colocá edificios.');
+ }catch(err){
+  logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
+  status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
+ }
+}
+boot();
