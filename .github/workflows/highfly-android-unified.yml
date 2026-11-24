@@ -54,6 +54,7 @@ jobs:
           node --test tests/p504-native-hdr.test.mjs
           node --test tests/p505-mobile-pacing-bloom.test.mjs
           node --test tests/p506-waterfall-joins.test.mjs
+          node --test tests/p506-mobile-grid-performance.test.mjs
           node --check src/highfly/p506-waterfall-joins.mjs
           node --check src/highfly/p505-frame-pacing.mjs
           node --check src/highfly/p504-hdr-options.mjs
