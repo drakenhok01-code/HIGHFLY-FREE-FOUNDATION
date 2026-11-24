@@ -58,8 +58,11 @@ export function installP508WorldClock(pipe,options={}){
    lastSync=now;
    const elapsed=(now-clockStart)*speed+clockOffset;
    const eclipseElapsed=(now-eclipseStart)*speed+eclipseOffset;
+   // P514 eclipse day: 45 real/game minutes of daylight from sunrise to
+   // sunset. The sun and aligned moon keep travelling, without a noon cutoff.
+   const eclipseProgress=Math.max(0,Math.min(1,eclipseElapsed/DAY_MS));
    phaseNow=mode==='auto'?phaseAt(elapsed+DAY_MS*.75):
-     mode==='eclipse'?phaseAt(eclipseElapsed+DAY_MS*.315):
+     mode==='eclipse'?.25+.5*eclipseProgress:
      ({amanecer:.25,dia:.5,atardecer:.75,noche:0})[mode];
    const active=mode==='auto'||mode==='eclipse'?phaseGrade(phaseNow):GRADE[mode];
    grade.set(active[0],active[1],active[2],active[3]);
@@ -164,7 +167,7 @@ export function installP508WorldClock(pipe,options={}){
   eventLabel=doc.createElement('div');
   eventLabel.style.cssText='font-size:10px;color:#a3e7e5;margin-top:5px';
   panel.appendChild(eventLabel);
-  const note=doc.createElement('div');note.textContent='P5.1.3: sol x3, luna x3.5, eclipse x4. Eclipse = día con recorrido completo (pulsar otra vez para repetir). Aurora: auto/forzar/apagar.';
+  const note=doc.createElement('div');note.textContent='P5.1.4: luna nítida del tamaño del sol; Eclipse = 45 min de amanecer a atardecer. FPS: diagnóstico oculto/mini/completo.';
   note.style.cssText='font-size:10px;color:#c9c2d9;margin-top:6px';panel.appendChild(note);
   open.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';open.setAttribute('aria-expanded',String(panel.style.display!=='none'));});
   root.append(open,panel);doc.body.appendChild(root);syncButtons();
