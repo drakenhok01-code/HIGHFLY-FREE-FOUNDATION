@@ -26,7 +26,23 @@ try{
  page.on('pageerror',e=>errors.push(String(e).slice(0,350)));
  page.on('console',msg=>{if(msg.type()==='error')errors.push('console: '+msg.text().slice(0,350));});
  await page.goto(base+'highfly/world-forge-3d.html',{waitUntil:'domcontentloaded',timeout:35000});
- await page.waitForFunction(()=>['listo','fallo'].includes(window.__highfly3DEditorHealth?.phase),{timeout:120000});
+ let phase='unknown';
+ try{
+  await page.waitForFunction(()=>['listo','fallo'].includes(window.__highfly3DEditorHealth?.phase),{timeout:35000});
+ }catch(err){
+  // Debug exactly what was loaded: DOM, script, resource errors and scene phase.
+  const trace=await Promise.race([
+   page.evaluate(()=>({phase:window.__highfly3DEditorHealth?.phase||'missing global',
+    log:window.__highfly3DEditorHealth?.lines||[],errors:window.__highfly3DEditorHealth?.errors||[],
+    ready:document.readyState,html:document.querySelector('#status')?.textContent,
+    script:[...document.scripts].map(s=>s.src),canvas:!!document.querySelector('canvas'),
+    resource:[...performance.getEntriesByType('resource')].slice(-12).map(x=>({name:x.name.slice(-75),duration:x.duration}))})),
+   delay(2500).then(()=>({blocked:'browser event loop unresponsive'}))
+  ]);
+  console.error('[P525 CHROME STATE AFTER 35s]',JSON.stringify({trace,errors,serverLogs:serverLogs.slice(-600)}).slice(0,6000));
+  await Promise.race([page.screenshot({path:'p525-editor-3d-smoke.png',fullPage:true}),delay(2400)]);
+  throw err;
+ }
  const state=await page.evaluate(()=>{
   const r=window.__highfly3DEditorHealth;
   const canvas=document.querySelector('#canvas-holder canvas');
