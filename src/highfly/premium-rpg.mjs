@@ -484,7 +484,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<input id="hf-p492-sens" type="range" min="0.3" max="2.5" step="0.05" value="'+sensitivity.toFixed(2)+'" data-hf-camera-sensitivity aria-label="Sensibilidad de cámara"/>'+
     '<button type="button" data-hf-camera-invert aria-pressed="'+invert+'">Invertir cámara vertical: '+(invert?'SÍ':'NO')+'</button>'+
     '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
-    '<div class="hf-rpg-rule"></div><div class="hf-rpg-options"><div><b>🌌 MUNDO Y CLIMA</b><small>Fenómenos del cielo, luna, ciclo de 45 minutos y herramientas de prueba. No se muestran en el HUD.</small></div>'+ 
+    '<div class="hf-rpg-rule"></div><div class="hf-rpg-options hf-climate-settings"><div><b>🌌 MUNDO Y CLIMA</b><small>Fenómenos del cielo, luna, ciclo de 45 minutos y herramientas de prueba. No se muestran en el HUD.</small></div>'+ 
     '<div data-hf-climate-controls aria-label="Ajustes del mundo y clima"></div></div>'+ 
     '<div class="hf-rpg-rule"></div>'+button('✧ EDITAR HUD 3.1','data-hf-action="edit-hud"','is-primary')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
