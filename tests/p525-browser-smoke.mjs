@@ -5,13 +5,13 @@ import puppeteer from 'puppeteer-core';
 const CHROME=process.env.CHROME_BIN||['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium'].find(f=>fs.existsSync(f));
 if(!CHROME)throw Error('Chrome unavailable on CI runner: cannot claim visual 3D verification');
 const base='http://127.0.0.1:5188/HIGHFLY-FREE-FOUNDATION/preview-p525/';
-const vite=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','5188','--strictPort'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
+const vite=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','5188','--strictPort','--base','/HIGHFLY-FREE-FOUNDATION/preview-p525/'],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});
 let serverLogs='';vite.stdout.on('data',x=>serverLogs+=x);vite.stderr.on('data',x=>serverLogs+=x);
 let browser;
 try{
  let up=false;
  for(let k=0;k<40;k++){
-  try{const r=await fetch(base+'highfly/world-forge-3d.html');if(r.ok){up=true;break;}}catch{}
+  try{const r=await fetch(base+'highfly/world-forge-3d.html');const html=await r.text();if(r.ok&&html.includes('WORLD FORGE · 3D V0.5')){up=true;break;}}catch{}
   await delay(400);
  }
  if(!up)throw Error('Vite preview server did not start '+serverLogs.slice(-1500));
