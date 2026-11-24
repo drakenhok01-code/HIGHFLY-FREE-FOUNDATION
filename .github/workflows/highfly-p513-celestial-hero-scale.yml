@@ -176,7 +176,9 @@ jobs:
           grep -q 'eclipseElapsed' .work/unsung/src/highfly/p508-world-clock.mjs
           grep -q 'P512:' .work/unsung/src/engine/pipeline.js
           grep -q 'hfRubySky' .work/unsung/src/engine/pipeline.js
-          grep -q '0.0156,0.0170' .work/unsung/src/engine/pipeline.js
+          # P512 source history is preserved; P513 replaces the live radius by design.
+          grep -q '0.0156,0.0170' scripts/f0-build.mjs
+          grep -q '0.0510,0.0680' .work/unsung/src/engine/pipeline.js
           grep -q 'eclipseDisplayVector' .work/unsung/src/highfly/p510-world-alive.mjs
           grep -q 'P511:' .work/unsung/src/engine/pipeline.js
           grep -q 'uHFVisualSunDir' .work/unsung/src/engine/pipeline.js
