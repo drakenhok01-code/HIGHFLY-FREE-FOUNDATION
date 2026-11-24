@@ -308,7 +308,7 @@ console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 fu
 
 
 for(const name of ['premium-assets.mjs','premium-map.mjs'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
-for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p498-android-resolution.mjs','p499-native-profiler.mjs','p501-stage-profiler.mjs','p502-fps-audit.mjs','p503-opaque-copy.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
+for(const name of ['p491-cc0-creatures.mjs','p49-hunt-data.mjs','p49-hunt-world.mjs','p492-kaykit-people.mjs','p492-radar.mjs','p493-item-transactions.mjs','p493-interaction.mjs','p493-portal.mjs','p493-interaction.css','p494-cartographic-map.mjs','p494-stair-guard.mjs','p495-stair-route.mjs','p496-stair-camera.mjs','p498-android-resolution.mjs','p499-native-profiler.mjs','p501-stage-profiler.mjs','p502-fps-audit.mjs','p503-opaque-copy.mjs','p504-hdr-options.mjs','p49-hunts.css','rpg-bag-capacity.mjs','rpg-core.mjs','p41-loot.mjs','p41-world-loot.mjs','p42-item-art.mjs','premium-p41.css','premium-p42.css','premium-p43.css','premium-p44.css','premium-p45.css','premium-p46.css','premium-p47.css','premium-rpg.mjs','premium-rpg.css','premium-f0148-v2.css','premium-f0148-v3.css','premium-f0148-v3-1-polish.css','premium-f0148-v3-2-clean.css','premium-f0148-user-icons.css','phoenix-brand.css','phoenix-intro.mjs','phoenix-v36-polish.css'])copy(path.join(ROOT,'src/highfly/'+name),loc('src/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/kaykit-free-hero.mjs'),loc('src/highfly/kaykit-free-hero.mjs'));
 copy(path.join(ROOT,'src/highfly/stylize-kaykit-free.mjs'),loc('src/highfly/stylize-kaykit-free.mjs'));
 copy(path.join(ROOT,'src/highfly/kaykit-material.mjs'),loc('src/highfly/kaykit-material.mjs'));
@@ -394,6 +394,29 @@ patch('src/world/arch/sites.js',
         // Original local +X goes uphill (world -X); negative X faces Cantor.
         // The apron top is 5 cm BELOW the first tread to avoid a step snag.
         q.mat_(M.PAVING).box(-6.6, -1.05, -4.5, 7.1, 1.17, 9, '-y');`);
+// P504: opt-in packed high-dynamic-range render targets.  The GPU may
+// support R11F_G11F_B10F (4 bytes per pixel) instead of RGBA16F (8 B/px).
+// Test actual framebuffer completeness before use, restore RGBA16F on any
+// failure. Scene, fog, opaque refraction and both TAA history buffers only.
+// No change to native pixel dimensions or visible foliage/objects.
+patch('src/engine/pipeline.js',
+ "import { FullscreenPass, makeTarget } from './fullscreen.js';",
+ "import { FullscreenPass, makeTarget } from './fullscreen.js';\\nimport { selectP504HdrFormat } from './highfly/p504-hdr-options.mjs';".replaceAll('\\n','\n'));
+patch('src/engine/pipeline.js',
+ "    this.renderer = renderer;",
+ "    this.renderer = renderer;\\n    this._hfHdrFormat=selectP504HdrFormat(renderer,globalThis.location?.search||'');\\n    this._hfCompactHdr=this._hfHdrFormat.options||{};".replaceAll('\\n','\n'));
+patch('src/engine/pipeline.js',
+ "    this.rtScene = makeTarget(rw, rh, { depthBuffer: true });",
+ "    this.rtScene = makeTarget(rw, rh, { depthBuffer: true, ...this._hfCompactHdr });");
+patch('src/engine/pipeline.js',
+ "    this.rtFog = makeTarget(rw, rh);",
+ "    this.rtFog = makeTarget(rw, rh, this._hfCompactHdr);");
+patch('src/engine/pipeline.js',
+ "    this.rtOpaque = makeTarget(rw, rh);",
+ "    this.rtOpaque = makeTarget(rw, rh, this._hfCompactHdr);");
+patch('src/engine/post.js',
+ "    this.history = [makeTarget(w, h), makeTarget(w, h)];",
+ "    this.history = [makeTarget(w, h, this.pipe._hfCompactHdr), makeTarget(w, h, this.pipe._hfCompactHdr)];");
 // P503: one source-of-truth for each stationary vegetation tile. Unsung's
 // grass and flower cells only move when crossing their 16m / 32m grid;
 // the original code sampled terrain.heightAt and called updateMatrixWorld on
