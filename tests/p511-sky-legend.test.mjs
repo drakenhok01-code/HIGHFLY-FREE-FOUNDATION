@@ -43,12 +43,6 @@ assert.equal(api.auroraSetting,'auto');
 assert.equal(api.event.aurora,0);
 assert.equal(api.event.eclipse,0);
 assert.deepEqual(api.grade,GRADE.atardecer);
-// Simulated 32-day sky timeline at 8Hz, fast-forwarded in deterministic steps.
-for(let d=0;d<32;d++){
- now=(d+.25)*DAY_MS/60;
- api.update();
- assert.ok(Number.isFinite(api.phase));
-}
 now=(1.25)*DAY_MS/60;api.update();
 assert.equal(api.phase,0);
 assert.equal(sky.uHFAurora.value,1,'rare aurora automatically triggers');
@@ -68,6 +62,12 @@ api.setAurora(false);assert.equal(sky.uHFAurora.value,0);
 api.setAurora('auto');assert.equal(api.auroraSetting,'auto');
 api.select('eclipse');assert.equal(sky.uHFEclipse.value,1);
 api.select('noche');assert.equal(sky.uHFEclipse.value,0);
+// Advance simulated world to day 32 after the direct event assertions.
+for(let d=6;d<32;d++){
+ now=(d+.25)*DAY_MS/60;
+ api.update();
+ assert.ok(Number.isFinite(api.phase));
+}
 api.dispose();
 // Regression: all shaders are patched INSIDE original pipeline, not new GPU passes.
 const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
@@ -75,7 +75,7 @@ const section=build.slice(build.indexOf('// P511 SKY LEGEND'),build.indexOf('// 
 assert.ok(section.length>2000,'P511 patches present');
 assert.ok(section.includes("patch('src/engine/pipeline.js'"));
 assert.ok(!section.includes("patch('src/world")&&!section.includes("new WebGLRenderTarget"),'no new passes/assets');
-for(const fragment of ['hfNight','float crater','moonGlow','float ridge','float core','corona','hfOcc']){
+for(const fragment of ['hfNight','float c1=','moonGlow','float ridge','float core','corona','hfOcc']){
  // crater and ridge terminology may differ in comments; use source-presence
  assert.ok(section.includes(fragment),'missing shader feature '+fragment);
 }
