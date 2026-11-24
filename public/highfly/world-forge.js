@@ -1,4 +1,4 @@
-/* HIGHFLY WORLD FORGE V0.1
+/* HIGHFLY WORLD FORGE V0.2
  * No game engine / combat / WebGL. Actual frozen 16-bit Unsung heightmaps.
  * Same-origin localStorage layout is read by the isolated game preview.
  */
@@ -46,8 +46,61 @@ const ZONES=[
  {x:-179,z:-459,r:20,name:'Escalera original'}
 ];
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
-let mapData=null,coreMap,regionMap,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
+let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
+const layers={native:true,forest:true,paths:true};
+const nativeImages={};let nativeTreeGrid=new Map();
+const nativeCell=32,nativeKey=(x,z)=>Math.floor(x/nativeCell)+','+Math.floor(z/nativeCell);
+function nativeTreeNear(o,radius){
+ if(!nativeOverlay?.trees)return null;
+ const minX=Math.floor((o.x-radius-11)/nativeCell),maxX=Math.floor((o.x+radius+11)/nativeCell);
+ const minZ=Math.floor((o.z-radius-11)/nativeCell),maxZ=Math.floor((o.z+radius+11)/nativeCell);
+ const speciesRadius=[7,7,7,6,6,8,8,2.4,2.4,6,6,6];
+ for(let ix=minX;ix<=maxX;ix++)for(let iz=minZ;iz<=maxZ;iz++){
+  for(const t of nativeTreeGrid.get(ix+','+iz)??[]){
+   if(Math.hypot(o.x-t[0],o.z-t[1])<radius+speciesRadius[t[3]]*t[2]*.73)return t;
+  }
+ }
+ return null;
+}
+async function imageFrom(url){
+ return await new Promise((resolve,reject)=>{
+  const im=new Image();im.decoding='async';im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Capa original no disponible: '+url));im.src=url;
+ });
+}
+async function loadNativeReference(){
+ const metaUrl=new URL('./native-overview.json',import.meta.url);
+ const response=await fetch(metaUrl,{cache:'force-cache'});
+ if(!response.ok)throw Error('No se pudo cargar el catálogo de estructuras originales ('+response.status+')');
+ const overview=await response.json();
+ if(overview.schema!==1||!Array.isArray(overview.trees)||!overview.routes)throw Error('Referencia original inválida');
+ const images=['native-architecture-core','native-architecture-region','native-trees-core','native-trees-region'];
+ const originals=await Promise.all(images.map(async name=>[name,await imageFrom(new URL('./'+name+'.png',import.meta.url))]));
+ for(const [name,img] of originals)nativeImages[name]=img;
+ const cells=new Map();
+ for(const t of overview.trees){
+  const key=nativeKey(t[0],t[1]);
+  if(!cells.has(key))cells.set(key,[]);
+  cells.get(key).push(t);
+ }
+ nativeOverlay=overview;nativeTreeGrid=cells;
+ const pixelCanvas=document.createElement('canvas');pixelCanvas.width=pixelCanvas.height=2048;
+ const pctx=pixelCanvas.getContext('2d',{willReadFrequently:true});
+ pctx.drawImage(nativeImages['native-architecture-core'],0,0);
+ nativePixels=pctx.getImageData(0,0,2048,2048).data;
+ $('native-count').textContent=overview.trees.length.toLocaleString('es-AR')+' árboles · '+overview.structureMeshes+' mallas originales';
+ draw();
+ return overview;
+}
+function nativeStructureNear(o,radius){
+ if(!nativePixels||Math.max(Math.abs(o.x),Math.abs(o.z))>1000)return false;
+ const r=Math.max(2,radius),steps=[[-1,-1],[0,0],[1,1],[1,-1],[-1,1],[0,1],[0,-1],[1,0],[-1,0]];
+ for(const [a,b] of steps){
+  const px=Math.floor(o.x+1024+a*r*.65),pz=Math.floor(o.z+1024+b*r*.65);
+  if(px>=0&&px<2048&&pz>=0&&pz<2048&&nativePixels[(pz*2048+px)*4+3]>100)return true;
+ }
+ return false;
+}
 const safe=(text)=>{ $('status').textContent=text; };
 const cell=(x,n=1)=>Math.round(x/n)*n;
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -108,6 +161,8 @@ function siteStatus(o,ignoreId=null){
  const y=Math.max(...samples),slope=y-Math.min(...samples);
  if(!item.floor&&!o.type.startsWith('npc-')&&slope>Math.min(3.8,1.2+o.scale*1.1))return {ok:false,reason:'Pendiente excesiva ('+slope.toFixed(1)+' m)'};
  if(!item.floor){
+  if(!o.type.startsWith('npc-')&&nativeTreeNear(o,rad*.5))return {ok:false,reason:'Hay árboles originales en esta parcela'};
+  if(!o.type.startsWith('npc-')&&nativeStructureNear(o,rad*.64))return {ok:false,reason:'Hay una construcción original de Unsung en este lugar'};
   for(const zone of ZONES){if(dist(o,zone)<zone.r+rad*.72)return {ok:false,reason:'Zona protegida: '+zone.name};}
   if(!o.type.startsWith('npc-'))for(const existing of objects){
    if(existing.id===ignoreId||existing.id===o.id)continue;
@@ -206,6 +261,40 @@ function draw(){
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#263a3e';ctx.fillRect(0,0,rect.width,rect.height);
   ctx.translate(rect.width/2,rect.height/2);ctx.scale(view.zoom,view.zoom);ctx.translate(-view.x,-view.z);
   if(mapData){drawMapLayer(regionMap,16384);drawMapLayer(coreMap,2048);}
+  // Original-water basins, worn native paths, exact instance canopies and mesh roofs.
+  // All references are generated from the pinned original Unsung code, not hand-painted.
+  if(nativeOverlay){
+   if(layers.paths){
+    for(const pool of nativeOverlay.pools??[]){
+     ctx.beginPath();ctx.arc(pool.x,pool.z,pool.r,0,TAU);
+     ctx.fillStyle='#2b738baa';ctx.fill();ctx.strokeStyle='#93c5c9';ctx.lineWidth=1.1/view.zoom;ctx.stroke();
+    }
+    ctx.lineCap='round';ctx.lineJoin='round';
+    for(const route of nativeOverlay.routes){
+     if(route.length<2)continue;
+     ctx.beginPath();ctx.moveTo(route[0][0],route[0][1]);
+     for(let i=1;i<route.length;i++)ctx.lineTo(route[i][0],route[i][1]);
+     ctx.strokeStyle='#b99b78aa';ctx.lineWidth=5.2;ctx.stroke();
+     ctx.strokeStyle='#e9d3ae88';ctx.lineWidth=1.6;ctx.stroke();
+    }
+   }
+   if(layers.forest){
+    ctx.globalAlpha=.95;
+    drawMapLayer(nativeImages['native-trees-region'],16384);
+    drawMapLayer(nativeImages['native-trees-core'],2048);
+    ctx.globalAlpha=1;
+   }
+   if(layers.native){
+    drawMapLayer(nativeImages['native-architecture-region'],16384);
+    drawMapLayer(nativeImages['native-architecture-core'],2048);
+    for(const platform of nativeOverlay.floors??[]){
+     if(platform.r&&!platform.w){
+      ctx.beginPath();ctx.arc(platform.x,platform.z,platform.r,0,TAU);
+      ctx.strokeStyle='#d7c7a3bb';ctx.lineWidth=1.5/view.zoom;ctx.stroke();
+     }
+    }
+   }
+  }
   if(gridOn&&view.zoom>.42){
    const unit=view.zoom>.8?10:50,loX=view.x-rect.width/view.zoom/2,hiX=view.x+rect.width/view.zoom/2;
    const loZ=view.z-rect.height/view.zoom/2,hiZ=view.z+rect.height/view.zoom/2;
@@ -324,6 +413,11 @@ canvas.addEventListener('wheel',e=>{
 $('select').onclick=()=>{tool='select';selectedAsset=null;syncTools();renderCatalog();draw();};
 $('pan').onclick=()=>{tool='pan';selectedAsset=null;syncTools();renderCatalog();draw();};
 $('grid').onclick=()=>{gridOn=!gridOn;syncTools();draw();};
+for(const [id,field] of [['layer-native','native'],['layer-forest','forest'],['layer-paths','paths']]){
+ $(id).onclick=()=>{layers[field]=!layers[field];$(id).classList.toggle('active',layers[field]);draw();};
+}
+$('core-world').onclick=()=>{view.x=0;view.z=0;const r=canvas.getBoundingClientRect();view.zoom=clamp(Math.min(r.width,r.height)/(2048*1.06),.045,6);draw();};
+$('full-world').onclick=()=>{view.x=0;view.z=0;const r=canvas.getBoundingClientRect();view.zoom=clamp(Math.min(r.width,r.height)/(16384*1.06),.045,6);draw();};
 $('home').onclick=locateInitial;
 $('zoom-in').onclick=()=>{view.zoom=clamp(view.zoom*1.25,.045,6);draw();};
 $('zoom-out').onclick=()=>{view.zoom=clamp(view.zoom/1.25,.045,6);draw();};
@@ -375,7 +469,14 @@ setCategory(category);loadLocal();resize();updateProps();syncTools();
   await new Promise(resolve=>setTimeout(resolve,25));
   regionMap=makeTopo(region,meta.region,590);coreMap=makeTopo(core,meta.core,700);
   for(const o of objects)o.y=heightAt(o.x,o.z);
-  safe('✓ Mapa real cargado · Sin combate, IA, partículas ni renderizado del juego. Elegí algo del catálogo.');
+  safe('✓ Alturas reales cargadas. Preparando árboles y edificaciones originales…');
   draw();
+  try{
+   const full=await loadNativeReference();
+   safe('✓ MUNDO ORIGINAL VISIBLE: '+full.trees.length.toLocaleString('es-AR')+' árboles y arquitectura auténtica de Unsung. Edición liviana sin abrir el RPG.');
+  }catch(nativeError){
+   console.error('[HIGHFLY WORLD FORGE NATIVE]',nativeError);
+   safe('El mapa topográfico está disponible, pero faltan referencias originales: '+nativeError.message);
+  }
  }catch(err){safe('ERROR DE MAPA: '+err.message+'. El editor necesita los archivos originales de Unsung.');console.error(err);}
 })();
