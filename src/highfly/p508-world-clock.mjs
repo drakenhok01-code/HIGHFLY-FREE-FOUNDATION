@@ -123,7 +123,7 @@ export function installP508WorldClock(pipe,options={}){
  const setMoon=(value)=>{
    if(astronomy.enabled)astronomy.moonOverride(value);lastSync=-Infinity;update();syncButtons();return value;
  };
- const api={enabled:true,select,setAurora,setSpeed,setMoon,setDiagnostics,cycleDiagnostics,update,dispose,
+ const api={enabled:true,select,setAurora,setSpeed,setMoon,setDiagnostics,cycleDiagnostics,mountControls,update,dispose,
   get diagnostics(){return diagMode},
   get speed(){return speed},get astronomy(){return astronomy},get phase(){return phaseNow},
   get mode(){return mode},get aurora(){return activeAurora>0},get eclipse(){return activeEclipse>0},
@@ -133,6 +133,15 @@ export function installP508WorldClock(pipe,options={}){
  };
  pipe.onBeforeScene.push(update);
  let panel=null,root=null,buttons=[],toggle=null,fastButton=null,lunarButton=null,eventLabel=null;
+ // P515: mount the existing live climate controls only inside HIGHFLY Options.
+ // Moving one DOM panel preserves listeners, sky state, and GPU performance.
+ function mountControls(host){
+  if(!host||!panel)return false;
+  panel.style.display='block';
+  host.appendChild(panel);
+  syncButtons();
+  return true;
+ }
  function syncButtons(){
   for(const item of buttons){
    const selected=item.value===mode;
@@ -166,12 +175,10 @@ export function installP508WorldClock(pipe,options={}){
   diagMini.textContent='FPS —';
   diagMini.style.cssText='position:fixed;right:8px;bottom:7px;z-index:99994;pointer-events:none;background:#0c0f24bd;border:1px solid #72bcb9;border-radius:14px;color:#edffff;font:600 11px/1.2 system-ui,sans-serif;padding:4px 8px';
   doc.body.appendChild(diagMini);
-  root=doc.createElement('div');root.id='hf-p508-climate';
-  root.style.cssText='position:fixed;top:6px;right:6px;z-index:99996;color:#f7f1ff;font:12px/1.3 system-ui,sans-serif;pointer-events:auto;max-width:260px';
-  const open=doc.createElement('button');
-  open.type='button';open.textContent='☀ CLIMA';
-  open.style.cssText='padding:6px 10px;border:1px solid #e0c074;border-radius:18px;background:#151329e8;color:#f6e7ff;font-weight:700;box-shadow:0 2px 9px #08061299';
-  open.setAttribute('aria-label','Abrir selector de hora y aurora');
+  // Keep a hidden storage node for the controls until the Options tab opens.
+  // Neither the CLIMA badge nor its panel is drawn on the adventure HUD.
+  root=doc.createElement('div');root.id='hf-p508-climate';root.hidden=true;
+  root.style.cssText='display:none!important';
   panel=doc.createElement('div');
   panel.style.cssText='display:none;margin-top:5px;padding:9px;background:#0e0c20f2;border:1px solid #7a60a8;border-radius:12px;box-shadow:0 4px 16px #0009;max-height:70vh;overflow:auto';
   const label=doc.createElement('div');label.textContent='HIGHFLY · CIELO VIVO';
@@ -208,15 +215,14 @@ export function installP508WorldClock(pipe,options={}){
   panel.appendChild(eventLabel);
   const note=doc.createElement('div');note.textContent='P5.1.4: luna nítida del tamaño del sol; Eclipse = 45 min de amanecer a atardecer. FPS: diagnóstico oculto/mini/completo.';
   note.style.cssText='font-size:10px;color:#c9c2d9;margin-top:6px';panel.appendChild(note);
-  open.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';open.setAttribute('aria-expanded',String(panel.style.display!=='none'));});
-  root.append(open,panel);doc.body.appendChild(root);syncButtons();
+  root.append(panel);doc.body.appendChild(root);syncButtons();
  }
  update();
  function dispose(){
   playing=false;const i=pipe.onBeforeScene.indexOf(update);if(i>=0)pipe.onBeforeScene.splice(i,1);
   pipe.sky.sunColor.copy(baseSun);
   grade.set(0,0,1,0);tonemapGrade.copy(grade);
-  root?.remove();diagMini?.remove();diagCss?.remove();
+  panel?.remove();root?.remove();diagMini?.remove();diagCss?.remove();
   if(doc?.body)doc.body.removeAttribute('data-hf-diag');
  }
  if(win){win.__hfP508Climate=api;win.__hfP510Climate=api;}
