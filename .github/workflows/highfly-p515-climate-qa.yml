@@ -1,0 +1,26 @@
+name: HIGHFLY P5.1.5 Climate Options QA
+on:
+  push:
+    branches:
+      - p515-climate-in-options-20261124
+  pull_request:
+    branches:
+      - p514-moon-eclipse-final-20261124
+permissions:
+  contents: read
+jobs:
+  climate-options-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify native sky and RPG menu JavaScript syntax
+        run: |
+          node --check src/highfly/p508-world-clock.mjs
+          node --check src/highfly/premium-rpg.mjs
+      - name: Verify P508/P514/P515 logic and HUD visibility
+        run: |
+          node --test tests/p508-worldclock.test.mjs tests/p514-moon-eclipse-final.test.mjs tests/p515-climate-options.test.mjs
