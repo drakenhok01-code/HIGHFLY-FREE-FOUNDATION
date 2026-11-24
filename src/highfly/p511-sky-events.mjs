@@ -20,9 +20,17 @@ export function skyEvents(worldDays,solarPhase){
   const eclipse=eclipseDay?smoother((p-.40)/.065)*(1-smoother((p-.535)/.065)):0;
   return {day,aurora,eclipse,auroraNight:auroraDay,eclipseDay};
 }
+/** P513: manual Eclipse is a complete travelling solar day, not a static sky.
+ * The reddish totality lasts a portion of morning as sun rises above the arch.
+ * Phase is the real solar orbital phase (sun east at 0.25, noon at 0.50).
+ */
+export function manualEclipseStrength(phase){
+ const p=mod(Number(phase),1);
+ return smoother((p-.27)/.04)*(1-smoother((p-.43)/.06));
+}
 export function eventPreview(mode,worldDays,phase,auroraSetting='auto'){
  const events=mode==='auto'?skyEvents(worldDays,phase):{day:Math.floor(worldDays),aurora:0,eclipse:0,auroraNight:false,eclipseDay:false};
  const aurora=auroraSetting===true?1:auroraSetting===false?0:events.aurora;
- const eclipse=mode==='eclipse'?1:events.eclipse;
+ const eclipse=mode==='eclipse'?manualEclipseStrength(phase):events.eclipse;
  return {...events,aurora,eclipse};
 }
