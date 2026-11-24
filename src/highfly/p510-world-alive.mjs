@@ -80,7 +80,7 @@ export function installP510Astronomy(pipe,options={}){
   if(key>=0 && key!==committedShadow && key!==requestedShadow){
    if(t.hfStartSunBake(key,shadowVector(key)))requestedShadow=key;
   }
-  const result=t.hfAdvanceSunBake();
+  const result=t.hfAdvanceSunBake(key);
   if(result?.committed){
    committedShadow=result.key;requestedShadow=-1;shadowUpdates++;
   } else if(result?.aborted)requestedShadow=-1;
