@@ -699,7 +699,7 @@ run('npm',['ci','--no-audit','--no-fund'],origin);
 // Vite 8 no longer ships esbuild; pin only this standalone editor bundler in the disposable checkout.
 run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2'],origin);
 // Bundle only the standalone 3D editor's three.js dependencies. No game engine boot.
-run('node',['node_modules/esbuild/bin/esbuild','src/highfly/p525-world-forge-3d.mjs','--bundle','--platform=browser','--format=esm','--target=es2020','--minify','--outfile=public/highfly/world-forge-3d.js'],origin);
+run('node_modules/esbuild/bin/esbuild',['src/highfly/p525-world-forge-3d.mjs','--bundle','--platform=browser','--format=esm','--target=es2020','--minify','--outfile=public/highfly/world-forge-3d.js'],origin);
 if(!fs.existsSync(loc('public/highfly/world-forge-3d.js')))throw Error('WORLD FORGE 3D bundle not generated');
 copy(path.join(ROOT,'scripts/p522-native-world-export.mjs'),loc('tools/p522-native-world-export.mjs'));
 copy(path.join(ROOT,'scripts/p522-native-world-raster.py'),loc('tools/p522-native-world-raster.py'));
