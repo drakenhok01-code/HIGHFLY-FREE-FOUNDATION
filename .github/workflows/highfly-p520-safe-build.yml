@@ -32,6 +32,8 @@ jobs:
         run: |
           HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p520/ npm run build
           npm run qa:dist
+          node scripts/qa-p520-real-terrain.mjs
+          test -s dist/P520_WORLD_LAYOUT_AUDIT.json
           test -s dist/index.html
           test -s .work/unsung/src/highfly/p520-settlements.mjs
           test -s .work/unsung/src/highfly/p520-settlement-plan.mjs
