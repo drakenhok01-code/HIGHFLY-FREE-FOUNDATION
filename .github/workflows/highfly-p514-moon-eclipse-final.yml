@@ -177,7 +177,8 @@ jobs:
           grep -q 'hf-p514-debug-toggle' .work/unsung/src/highfly/p508-world-clock.mjs
           grep -q 'data-hf-diag' .work/unsung/src/highfly/p508-world-clock.mjs
           grep -q 'hfHeroRadius' .work/unsung/src/engine/pipeline.js
-          grep -q '0.1575' .work/unsung/src/engine/pipeline.js
+          grep -q '0.0510' .work/unsung/src/engine/pipeline.js
+          ! grep -q 'moonGlow*hfNight*1.55' .work/unsung/src/engine/pipeline.js
           grep -q 'manualEclipseStrength' .work/unsung/src/highfly/p511-sky-events.mjs
           grep -q 'eclipseElapsed' .work/unsung/src/highfly/p508-world-clock.mjs
           grep -q 'P512:' .work/unsung/src/engine/pipeline.js
