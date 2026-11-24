@@ -59,7 +59,7 @@ assert.equal(lunarPhase(0),.5);
 // Ensure no new GPU pass or map/geometry/quality changes in P512 delta.
 const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
 const start=build.indexOf('// P512 ECLIPSE FINAL');
-const end=build.indexOf('// P503: one source-of-truth',start);
+const end=build.indexOf('// P513 CELESTIAL HERO SCALE',start)>=0 ? build.indexOf('// P513 CELESTIAL HERO SCALE',start) : build.indexOf('// P503: one source-of-truth',start);
 assert.ok(start>0&&end>start);
 const patch=build.slice(start,end);
 assert.equal((patch.match(/patch\('src\/engine\/pipeline\.js'/g)||[]).length,9);
