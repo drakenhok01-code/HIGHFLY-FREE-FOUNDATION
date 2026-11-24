@@ -688,3 +688,21 @@ body.hf-rpg-is-open #ui #hud{visibility:hidden!important}
 #hf-rpg [data-hf-climate-controls]{flex:1 1 260px;min-width:min(220px,100%);max-width:100%;box-sizing:border-box}
 #hf-rpg [data-hf-climate-controls]>div{box-sizing:border-box;width:100%;max-height:55vh;overflow:auto}
 #hf-rpg [data-hf-climate-controls] button{touch-action:manipulation;min-height:30px}
+
+/* P5.2.1: One Android/desktop scroll container for Options.
+   Previous content clipped its controls because overflow:hidden + tall climate controls. */
+#hf-rpg .hf-rpg-content.hf-rpg-options-scroll{
+ display:block;min-height:0;overflow-y:auto!important;overflow-x:hidden;
+ overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-width:thin;
+ -webkit-overflow-scrolling:touch;padding-bottom:22px;
+}
+#hf-rpg .hf-rpg-options-scroll>.hf-rpg-panel{
+ display:block;height:auto!important;max-height:none!important;min-height:max-content;
+ overflow:visible!important;padding-bottom:28px;
+}
+#hf-rpg .hf-rpg-options-scroll [data-hf-climate-controls]{
+ flex:1 1 100%;min-width:0;width:100%;touch-action:pan-y;
+}
+#hf-rpg .hf-rpg-options-scroll [data-hf-climate-controls]>div{
+ max-height:none!important;overflow:visible!important;
+}
