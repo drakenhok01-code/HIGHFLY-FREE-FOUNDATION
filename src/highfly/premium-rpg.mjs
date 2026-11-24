@@ -486,6 +486,8 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<small>Guardado automático. Afecta la cámara real de Unsung y el tacto de HIGHFLY.</small></div>'+
     '<div class="hf-rpg-rule"></div><div class="hf-rpg-options hf-climate-settings"><div><b>🌌 MUNDO Y CLIMA</b><small>Fenómenos del cielo, luna, ciclo de 45 minutos y herramientas de prueba. No se muestran en el HUD.</small></div>'+ 
     '<div data-hf-climate-controls aria-label="Ajustes del mundo y clima"></div></div>'+ 
+    '<div class="hf-rpg-rule"></div><div class="hf-rpg-options"><div><b>🌍 WORLD FORGE · EDITOR</b><small>Editá edificios, caminos, faroles y NPC sin cargar el combate. Los cambios se guardan por dispositivo y pueden exportarse a JSON.</small></div>'+
+    '<a class="hf-world-forge-link" href="'+import.meta.env.BASE_URL+'highfly/world-forge.html">ABRIR EDITOR</a></div>'+
     '<div class="hf-rpg-rule"></div>'+button('✧ EDITAR HUD 3.1','data-hf-action="edit-hud"','is-primary')+
     '<div class="hf-rpg-mini-actions">'+button('VOLVER AL JUEGO','data-hf-action="close"','is-primary')+'</div>');
  }
