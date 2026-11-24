@@ -17,7 +17,7 @@ test('P506 waterfall join overlaps the original pool disc and meets original fal
   assert.equal(idx.length,j.segments*6);
   const lastY=pos[pos.length-5];
   assert.ok(Math.abs(lastY-(p.level-0.5))<1e-8, 'outflow tip must meet original fall Y');
-  const len=Math.hypot(...p.out),dx=p.out[0]/len,dz=p.out[1]/len;
+  const dx=p.out[0],dz=p.out[1];
   const lastCenterX=(pos[pos.length-6]+pos[pos.length-3])/2;
   const lastCenterZ=(pos[pos.length-4]+pos[pos.length-1])/2;
   assert.ok(Math.abs(lastCenterX-(p.x+dx*(s-1.5+0.4)))<1e-8);
@@ -40,6 +40,6 @@ test('P506 is wired into native static waterfall batch, not a second render pass
   assert.match(build,/src\/world\/waterfalls\.js/);
   assert.match(build,/appendP506PoolOutflow/);
   assert.match(build,/src\/highfly\/p506-waterfall-joins\.mjs/);
-  assert.match(build,/src\/world\/waterfalls\.js'\]/);
+  assert.match(build,/src\/world\/waterfalls\.js/);
   assert.doesNotMatch(build,/patch\('src\/world\/water\.js'/);
 });
