@@ -11,8 +11,10 @@ const html=source('public/highfly/world-forge.html'),editor=source('public/highf
 assert.match(html,/WORLD FORGE/);assert.match(html,/id="map"/);
 for(const id of ['save','export','import','play','undo','redo','select','pan','grid','rotate-left','rotate-right','scale-up','scale-down','delete'])
  assert.match(html,new RegExp('id="'+id+'"'),'Editor missing '+id);
-assert.match(editor,/DecompressionStream\('gzip'\)/);
-assert.match(editor,/core_h\.bin/);assert.match(editor,/region_h\.bin/);
+// P523 supersedes the original gzip-browser decoder: image-based is byte-exact and CDN safe.
+assert.ok(!editor.includes('DecompressionStream'));
+assert.match(editor,/loadHeightPNG/);
+assert.match(editor,/native-terrain-manifest\.json/);
 assert.match(editor,/location\.href=game\.href/);assert.match(editor,/hfworld=1/);
 assert.match(editor,/paintLine/);assert.match(editor,/onPointerMove/);
 assert.match(editor,/JSON\.stringify/);assert.match(editor,/saveLocal/);

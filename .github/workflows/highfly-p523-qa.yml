@@ -1,0 +1,51 @@
+name: HIGHFLY P523 PNG Native Terrain + Diagnostics QA (No Deploy)
+on:
+  push:
+    branches: [p523-world-forge-png-terrain-diagnostics-20261124]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: highfly-p523-png-qa
+  cancel-in-progress: true
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install CPU raster dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Guard correct URLs, PNG decoding and original gameplay
+        run: |
+          node --check scripts/f0-build.mjs
+          node --check public/highfly/world-forge.js
+          node --test tests/p523-png-terrain.test.mjs tests/p521-world-forge.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Compile Unsung and verify original height rasters are byte-perfect
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p523/ npm run build
+          npm run qa:dist
+          for name in native-terrain-core.png native-terrain-region.png native-relief-core.png native-relief-region.png native-terrain-manifest.json native-overview.json native-architecture-core.png native-trees-core.png; do
+            test -s "dist/highfly/$name" || exit 17
+          done
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('dist/highfly/native-terrain-manifest.json'));if(m.maps.core.expectedRawBytes!==8388608||m.maps.region.expectedRawBytes!==8388608)throw Error('not native 2048² Uint16 Unsung');console.log('[P523 QA] Original 8,388,608 bytes verified on each terrain map')"
+          test -s dist/world/world.json
+          test -s dist/highfly/world-forge.js
+          grep -q 'preview-p523' dist/index.html
+          ! grep -q 'DecompressionStream' dist/highfly/world-forge.js
+          grep -q 'P5.2.3' dist/highfly/world-forge.js
+      - name: Store standalone non-deployed P523 compilation
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p523-png-diagnostics
+          path: dist/
+          retention-days: 5
+          if-no-files-found: error
