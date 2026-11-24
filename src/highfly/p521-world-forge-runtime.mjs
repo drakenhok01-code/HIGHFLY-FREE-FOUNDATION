@@ -1,0 +1,243 @@
+/** HIGHFLY WORLD FORGE V0.1: render saved, placed editor objects
+ * inside REAL Unsung world. Only opt-in ?hfworld=1 and same-origin storage.
+ * No KayKit SOURCE or project-restricted assets. Existing terrain untouched.
+ */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
+import {MeshBuilder,M} from '../world/arch/builder.js';
+import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
+
+export const WORLD_FORGE_KEY='hf-world-forge-layout-v1';
+const BOUNDS=Object.freeze({
+ guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
+ timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
+ warehouse:[11,9],fishery:[10,8],ranger:[9,8],
+ 'floor-stone':[4,4],'floor-earth':[4,4],'floor-wood':[4,4],
+ lantern:[1.5,1.5],well:[4,4],fence:[4,.4],barrel:[1.1,1.1],
+ bench:[3,1.4],tree:[3,3],rock:[3,2.5],ore:[3,3],
+ 'npc-merchant':[1,1],'npc-guard':[1,1],'npc-artisan':[1,1]
+});
+const PROTECTED=[
+ [-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],
+ [578,-437,29],[517,437,29],[136,546,29],[-405,435,29],[-1005,-168,47],
+ [-179,-459,20]
+];
+const num=x=>typeof x==='number'&&Number.isFinite(x);
+export function validateWorldForgeLayout(data){
+ if(!data||data.schema!==1||data.world!=='unsung-vale'||!Array.isArray(data.objects)||data.objects.length>2500)
+  return {ok:false,reason:'invalid layout/schema/size',objects:[]};
+ const all=[],ids=new Set();
+ for(const o of data.objects){
+  if(!o||typeof o.id!=='string'||o.id.length>80||ids.has(o.id)||
+     !Object.hasOwn(BOUNDS,o.type)||![o.x,o.z,o.yaw,o.scale].every(num)||
+     Math.abs(o.x)>8120||Math.abs(o.z)>8120||o.scale<.5||o.scale>3)
+    return {ok:false,reason:'invalid item',objects:[]};
+  ids.add(o.id);all.push({...o});
+ }
+ return {ok:true,objects:all};
+}
+function footprint(world,o){
+ const [w0,d0]=BOUNDS[o.type],w=w0*o.scale,d=d0*o.scale;
+ const c=Math.cos(o.yaw),s=Math.sin(o.yaw),heights=[];
+ for(const [dx,dz] of [[0,0],[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
+  const x=o.x+dx*c-dz*s,z=o.z+dx*s+dz*c;
+  const h=world.groundHeight(x,z),water=world.waterLevel?.(x,z);
+  if(!num(h)||h<-.1||(num(water)&&water>=h-.1))return null;
+  heights.push(h);
+ }
+ const y=Math.max(...heights),slope=y-Math.min(...heights);
+ if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>Math.min(3.8,1.2+o.scale*1.1))
+  return null;
+ if(!o.type.startsWith('floor-')){
+  const r=Math.hypot(w,d)*.36;
+  if(PROTECTED.some(([x,z,radius])=>Math.hypot(o.x-x,o.z-z)<radius+r))return null;
+ }
+ return {y,w,d,slope};
+}
+function roof(q,w,d,h,type){
+ const e=.45,peak=h+Math.min(4,d*.4);
+ q.mat_(type==='timber'||type==='ranger'?M.DARK:M.ROOF);
+ q.quad([-w/2-e,h,d/2+e],[w/2+e,h,d/2+e],[w/2+e,peak,0],[-w/2-e,peak,0]);
+ q.quad([w/2+e,h,-d/2-e],[-w/2-e,h,-d/2-e],[-w/2-e,peak,0],[w/2+e,peak,0]);
+ q.mat_(M.GOLD).box(-w/2-e,peak-.13,-.13,w+2*e,.27,.26);
+}
+function house(q,type,w,d,h){
+ const wall=.35,door=2.55,d2=(w-door)/2;
+ q.mat_(type==='timber'||type==='ranger'?M.DARK:M.ASHLAR);
+ q.box(-w/2,0,-d/2,w,h,wall);
+ q.box(-w/2,0,-d/2,wall,h,d);
+ q.box(w/2-wall,0,-d/2,wall,h,d);
+ q.box(-w/2,0,d/2-wall,d2,h,wall);
+ q.box(door/2,0,d/2-wall,d2,h,wall);
+ q.box(-door/2,3.25,d/2-wall,door,h-3.25,wall);
+ q.mat_(M.MARBLE).box(-w/2,-.03,-d/2,w,.10,d);
+ for(const x of [-w*.33,w*.33]){
+  q.mat_(M.FRIEZE).box(x-.38,h*.52,d/2-.11,.76,1.3,.18);
+  q.mat_(M.GLASS).box(x-.3,h*.6,d/2+.07,.6,.85,.03);
+ }
+ if(type==='timber'||type==='ranger'){
+  q.mat_(M.ROOF);
+  for(const x of [-w/2+.5,0,w/2-.5])q.box(x-.15,0,d/2-.45,.3,h,d+.1);
+ }
+ roof(q,w,d,h,type);
+}
+function buildStructure(b,o,f){
+ const type=o.type,[w0,d0]=BOUNDS[type],w=w0*o.scale,d=d0*o.scale;
+ const h=({guild:12,forge:7.5,inn:8,house:7,timber:6,market:5,mill:11,granary:7,warehouse:7,fishery:6.5,ranger:6})[type]*o.scale;
+ b.at(o.x,f.y+.03,o.z,o.yaw,q=>{
+  if(type==='guild'){
+   // Reuse actual original Unsung architecture, not the previous P520 stone cubes.
+   hall(q,{w,d,h:Math.max(h,9),bays:3,detail:1,foot:1.2});
+   q.mat_(M.PAVING).box(-w/2-.7,-.17,d/2,w+1.4,.16,2.8);
+  }else if(type==='market'){
+   q.mat_(M.PAVING).box(-w/2,-.16,-d/2,w,.16,d);
+   for(const x of [-w*.31,w*.31]){
+    q.mat_(M.ASHLAR).box(x-1,0,-d*.3,2,1.1,3);
+    q.mat_(M.ROOF).box(x-3,2.6,-d*.44,6,.27,d*.65);
+    for(const z of [-d*.38,d*.15])q.mat_(M.MARBLE).box(x-2.9,0,z,.18,2.6,.18);
+   }
+  }else if(type==='mill'){
+   q.mat_(M.ASHLAR).prism(w*.4,w*.32,0,h,8);
+   q.mat_(M.ROOF).prism(w*.43,0,h,h+3*o.scale,8);
+   q.mat_(M.DARK).box(-.25,h*.5,d*.39,.5,h*.55,.3);
+   q.mat_(M.MARBLE).box(-w*.35,h*.73,d*.48,w*.7,.26,.35);
+   q.mat_(M.MARBLE).box(-.15,h*.4,d*.48,.3,h*.7,.35);
+   q.mat_(M.MARBLE).box(-w*.21,h*.53,d*.5,w*.42,.14,.18);
+  }else{
+   house(q,type,w,d,h);
+   if(type==='forge'){
+    q.mat_(M.ASHLAR).box(w*.34,h*.62,-d*.37,1.1,4*o.scale,1.1);
+    q.mat_(M.DARK).box(w*.28,h*.62+4*o.scale,-d*.45,1.25,.4,1.25);
+   }
+   if(type==='inn'){q.at(0,0,d/2+2*o.scale,0,j=>bench(j,2.2*o.scale));}
+   if(type==='fishery'){q.mat_(M.PAVING).box(-w/2,-.15,d/2,w,.15,2.5*o.scale);}
+  }
+  for(const x of [-w/2+.9,w/2-.9])q.at(x,0,d/2+1.1,0,j=>lantern(j,2.5*o.scale));
+ });
+}
+function decorate(b,o,f,world){
+ const type=o.type,[w0,d0]=BOUNDS[type],w=w0*o.scale,d=d0*o.scale;
+ if(type.startsWith('floor-')){
+  const x=o.x,z=o.z,y=world.groundHeight.bind(world);
+  const c=Math.cos(o.yaw),s=Math.sin(o.yaw),pos=(a,b)=>{
+   const px=x+a*c-b*s,pz=z+a*s+b*c;
+   return [px,y(px,pz)+.06,pz];
+  };
+  b.mat_(type==='floor-stone'?M.PAVING:type==='floor-wood'?M.ROOF:M.ASHLAR);
+  b.quad(pos(-w/2,d/2),pos(w/2,d/2),pos(w/2,-d/2),pos(-w/2,-d/2));
+  return;
+ }
+ b.at(o.x,f.y+.035,o.z,o.yaw,q=>{
+  const scale=o.scale;
+  if(type==='lantern')q.at(0,0,0,0,j=>lantern(j,3*scale));
+  if(type==='bench')q.at(0,0,0,0,j=>bench(j,3*scale));
+  if(type==='well'){
+   q.mat_(M.MARBLE).lathe([[2*scale,0],[2*scale,1.0*scale],[1.6*scale,1.0*scale]],12);
+   q.mat_(M.DARK).prism(1.45*scale,1.2*scale,.65*scale,.1*scale,12);
+  }
+  if(type==='fence'){
+   for(const x of [-w/2,w/2])q.mat_(M.ASHLAR).box(x-.16,0,-.16,.32,1.55*scale,.32);
+   for(const y of [.45,1.07])q.mat_(M.ROOF).box(-w/2,y*scale,-.13,w,.17*scale,.26);
+  }
+  if(type==='barrel'){
+   q.mat_(M.ROOF).prism(.5*scale,.58*scale,0,1.12*scale,8);
+   for(const y of [.2,.92])q.mat_(M.GOLD).prism(.61*scale,.61*scale,y*scale,.08*scale,8);
+  }
+  if(type==='tree'){
+   q.mat_(M.DARK).prism(.4*scale,.34*scale,0,3.1*scale,7);
+   q.mat_(M.ROOF).prism(2*scale,1*scale,2.4*scale,6.7*scale,8);
+  }
+  if(type==='rock')q.mat_(M.ASHLAR).prism(1.7*scale,1.1*scale,0,1.8*scale,7);
+  if(type==='ore'){
+   q.mat_(M.ASHLAR).prism(1.4*scale,.9*scale,0,1.5*scale,6);
+   q.mat_(M.GOLD).prism(.5*scale,.2*scale,.4*scale,1.5*scale,5);
+  }
+ });
+}
+function loadedLayout(storage){
+ try{return validateWorldForgeLayout(JSON.parse(storage?.getItem(WORLD_FORGE_KEY)||'null'));}
+ catch{return {ok:false,objects:[],reason:'Storage unavailable or invalid JSON'};}
+}
+export function installHighflyWorldForge(game,{search=globalThis.location?.search??'',storage=globalThis.localStorage}={}){
+ if(!game||game.__hfP521WorldForge)return game?.__hfP521WorldForge??null;
+ if(new URLSearchParams(search).get('hfworld')!=='1')return null;
+ const loaded=loadedLayout(storage);
+ if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],skipped=[];
+ const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
+  if(!byChunk.has(key))byChunk.set(key,new MeshBuilder());
+  return byChunk.get(key);
+ };
+ for(const o of loaded.objects){
+  const fp=footprint(world,o);
+  if(!fp){skipped.push(o.id);continue;}
+  if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
+  if(o.type==='ore'||o.type==='tree')resources.push({...o,y:fp.y});
+  const builder=add(o);
+  if(['guild','forge','inn','house','timber','market','mill','granary','warehouse','fishery','ranger'].includes(o.type))
+   buildStructure(builder,o,fp);
+  else decorate(builder,o,fp,world);
+ }
+ const meshes=[],collisions=[];
+ for(const [key,builder] of byChunk){
+  if(!builder.triCount)continue;
+  const mesh=game.arch.add(builder,{near:false});
+  mesh.name='HIGHFLY_WORLD_FORGE_CHUNK_'+key;
+  mesh.updateMatrixWorld(true);meshes.push(mesh);
+  // Static, solid and walkable; a single original BVH for each 220m cell.
+  world.addGeometry(mesh.geometry);collisions.push(mesh.geometry);
+ }
+ const nodes=resources.map(o=>({id:'hf-wf-'+o.id,kind:o.type==='ore'?'ore':'tree',
+  x:o.x,y:o.y,z:o.z,charges:8,available:true}));
+ world.highflyInteractables=[...(world.highflyInteractables??[]),...nodes];
+ let actors=[],disposed=false;
+ const readyPromise=people.length?new GLTFLoader()
+  .loadAsync(import.meta.env.BASE_URL+'models/hf-kaykit-knight.glb')
+  .then(gltf=>{
+   if(disposed)return;
+   const bounds=new THREE.Box3().setFromObject(gltf.scene),h=Math.max(.1,bounds.getSize(new THREE.Vector3()).y);
+   const idle=gltf.animations.find(x=>x.name==='Idle');
+   for(const p of people.slice(0,90)){
+    const anchor=new THREE.Group(),model=cloneRig(gltf.scene);
+    anchor.name='HIGHFLY_WF_'+p.type+'_'+p.id;
+    anchor.position.set(p.x,p.y+.045,p.z);anchor.rotation.y=p.yaw;
+    model.scale.setScalar((1.8*p.scale)/h);
+    model.traverse(x=>{
+     if(!x.isMesh)return;
+     x.frustumCulled=false;
+     if(/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name)){x.visible=false;return;}
+     const old=Array.isArray(x.material)?x.material[0]:x.material;
+     x.material=new THREE.MeshBasicMaterial({map:old?.map??null,color:x.name.includes('Head')?0xffffff:
+      p.type==='npc-guard'?0xb0b8e6:p.type==='npc-artisan'?0xd7b185:0xbf98d9,
+      side:THREE.DoubleSide,transparent:!!old?.transparent,alphaTest:old?.alphaTest??0});
+    });
+    anchor.add(model);anchor.visible=false;group.add(anchor);
+    const mixer=new THREE.AnimationMixer(model);if(idle)mixer.clipAction(idle).play();
+    actors.push({anchor,mixer,p});
+   }
+  })
+  .catch(err=>console.warn('[HIGHFLY WORLD FORGE] NPC model failed',err)):Promise.resolve();
+ let lastUpdate=game.update;
+ game.update=function(realDt){
+  const result=lastUpdate.call(this,realDt);
+  if(!disposed&&this.player?.pos)for(const a of actors){
+   const d=Math.hypot(a.p.x-this.player.pos.x,a.p.z-this.player.pos.z);
+   a.anchor.visible=d<130;
+   if(d<65){a.mixer.update(Math.min(.05,Math.max(0,realDt||0)));a.anchor.updateMatrixWorld(true);}
+  }
+  return result;
+ };
+ const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,readyPromise,
+  get npcCount(){return actors.length;},
+  get placedCount(){return loaded.objects.length-skipped.length;},
+  dispose(){
+   disposed=true;game.update=lastUpdate;
+   world.highflyInteractables=(world.highflyInteractables??[]).filter(n=>!nodes.includes(n));
+   for(const a of actors){group.remove(a.anchor);a.mixer.stopAllAction();}
+   // World collision is deliberately kept until page reload: no orphan BVH edits.
+  }};
+ game.__hfP521WorldForge=api;globalThis.__hfP521WorldForge=api;
+ console.info('[HIGHFLY WORLD FORGE]',meshes.length,'native 3D chunks,',people.length,'placed NPCs,',skipped.length,'safety skips');
+ return api;
+}
