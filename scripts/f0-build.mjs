@@ -405,7 +405,7 @@ patch('src/world/arch/sites.js',
 // No change to native pixel dimensions or visible foliage/objects.
 patch('src/engine/pipeline.js',
  "import { FullscreenPass, makeTarget } from './fullscreen.js';",
- "import { FullscreenPass, makeTarget } from './fullscreen.js';\\nimport { selectP504HdrFormat } from './highfly/p504-hdr-options.mjs';".replaceAll('\\n','\n'));
+ "import { FullscreenPass, makeTarget } from './fullscreen.js';\\nimport { selectP504HdrFormat } from '../highfly/p504-hdr-options.mjs';".replaceAll('\\n','\n'));
 patch('src/engine/pipeline.js',
  "    this.renderer = renderer;",
  "    this.renderer = renderer;\\n    this._hfHdrFormat=selectP504HdrFormat(renderer,globalThis.location?.search||'');\\n    this._hfCompactHdr=this._hfHdrFormat.options||{};".replaceAll('\\n','\n'));
