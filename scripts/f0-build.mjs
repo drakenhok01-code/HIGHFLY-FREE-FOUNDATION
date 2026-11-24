@@ -339,6 +339,7 @@ copy(path.join(ROOT,'src/highfly/qa-p507-sky.mjs'),loc('src/highfly/qa-p507-sky.
 copy(path.join(ROOT,'src/highfly/p508-world-clock.mjs'),loc('src/highfly/p508-world-clock.mjs'));
 copy(path.join(ROOT,'src/highfly/p510-world-alive.mjs'),loc('src/highfly/p510-world-alive.mjs'));
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
+copy(path.join(ROOT,'src/highfly/qa-p510-shadows.mjs'),loc('src/highfly/qa-p510-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('scripts/qa-p495-stairs.mjs'));
 
