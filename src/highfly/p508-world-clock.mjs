@@ -1,4 +1,4 @@
-/** HIGHFLY P5.0.8 — original MIT-friendly world clock adapted to Unsung.
+/** HIGHFLY P5.0.9 — original MIT-friendly world clock adapted to Unsung.
  * Design inspiration: Tianjie5 sun/moon/aurora; ClaudeCraft pure 45-min clock.
  * Native Unsung sky pass, shaders and P507 cache remain; NO extra renderer.
  * Visual day/night grade is reversible. Fixed sun direction preserves terrain
@@ -32,7 +32,7 @@ export function installP508WorldClock(pipe,options={}){
  }
  const search=new URLSearchParams(options.search??win?.location?.search??'');
  let mode=search.get('hftime')||'atardecer';
- if(mode!=='auto'&&!PHASES.includes(mode))mode='atardecer';
+ if(mode!=='auto'&&mode!=='eclipse'&&!PHASES.includes(mode))mode='atardecer';
  let aurora=search.get('hfaurora')!=='0',playing=true;
  let clockStart=options.now?.()??globalThis.performance?.now?.()??0;
  let lastSync=-Infinity,draws=0;
@@ -45,24 +45,26 @@ export function installP508WorldClock(pipe,options={}){
    const now=rt();
    if(now-lastSync<125)return;
    lastSync=now;
-   const active=mode==='auto'?phaseGrade(phaseAt(now,clockStart-DAY_MS*.75)):GRADE[mode];
+   const active=mode==='auto'?phaseGrade(phaseAt(now,clockStart-DAY_MS*.75)):mode==='eclipse'?GRADE.dia:GRADE[mode];
    grade.set(active[0],active[1],active[2],active[3]);
    tonemapGrade.copy(grade);
    pipe.skyPass.uniforms.uHFAurora.value=aurora?1:0;
+   if(pipe.skyPass.uniforms.uHFEclipse)pipe.skyPass.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
+   if(pipe.tonemap.uniforms.uHFEclipse)pipe.tonemap.uniforms.uHFEclipse.value=mode==='eclipse'?1:0;
    pipe.skyPass.uniforms.uHFClock.value=now/1000;
    // Change intensity, never sun direction: original precomputed terrain
    // and static shadows remain aligned in all four phases.
-   pipe.sky.sunColor.copy(baseSun).multiplyScalar(1-0.86*active[3]+0.08*active[1]);
+   pipe.sky.sunColor.copy(baseSun).multiplyScalar((1-0.86*active[3]+0.08*active[1])*(mode==='eclipse'?.30:1));
    draws++;
  };
  const select=(next)=>{
-   if(next!=='auto'&&!PHASES.includes(next))return false;
+   if(next!=='auto'&&next!=='eclipse'&&!PHASES.includes(next))return false;
    if(next==='auto'&&mode!=='auto')clockStart=rt();
    mode=next;lastSync=-Infinity;update();syncButtons();return true;
  };
  const setAurora=(value)=>{aurora=!!value;lastSync=-Infinity;update();syncButtons();};
  const api={enabled:true,select,setAurora,update,dispose,
-  get mode(){return mode},get aurora(){return aurora},
+  get mode(){return mode},get aurora(){return aurora},get eclipse(){return mode==='eclipse'}, 
   get grade(){return [grade.x,grade.y,grade.z,grade.w]},
   get updates(){return draws}
  };
@@ -93,7 +95,7 @@ export function installP508WorldClock(pipe,options={}){
   label.style.cssText='font-weight:800;color:#edd6ff;margin-bottom:7px';panel.appendChild(label);
   const row=doc.createElement('div');
   row.style.cssText='display:flex;flex-wrap:wrap;gap:5px';
-  const opts=[['amanecer','🌅 Amanecer'],['dia','☀ Día'],['atardecer','🌇 Atardecer'],['noche','🌙 Noche'],['auto','⏱ Auto 45m']];
+  const opts=[['amanecer','🌅 Amanecer'],['dia','☀ Día'],['atardecer','🌇 Atardecer'],['noche','🌙 Noche'],['eclipse','🌑 Eclipse'],['auto','⏱ Auto 45m']];
   for(const [value,title] of opts){
     const node=doc.createElement('button');
     node.type='button';node.textContent=title;
@@ -104,7 +106,7 @@ export function installP508WorldClock(pipe,options={}){
   toggle=doc.createElement('button');toggle.type='button';
   toggle.style.cssText='margin-top:7px;padding:6px 9px;border-radius:9px;background:#184d4ee8;color:#e3ffff;border:1px solid #60c9b2;font:11px system-ui';
   toggle.addEventListener('click',()=>setAurora(!aurora));panel.appendChild(toggle);
-  const note=doc.createElement('div');note.textContent='Sombras originales conservadas para mantener FPS.';
+  const note=doc.createElement('div');note.textContent='Sombras originales conservadas. Eclipse visual, sin pasadas adicionales.';
   note.style.cssText='font-size:10px;color:#c9c2d9;margin-top:6px';panel.appendChild(note);
   open.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';open.setAttribute('aria-expanded',String(panel.style.display!=='none'));});
   root.append(open,panel);doc.body.appendChild(root);syncButtons();
