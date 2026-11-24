@@ -177,7 +177,7 @@ function drawItem(o,ghost=false){
  const item=getAsset(o),selected=o.id===selectedId,w=item.w*o.scale,d=item.d*o.scale;
  ctx.save();ctx.translate(o.x,o.z);ctx.rotate(o.yaw);
  const fill=COLORS[o.type]||'#c3a98a';
- ctx.globalAlpha=ghost?.62:1;
+ ctx.globalAlpha=ghost ? .62 : 1;
  ctx.fillStyle=fill;ctx.strokeStyle=selected?'#79fff5':ghost?'#fff0a3':'#271d2b';
  ctx.lineWidth=(selected?2.6:1.4)/view.zoom;
  if(item.floor){ctx.fillRect(-w/2,-d/2,w,d);ctx.strokeRect(-w/2,-d/2,w,d);}
@@ -273,7 +273,7 @@ const downPointers=new Map();
 function onPointerDown(e){
  e.preventDefault();canvas.setPointerCapture(e.pointerId);
  const w=worldAt(e);mouse={...w,valid:true};downPointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
- if(downPointers.size>1){drag={kind:'pinch',dist:Math.hypot(...(()=>([...downPointers.values()].map((p,i,a)=>i?{x:p.clientX-a[0].clientX,y:p.clientY-a[0].clientY}:null).filter(Boolean).map(p=>[p.x,p.y])[0]||[0,0]))()),zoom:view.zoom};return;}
+ if(downPointers.size>1){const a=[...downPointers.values()];drag={kind:'pinch',dist:Math.hypot(a[1].clientX-a[0].clientX,a[1].clientY-a[0].clientY),zoom:view.zoom};return;}
  if(e.button===1||tool==='pan'||e.shiftKey||e.altKey){drag={kind:'pan',x:e.clientX,z:e.clientY,originX:view.x,originZ:view.z};return;}
  if(tool==='place'&&selectedAsset){
   snapshot();lastStamp=w;
