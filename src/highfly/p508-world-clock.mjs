@@ -40,6 +40,8 @@ export function installP508WorldClock(pipe,options={}){
  let activeAurora=0,activeEclipse=0,lastEvent=null;
  let clockStart=options.now?.()??globalThis.performance?.now?.()??0;
  let speed=search.get('hffast')==='1'?60:1,clockOffset=0;
+ // P513 manual eclipse is a MOVING solar day, starting just before the grand arch peak.
+ let eclipseStart=clockStart,eclipseOffset=0;
  let phaseNow=.75;
  let moonIndex=0;
  let lastSync=-Infinity,draws=0;
@@ -55,8 +57,11 @@ export function installP508WorldClock(pipe,options={}){
    if(now-lastSync<125)return;
    lastSync=now;
    const elapsed=(now-clockStart)*speed+clockOffset;
-   phaseNow=mode==='auto'?phaseAt(elapsed+DAY_MS*.75):mode==='eclipse'?.5:({amanecer:.25,dia:.5,atardecer:.75,noche:0})[mode];
-   const active=mode==='auto'?phaseGrade(phaseNow):mode==='eclipse'?GRADE.dia:GRADE[mode];
+   const eclipseElapsed=(now-eclipseStart)*speed+eclipseOffset;
+   phaseNow=mode==='auto'?phaseAt(elapsed+DAY_MS*.75):
+     mode==='eclipse'?phaseAt(eclipseElapsed+DAY_MS*.315):
+     ({amanecer:.25,dia:.5,atardecer:.75,noche:0})[mode];
+   const active=mode==='auto'||mode==='eclipse'?phaseGrade(phaseNow):GRADE[mode];
    grade.set(active[0],active[1],active[2],active[3]);
    tonemapGrade.copy(grade);
    lastEvent=eventPreview(mode,elapsed/DAY_MS,phaseNow,auroraOverride);
@@ -84,6 +89,7 @@ export function installP508WorldClock(pipe,options={}){
  const select=(next)=>{
    if(next!=='auto'&&next!=='eclipse'&&!PHASES.includes(next))return false;
    if(next==='auto'&&mode!=='auto'){clockStart=rt();clockOffset=0;}
+   if(next==='eclipse'){eclipseStart=rt();eclipseOffset=0;} // also replay event
    mode=next;lastSync=-Infinity;update();syncButtons();return true;
  };
  const setAurora=(value)=>{
@@ -93,6 +99,7 @@ export function installP508WorldClock(pipe,options={}){
  const setSpeed=(value)=>{
    const now=rt();
    clockOffset+=(now-clockStart)*speed;clockStart=now;
+   eclipseOffset+=(now-eclipseStart)*speed;eclipseStart=now;
    speed=value===60?60:1;lastSync=-Infinity;update();syncButtons();return speed;
  };
  const setMoon=(value)=>{
@@ -157,7 +164,7 @@ export function installP508WorldClock(pipe,options={}){
   eventLabel=doc.createElement('div');
   eventLabel.style.cssText='font-size:10px;color:#a3e7e5;margin-top:5px';
   panel.appendChild(eventLabel);
-  const note=doc.createElement('div');note.textContent='P5.1.1: luna y estrellas cada noche · aurora tras lunas especiales · eclipse muy raro. Botón Aurora: auto/forzar/apagar.';
+  const note=doc.createElement('div');note.textContent='P5.1.3: sol x3, luna x3.5, eclipse x4. Eclipse = día con recorrido completo (pulsar otra vez para repetir). Aurora: auto/forzar/apagar.';
   note.style.cssText='font-size:10px;color:#c9c2d9;margin-top:6px';panel.appendChild(note);
   open.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';open.setAttribute('aria-expanded',String(panel.style.display!=='none'));});
   root.append(open,panel);doc.body.appendChild(root);syncButtons();
