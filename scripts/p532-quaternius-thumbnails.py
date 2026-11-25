@@ -8,6 +8,7 @@ import numpy as np
 from PIL import Image,ImageDraw
 
 ROOT=Path('public/highfly/quaternius-cc0')
+DECODED=Path('tools/p532-decoded-quaternius')
 items=json.loads((ROOT/'manifest.json').read_text())['models']
 OUT=ROOT/'thumbs';OUT.mkdir(parents=True,exist_ok=True)
 def glb(path):
@@ -22,7 +23,7 @@ def glb(path):
  return doc,binary
 def read(doc,bin,i):
  a=doc['accessors'][i];view=doc['bufferViews'][a['bufferView']]
- typ={5126:'<f4',5123:'<u2',5125:'<u4',5121:'u1',5122:'<i2'}[a['componentType']]
+ typ={5126:'<f4',5123:'<u2',5125:'<u4',5121:'u1',5122:'<i2',5120:'i1'}[a['componentType']]
  fields={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4}[a['type']]
  dt=np.dtype(typ);stride=view.get('byteStride',fields*dt.itemsize)
  off=view.get('byteOffset',0)+a.get('byteOffset',0)
@@ -30,7 +31,9 @@ def read(doc,bin,i):
  return arr.copy()
 for rec in items:
  rel=rec['source'].split('/public/models/',1)[1]
- doc,bin=glb(ROOT/rel)
+ input_file=DECODED/rel
+ if not input_file.is_file():raise ValueError('Missing actual decoded meshopt GLB '+str(input_file))
+ doc,bin=glb(input_file)
  id=rec['id'];foliage='/foliage/' in rec['source']
  if 'pine' in id:base=np.array([62,112,77],float)
  elif 'oak' in id:base=np.array([95,139,84],float)
