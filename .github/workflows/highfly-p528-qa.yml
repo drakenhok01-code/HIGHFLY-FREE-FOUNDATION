@@ -1,7 +1,7 @@
 name: "HIGHFLY P528 - 3D World Forge Original Unsung QA"
 on:
   push:
-    branches: [p528-world-forge-complete-prefab-editor-20261125]
+    branches: [p528-beginning-village-preset-20261125]
   workflow_dispatch:
 permissions:
   contents: read
