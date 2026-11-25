@@ -34,9 +34,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ROOT="$RUNNER_${{ runner.temp }}/highfly-pages-compact"
-          ARCH="$RUNNER_${{ runner.temp }}/old-pages-readonly/artifact.tar"
-          NEW="$RUNNER_${{ runner.temp }}/p537-tested-build"
+          ROOT="$RUNNER_TEMP/highfly-pages-compact"
+          ARCH="$RUNNER_TEMP/old-pages-readonly/artifact.tar"
+          NEW="$RUNNER_TEMP/p537-tested-build"
           mkdir -p "$ROOT"
           test -s "$ARCH"
           test -s "$NEW/index.html"
