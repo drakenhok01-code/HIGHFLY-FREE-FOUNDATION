@@ -34,12 +34,25 @@ const BOUNDS=Object.freeze({
  'kaykit-well':[6,6],
  'kaykit-windmill':[12,12],
 });
-const PROTECTED=[
- [-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],
- [578,-437,29],[517,437,29],[136,546,29],[-405,435,29],[-1005,-168,47],
- [-179,-459,20]
-];
+// Protect actual arrival spot and original walkable geometry; broad 42m circles used
+// to veto even empty buildable terrain. The editor checks original footprint separately.
+const PROTECTED=[[-519,-70,8],[-179,-459,7]];
 const num=x=>typeof x==='number'&&Number.isFinite(x);
+// The original Unsung renderer can exclude tree instances on a building's footprint
+// BEFORE creating GPU instance buffers, preserving the source forest everywhere else.
+export function worldForgeTreeClearings({search=globalThis.location?.search??'',storage=globalThis.localStorage}={}){
+ if(new URLSearchParams(search).get('hfworld')!=='1')return ()=>false;
+ const loaded=loadedLayout(storage);
+ if(!loaded.ok)return ()=>false;
+ const cleared=loaded.objects.filter(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-'));
+ return (x,z)=>cleared.some(o=>{
+  const dims=BOUNDS[o.type];if(!dims)return false;
+  const dx=x-o.x,dz=z-o.z,c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+  const lx=dx*c+dz*s,lz=-dx*s+dz*c;
+  return Math.abs(lx)<dims[0]*o.scale*.5+1.8&&Math.abs(lz)<dims[1]*o.scale*.5+1.8;
+ });
+}
+
 const KAYKIT_FREE_NAMES=Object.freeze({
  'kaykit-archeryrange':'archeryrange','kaykit-barracks':'barracks',
  'kaykit-blacksmith':'blacksmith','kaykit-castle':'castle',
@@ -76,11 +89,17 @@ function footprint(world,o){
   heights.push(h);
  }
  const y=Math.max(...heights),slope=y-Math.min(...heights);
- if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>Math.min(3.8,1.2+o.scale*1.1))
+ if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>Math.min(5.2,1.75+o.scale*1.5))
   return null;
  if(!o.type.startsWith('floor-')){
-  const r=Math.hypot(w,d)*.36;
+  const r=Math.hypot(w,d)*.22;
   if(PROTECTED.some(([x,z,radius])=>Math.hypot(o.x-x,o.z-z)<radius+r))return null;
+  // Original stone platforms and stairs already have real solids in CollisionWorld.
+  // Buildings cannot overwrite those solids; paths/paving may continue across them.
+  for(const [dx,dz] of [[0,0],[-w*.3,-d*.3],[w*.3,-d*.3]]){
+   const x=o.x+dx,z=o.z+dz,top=world.floorBelow?.(x,y+20,z,40);
+   if(num(top)&&top>world.groundHeight(x,z)+.75)return null;
+  }
  }
  return {y,w,d,slope};
 }
