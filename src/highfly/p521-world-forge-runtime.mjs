@@ -28,7 +28,8 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true;
+const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true;
+const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
@@ -36,7 +37,7 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -140,9 +141,9 @@ function footprint(world,o){
  const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type)||UNSUNG_ORIGINAL_ASSETS.find(a=>a.id===o.type);
  const gradeBuilding=P537_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
   ((asset?.kind==='building')||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||['guild','forge','inn','house','timber','granary','warehouse','mill','fishery','ranger'].includes(o.type));
- const grade=gradeBuilding?gradePlanFor(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{apron:3,subdivisions:6}):null;
+ const grade=gradeBuilding?gradePlanFor(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{apron:3,subdivisions:6,dynamicApron:P539_PREVIEW}):null;
  const y=grade?grade.y:basicY,slope=grade?grade.slope:basicSlope;
- if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>Math.min(5.2,1.75+o.scale*1.5))
+ if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>(P539_PREVIEW&&gradeBuilding?24:Math.min(5.2,1.75+o.scale*1.5)))
   return null;
  if(!o.type.startsWith('floor-')){
   const r=Math.hypot(w,d)*.22;
@@ -275,8 +276,9 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // as a READ-ONLY backup, including the player's placed structures.
  if(P538_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
   try{
-   const prior=validateWorldForgeLayout(JSON.parse(storage?.getItem('hf-world-forge-layout-p537-v1')||'null'));
-   const old=prior.ok?prior.objects:[];
+   const prior=validateWorldForgeLayout(JSON.parse(storage?.getItem(P539_PREVIEW?'hf-world-forge-layout-p538-v1':'hf-world-forge-layout-p537-v1')||'null'));
+   const backup=validateWorldForgeLayout(JSON.parse(storage?.getItem('hf-world-forge-layout-p537-v1')||'null'));
+   const old=prior.ok?prior.objects:(backup.ok?backup.objects:[]);
    const plan=buildEastbrookLand({
     existing:old,sizeOf:type=>BOUNDS[type]||null,
     canPlace:o=>{
@@ -287,7 +289,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    const objects=plan.complete?[...old,...plan.objects]:old;
    if(objects.length){
     const payload={schema:1,world:'unsung-vale',
-     author:'HIGHFLY P538 Arvelia — P537 preserved, no restricted assets',objects};
+     author:P539_PREVIEW?'HIGHFLY P539 Arvelia — native slope fit and CC0 smithy substitute':'HIGHFLY P538 Arvelia — P537 preserved, no restricted assets',objects};
     const check=validateWorldForgeLayout(payload);
     if(check.ok){
      storage?.setItem(WORLD_FORGE_KEY,JSON.stringify(payload));
