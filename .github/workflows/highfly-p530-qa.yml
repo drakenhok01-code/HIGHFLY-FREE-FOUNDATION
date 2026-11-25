@@ -55,7 +55,7 @@ jobs:
         run: |
           cp tests/p530-browser-world-forge.mjs .work/unsung/tools/p530-browser-world-forge.mjs
           cd .work/unsung
-          node tools/p529-browser-beginning-village.mjs
+          node tools/p530-browser-world-forge.mjs
       - name: Preserve screenshot of native 3D editor from CI browser
         if: always()
         uses: actions/upload-artifact@v4
