@@ -644,7 +644,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW,cameraPan=null,objectClipboard=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW||P534_PREVIEW,cameraPan=null,objectClipboard=null;
 let roadNodes=[],roadHover=null,roadPreview=null,roadEditId=null,roadDragIndex=-1,roadPreviewStamp=0;
 function disposeRoadPreview(){
  if(roadPreview){scene.remove(roadPreview);disposeCurvedRoadGeometry(roadPreview);roadPreview=null;}
@@ -677,7 +677,7 @@ function drawRoadPreview(force=false){
  render();
 }
 function startRoadDraft(editId=null){
- if(!P533_PREVIEW)return;
+ if(!(P533_PREVIEW||P534_PREVIEW))return;
  disposeRoadPreview();
  if(ghost)ghost.visible=false;
  selected=null;chosen=CURVED_ROAD_TYPE;roadHover=null;
@@ -776,7 +776,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW||P534_PREVIEW)||x.id!=='Edificios'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW||P534_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW||P534_PREVIEW)||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
