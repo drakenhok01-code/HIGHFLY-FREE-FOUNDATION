@@ -1,0 +1,106 @@
+name: "HIGHFLY P541 — publish verified manual editor to GitHub Pages"
+on:
+  push:
+    branches: [p541-manual-world-forge-clean-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p541-clean-pages
+  cancel-in-progress: true
+jobs:
+  publish-approved:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download proven P541 game and Forge from successful Chrome QA
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p541-manual-unsung-graded
+          run-id: 45696929503
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p541-tested
+      - name: Preserve approved P539 editor with slope support
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p539-arvelia-camera-slope
+          run-id: 45687558253
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p539-approved
+      - name: Preserve approved P538 and P537 rollback backups
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p538-arvelia-world-forge
+          run-id: 45681104388
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p538-approved
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          run-id: 45659850899
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p537-approved
+      - name: Validate isolated archives and assemble clean Pages tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/p541-manual-approved-release"
+          for v in 537 538 539 541; do
+            SRC="$RUNNER_TEMP/p${v}-approved"
+            if [ "$v" = 541 ]; then SRC="$RUNNER_TEMP/p541-tested"; fi
+            test -s "$SRC/index.html"
+            test -s "$SRC/highfly/world-forge-3d.html"
+            test -s "$SRC/highfly/world-forge-3d.js"
+            grep -q "preview-p${v}" "$SRC/index.html"
+            mkdir -p "$ROOT/preview-p${v}"
+            cp -a "$SRC/." "$ROOT/preview-p${v}/"
+          done
+          grep -q "WORLD FORGE 4.9" "$ROOT/preview-p541/highfly/world-forge-3d.html"
+          grep -q "Construcción libre" "$ROOT/preview-p541/highfly/world-forge-3d.html"
+          grep -q 'id="pilot-eastbrook" hidden' "$ROOT/preview-p541/highfly/world-forge-3d.html"
+          grep -q 'id="slope-toggle" class="on"' "$ROOT/preview-p541/highfly/world-forge-3d.html"
+          test ! -e "$ROOT/preview-p540"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html><html lang="es"><meta charset="utf-8">
+          <title>HIGHFLY P5.4.1 — World Forge construcción manual</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p541/">
+          <a href="./preview-p541/">Abrir World Forge 4.9 · Construcción manual</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "P541 approved GitHub Pages size: $SIZE bytes"
+          test "$SIZE" -lt 900000000 || { echo "::error::Pages size exceeds 900MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p541-final-manual-site
+          path: dist-pages
+      - name: Wait until GitHub indexes its own uploaded Pages artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p541-final-manual-site")] | length' 2>/dev/null || echo 0)"
+            echo "Pages artifact API visibility check $attempt: $N"
+            if [ "$N" = 1 ]; then
+              echo "Pages artifact unique and visible; allowing indexing to propagate."
+              sleep 30
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::Pages artifact never became visible in GitHub API"
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p541-final-manual-site
