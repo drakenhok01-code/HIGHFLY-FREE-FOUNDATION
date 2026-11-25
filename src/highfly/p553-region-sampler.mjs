@@ -17,7 +17,7 @@ export function makeRegionSampler(d,p,native){
   for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++){const v=table.get((a.q+i)+','+(a.r+j));if(!v)continue;const dd=Math.hypot(v.x-x,v.z-z)/R;if(dd>2.1)continue;const k=Math.pow(Math.max(0,1-dd/2.1),3);const wet=v.ground==='water',level=v.top-.14>-.05?v.top-.14:-.05;h+=k*(wet?Math.min(v.top-.55,level-.38):v.top);soil+=k*(['soil','dirt','sand','paved'].includes(v.ground)?1:0);water+=wet?k:0;wy+=wet?k*level:0;total+=k;}
   const wet=t.ground==='water',level=t.top-.14>-.05?t.top-.14:-.05,top=wet?Math.min(t.top-.55,level-.38):t.top;
   const keep=1-smooth((a.dist/R-.36)/.48),mix=(a,b,k)=>a+(b-a)*k;
-  return {height:mix(h/(total||1),top,keep),waterLevel:water?wy/water:level,water:mix(water/(total||1),wet?1:0,keep),soil:mix(soil/(total||1),['soil','dirt','sand','paved'].includes(t.ground)?1:0,keep),coverage:1-smooth((a.dist/R-.8)/.65),t};
+  return {height:mix(h/(total||1),top,keep),waterLevel:water?wy/water:level,water:mix(water/(total||1),wet?1:0,keep),soil:mix(soil/(total||1),['soil','dirt','sand','paved'].includes(t.ground)?1:0,keep),coverage:1-smooth((a.dist/R-1.02)/.58),t};
  }
  // Blend farther outside the island through an irregular, continuous apron.
  function sample(x,z){
@@ -32,7 +32,7 @@ export function makeRegionSampler(d,p,native){
    k=Math.max(k,.95*(1-smooth((dist-R*S*.8)/p.transition)));
   }
   k*=smooth(edge/9);
-  const target=p.base+q.height*S,y=native(x,z)+(target-native(x,z))*k;
+  const target=p.base+q.height*S,original=native(x,z),y=original+(target-original)*k;
   return {y,soil:q.soil*q.coverage,water:q.water*q.coverage,level:p.base+q.waterLevel*S,inside:q.coverage>.5,transition:k};
  }
  return {sample,source,nearest};
