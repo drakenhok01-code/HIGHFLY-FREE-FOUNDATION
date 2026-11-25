@@ -27,14 +27,14 @@ try{
  page.on('response',r=>{if(r.status()===404&&r.url().includes('/kaykit-free/'))badResponses.push(r.url());});
  await page.goto(BASE+'?hfqa=1&hfchar=kaykit',{waitUntil:'domcontentloaded',timeout:60000});
  await page.waitForFunction(()=>!!window.__hfP515Eastbrook?.readyPromise,{timeout:190000});
- await page.evaluate(()=>window.__hfP515Eastbrook.readyPromise);
+ await page.evaluate(async()=>{await window.__hfP515Eastbrook.readyPromise;return true;});
  const status=await page.evaluate(()=>{
   const town=window.__hfP515Eastbrook,g=window.__game;
   return {game:!!g,player:!!g?.player,world:!!g?.world,town:{
    id:town.id,editor:town.editor,placed:town.placed,intended:town.intended,
    visibleBuildings:town.visibleBuildings,loaded:town.loaded.map(x=>({id:x.id,model:x.model,colliders:x.colliders})),
    failed:town.failed,skipped:town.skipped,grassPixels:town.grassPixels,roads:town.roads,
-   ready:town.fullyBuilt,base:import.meta.env?.BASE_URL??null
+   ready:town.fullyBuilt
   }};
  });
  console.log('[HIGHFLY P515 NATIVE REAL GAME]',JSON.stringify({status,errors,badResponses}).slice(0,8500));
