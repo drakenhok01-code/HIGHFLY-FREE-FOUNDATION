@@ -345,7 +345,7 @@ copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky
 for(const name of ['p521-world-forge-runtime','p521-resume-position'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 for(const name of ['world-forge.html','world-forge.js','world-forge-3d.html'])copy(path.join(ROOT,'public/highfly/'+name),loc('public/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/p525-world-forge-3d.mjs'),loc('src/highfly/p525-world-forge-3d.mjs'));
-for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog'])
+for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora'])
  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
