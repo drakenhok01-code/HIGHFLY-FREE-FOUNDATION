@@ -10,7 +10,7 @@
 export const GROUND_FIT_VERSION='p537-grade-1';
 const smooth=x=>{const t=Math.max(0,Math.min(1,x));return t*t*(3-2*t);};
 const finite=Number.isFinite;
-export function gradePlanFor(o,{w,d},heightAt,{apron=3,subdivisions=6}={}){
+export function gradePlanFor(o,{w,d},heightAt,{apron=3,subdivisions=6,dynamicApron=false}={}){
  if(!o||!finite(o.x)||!finite(o.z)||!finite(o.yaw)||!finite(w)||!finite(d)||!finite(o.scale)||
   o.scale<=0||w<=0||d<=0||typeof heightAt!=='function')throw Error('Invalid rotated grade parcel');
  const W=w*o.scale,D=d*o.scale,c=Math.cos(o.yaw),s=Math.sin(o.yaw),values=[];
@@ -24,7 +24,10 @@ export function gradePlanFor(o,{w,d},heightAt,{apron=3,subdivisions=6}={}){
  // this keeps the native game terrain from visibly poking through the lot.
  const groundMax=Math.max(...values),groundMin=Math.min(...values);
  return {id:o.id??'',x:o.x,z:o.z,yaw:o.yaw,w:W,d:D,
-  y:groundMax,groundMin,slope:groundMax-groundMin,apron:Math.max(1.5,Math.min(6,apron)),
+  y:groundMax,groundMin,slope:groundMax-groundMin,
+   // P539: steep lots get a wider feathered EARTH ramp rather than a floating box.
+   // Opt-in only: P537/P538 continue using the original compact 3m apron.
+   apron:dynamicApron?Math.min(24,Math.max(3,3+(groundMax-groundMin)*.88)):Math.max(1.5,Math.min(6,apron)),
   c,s,source:'Unsung-original-heightfield'};
 }
 export function gradeHeightAt(x,z,base,plan){
