@@ -9,12 +9,15 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
 import {loadUnsungOriginal} from './p530-unsung-loader.mjs';
+import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_GROUPS} from './p531-kaykit-free-catalog.mjs';
+import {UNSUNG_FLORA,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 const $=id=>document.getElementById(id);
+const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -43,6 +46,13 @@ const base=[
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
 ].concat(VILLAGE_DECOR_ASSETS.map(a=>[a.id,a.label,a.icon,a.cat,a.w,a.d]))
  .map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
+// Extend the 16 legacy red houses in place; all 221 FREE models remain
+// uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
+for(const extra of KAYKIT_FREE_ALL){
+ const prev=base.find(x=>x.id===extra.id);
+ if(prev)Object.assign(prev,extra);
+ else base.push({...extra});
+}
 // Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 function addPrivateCatalog(models){
  for(const x of models){
@@ -54,7 +64,8 @@ function addPrivateCatalog(models){
   BY_ID.set(a.id,a);
  }
 }
-// Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
+for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
+ // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
 addPrivateCatalog(loadPrivateSourceCatalog());
@@ -88,7 +99,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=P531_PREVIEW?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -277,7 +288,7 @@ function validPosition(o,id=null){
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
  if(!flat&&!npc){
   const slope=Math.max(...samples)-Math.min(...samples);
-  const isBuilding=!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
+  const isBuilding=a.kind==='building'||!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
   if(slope>(isBuilding?1.05:Math.min(5.2,1.75+o.scale*1.5)))
    return {ok:false,why:'La parcela tiene desnivel: buscá un terreno nivelado. Evitamos bloques flotantes bajo el edificio.'};
   if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
@@ -308,14 +319,15 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||!!a.privateModel||!!a.originalPrefab||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.freeModel||!!a.privateModel||!!a.originalPrefab||!!a.nativeFlora||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
- :url('kaykit-free/building_'+a.model+'_red.gltf');
+ :a.freeModel?url('kaykit-free/all/'+a.freePath):url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
-  cache.set(a.id,(a.originalPrefab?
+  cache.set(a.id,(a.nativeFlora?Promise.resolve({scene:nativeUnsungFlora(a.id)}):
+  a.originalPrefab?
   loadUnsungOriginal(a.id,url).then(scene=>({scene})):
   a.privateModel?
   readPrivateSourceGLB(a.id).then(data=>gltfLoader.parseAsync(data,'')):
@@ -426,7 +438,7 @@ async function buildPlaced(o){
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
-   else if((a.model||(a.privateModel&&a.kind==='building'))&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
+   else if((a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
  }else root.add(makeModel(a,o));
@@ -495,7 +507,7 @@ function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||a.kind==='building'||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
  ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
  ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
  const outline=ghost.children[0];
@@ -518,17 +530,23 @@ function selectAsset(id){
  else status('Elegiste '+a.label+' · Tocá terreno libre para colocarlo.');
 }
 const CATALOG_TABS=[
+ {id:'KayKit FREE · Edificios',label:'🏘️ Casas · 4 colores',filter:a=>a.cat==='KayKit FREE · Edificios'},
+ {id:'KayKit FREE · Arquitectura',label:'🏰 Puentes · muros',filter:a=>a.cat==='KayKit FREE · Arquitectura'},
+ {id:'KayKit FREE · Accesorios',label:'🧰 Accesorios',filter:a=>a.cat==='KayKit FREE · Accesorios'},
+ {id:'KayKit FREE · Naturaleza',label:'🌳 Árboles · rocas',filter:a=>a.cat==='KayKit FREE · Naturaleza'},
+ {id:'KayKit FREE · Hexágonos',label:'⬡ Hex originales',filter:a=>a.cat==='KayKit FREE · Hexágonos'},
  {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
  {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
  {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
  {id:'Unsung original',label:'🏛️ Unsung original',filter:a=>!!a.originalPrefab},
+ {id:'Unsung árboles',label:'🌸 Árboles Unsung',filter:a=>!!a.nativeFlora},
  {id:'Pisos',label:'🧱 Pisos y caminos',filter:a=>a.cat==='Pisos'},
  {id:'Decoración',label:'🏮 Decoración HIGHFLY',filter:a=>a.cat==='Decoración'},
  {id:'Naturaleza',label:'🌳 Naturaleza',filter:a=>a.cat==='Naturaleza'},
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW,cameraPan=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -552,9 +570,10 @@ function drawCatalog(){
   const el=document.createElement('button');el.type='button';
   el.className='asset'+(chosen===a.id?' selected':'');
   el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
-  if(a.model||a.originalPrefab){
+  if(a.model||a.freeModel||a.originalPrefab){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
    img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    a.freeModel?url('kaykit-free/thumbs-all/'+a.thumbName+'.png'):
     url('kaykit-free/thumbs/building_'+a.model+'_red.png');
    img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
    el.append(img);
@@ -562,8 +581,8 @@ function drawCatalog(){
    const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);
   }
   const label=document.createElement('span');label.textContent=a.label;el.append(label);
-  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||
-   (a.originalPrefab?'UNSUNG · MIT':a.model?'KAYKIT · CC0':a.cat);el.append(type);
+  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||a.sub||
+   (a.originalPrefab?'UNSUNG · MIT':a.freeModel||a.model?'KAYKIT FREE · CC0':a.cat);el.append(type);
   const size=document.createElement('small');size.className='asset-size';
   size.textContent=a.w+' × '+a.d+' m · '+(a.originalPrefab?'ORIGINAL':a.privateModel?'SOURCE':'3D');
   el.append(size);
@@ -577,7 +596,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS){
+ for(const tab of CATALOG_TABS.filter(x=>!P531_PREVIEW||!x.id.startsWith('SOURCE'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -589,14 +608,14 @@ function addAt(x,z){
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
  if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
- if(chosen.startsWith('floor-')||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
+ if(chosen.startsWith('floor-')||a.kind==='building'||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
  o.y=check.y;records.push(o);
  buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){
   groups.placed.add(root);viewCache.set(o.id,root);
-  if(!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
+  if(!repeatPlacement&&!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
    selectObject(o.id);
    status('✓ '+a.label+' colocado. Ya podés MOVER, GIRAR o cambiar tamaño.');
   }
@@ -751,6 +770,12 @@ function exportJSON(){
 function bindUI(){
  $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
  $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};
+ $('repeat-place').onclick=()=>{repeatPlacement=!repeatPlacement;
+  $('repeat-place').classList.toggle('on',repeatPlacement);
+  $('repeat-place').textContent='↻ Repetir: '+(repeatPlacement?'SÍ':'NO');
+  status(repeatPlacement?'Herramienta continua: podés colocar varias construcciones iguales seguidas.':
+    'Colocación individual: al poner una casa pasa a Mover/Girar.');
+ };
  $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
@@ -774,17 +799,43 @@ function bindUI(){
  $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
  $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
- window.addEventListener('keydown',e=>{if(document.activeElement?.tagName==='INPUT')return;
+ window.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicateSelected();return;}
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
+   const k=e.key.toLowerCase();
+   if(['q','r'].includes(k)&&mode==='place'){e.preventDefault();transform(k==='q'?'rot-left':'rot-right');return;}
+   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Pincel '+brushCells*4+' m';status('Pincel '+brushCells*4+' metros.');return;}
+   if(k==='v'){$('select').click();return;}
+   if(k==='c'){$('orbit').click();return;}
+   if(k==='t'){$('top').click();return;}
+   if(k==='i'){$('iso').click();return;}
+  }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}
   if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();redo();}
   if(e.key==='Delete'||e.key==='Backspace')remove();
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ // For desk editing the cursor must be able to pan/zoom while a building
+ // brush is selected. We don't enable competing left-drag OrbitControls.
+ canvas.addEventListener('contextmenu',e=>e.preventDefault());
+ canvas.addEventListener('wheel',e=>{
+  if(!['place','move','rotate','scale'].includes(mode))return;
+  e.preventDefault();
+  const target=orbit.target,vec=cam.position.clone().sub(target);
+  vec.multiplyScalar(e.deltaY>0?1.12:.88).clampLength(8,4500);
+  cam.position.copy(target).add(vec);orbit.update();updateNear();updateTrees();render();
+ },{passive:false});
  // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
  // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
-  if(!e.isPrimary)return;
+  if(e.button===1||e.button===2){
+   e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
+   canvas.setPointerCapture?.(e.pointerId);return;
+  }
+  if(!e.isPrimary||e.button!==0)return;
   downPos={x:e.clientX,y:e.clientY};
   if(mode==='place'&&chosen){
    e.preventDefault();
@@ -809,6 +860,16 @@ function bindUI(){
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId){
+   const dx=e.clientX-cameraPan.x,dy=e.clientY-cameraPan.y;
+   cameraPan.x=e.clientX;cameraPan.y=e.clientY;
+   const dist=Math.max(30,cam.position.distanceTo(orbit.target)),unit=dist*.0018;
+   const right=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0);
+   const forward=new THREE.Vector3();forward.subVectors(orbit.target,cam.position);
+   right.y=0;forward.y=0;right.normalize();forward.normalize();
+   const move=right.multiplyScalar(-dx*unit).addScaledVector(forward,dy*unit);
+   cam.position.add(move);orbit.target.add(move);orbit.update();updateNear();updateTrees();render();return;
+  }
   if(mode==='place')previewGhost(e);
   if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
    const hit=hitTerrain(e),root=viewCache.get(movingExisting.id),saved=movingExisting.old;
@@ -829,6 +890,10 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId){
+   cameraPan=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   return;
+  }
   if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
    const item=records.find(x=>x.id===movingExisting.id),root=viewCache.get(movingExisting.id),old=movingExisting.old;
    if(item&&root){
@@ -866,6 +931,7 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId)cameraPan=null;
   if(movingExisting&&activePointer===e.pointerId){
    const root=viewCache.get(movingExisting.id),old=movingExisting.old;
    if(root){root.position.set(old.x,old.y+.035,old.z);gizmo?.attach(root);render();}
@@ -928,7 +994,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 3D P5.2.9 listo · '+records.length+' construcciones y decoraciones. Editá o tocá ▶ Ver en RPG.');
+  status('✓ WORLD FORGE 4.1 · P5.3.1 · FREE completo: 221 modelos KayKit + 18 originales Unsung. PC: clic para colocar, derecho arrastre para mover cámara, Q/R para girar.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');

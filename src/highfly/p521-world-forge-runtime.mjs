@@ -11,14 +11,17 @@ import * as NativeKit from '../world/arch/kit.js';
 import * as NativeArch from '../world/arch/builder.js';
 import {UNSUNG_ORIGINAL_ASSETS,UNSUNG_ORIGINAL_IDS,buildUnsungOriginal} from './p530-unsung-original.mjs';
 import {buildWorldForgeCityMask} from './p530-city-ground-mask.mjs';
+import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_IDS} from './p531-kaykit-free-catalog.mjs';
+import {UNSUNG_FLORA,UNSUNG_FLORA_BY_ID,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
+const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -44,6 +47,8 @@ const BOUNDS=Object.freeze({
  'kaykit-well':[6,6],
  'kaykit-windmill':[12,12],
  ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]])),
+ ...Object.fromEntries(KAYKIT_FREE_ALL.map(a=>[a.id,[a.w,a.d]])),
+ ...Object.fromEntries(UNSUNG_FLORA.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_ORIGINAL_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
 });
@@ -77,7 +82,11 @@ const KAYKIT_FREE_NAMES=Object.freeze({
 });
 // Pinned public CC0 glTF, not privately purchased SOURCE content.
 // All model files and their legal licence are shipped by build P524.
-const kaykitFreeUrl=type=>import.meta.env.BASE_URL+'highfly/kaykit-free/building_'+KAYKIT_FREE_NAMES[type]+'_red.gltf';
+const kaykitFreeUrl=type=>{
+ const model=KAYKIT_FREE_BY_ID.get(type);
+ return model?import.meta.env.BASE_URL+'highfly/kaykit-free/all/'+model.freePath:
+   import.meta.env.BASE_URL+'highfly/kaykit-free/building_'+KAYKIT_FREE_NAMES[type]+'_red.gltf';
+};
 
 export function validateWorldForgeLayout(data){
  if(!data||data.schema!==1||data.world!=='unsung-vale'||!Array.isArray(data.objects)||data.objects.length>2500)
@@ -291,6 +300,17 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
+  if(UNSUNG_FLORA_BY_ID.has(o.type)){
+   const source=nativeUnsungFlora(o.type),instance=source.clone(true);
+   const box=new THREE.Box3().setFromObject(source),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+   const dims=BOUNDS[o.type],scale=Math.min(dims[0]/Math.max(.001,size.x),dims[1]/Math.max(.001,size.z))*o.scale;
+   instance.position.set(o.x-center.x*scale,fp.y-box.min.y*scale,o.z-center.z*scale);
+   instance.rotation.y=o.yaw;instance.scale.setScalar(scale);
+   instance.name='HIGHFLY_ORIGINAL_UNSUNG_TREE_'+o.type+'_'+o.id;
+   group.add(instance);
+   scenic.push({...o,y:fp.y,_instance:instance});
+   continue;
+  }
   if(UNSUNG_ORIGINAL_IDS.has(o.type)){
    // Real MIT Unsung kit pieces, same original procedural geometry and shader as native map.
    const center=nativeCenter(o.type),b=add(o),dims=BOUNDS[o.type];
@@ -313,13 +333,18 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    sourceBuildings.push({o,fp});
    continue;
   }
-  if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
+  if(KAYKIT_FREE_IDS.has(o.type)||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
    // A real native Unsung stone foundation follows the max of all footprint corners.
    // Matches the editor's solid plinth, prevents a complete building sinking into slopes.
-   const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
-   builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
-    q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
-   });
+   // Flat parcels place the authentic model directly on Unsung terrain.
+   // Only steep building lots get a subtle foot slab, never props or vegetation.
+   const asset=KAYKIT_FREE_BY_ID.get(o.type);
+   if((asset?.kind==='building'||!asset)&&fp.slope>.35){
+    const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
+    builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
+     q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
+    });
+   }
    kaykitBuildings.push({o,fp});continue;
   }
   if(o.type==='ore'||o.type==='tree')resources.push({...o,y:fp.y});
@@ -342,6 +367,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // for solid pillars, tree trunks and elevated gazebo floor to protect Android.
  const scenicObjects=[];
  for(const o of scenic){
+  if(o._instance){scenicObjects.push({o,model:o._instance});continue;}
   const model=makeVillageDecor(o.type,o.scale);if(!model){skipped.push(o.id);continue;}
   model.position.set(o.x,o.y+.045,o.z);model.rotation.y=o.yaw;
   model.traverse(mesh=>{if(mesh.isMesh)mesh.frustumCulled=true;});
@@ -443,6 +469,10 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   let added=0;
   scene.traverse(mesh=>{
    if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
+   // Trees, bushes, clouds, small props and hex pieces should not create
+   // leaf-shaped or terrain-blocking collision meshes in the playable RPG.
+   const freeAsset=KAYKIT_FREE_BY_ID.get(o.type);
+   if(freeAsset&&!['building','structure'].includes(freeAsset.kind))return;
    // Trees and loose props retain visual fidelity without treating leaves as impassable walls.
    if(privateSourceType(o.type)&&!['building','rock'].includes(PRIVATE_SOURCE.get(o.type)?.kind))return;
    const geom=mesh.geometry.clone().applyMatrix4(mesh.matrixWorld);
@@ -454,7 +484,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   kaykitObjects.push({anchor,o,colliders:added});
  })).then(results=>{
   results.forEach((v,i)=>{if(v.status==='rejected')kaykitFailures.push({id:allModelLots[i]?.o.id,error:String(v.reason)});});
-  console.info('[HIGHFLY KAYKIT FREE CC0]',kaykitObjects.length,'real medieval models,',kaykitFailures.length,'load failures');
+  console.info('[HIGHFLY KAYKIT COMPLETE FREE CC0]',kaykitObjects.length,'real medieval models,',kaykitFailures.length,'load failures');
  }).catch(err=>console.error('[HIGHFLY KAYKIT FREE]',err));
  const readyPromise=Promise.all([peopleReadyPromise,buildingsReadyPromise]);
  let lastUpdate=game.update;

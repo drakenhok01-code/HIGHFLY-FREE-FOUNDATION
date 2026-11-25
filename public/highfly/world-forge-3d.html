@@ -52,9 +52,9 @@ aside{flex:none;width:265px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.0 · P5.3.0</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.1 · P5.3.1 · FREE</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
-<button id="preset-village" title="Propuesta automática EXPERIMENTAL, no una réplica exacta de la imagen">🏡 Arvelia · borrador</button><button id="import-source" title="Importar el paquete privado de edificios, accesorios, Halloween y Mixed Bag 2">📦 SOURCE + Halloween</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
+<button id="preset-village" title="Distribución automática experimental, no replica la referencia aprobada">🏡 Arvelia · borrador</button><button id="import-source" hidden style="display:none" title="Deshabilitado para el laboratorio exclusivo FREE">📦 SOURCE (no se usa en P5.3.1)</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
 </div></header>
 <main><aside>
@@ -72,14 +72,15 @@ aside{flex:none;width:265px;background:#18152b;border-right:1px solid #584472;di
 <button id="select">▣ Selección</button>
 <button id="move">↔ Mover</button><button id="rotate">⟳ Girar</button><button id="scale">◩ Escala</button>
 <button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button><button id="brush-width" title="Ancho del pincel de pavimento">🧱 Pincel 4 m</button>
+<button id="repeat-place" class="on" title="Colocar varias copias seguidas del mismo edificio como Age of Empires">↻ Repetir: SÍ</button>
 <button id="home">⌖ Inicio</button><button id="trees" class="on">🌳 Árboles</button>
 <button id="original" class="on">🏛️ Original</button><button id="water" class="on">🌊 Agua</button>
 </div>
 <div id="top-info"><div id="coords">X — / Z —</div><div id="metrics">3D editor · mapa auténtico</div></div>
 <div id="status">Preparando terreno 3D original…</div>
-<div id="tips">PC: clic para colocar; arrastrá para pintar pisos · Android: tocá para construir, deslizá para pintar; 2 dedos para mover/zoom</div>
+<div id="tips">PC: clic repetido para construir · botón derecho y arrastrar = mover cámara · rueda = zoom · Q/R girar · Ctrl+D duplicar · Ctrl+S guardar · Supr borrar · 1/2/3 pincel · clic y arrastrar para empedrar</div>
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p530"></script>
+<script type="module" src="./world-forge-3d.js?v=p531"></script>
 </body></html>
