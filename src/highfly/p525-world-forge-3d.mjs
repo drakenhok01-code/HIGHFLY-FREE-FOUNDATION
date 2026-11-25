@@ -3,14 +3,14 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1';
+const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
  ['house','Casa medieval','🏡','Edificios',9,8],['timber','Casa madera','🛖','Edificios',8,8],['market','Mercado','🏪','Edificios',12,9],
  ['mill','Molino','🌾','Edificios',10,10],['granary','Granero','🌽','Edificios',12,9],['warehouse','Almacén','📦','Edificios',11,9],
  ['fishery','Pesquería','🎣','Edificios',10,8],['ranger','Refugio','🏕','Edificios',9,8],
- ['floor-stone','Empedrado','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
+ ['floor-stone','Continuar plaza · piedra','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
  ['lantern','Farol original','🏮','Decoración',1.5,1.5],['well','Pozo','🕳','Decoración',4,4],
  ['fence','Valla','🚧','Decoración',4,.4],['barrel','Barril','🛢','Decoración',1.1,1.1],['bench','Banco','🪑','Decoración',3,1.4],
  ['tree','Árbol','🌳','Naturaleza',3,3],['rock','Roca','🪨','Naturaleza',3,2.5],['ore','Mineral','⛏','Naturaleza',3,3],
@@ -32,7 +32,8 @@ const base=[
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
 ].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat,w,d,model}));
 const BY_ID=new Map(base.map(a=>[a.id,a]));
-const safety=[[-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],[578,-437,29],[517,437,29],[136,546,29],[-405,435,29],[-1005,-168,47],[-179,-459,20]];
+// Protect the actual spawn and staircase, not entire 42m-radius free land parcels.
+const safety=[[-519,-70,8],[-179,-459,7]];
 const logData={phase:'inicio',lines:[],errors:[]};
 const log=(message,detail='',ok=true)=>{
  const s=(ok?'✓ ':'✕ ')+message+(detail?' — '+detail:'');
@@ -59,7 +60,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -175,9 +176,14 @@ function updateTrees(force=false){
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
  treeFocus=[x,z];
  const lists=Array.from({length:5},()=>[]),rad=260;
+ const clearedLots=records.filter(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&BY_ID.has(o.type));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
   for(const t of overview.treeIndex.get(i+','+j)||[]){
    if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
+   if(clearedLots.some(o=>(()=>{
+     const [dx,dz]=[t[0]-o.x,t[1]-o.z],a=BY_ID.get(o.type),c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+     return Math.abs(dx*c+dz*s)<a.w*o.scale*.5+1.8&&Math.abs(-dx*s+dz*c)<a.d*o.scale*.5+1.8;
+   })()))continue;
    const k=treeKinds[t[3]]??4;if(lists[k].length<900)lists[k].push(t);
   }
  }
@@ -242,9 +248,11 @@ function validPosition(o,id=null){
  }
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
  if(!flat&&!npc){
-  if(Math.max(...samples)-Math.min(...samples)>Math.min(3.8,1.2+o.scale*1.1))return {ok:false,why:'Pendiente excesiva'};
-  if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.7))return {ok:false,why:'Zona original protegida'};
-  if(treeNear(o.x,o.z,rad*.5))return {ok:false,why:'Árbol original'};
+  if(Math.max(...samples)-Math.min(...samples)>Math.min(5.2,1.75+o.scale*1.5))return {ok:false,why:'Pendiente excesiva (buscá una explanada)'};
+  if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
+  // In a building lot the native trees can be *visually excluded* (same flag in RPG).
+  // We never modify the Unsung terrain/forest source or the original plaza.
+  if(!o.clearTrees&&treeNear(o.x,o.z,rad*.5))return {ok:false,why:'Árbol original: activá despeje automático'};
   if(archNear(o.x,o.z,rad*.6))return {ok:false,why:'Arquitectura original'};
   for(const b of records){
    if(b.id===id||b.id===o.id||b.type.startsWith('floor-')||b.type.startsWith('npc-'))continue;
@@ -260,7 +268,13 @@ function save(show=false){
 }
 function recordSnapshot(){history.push(JSON.stringify(records));if(history.length>60)history.shift();redoStack.length=0;}
 function restore(){
- try{const d=JSON.parse(localStorage.getItem(STORE)||'null');if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));}
+ try{
+  // Preserve user's previously placed world when first trying this experimental editor.
+  const old=localStorage.getItem(STORE);
+  if(old&&!localStorage.getItem(BACKUP))localStorage.setItem(BACKUP,old);
+  const d=JSON.parse(old||'null');
+  if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));
+ }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
 const modelUrl=a=>url('kaykit-free/building_'+a.model+'_red.gltf');
@@ -268,16 +282,65 @@ function getGLTF(a){
  if(!cache.has(a.id))cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>g.scene).catch(err=>{log('KayKit '+a.label,err.message,false);return null;}));
  return cache.get(a.id);
 }
+// Exact native paved court elevations from original Unsung's Architecture.buildPlayable().
+function floorElevation(x,z){
+ let y=elevation(x,z);
+ for(const f of overview?.floors||[]){
+  if(!finite(f.y))continue;
+  const inside=f.r?Math.hypot(x-f.x,z-f.z)<=f.r-.1:
+    (Math.abs(x-f.x)<=(f.w||0)*.5-.1&&Math.abs(z-f.z)<=(f.d||0)*.5-.1);
+  if(inside)y=Math.max(y,f.y);
+ }
+ return y;
+}
+// Editor-only detailed previews. The real RPG uses original procedural M.PAVING material.
+const floorMats=new Map();
+function floorMaterial(type){
+ if(floorMats.has(type))return floorMats.get(type);
+ const c=document.createElement('canvas');c.width=c.height=384;
+ const g=c.getContext('2d'),seed=(a,b)=>{let n=Math.imul((a+3)*92837111,(b+7)*689287499);n^=n>>>15;return ((n>>>0)%1000)/1000;};
+ const stone=type==='floor-stone',wood=type==='floor-wood';
+ g.fillStyle=stone?'#5b5a50':wood?'#564838':'#826d57';g.fillRect(0,0,384,384);
+ const rows=stone?9:wood?11:14,step=384/rows;
+ for(let row=0;row<rows;row++){
+  let x=-step*2*(row%3),index=0;
+  while(x<386){
+   const n=seed(row,index++),width=stone?step*(1.7+1.2*n):wood?384:step*(.8+1.2*n);
+   const top=row*step+1.4,bottom=(row+1)*step-1.3,left=x+1.7;
+   const light=stone?Math.round(162+28*n):wood?Math.round(117+27*n):Math.round(126+26*n);
+   g.fillStyle=stone?'rgb('+(light+10)+','+(light+6)+','+(light-1)+')':
+     wood?'rgb('+(light+18)+','+(light+4)+','+(light-21)+')':
+       'rgb('+(light+15)+','+light+','+(light-16)+')';
+   g.fillRect(left,top,Math.max(1,width-3),bottom-top);
+   g.fillStyle=stone?'rgba(245,237,207,.13)':'rgba(246,224,176,.12)';
+   g.fillRect(left,top,Math.max(1,width-3),1.4);
+   g.fillStyle='rgba(21,27,26,.11)';g.fillRect(left,bottom-2,Math.max(1,width-3),1.7);
+   x+=width;if(wood)break;
+  }
+ }
+ for(let k=0;k<4500;k++){
+  const x=seed(k,8)*384,y=seed(k,13)*384,n=seed(k,27);
+  g.fillStyle=n>.47?'rgba(250,241,218,.055)':'rgba(45,48,43,.05)';
+  g.fillRect(x,y,n>.7?1.7:.8,n>.7?1.5:.8);
+ }
+ const tx=new THREE.CanvasTexture(c);tx.wrapS=tx.wrapT=THREE.RepeatWrapping;
+ tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ const mat=new THREE.MeshLambertMaterial({map:tx,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+ floorMats.set(type,mat);return mat;
+}
 function makeModel(a,o){
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
-  const w=a.w*o.scale,d=a.d*o.scale,points=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+  const w=a.w*o.scale,d=a.d*o.scale,points=[],uvs=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
   for(const [x,z] of [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]]){
-   const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;points.push(x,elevation(xx,zz)-o.y+.14,z);
+   const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;
+   points.push(x,floorElevation(xx,zz)-o.y+.20,z);
+   uvs.push(xx/4,zz/4);
   }
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   geo.setIndex([0,1,2,0,2,3]);geo.computeVertexNormals();
-  group.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:a.id==='floor-stone'?0xbcb3a3:a.id==='floor-earth'?0x98775c:0xb28a60,side:THREE.DoubleSide})));
+  group.add(new THREE.Mesh(geo,floorMaterial(a.id)));
   return group;
  }
  const m=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale,3*o.scale,a.d*o.scale),new THREE.MeshLambertMaterial({color:0xbaa99c}));
@@ -309,7 +372,7 @@ async function rebuildPlaced(){
   const node=await buildPlaced(o);if(rebuildPlaced.token!==token)return;
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
- render();showProps();
+ updateTrees(true);render();showProps();
 }
 function showProps(){
  const o=records.find(x=>x.id===selected),name=o?BY_ID.get(o.type).label:chosen?BY_ID.get(chosen).label:'EDITOR 3D';
@@ -351,7 +414,7 @@ function previewGhost(ev){
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
  ghost.position.set(x,elevation(x,z)+.2,z);ghost.visible=true;
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1,clearTrees:!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')});
  const outline=ghost.children[0];
  if(outline?.material?.color)outline.material.color.setHex(check.ok?0x88ffe0:0xff6b89);
  status(check.ok?'Vista previa: '+a.label+' · X '+x+' Z '+z:'No se puede colocar aquí: '+check.why);
@@ -377,16 +440,33 @@ function drawCats(){for(const cat of [...new Set(base.map(x=>x.cat))]){
 function addAt(x,z){
  if(!chosen||!map)return false;
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
- const check=validPosition(o);if(!check.ok){status('No se puede colocar: '+check.why);return false;}
+ if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
+ const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
+ if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
  o.y=check.y;records.push(o);
- buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){groups.placed.add(root);viewCache.set(o.id,root);render();}});
- status('Añadido '+a.label+' · X '+o.x+' / Z '+o.z);return true;
+ buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){
+  groups.placed.add(root);viewCache.set(o.id,root);
+  if(!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
+   selectObject(o.id);
+   status('✓ '+a.label+' colocado. Ya podés MOVER, GIRAR o cambiar tamaño.');
+  }
+  render();
+ }});
+ if(o.clearTrees)updateTrees(true);
+ status('✓ Añadido '+a.label+' · X '+o.x+' / Z '+o.z);
+ return o.id;
 }
 function paintLine(a,b){
  const steps=Math.max(1,Math.ceil(Math.hypot(a.x-b.x,a.z-b.z)/2));
- for(let i=0;i<=steps;i++)addAt(a.x+(b.x-a.x)*i/steps,a.z+(b.z-a.z)*i/steps);
- save();
+ // A true grid brush: never skip 4m paving cells when the finger moves quickly.
+ let x0=Math.round(a.x/4),z0=Math.round(a.z/4),x1=Math.round(b.x/4),z1=Math.round(b.z/4);
+ let dx=Math.abs(x1-x0),dz=-Math.abs(z1-z0),sx=x0<x1?1:-1,sz=z0<z1?1:-1,err=dx+dz,guard=0;
+ while(guard++<300){
+  addAt(x0*4,z0*4);
+  if(x0===x1&&z0===z1)break;
+  const e=2*err;if(e>=dz){err+=dz;x0+=sx;}if(e<=dx){err+=dx;z0+=sz;}
+ }
 }
 function clickPlaced(ev){
  positionPointer(ev);const hit=raycaster.intersectObjects(groups.placed.children,true);
@@ -442,19 +522,56 @@ function bindUI(){
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
+ // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
-  if(mode==='place'&&chosen&&e.isPrimary){
-   const h=hitTerrain(e);if(!h)return;
-   recordSnapshot();dragPainting=chosen.startsWith('floor-');lastPaint=h;
-   if(!addAt(h.x,h.z))history.pop();save();
+  if(!e.isPrimary)return;
+  downPos={x:e.clientX,y:e.clientY};
+  if(mode==='place'&&chosen){
+   e.preventDefault();
+   canvas.setPointerCapture?.(e.pointerId);
+   activePointer=e.pointerId;
+   const hit=hitTerrain(e);
+   if(!hit)return;
+   const floor=chosen.startsWith('floor-');
+   recordSnapshot();
+   if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
+   else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
   if(mode==='place')previewGhost(e);
-  if(mode==='place'&&dragPainting&&(e.buttons&1)){const h=hitTerrain(e);if(h&&lastPaint){paintLine(lastPaint,h);lastPaint=h;}}
+  if(mode==='place'&&activePointer===e.pointerId){
+   const h=hitTerrain(e);
+   if(dragPainting&&lastPaint&&h){paintLine(lastPaint,h);lastPaint=h;}
+   if(pendingDrop&&h)pendingDrop=h;
+  }
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
- const end=()=>{dragPainting=false;lastPaint=null;save();};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+ canvas.addEventListener('pointerup',e=>{
+  if(mode==='place'&&activePointer===e.pointerId){
+   if(pendingDrop){
+    const h=hitTerrain(e)||pendingDrop;
+    if(!addAt(h.x,h.z))history.pop();
+    pendingDrop=null;
+   }
+   save();
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   activePointer=null;dragPainting=false;lastPaint=null;
+  }else if(mode==='orbit'&&downPos&&Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y)<9){
+   // Optional direct selection by single tap, without switching camera mode first.
+   const id=clickPlaced(e);if(id)selectObject(id);
+  }
+  downPos=null;
+ });
+ canvas.addEventListener('pointercancel',e=>{
+  if(activePointer===e.pointerId){
+   activePointer=null;pendingDrop=null;dragPainting=false;lastPaint=null;
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   save();
+  }
+  downPos=null;
+ });
 }
 function installGizmo(){
  gizmo=new TransformControls(cam,renderer.domElement);scene.add(gizmo.getHelper());
@@ -465,11 +582,12 @@ function installGizmo(){
   if(ev.value){before=JSON.stringify(records);return;}
   const o=records.find(x=>x.id===selected),root=viewCache.get(selected);if(!o||!root)return;
   const old={...o};o.x=snap(root.position.x,1);o.z=snap(root.position.z,1);
-  o.yaw=root.rotation.y;o.scale=clamp(Math.round(root.scale.x*100)/100,.5,3);
+  o.yaw=root.rotation.y;o.scale=mode==='scale'?clamp(Math.round(old.scale*Math.max(.2,(root.scale.x+root.scale.z)*.5)*100)/100,.5,3):old.scale;
   const check=validPosition(o,o.id);
-  if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;status('Ubicación bloqueada: '+check.why);}
+  if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;root.scale.setScalar(1);status('Ubicación bloqueada: '+check.why);}
   else{o.y=check.y;root.position.y=o.y;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
-  if(mode==='scale')rebuildPlaced();showProps();render();
+  if(mode==='scale')rebuildPlaced();else if(mode==='move')updateTrees(true);
+  showProps();render();
  });
  gizmo.addEventListener('objectChange',()=>{
   const obj=viewCache.get(selected);if(obj&&mode==='move')obj.position.y=elevation(obj.position.x,obj.position.z);
@@ -500,5 +618,18 @@ async function boot(){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
  }
+}
+// Test-only viewport inspection; available only with explicit ?hfqa query.
+if(new URLSearchParams(location.search).has('hfqa')){
+ window.__hfWorldForge3DQA={
+  focus,
+  validPosition,
+  point(x,z){
+   const world=new THREE.Vector3(x,elevation(x,z)+1,z);
+   const ndc=world.project(cam),r=renderer.domElement.getBoundingClientRect();
+   return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
+  },
+  objects(){return records.map(x=>({...x}));}
+ };
 }
 boot();

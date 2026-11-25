@@ -42,7 +42,7 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE · 3D V0.5</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE · 3D V0.6</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
 <button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
@@ -50,7 +50,7 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 <main><aside>
 <div id="cats"></div><input id="search" placeholder="Buscar edificios, pisos, NPC…" aria-label="Buscar objetos"/>
 <div id="catalog"></div>
-<div id="props"><strong>EDITOR TRIDIMENSIONAL</strong><small>Elegí un objeto y tocá el terreno para colocarlo. Seleccionalo y usá MOVER, GIRAR o ESCALA. La cámara es independiente del juego.</small>
+<div id="props"><strong>EDITOR TRIDIMENSIONAL</strong><small>Elegí un edificio, arrastrá su vista previa y soltá para colocarlo. En PISOS, deslizá para pintar caminos. El mundo original queda intacto.</small>
 <div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="remove">🗑 Borrar</button></div>
 </div></aside>
 <section id="canvas-holder">
@@ -64,9 +64,9 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 </div>
 <div id="top-info"><div id="coords">X — / Z —</div><div id="metrics">3D editor · mapa auténtico</div></div>
 <div id="status">Preparando terreno 3D original…</div>
-<div id="tips">PC: botón derecho para mover mapa; izquierdo para orbitar · Android: dos dedos para mover/zoom</div>
+<div id="tips">PC: clic para colocar; arrastrá para pintar pisos · Android: tocá para construir, deslizá para pintar; 2 dedos para mover/zoom</div>
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p525"></script>
+<script type="module" src="./world-forge-3d.js?v=p526"></script>
 </body></html>

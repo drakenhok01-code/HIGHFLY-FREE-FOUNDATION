@@ -83,7 +83,7 @@ if(begin<0||end<0)throw Error('Unsung forest populate anchors missing');
 // Original native source (commit pinned by HIGHFLY config) executes forest exclusion,
 // sampling, procedural seed and hand-placed species. Not approximated random dots.
 const nativeForestSource=source.slice(begin,end);
-(new Function('POOLS','routes','sites','forest',nativeForestSource))(POOLS,routes,sites,forest);
+(new Function('POOLS','routes','sites','forest','hfWFClearTree',nativeForestSource))(POOLS,routes,sites,forest,()=>false);
 const trees=forest.trees.map(t=>[
  +t.x.toFixed(2),+t.z.toFixed(2),+t.s.toFixed(3),t.v
 ]);
@@ -94,7 +94,7 @@ const overlay={
  routes,
  pools:POOLS.map(p=>({id:p.id,x:p.x,z:p.z,r:p.r,level:p.level,out:p.out})),
  plazas:(sites.plazas||[]).map(p=>({x:p[0],z:p[1],r:p[2]})),
- floors:(sites.floors||[]).map(f=>({x:f.x,z:f.z,r:f.r||null,w:f.w||null,d:f.d||null})),
+ floors:(sites.floors||[]).map(f=>({x:f.x,y:f.y,z:f.z,r:f.r||null,w:f.w||null,d:f.d||null,half:!!f.half})),
  outer:(sites.outer||[]).map(({id,x,z,r,away,style})=>({id,x,z,r,away,style})),
  lanterns:(sites.lanterns||[]).map(([x,y,z])=>({x,z})),
  spires:(sites.spires||[]).map(({id,x,z})=>({id,x,z})),

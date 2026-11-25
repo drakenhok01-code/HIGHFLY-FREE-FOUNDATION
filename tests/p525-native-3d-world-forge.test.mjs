@@ -8,7 +8,7 @@ const aerialUI=read('public/highfly/world-forge.html');
 const export3d=read('scripts/p522-native-world-export.mjs');
 const build=read('scripts/f0-build.mjs');
 const orig=read('src/highfly/p521-world-forge-runtime.mjs');
-assert.match(ui,/WORLD FORGE · 3D V0\.5/);
+assert.match(ui,/WORLD FORGE · 3D V0\.[56]/);
 assert.match(ui,/id="canvas-holder"/);
 assert.match(ui,/world-forge-3d\.js/);
 assert.match(aerialUI,/id="view-3d"/);
