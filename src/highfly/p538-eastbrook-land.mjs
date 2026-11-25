@@ -11,7 +11,7 @@
 export const EASTBROOK_LAND_ANCHOR=Object.freeze({x:-512,z:-70});
 export const EASTBROOK_LAND_SPECS=Object.freeze([
  {role:'banco',source:'eastbrook_bank',type:'kaykit-home-b',dx:-47.99,dz:-16.33,yaw:225,scale:1.15,required:true},
- {role:'herreria',source:'eastbrook_smithy',type:'kaykit-home-a',wanted:'kaykit-blacksmith',dx:9.80,dz:26.80,yaw:20,scale:1.18,required:true},
+ {role:'herreria',source:'eastbrook_smithy',type:'kaykit-blacksmith',wanted:'kaykit-blacksmith',dx:9.80,dz:26.80,yaw:20,scale:1.18,required:true},
  {role:'taberna',source:'eastbrook_inn',type:'kaykit-tavern',dx:-16.34,dz:41.37,yaw:24,scale:1.18,required:true},
  {role:'capilla',source:'eastbrook_chapel',type:'kaykit-church',dx:42.20,dz:-17.62,yaw:125,scale:1.15,required:true},
  {role:'botica',source:'eastbrook_apothecary',type:'kaykit-home-a',dx:-16.59,dz:-25.63,yaw:175,scale:1.16,required:true},
@@ -21,10 +21,11 @@ export const EASTBROOK_LAND_SPECS=Object.freeze([
  {role:'casa-sur',source:null,type:'kaykit-home-b',dx:-55,dz:48,yaw:-30,scale:1.05,required:false}
 ]);
 // P539: the original FREE hexagon blacksmith did not load in the observed
-// P538 browser. Use a genuine tested CC0 house, not a restricted paid building.
+// P538 browser. Prefer the original; when loading fails, use a genuine CC0 house.
 // Retain the desired ID to make the pending exact visual replacement explicit.
 export const EASTBROOK_PENDING=Object.freeze([{role:'herreria',wanted:'kaykit-blacksmith',replacement:'kaykit-home-a',reason:'El prefab completo no cargó en P538; reemplazo 3D CC0 funcional'}]);
 export const EASTBROOK_FREE_FALLBACKS=Object.freeze({
+ 'kaykit-blacksmith':['kaykit-home-a','kaykit-home-b','unsung-hall'],
  'kaykit-home-a':['kaykit-home-b','kaykit-tavern','unsung-hall'],
  'kaykit-home-b':['kaykit-home-a','kaykit-tavern','unsung-hall'],
  'kaykit-tavern':['kaykit-home-a','kaykit-home-b','unsung-hall'],
