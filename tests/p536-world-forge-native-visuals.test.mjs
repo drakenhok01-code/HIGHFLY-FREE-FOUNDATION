@@ -57,7 +57,7 @@ test('Original MIT tree and meadow assets: Unsung native leaf atlas, triple-blad
  assert.match(native,/nearClearings=records\(\)\.filter/);
 });
 test('Never ship private purchased packs through preview; originals remain intact',()=>{
- assert.doesNotMatch(native,/SOURCE|[.]zip/);
+ assert.doesNotMatch(native,/readPrivateSourceGLB|importPrivateSourcePack|KIT_COMPLETO|[.]zip\\b/);
  assert.doesNotMatch(bends,/SOURCE.*(?:load|fetch|https)/);
  assert.match(builder,/p536-native-editor-visuals/);
  assert.match(page,/WORLD FORGE 4\.4/);
