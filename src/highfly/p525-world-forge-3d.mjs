@@ -64,7 +64,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -643,10 +643,31 @@ function bindUI(){
    recordSnapshot();
    if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
+  }else if(mode==='move'&&selected&&!gizmo?.dragging&&clickPlaced(e)===selected){
+   // Directly grab the complete model, just like Age of Empires object placement.
+   const data=records.find(o=>o.id===selected),root=viewCache.get(selected);
+   if(data&&root){
+    e.preventDefault();activePointer=e.pointerId;
+    canvas.setPointerCapture?.(e.pointerId);
+    movingExisting={id:selected,old:{...data}};
+    gizmo?.detach();
+    status('Arrastrá '+BY_ID.get(data.type).label+' por el terreno y soltá para confirmar.');
+   }
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
   if(mode==='place')previewGhost(e);
+  if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
+   const hit=hitTerrain(e),root=viewCache.get(movingExisting.id),saved=movingExisting.old;
+   if(hit&&root){
+    const nx=snap(hit.x,1),nz=snap(hit.z,1),
+      safety=validPosition({...saved,x:nx,z:nz},saved.id);
+    root.position.set(nx,(safety.ok?safety.y:elevation(nx,nz))+.035,nz);
+    status(safety.ok?'✓ Soltá para ubicar '+BY_ID.get(saved.type).label+' en X '+nx+' Z '+nz:
+      'Posición bloqueada: '+safety.why);
+    render();
+   }
+  }
   if(mode==='place'&&activePointer===e.pointerId){
    const h=hitTerrain(e);
    if(dragPainting&&lastPaint&&h){paintLine(lastPaint,h);lastPaint=h;}
@@ -655,6 +676,27 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
+   const item=records.find(x=>x.id===movingExisting.id),root=viewCache.get(movingExisting.id),old=movingExisting.old;
+   if(item&&root){
+    const candidate={...old,x:snap(root.position.x,1),z:snap(root.position.z,1)};
+    const safety=validPosition(candidate,item.id);
+    if(safety.ok){
+     if(candidate.x!==old.x||candidate.z!==old.z){
+      recordSnapshot();Object.assign(item,candidate,{y:safety.y});save();
+      updateTrees(true);
+     }
+     root.position.set(item.x,safety.y+.035,item.z);
+     status('✓ '+BY_ID.get(item.type).label+' colocado en X '+item.x+' Z '+item.z);
+    }else{
+     root.position.set(old.x,old.y+.035,old.z);
+     status('No se movió: '+safety.why);
+    }
+    gizmo?.attach(root);showProps();render();
+   }
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   movingExisting=null;activePointer=null;downPos=null;return;
+  }
   if(mode==='place'&&activePointer===e.pointerId){
    if(pendingDrop){
     const h=hitTerrain(e)||pendingDrop;
@@ -671,6 +713,11 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(movingExisting&&activePointer===e.pointerId){
+   const root=viewCache.get(movingExisting.id),old=movingExisting.old;
+   if(root){root.position.set(old.x,old.y+.035,old.z);gizmo?.attach(root);render();}
+   movingExisting=null;
+  }
   if(activePointer===e.pointerId){
    activePointer=null;pendingDrop=null;dragPainting=false;lastPaint=null;
    if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
