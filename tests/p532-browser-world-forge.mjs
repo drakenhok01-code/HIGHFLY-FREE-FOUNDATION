@@ -296,8 +296,19 @@ try{
  await page.evaluate(()=>{
   [...document.querySelectorAll('#catalog button')].find(e=>e.textContent.includes('Arbusto con flores'))?.click();
  });
- await page.waitForFunction(()=>window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers')||
-  window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),{timeout:20000});
+ try{
+  await page.waitForFunction(()=>window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers')||
+   window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),{timeout:16000});
+ }catch{
+  const qload=await page.evaluate(()=>({
+   selected:window.__hfWorldForge3DQA?.placement(),
+   failure:window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),
+   status:document.querySelector('#status')?.textContent,
+   diag:window.__highfly3DEditorHealth?.lines?.slice(-8),
+   cards:[...document.querySelectorAll('#catalog button')].map(x=>x.textContent).slice(0,30)
+  }));
+  throw Error('Quaternius bush never started / loaded: '+JSON.stringify({qload,errors}).slice(0,6000));
+ }
  const qload=await page.evaluate(()=>({
   ready:window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers'),
   failure:window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),
