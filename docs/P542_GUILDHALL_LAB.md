@@ -1,0 +1,4 @@
+# P5.4.2 Guildhall lab (isolated)
+Base P5.4.1, no deployment, no merge, separate localStorage key. No hex floor.
+Seven original Guildhall JSON compositions copied under MIT from https://github.com/Codestz/guildhall/tree/main/data/tiles; license retained. The five-prefab test village is a HIGHFLY arrangement of the original component groups, not a copy of a full Guildhall seed. Each group's relative X/Z and yaw are retained; unit=6 m is a calibration hypothesis. Existing KayKit models reused, other assets mapped to public catalog equivalents; unhandled elevated or tilted pieces omitted with report. No upstream models copied.
+Use /preview-p542/highfly/world-forge-3d.html on an isolated build. Center camera over clear ground, choose prefab, rotate group, click Colocar conjunto. Entire group rejected if native terrain or existing scene rejects any item. Undo group in one operation. RPG uses independent layout key. No visual parity or Android FPS claim until verified.

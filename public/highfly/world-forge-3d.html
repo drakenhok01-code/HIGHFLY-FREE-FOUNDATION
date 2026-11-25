@@ -52,13 +52,13 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.9 · P5.4.1 · EDICIÓN LIBRE + PENDIENTE AUTO</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE LAB · P5.4.2 · GUILDHALL + UNSUNG</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
 <button id="pilot-eastbrook" hidden style="display:none" title="Desactivado: la aldea la construye el usuario">Importación automática desactivada</button><button id="preset-village" hidden style="display:none" title="Desactivado: construcción manual">Generador de aldea desactivado</button><button id="import-source" hidden style="display:none" title="Deshabilitado: laboratorio solo CC0/MIT público">📦 SOURCE (no se usa en P5.3.2)</button><span style="color:#e9cb93;font-size:11px;white-space:nowrap" aria-label="Modo manual activo">🧱 Construcción libre</span><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
 </div></header>
 <main><aside>
-<div class="catalog-heading">🏰 CONSTRUCTOR · KAYKIT + QUATERNIUS + UNSUNG · CC0/MIT</div>
+<div id="guildhall-lab" hidden style="padding:8px;background:#211b35"><strong>🏰 Guildhall · prueba aislada</strong><p style="font-size:11px">Centrar cámara en terreno libre. Elige una composición sin suelo hexagonal.</p><select id="guildhall-prefab" style="max-width:100%"></select><select id="guildhall-angle"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select><button id="guildhall-place">Colocar conjunto</button></div><div class="catalog-heading">🏰 CONSTRUCTOR · KAYKIT + QUATERNIUS + UNSUNG · CC0/MIT</div>
 <div id="cats" role="tablist" aria-label="Colección de construcción"></div>
 <input id="search" placeholder="🔎 Buscar modelos, oficios, árboles, arquitectura…" aria-label="Buscar objetos"/>
 <div id="catalog-meta" aria-live="polite">Cargando catálogo…</div>
@@ -87,5 +87,5 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p541"></script>
+<script type="module" src="./world-forge-3d.js?v=p542"></script>
 </body></html>

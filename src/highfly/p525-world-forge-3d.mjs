@@ -22,8 +22,10 @@ import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-r
 import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
+import {guildhallPlan,GUILDHALL_OPTIONS,GUILDHALL_KEY} from './p542-guildhall-prefabs.mjs';
 const $=id=>document.getElementById(id);
-const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true;
+const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true;
+const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
@@ -33,9 +35,9 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P542_PREVIEW?GUILDHALL_KEY:P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P542_PREVIEW?'hf-world-forge-view-p542-guildhall-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P542_PREVIEW?'hf-world-forge-layout-p542-guildhall-backup':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -439,7 +441,7 @@ function restore(){
   // P541 is the real P539 editor with NO prebuilt Arvelia. Bring across
   // only the player's own work. Imported P538/P539/P540 towns are excluded.
   // Both the source save and the old Pages previews remain untouched.
-  if(P541_PREVIEW&&!old&&!new URLSearchParams(location.search).has('hfqa')){
+  if(P541_PREVIEW&&!P542_PREVIEW&&!old&&!new URLSearchParams(location.search).has('hfqa')){
    const originalKeys=['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'];
    for(const previousKey of originalKeys){
     const previous=localStorage.getItem(previousKey);
@@ -1144,7 +1146,42 @@ function exportJSON(){
  const blob=new Blob([JSON.stringify({schema:1,world:'unsung-vale',objects:records},null,2)],{type:'application/json'});
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
 }
+async function loadGuildhallPilot(){
+ if(!P542_PREVIEW||!map||!overview||!architectPixel){status('Laboratorio P542: primero cargá el terreno nativo.');return false;}
+ const button=$('guildhall-place'),select=$('guildhall-prefab');
+ button.disabled=true;
+ try{
+ const id=select.value,yaw=Number($('guildhall-angle').value)*Math.PI/180;
+ const anchor={x:orbit.target.x,z:orbit.target.z};
+ const plan=guildhallPlan(id,{...anchor,yaw,stamp:Date.now().toString(36),hasAsset:t=>BY_ID.has(t)});
+ if(!plan.objects.length||records.length+plan.objects.length>2500)throw Error('Plano vacío o límite de piezas');
+ for(const item of plan.objects){
+  const checked=validPosition(item);
+  if(!checked.ok)throw Error(item.type+': '+checked.why+'; mové el centro de cámara a terreno despejado.');
+  item.y=checked.y;
+ }
+ for(const type of new Set(plan.objects.map(o=>o.type))){
+  const a=BY_ID.get(type);
+  if(realPrefab(a)&&!await getGLTF(a))throw Error('No cargó '+a.label+'; nada colocado');
+ }
+ // Preserve intended accessory overlaps within each source prefab.
+ recordSnapshot();
+ records.push(...plan.objects);save();await rebuildPlaced();
+ window.__hfGuildhallLastPlan=plan;
+ log('Guildhall P542',plan.objects.length+' piezas, '+plan.substitutions.length+' sustituciones, '+plan.omitted.length+' omitidas');
+ status('Guildhall: '+plan.objects.length+' piezas · '+plan.substitutions.length+' equivalentes · '+plan.omitted.length+' omitidas. Deshacer revierte el conjunto.');
+ return true;
+ }catch(err){status('Guildhall: '+err.message);return false;}
+ finally{button.disabled=false;}
+}
+
 function bindUI(){
+ if(P542_PREVIEW){
+  $('guildhall-lab').hidden=false;
+  $('map2d').hidden=true;
+  for(const p of GUILDHALL_OPTIONS){const option=document.createElement('option');option.value=p.id;option.textContent=p.label;$('guildhall-prefab').append(option);}
+  $('guildhall-place').onclick=loadGuildhallPilot;
+ }
  if($('pilot-eastbrook'))$('pilot-eastbrook').onclick=()=>loadEastbrookLand();
  $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
  $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};

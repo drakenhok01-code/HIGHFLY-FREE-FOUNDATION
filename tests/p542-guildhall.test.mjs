@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {guildhallPlan,GUILDHALL_TILES,GUILDHALL_KEY} from '../src/highfly/p542-guildhall-prefabs.mjs';
+import {KAYKIT_FREE_IDS} from '../src/highfly/p531-kaykit-free-catalog.mjs';
+import {QUATERNIUS_CC0_IDS} from '../src/highfly/p532-quaternius-cc0-catalog.mjs';
+import {VILLAGE_DECOR_IDS} from '../src/highfly/p528-village-layout.mjs';
+import {PUBLIC_URBAN_IDS} from '../src/highfly/p532-public-urban-assets.mjs';
+const known=t=>[KAYKIT_FREE_IDS,QUATERNIUS_CC0_IDS,VILLAGE_DECOR_IDS,PUBLIC_URBAN_IDS].some(s=>s.has(t))||t==='bench';
+test('all source objects explicitly accounted for; no hex terrain',()=>{for(const t of GUILDHALL_TILES){const p=guildhallPlan(t.id,{x:100,z:200,hasAsset:known});assert.equal(p.objects.length+p.omitted.length,t.pieces.length);assert.ok(p.objects.every(o=>known(o.type)&&!o.type.includes('hex-')&&o.scale>=.5&&o.scale<=3));}});
+test('preserves house-pair positions and source yaw',()=>{const p=guildhallPlan('house-pair',{x:100,z:200,unit:6,hasAsset:known});const a=p.objects[0],b=p.objects[1];assert.equal(a.type,'kaykit-home-a');assert.equal(b.type,'free-building-home-a-blue');assert.ok(Math.abs((b.x-a.x)-2.05*6)<1e-9);assert.ok(Math.abs((b.z-a.z)-.4*6)<1e-9);assert.equal(b.yaw,-.5);});
+test('rotates the entire group; no main save key',()=>{const a=guildhallPlan('house-pair',{x:0,z:0,yaw:Math.PI/2}).objects[0];assert.ok(Math.abs(a.x+3.6)<1e-9);assert.ok(Math.abs(a.z-5.7)<1e-9);assert.match(GUILDHALL_KEY,/p542/);});
+test('pilot and unknown asset accounting',()=>{const p=guildhallPlan('pilot',{x:0,z:0,hasAsset:known});assert.ok(p.objects.length>=20);assert.equal(new Set(p.objects.map(o=>o.id)).size,p.objects.length);assert.equal(guildhallPlan('pilot',{x:0,z:0,hasAsset:()=>false}).objects.length,0);assert.throws(()=>guildhallPlan('bad',{x:0,z:0}));});
