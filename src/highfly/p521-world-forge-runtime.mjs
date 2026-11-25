@@ -22,13 +22,15 @@ import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-r
 import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {gradePlanFor,gradePatchGrid} from './p537-grade-parcels.mjs';
 import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
+import {buildArveliaMasterplan} from './p540-arvelia-masterplan.mjs';
 import {installArveliaQuests} from './p538-arvelia-quests.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true;
+const P540_PREVIEW=globalThis.location?.pathname?.includes('/preview-p540/')===true;
+const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P540_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
@@ -37,7 +39,7 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P540_PREVIEW?'hf-world-forge-layout-p540-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -140,7 +142,8 @@ function footprint(world,o){
  const basicY=Math.max(...heights),basicSlope=basicY-Math.min(...heights);
  const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type)||UNSUNG_ORIGINAL_ASSETS.find(a=>a.id===o.type);
  const gradeBuilding=P537_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
-  ((asset?.kind==='building')||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||['guild','forge','inn','house','timber','granary','warehouse','mill','fishery','ranger'].includes(o.type));
+  ((asset?.kind==='building')||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||['guild','forge','inn','house','timber','granary','warehouse','mill','fishery','ranger'].includes(o.type)||
+   (P540_PREVIEW&&['hf-fountain-stone','village-gazebo','hf-round-flowerbed'].includes(o.type)));
  const grade=gradeBuilding?gradePlanFor(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{apron:3,subdivisions:6,dynamicApron:P539_PREVIEW}):null;
  const y=grade?grade.y:basicY,slope=grade?grade.slope:basicSlope;
  if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>(P539_PREVIEW&&gradeBuilding?24:Math.min(5.2,1.75+o.scale*1.5)))
@@ -271,10 +274,52 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
  let loaded=loadedLayout(storage);
 
+
+ // P540: the same REAL editable master plan is available even when entering
+ // the RPG directly before the World Forge editor. Editor's saved JSON wins.
+ // Private SOURCE, AI mockup-only buildings and ClaudeCraft art are never used.
+ if(P540_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
+  try{
+   const names=['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p538-v1',
+    'hf-world-forge-layout-p537-v1'];
+   let prior={ok:false,objects:[]};
+   for(const name of names){
+    try{
+     const value=validateWorldForgeLayout(JSON.parse(storage?.getItem(name)||'null'));
+     if(value.ok){prior=value;break;}
+    }catch{}
+   }
+   const others=prior.ok?prior.objects.filter(o=>o.highflyTown!=='arvelia'):[];
+   const plan=buildArveliaMasterplan({
+    existing:others,
+    sizeOf:type=>BOUNDS[type]||null,
+    buildingTypes:{herreria:'kaykit-home-a'},
+    canPlace:o=>{
+     const fp=footprint(game.world,o);
+     return fp?{ok:true,y:fp.y}:{ok:false};
+    }
+   });
+   const objects=plan.complete?[...others,...plan.objects]:others;
+   if(objects.length){
+    const payload={schema:1,world:'unsung-vale',
+     author:'HIGHFLY P540 Arvelia · town blueprint with certified public CC0 and Unsung assets',
+     objects};
+    const check=validateWorldForgeLayout(payload);
+    if(check.ok){
+     storage?.setItem(WORLD_FORGE_KEY,JSON.stringify(payload));
+     loaded=check;
+     console.info('[HIGHFLY P540 MASTERPLAN]',plan.complete?
+      'Full Arvelia generated and saved in RPG; 3D editor sees identical JSON':
+      'P539 preserved; masterplan terrain rejected',plan.counts||{},plan.reason);
+    }
+   }
+  }catch(err){console.warn('[HIGHFLY P540]',err);}
+ }
+
  // P538: autoload the same terrain-validated town in the playable RPG
  // even if the user enters the game before opening the editor. Preserve P537
  // as a READ-ONLY backup, including the player's placed structures.
- if(P538_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
+ if(!P540_PREVIEW&&P538_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
   try{
    const prior=validateWorldForgeLayout(JSON.parse(storage?.getItem(P539_PREVIEW?'hf-world-forge-layout-p538-v1':'hf-world-forge-layout-p537-v1')||'null'));
    const backup=validateWorldForgeLayout(JSON.parse(storage?.getItem('hf-world-forge-layout-p537-v1')||'null'));
