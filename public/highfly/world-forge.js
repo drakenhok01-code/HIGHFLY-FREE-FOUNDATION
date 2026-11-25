@@ -283,7 +283,7 @@ function itemAt(x,z){
 function insert(type,x,z){
  const item=BY_ID.get(type);if(!item||item.cat==='Bocetos antiguos')return false;
  const q=item.floor?4:2,o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type,x:cell(x,q),z:cell(z,q),yaw:0,scale:1,y:0};
- if(!item.floor&&!type.startsWith('npc-'))o.clearTrees=true;
+ if(item.floor||!type.startsWith('npc-'))o.clearTrees=true;
  const status=siteStatus(o);
  if(!status.ok){safe('✕ No se puede colocar '+item.label+': '+status.reason);return false;}
  if(item.floor&&objects.some(p=>p.type===type&&dist(o,p)<1.1))return false;
@@ -556,7 +556,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
@@ -568,7 +568,7 @@ window.addEventListener('keydown',e=>{
  if(e.key.toLowerCase()==='r'&&selectedId){$('rotate-right').click();}
 });
 window.addEventListener('resize',resize);
-for(const cat of [...new Set(CATALOG.map(x=>x.cat))]){
+for(const cat of ['Edificios','KayKit FREE','SOURCE · Edificios','SOURCE · Accesorios','Unsung original','Pisos','Decoración','Naturaleza','NPC']){
  const btn=document.createElement('button');btn.textContent=cat;btn.dataset.cat=cat;btn.onclick=()=>setCategory(cat);$('categories').append(btn);
 }
 setCategory(category);loadLocal();resize();updateProps();syncTools();
