@@ -6,6 +6,7 @@ import {KAYKIT_FREE_ALL} from './p531-kaykit-free-catalog.mjs';
 import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
 import {localizePublicAsset} from './p532-spanish-labels.mjs';
 import {PUBLIC_URBAN_ASSETS} from './p532-public-urban-assets.mjs';
+import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,distanceToCurvedRoad} from './p533-curved-road-path.mjs';
 const $=id=>document.getElementById(id);
 // Autodiagnóstico visible, copiable y sin datos personales.
 // Nunca registra coordenadas del usuario ni contenido del guardado local.
@@ -29,11 +30,12 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
+const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
+const STORE=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -89,11 +91,12 @@ const CATALOG=[
  {id:'npc-guard',label:'NPC guardia',icon:'🛡️',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-artisan',label:'NPC artesano',icon:'👨‍🏭',cat:'NPC',w:1,d:1,h:1.8}
 ];
-for(const source of KAYKIT_FREE_ALL){const extra=P532_PREVIEW?localizePublicAsset(source):source;const ix=CATALOG.findIndex(x=>x.id===extra.id);
+for(const source of KAYKIT_FREE_ALL){const extra=(P532_PREVIEW||P533_PREVIEW)?localizePublicAsset(source):source;const ix=CATALOG.findIndex(x=>x.id===extra.id);
  if(ix>=0)CATALOG[ix]={...CATALOG[ix],...extra,free:'building_'+extra.label};
  else CATALOG.push({...extra});}
 for(const p of QUATERNIUS_CC0_ALL)CATALOG.push({...p});
 for(const p of PUBLIC_URBAN_ASSETS)CATALOG.push({...p,publicUrban:true});
+if(P533_PREVIEW)CATALOG.push({...CURVED_ROAD_CATALOG,floor:true});
 for(const [id,label,icon,w,d,h] of [
  ['unsung-tree-ember','Arce carmesí original','🍁',12,12,15],
  ['unsung-tree-blossom','Cerezo rosa original','🌸',10,10,9],
@@ -147,10 +150,10 @@ const VILLAGE_COLORS={'village-blossom':'#e69dbd','village-lilac':'#ba95d0',
  'village-gazebo':'#e4d6bf','village-banner':'#b6475d',
  'village-lamp':'#f0c36d','village-crates':'#aa8058'};
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
-let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
+let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category=(P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem((P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
+ const previous=JSON.parse(localStorage.getItem((P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -229,7 +232,7 @@ function loadLocal(){
  }catch{}
  $('items').textContent=objects.length+' elementos';
 }
-function validItem(o){return !!(o&&typeof o.id==='string'&&BY_ID.has(o.type)&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Math.abs(o.x)<8190&&Math.abs(o.z)<8190&&Number.isFinite(o.yaw)&&Number.isFinite(o.scale)&&o.scale>=.5&&o.scale<=3);}
+function validItem(o){return !!(o&&(!isCurvedRoad(o)||roadPathValid(o).ok)&&typeof o.id==='string'&&BY_ID.has(o.type)&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Math.abs(o.x)<8190&&Math.abs(o.z)<8190&&Number.isFinite(o.yaw)&&Number.isFinite(o.scale)&&o.scale>=.5&&o.scale<=3);}
 async function loadHeightPNG(meta,name){
  const where=new URL('./native-terrain-'+name+'.png',import.meta.url);
  const image=await imageFrom(where);
@@ -269,6 +272,13 @@ const sea=(x,z)=>heightAt(x,z)<-.05;
 function siteStatus(o,ignoreId=null){
  if(!mapData)return {ok:false,reason:'Cargando mapa'};
  const item=getAsset(o);if(!item)return {ok:false,reason:'Objeto desconocido'};
+ if(isCurvedRoad(o)){
+  const v=roadPathValid(o);
+  if(!v.ok)return {ok:false,reason:v.reason};
+  const p=sampleCurvedRoad(o.points,3);
+  for(const q of p)if(heightAt(q.x,q.z)<-.1)return {ok:false,reason:'Camino bajo el agua'};
+  return {ok:true,y:heightAt(o.x,o.z),grade:0};
+ }
  const w=item.w*o.scale,d=item.d*o.scale,rad=Math.hypot(w,d)/2;
  const c=Math.cos(o.yaw),s=Math.sin(o.yaw),samples=[];
  for(const [dx,dz] of [[0,0],[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
@@ -295,6 +305,11 @@ function siteStatus(o,ignoreId=null){
 function itemAt(x,z){
  for(let i=objects.length-1;i>=0;i--){
   const o=objects[i],item=getAsset(o),r=Math.max(item.w,item.d)*o.scale*.62;
+  if(isCurvedRoad(o)){
+   const samples=sampleCurvedRoad(o.points,2);
+   if(distanceToCurvedRoad(x,z,samples)<=Math.max(o.width*.5+1,3/view.zoom))return o;
+   continue;
+  }
   if(Math.hypot(x-o.x,z-o.z)<Math.max(r,3/view.zoom))return o;
  }
  return null;
@@ -349,6 +364,17 @@ function resize(){
  draw();
 }
 function drawItem(o,ghost=false){
+ if(isCurvedRoad(o)){
+  const pts=sampleCurvedRoad(o.points,1.8);if(!pts.length)return;
+  const selected=o.id===selectedId;
+  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+  const trace=()=>{ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].z);for(const p of pts.slice(1))ctx.lineTo(p.x,p.z);};
+  trace();ctx.strokeStyle=selected?'#74eee5':'#746d65';ctx.lineWidth=o.width+.75;ctx.stroke();
+  trace();ctx.strokeStyle='#dbcfad';ctx.lineWidth=o.width+.43;ctx.stroke();
+  trace();ctx.strokeStyle='#b1ad9f';ctx.lineWidth=o.width-.23;ctx.stroke();
+  ctx.setLineDash([.12,.75]);trace();ctx.strokeStyle='rgba(242,237,206,.30)';ctx.lineWidth=Math.max(1,o.width-.6);ctx.stroke();
+  ctx.restore();return;
+ }
  const item=getAsset(o),selected=o.id===selectedId,w=item.w*o.scale,d=item.d*o.scale;
  ctx.save();ctx.translate(o.x,o.z);ctx.rotate(o.yaw);
  const fill=VILLAGE_COLORS[o.type]||COLORS[o.type]||'#c3a98a';
@@ -506,7 +532,7 @@ function onPointerDown(e){
   draw();return;
  }
  const hit=itemAt(w.x,w.z);selectedId=hit?.id??null;tool='select';selectedAsset=null;syncTools();renderCatalog();
- drag=hit?{kind:'move',id:hit.id,before:JSON.stringify(objects),x:hit.x,z:hit.z}:{kind:'pan',x:e.clientX,z:e.clientY,originX:view.x,originZ:view.z};
+ drag=hit&&!isCurvedRoad(hit)?{kind:'move',id:hit.id,before:JSON.stringify(objects),x:hit.x,z:hit.z}:{kind:'pan',x:e.clientX,z:e.clientY,originX:view.x,originZ:view.z};
  if(hit)snapshot();updateProps();draw();
 }
 function onPointerMove(e){
@@ -579,7 +605,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem((P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
@@ -591,7 +617,7 @@ window.addEventListener('keydown',e=>{
  if(e.key.toLowerCase()==='r'&&selectedId){$('rotate-right').click();}
 });
 window.addEventListener('resize',resize);
-for(const cat of ['KayKit FREE · Edificios','KayKit FREE · Arquitectura','KayKit FREE · Accesorios','KayKit FREE · Naturaleza','KayKit FREE · Hexágonos',...(P532_PREVIEW?['Quaternius · Edificios','Quaternius · Accesorios','Quaternius · Naturaleza','Urbanismo HIGHFLY']:[]),'Unsung original','Unsung árboles','Pisos','Decoración','Naturaleza','NPC',...((P531_PREVIEW||P532_PREVIEW)?[]:['Edificios','SOURCE · Edificios','SOURCE · Accesorios'])]){
+for(const cat of ['KayKit FREE · Edificios','KayKit FREE · Arquitectura','KayKit FREE · Accesorios','KayKit FREE · Naturaleza','KayKit FREE · Hexágonos',...((P532_PREVIEW||P533_PREVIEW)?['Quaternius · Edificios','Quaternius · Accesorios','Quaternius · Naturaleza','Urbanismo HIGHFLY']:[]),'Unsung original','Unsung árboles','Pisos','Decoración','Naturaleza','NPC',...((P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)?[]:['Edificios','SOURCE · Edificios','SOURCE · Accesorios'])]){
  const btn=document.createElement('button');btn.textContent=cat;btn.dataset.cat=cat;btn.onclick=()=>setCategory(cat);$('categories').append(btn);
 }
 setCategory(category);loadLocal();resize();updateProps();syncTools();
