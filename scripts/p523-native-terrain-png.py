@@ -44,12 +44,15 @@ for k in ('core','region'):
  shore=(height>=-.12)&(height<2.8)
  grass=(height>=2.8)&(slope<=.7)
  rocky=(height>=2.8)&(slope>.7)
- high=height>160
+ # Critical P533 visual bug: original script painted *every* terrace above
+ # 160m grey. Arvelia's flat elevated lawns are genuine GRASS, not high cliffs.
+ # Keep high-altitude rock gray ONLY on genuinely steep rock faces.
+ high=(height>160)&(slope>1.15)
  rgb=np.zeros((m['res'],m['res'],3),dtype=np.float32)
  rgb[:]=[76,119,86]
- rgb[grass]=[74,120,84]
- rgb[rocky]=[132,129,123]
- rgb[high]=[161,165,154]
+ rgb[grass]=[69,130,79]  # native elevated meadow: distinct, readable green
+ rgb[rocky]=[125,126,119]  # mountain and cliff stone
+ rgb[high]=[147,148,140]  # only steep high altitude cliff
  rgb[shore]=[174,162,120]
  rgb[sea]=[39,86,112]
  # Height contours are visual (no effect on terrain or editing placement).
