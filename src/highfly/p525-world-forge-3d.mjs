@@ -380,7 +380,24 @@ function recordSnapshot(){history.push(JSON.stringify(records));if(history.lengt
 function restore(){
  try{
   // Preserve user's previously placed world when first trying this experimental editor.
-  const old=localStorage.getItem(STORE);
+  let old=localStorage.getItem(STORE);
+  // Migrate the user's existing P532/P531 work as a COPY into the new isolated
+  // preview. Never overwrite either earlier version, and never seed CI tests.
+  if(!old&&P533_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')){
+   for(const previousKey of ['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']){
+    const previous=localStorage.getItem(previousKey);
+    if(!previous)continue;
+    try{
+     const d=JSON.parse(previous);
+     if(d?.world==='unsung-vale'&&d?.schema===1&&Array.isArray(d.objects)&&
+       d.objects.length<=2500&&d.objects.every(o=>BY_ID.has(o.type)&&
+        [o.x,o.z,o.yaw,o.scale].every(finite))){
+      old=previous;localStorage.setItem(STORE,previous);
+      log('Plano anterior conservado','copiado de '+previousKey+' a P533, sin borrar el original');break;
+     }
+    }catch{}
+   }
+  }
   if(old&&!localStorage.getItem(BACKUP))localStorage.setItem(BACKUP,old);
   const d=JSON.parse(old||'null');
   if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));
