@@ -32,9 +32,10 @@ jobs:
           node --check src/highfly/p529-private-source-import.mjs
           node --check src/highfly/p530-unsung-original.mjs
           node --check src/highfly/p530-unsung-loader.mjs
+          node --check src/highfly/p530-city-ground-mask.mjs
           node --check scripts/p530-native-unsung-prefabs.mjs
           node --check public/highfly/world-forge.js
-          node --test tests/p530-world-forge-age-catalog.test.mjs tests/p528-beginning-village.test.mjs tests/p529-private-kaykit-and-cities.test.mjs tests/p526-sims-builder.test.mjs tests/p525-native-3d-world-forge.test.mjs tests/p524-free-kaykit-buildings.test.mjs tests/p523-png-terrain.test.mjs tests/p521-world-forge.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          node --test tests/p530-city-mask.test.mjs tests/p530-world-forge-age-catalog.test.mjs tests/p528-beginning-village.test.mjs tests/p529-private-kaykit-and-cities.test.mjs tests/p526-sims-builder.test.mjs tests/p525-native-3d-world-forge.test.mjs tests/p524-free-kaykit-buildings.test.mjs tests/p523-png-terrain.test.mjs tests/p521-world-forge.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
           npm run qa:static
           npm run qa:gameplay
       - name: Build full HIGHFLY RPG and independent genuine original-world 3D editor
