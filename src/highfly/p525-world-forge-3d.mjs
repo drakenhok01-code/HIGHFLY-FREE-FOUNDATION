@@ -1523,6 +1523,9 @@ if(new URLSearchParams(location.search).has('hfqa')){
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
   objects(){return records.map(x=>({...x}));},
+  chooseForQA:selectAsset,
+  placeForQA:addAt,
+  savedJSON:()=>localStorage.getItem(STORE),
   roadStart:startRoadDraft,roadAdd:(x,z)=>addRoadNode({x,z}),
   roadFinish:finishRoadDraft,roadCancel:cancelRoadDraft,
   roadDraft(){return {mode,nodes:roadNodes.map(a=>[...a]),editing:roadEditId};},
