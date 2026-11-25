@@ -516,6 +516,29 @@ function getGLTF(a){
  }
  return cache.get(a.id);
 }
+// P542: original Unsung heightfield never moves. Building-owned adjustable
+// masonry feet descend to ground at nine separate contact positions.
+function adaptableBuildingSupports(a,o,anchorY){
+ const eligible=a.kind==='building'||a.cat==='Edificios'||
+  a.cat?.includes('Edificios')||a.cat?.includes('casas')||a.cat?.includes('Arquitectura');
+ if(!eligible)return null;
+ const support=buildingSupportPlan(o,{w:a.w,d:a.d},elevation,{topOverride:anchorY});
+ if(support.relief<.28)return null;
+ const g=new THREE.Group(),material=new THREE.MeshLambertMaterial({color:0x999185,side:THREE.DoubleSide});
+ const side=Math.min(1.25,Math.max(.45,Math.min(a.w,a.d)*o.scale*.07));
+ for(const p of support.positions){
+  if(p.height<.16)continue;
+  const post=new THREE.Mesh(new THREE.BoxGeometry(side,p.height+.10,side),material);
+  post.position.set(p.x,p.centerY-.05,p.z);
+  post.userData.foundation=true;post.userData.adaptiveSupport=true;
+  g.add(post);
+ }
+ const header=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale*.94,.22,a.d*o.scale*.94),material);
+ header.position.set(0,-.13,0);header.userData.foundation=true;g.add(header);
+ g.name='HIGHFLY_P542_BUILDING_OWNED_SUPPORTS';
+ g.userData.terrainChanged=false;g.userData.terrainRelief=support.relief;
+ return g;
+}
 function foundationFor(a,o,heightSlope){
  const h=Math.max(.16,heightSlope+.26),group=new THREE.Group();
  const slab=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale*.97,h,a.d*o.scale*.97),
@@ -642,6 +665,10 @@ async function buildPlaced(o){
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
+   else if(P542_PREVIEW){
+    const foundation=adaptableBuildingSupports(a,o,footY+.035);
+    if(foundation)root.add(foundation);
+   }
    else if(!P537_PREVIEW&&(a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
