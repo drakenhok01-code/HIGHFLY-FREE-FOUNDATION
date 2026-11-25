@@ -34,7 +34,7 @@ for(const [s,pat] of [
  [build,/p531-kaykit-all-free/],[build,/p531-kaykit-thumbnails/],
  [copy,/84fa4e91af6a88989be7c99e0891cede11f2ca38/],
  [copy,/KAYKIT_FREE_ALL/],[copy,/all-manifest\.json/],
- [thumbsCode,/p531.*FREE THUMBNAILS/],
+ [thumbsCode,/P531 FREE THUMBNAILS/],
  [editor,/KAYKIT_FREE_ALL/],[editor,/nativeUnsungFlora/],
  [editor,/repeatPlacement/],[editor,/cameraPan/],[editor,/P531_PREVIEW/],
  [editor,/thumbs-all/],[runtime,/KAYKIT_FREE_IDS/],
