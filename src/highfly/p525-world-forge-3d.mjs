@@ -546,7 +546,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW,cameraPan=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -615,7 +615,7 @@ function addAt(x,z){
  o.y=check.y;records.push(o);
  buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){
   groups.placed.add(root);viewCache.set(o.id,root);
-  if(!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
+  if(!repeatPlacement&&!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
    selectObject(o.id);
    status('✓ '+a.label+' colocado. Ya podés MOVER, GIRAR o cambiar tamaño.');
   }
@@ -770,6 +770,12 @@ function exportJSON(){
 function bindUI(){
  $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
  $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};
+ $('repeat-place').onclick=()=>{repeatPlacement=!repeatPlacement;
+  $('repeat-place').classList.toggle('on',repeatPlacement);
+  $('repeat-place').textContent='↻ Repetir: '+(repeatPlacement?'SÍ':'NO');
+  status(repeatPlacement?'Herramienta continua: podés colocar varias construcciones iguales seguidas.':
+    'Colocación individual: al poner una casa pasa a Mover/Girar.');
+ };
  $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
@@ -793,17 +799,43 @@ function bindUI(){
  $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
  $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
- window.addEventListener('keydown',e=>{if(document.activeElement?.tagName==='INPUT')return;
+ window.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicateSelected();return;}
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
+   const k=e.key.toLowerCase();
+   if(['q','r'].includes(k)&&mode==='place'){e.preventDefault();transform(k==='q'?'rot-left':'rot-right');return;}
+   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Pincel '+brushCells*4+' m';status('Pincel '+brushCells*4+' metros.');return;}
+   if(k==='v'){$('select').click();return;}
+   if(k==='c'){$('orbit').click();return;}
+   if(k==='t'){$('top').click();return;}
+   if(k==='i'){$('iso').click();return;}
+  }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}
   if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();redo();}
   if(e.key==='Delete'||e.key==='Backspace')remove();
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ // For desk editing the cursor must be able to pan/zoom while a building
+ // brush is selected. We don't enable competing left-drag OrbitControls.
+ canvas.addEventListener('contextmenu',e=>e.preventDefault());
+ canvas.addEventListener('wheel',e=>{
+  if(!['place','move','rotate','scale'].includes(mode))return;
+  e.preventDefault();
+  const target=orbit.target,vec=cam.position.clone().sub(target);
+  vec.multiplyScalar(e.deltaY>0?1.12:.88).clampLength(8,4500);
+  cam.position.copy(target).add(vec);orbit.update();updateNear();updateTrees();render();
+ },{passive:false});
  // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
  // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
-  if(!e.isPrimary)return;
+  if(e.button===1||e.button===2){
+   e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
+   canvas.setPointerCapture?.(e.pointerId);return;
+  }
+  if(!e.isPrimary||e.button!==0)return;
   downPos={x:e.clientX,y:e.clientY};
   if(mode==='place'&&chosen){
    e.preventDefault();
@@ -828,6 +860,16 @@ function bindUI(){
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId){
+   const dx=e.clientX-cameraPan.x,dy=e.clientY-cameraPan.y;
+   cameraPan.x=e.clientX;cameraPan.y=e.clientY;
+   const dist=Math.max(30,cam.position.distanceTo(orbit.target)),unit=dist*.0018;
+   const right=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0);
+   const forward=new THREE.Vector3();forward.subVectors(orbit.target,cam.position);
+   right.y=0;forward.y=0;right.normalize();forward.normalize();
+   const move=right.multiplyScalar(-dx*unit).addScaledVector(forward,dy*unit);
+   cam.position.add(move);orbit.target.add(move);orbit.update();updateNear();updateTrees();render();return;
+  }
   if(mode==='place')previewGhost(e);
   if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
    const hit=hitTerrain(e),root=viewCache.get(movingExisting.id),saved=movingExisting.old;
@@ -848,6 +890,10 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId){
+   cameraPan=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   return;
+  }
   if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
    const item=records.find(x=>x.id===movingExisting.id),root=viewCache.get(movingExisting.id),old=movingExisting.old;
    if(item&&root){
@@ -885,6 +931,7 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(cameraPan&&cameraPan.pointerId===e.pointerId)cameraPan=null;
   if(movingExisting&&activePointer===e.pointerId){
    const root=viewCache.get(movingExisting.id),old=movingExisting.old;
    if(root){root.position.set(old.x,old.y+.035,old.z);gizmo?.attach(root);render();}
@@ -947,7 +994,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 3D P5.2.9 listo · '+records.length+' construcciones y decoraciones. Editá o tocá ▶ Ver en RPG.');
+  status('✓ WORLD FORGE 4.1 · P5.3.1 · FREE completo: 221 modelos KayKit + 18 originales Unsung. PC: clic para colocar, derecho arrastre para mover cámara, Q/R para girar.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
