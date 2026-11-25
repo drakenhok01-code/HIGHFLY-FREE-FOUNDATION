@@ -93,8 +93,13 @@ const url=f=>new URL('./'+f,import.meta.url).href;
 const holder=$('canvas-holder');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xa8c7dd);
 scene.fog=new THREE.Fog(0xa8c7dd,850,6300);
-const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});
-renderer.setPixelRatio(Math.min(1.3,window.devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;
+const DESKTOP_FINE=!!globalThis.matchMedia?.('(pointer:fine) and (min-width:900px)')?.matches;
+let qualityHigh=DESKTOP_FINE;
+const renderer=new THREE.WebGLRenderer({antialias:DESKTOP_FINE,powerPreference:DESKTOP_FINE?'high-performance':'low-power'});
+renderer.setPixelRatio(Math.min(qualityHigh?2:1.2,window.devicePixelRatio||1));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.18;
 holder.insertBefore(renderer.domElement,holder.firstChild);
 const cam=new THREE.PerspectiveCamera(54,1,.1,35000);
 const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=false;orbit.minDistance=8;orbit.maxDistance=4500;
@@ -850,6 +855,17 @@ function bindUI(){
   status(repeatPlacement?'Herramienta continua: podés colocar varias construcciones iguales seguidas.':
     'Colocación individual: al poner una casa pasa a Mover/Girar.');
  };
+ $('quality-toggle').onclick=()=>{
+  qualityHigh=!qualityHigh;
+  renderer.setPixelRatio(Math.min(qualityHigh?2:1.15,window.devicePixelRatio||1));
+  $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
+  $('quality-toggle').classList.toggle('on',qualityHigh);
+  fit();render();
+  status('Calidad '+(qualityHigh?'ALTA (mallas reales Unsung y GLB a resolución de PC)':'NORMAL (menos píxeles de dibujo)')+
+    '. No cambia las texturas, el mapa ni el guardado.');
+ };
+ $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
+ $('quality-toggle').classList.toggle('on',qualityHigh);
  $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
