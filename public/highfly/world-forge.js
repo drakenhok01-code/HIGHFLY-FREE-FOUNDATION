@@ -1,4 +1,4 @@
-/* HIGHFLY WORLD FORGE V0.4
+/* HIGHFLY WORLD FORGE V0.7
  * No game engine / combat / WebGL. Actual frozen 16-bit Unsung heightmaps.
  * Same-origin localStorage layout is read by the isolated game preview.
  */
@@ -28,17 +28,17 @@ diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 
 const STORE='hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
- {id:'guild',label:'Gremio',icon:'🏰',cat:'Edificios',w:14,d:11,h:10},
- {id:'forge',label:'Herrería',icon:'⚒️',cat:'Edificios',w:11,d:9,h:8},
- {id:'inn',label:'Posada',icon:'🏠',cat:'Edificios',w:12,d:10,h:8},
- {id:'house',label:'Casa medieval',icon:'🏡',cat:'Edificios',w:9,d:8,h:7},
- {id:'timber',label:'Casa de madera',icon:'🛖',cat:'Edificios',w:8,d:8,h:6},
- {id:'market',label:'Mercado',icon:'🏪',cat:'Edificios',w:12,d:9,h:6},
- {id:'mill',label:'Molino',icon:'🌾',cat:'Edificios',w:10,d:10,h:11},
- {id:'granary',label:'Granero',icon:'🌽',cat:'Edificios',w:12,d:9,h:8},
- {id:'warehouse',label:'Almacén',icon:'📦',cat:'Edificios',w:11,d:9,h:7},
- {id:'fishery',label:'Pesquería',icon:'🎣',cat:'Edificios',w:10,d:8,h:7},
- {id:'ranger',label:'Refugio',icon:'🏕️',cat:'Edificios',w:9,d:8,h:6},
+ {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
+ {id:'forge',label:'Herrería',icon:'⚒️',cat:'Bocetos antiguos',w:11,d:9,h:8},
+ {id:'inn',label:'Posada',icon:'🏠',cat:'Bocetos antiguos',w:12,d:10,h:8},
+ {id:'house',label:'Casa medieval',icon:'🏡',cat:'Bocetos antiguos',w:9,d:8,h:7},
+ {id:'timber',label:'Casa de madera',icon:'🛖',cat:'Bocetos antiguos',w:8,d:8,h:6},
+ {id:'market',label:'Mercado',icon:'🏪',cat:'Bocetos antiguos',w:12,d:9,h:6},
+ {id:'mill',label:'Molino',icon:'🌾',cat:'Bocetos antiguos',w:10,d:10,h:11},
+ {id:'granary',label:'Granero',icon:'🌽',cat:'Bocetos antiguos',w:12,d:9,h:8},
+ {id:'warehouse',label:'Almacén',icon:'📦',cat:'Bocetos antiguos',w:11,d:9,h:7},
+ {id:'fishery',label:'Pesquería',icon:'🎣',cat:'Bocetos antiguos',w:10,d:8,h:7},
+ {id:'ranger',label:'Refugio',icon:'🏕️',cat:'Bocetos antiguos',w:9,d:8,h:6},
  {id:'kaykit-archeryrange',label:"Campo de tiro",icon:"🏹",cat:'KayKit FREE',w:16,d:13,h:10,free:'building_archeryrange_red'},
  {id:'kaykit-barracks',label:"Cuartel",icon:"🛡️",cat:'KayKit FREE',w:14,d:12,h:10,free:'building_barracks_red'},
  {id:'kaykit-blacksmith',label:"Herrería KayKit",icon:"⚒️",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_blacksmith_red'},
@@ -237,7 +237,7 @@ function itemAt(x,z){
  return null;
 }
 function insert(type,x,z){
- const item=BY_ID.get(type);if(!item)return false;
+ const item=BY_ID.get(type);if(!item||item.cat==='Bocetos antiguos')return false;
  const q=item.floor?4:2,o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type,x:cell(x,q),z:cell(z,q),yaw:0,scale:1,y:0};
  if(!item.floor&&!type.startsWith('npc-'))o.clearTrees=true;
  const status=siteStatus(o);
@@ -381,7 +381,7 @@ function draw(){
 function setCategory(cat){category=cat;for(const b of $('categories').children)b.classList.toggle('active',b.dataset.cat===cat);renderCatalog();}
 function renderCatalog(){
  const root=$('catalog');root.replaceChildren();
- for(const it of CATALOG.filter(x=>x.cat===category)){
+ for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:x.cat===category)){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
   const label=document.createElement('span');label.textContent=it.label;

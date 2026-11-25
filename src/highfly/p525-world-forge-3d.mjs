@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
@@ -30,8 +31,11 @@ const base=[
  ['kaykit-watermill','Molino de agua','🌊','KayKit FREE',12,12,'watermill'],
  ['kaykit-well','Pozo KayKit','🪣','KayKit FREE',6,6,'well'],
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
-].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat,w,d,model}));
+].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
+// Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 const BY_ID=new Map(base.map(a=>[a.id,a]));
+const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmith',inn:'kaykit-tavern',house:'kaykit-home-a',timber:'kaykit-home-b',market:'kaykit-market',mill:'kaykit-windmill',ranger:'kaykit-archeryrange'});
+// Only documented real CC0 model equivalents: granary, warehouse and fishery have no 1:1 CC0 building.
 // Protect the actual spawn and staircase, not entire 42m-radius free land parcels.
 const safety=[[-519,-70,8],[-179,-459,7]];
 const logData={phase:'inicio',lines:[],errors:[]};
@@ -60,7 +64,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -260,7 +264,7 @@ function validPosition(o,id=null){
    if(Math.hypot(o.x-b.x,o.z-b.z)<(Math.hypot(w,d)+Math.hypot(q.w*b.scale,q.d*b.scale))*.31)return {ok:false,why:'Edificio superpuesto'};
   }
  }
- return {ok:true,y:elevation(o.x,o.z)};
+ return {ok:true,y:Math.max(...samples),slope:Math.max(...samples)-Math.min(...samples)};
 }
 function save(show=false){
  try{localStorage.setItem(STORE,JSON.stringify({schema:1,world:'unsung-vale',author:'HIGHFLY WORLD FORGE 3D',objects:records}));if(show)status('✓ Diseño guardado; compartido con vista 2D y RPG');}
@@ -277,10 +281,32 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const modelUrl=a=>url('kaykit-free/building_'+a.model+'_red.gltf');
+const realPrefab=a=>!!a.model||a.id.startsWith('npc-');
+const modelUrl=a=>a.id.startsWith('npc-')
+ ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
+ :url('kaykit-free/building_'+a.model+'_red.gltf');
+const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
- if(!cache.has(a.id))cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>g.scene).catch(err=>{log('KayKit '+a.label,err.message,false);return null;}));
+ if(!cache.has(a.id)){
+  cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>{
+   if(!g.scene?.children?.length)throw Error('El prefab no contiene geometría');
+   const bounds=new THREE.Box3().setFromObject(g.scene),size=bounds.getSize(new THREE.Vector3());
+   if(size.x<.01||size.z<.01||size.y<.01)throw Error('El modelo está incompleto o carece de volumen 3D');
+   let meshCount=0;g.scene.traverse(o=>{if(o.isMesh)meshCount++;});
+   if(!meshCount)throw Error('El glTF no contiene ninguna malla');
+   prefabReady.add(a.id);
+   log('Prefab completo '+a.label,meshCount+' mallas · '+size.x.toFixed(1)+' × '+size.y.toFixed(1)+' × '+size.z.toFixed(1));
+   return g.scene;
+  }).catch(err=>{prefabFailed.set(a.id,err.message);log('Prefab completo '+a.label,err.message,false);return null;}));
+ }
  return cache.get(a.id);
+}
+function foundationFor(a,o,heightSlope){
+ const h=Math.max(.16,heightSlope+.26),group=new THREE.Group();
+ const slab=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale*.97,h,a.d*o.scale*.97),
+  new THREE.MeshLambertMaterial({color:0xaaa394,side:THREE.DoubleSide}));
+ slab.position.y=-h/2+.035;slab.userData.foundation=true;group.add(slab);
+ return group;
 }
 // Exact native paved court elevations from original Unsung's Architecture.buildPlayable().
 function floorElevation(x,z){
@@ -353,14 +379,23 @@ function makeModel(a,o){
 }
 async function buildPlaced(o){
  const a=BY_ID.get(o.type);if(!a)return null;
- const root=new THREE.Group();root.position.set(o.x,elevation(o.x,o.z)+.03,o.z);root.rotation.y=o.yaw;root.userData.placeId=o.id;
- if(a.model){
+ const root=new THREE.Group(),point=validPosition(o,o.id),footY=point.ok?point.y:elevation(o.x,o.z);
+ root.position.set(o.x,footY+.035,o.z);root.rotation.y=o.yaw;root.userData.placeId=o.id;
+ if(realPrefab(a)){
   const original=await getGLTF(a);
+  if(!original)throw Error('Prefab KayKit 3D sin cargar: '+a.label);
   if(original){
-   const model=original.clone(true),box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-   const scale=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
-   model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);root.add(model);
-  }else root.add(makeModel(a,o));
+   const model=a.id.startsWith('npc-')?cloneRig(original):original.clone(true);
+   const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+   const scale=a.id.startsWith('npc-')?1.8/Math.max(.01,size.y)*o.scale:
+     Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
+   model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
+   if(a.id.startsWith('npc-'))model.traverse(x=>{
+    if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
+   });
+   else root.add(foundationFor(a,o,point.slope||0));
+   root.add(model);
+  }
  }else root.add(makeModel(a,o));
  return root;
 }
@@ -369,7 +404,8 @@ async function rebuildPlaced(){
  for(const child of [...groups.placed.children])groups.placed.remove(child);
  viewCache.clear();selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
-  const node=await buildPlaced(o);if(rebuildPlaced.token!==token)return;
+  let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
+  if(rebuildPlaced.token!==token)return;
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
  updateTrees(true);render();showProps();
@@ -377,7 +413,10 @@ async function rebuildPlaced(){
 function showProps(){
  const o=records.find(x=>x.id===selected),name=o?BY_ID.get(o.type).label:chosen?BY_ID.get(chosen).label:'EDITOR 3D';
  $('props').querySelector('strong').textContent=name;
- $('props').querySelector('small').textContent=o?('X '+o.x+' · Z '+o.z+' · Suelo '+o.y.toFixed(1)+' · Giro '+Math.round(o.yaw*180/Math.PI)+'° · Tamaño '+o.scale.toFixed(2)):(chosen?'Tocá el terreno para colocarlo. Para orbitar, elegí Cámara.':'Seleccioná un edificio del catálogo; la cámara puede orbitar y acercarse.');
+ $('props').querySelector('small').textContent=o?('X '+o.x+' · Z '+o.z+' · Suelo '+o.y.toFixed(1)+' · Giro '+Math.round(o.yaw*180/Math.PI)+'° · Tamaño '+o.scale.toFixed(2)):(chosen?'Edificio completo · giro '+Math.round(pendingYaw*180/Math.PI)+'° · escala '+pendingScale.toFixed(2)+' · tocá o soltá para colocarlo.':'Elegí un edificio real. Tocá para colocar y usá Mover/Girar/Escala sobre la construcción.');
+ const legacy=records.filter(x=>Object.hasOwn(LEGACY_UPGRADE,x.type));
+ $('upgrade-legacy').hidden=legacy.length===0;
+ $('upgrade-legacy').textContent='✨ Reemplazar '+legacy.length+' boceto'+(legacy.length===1?'':'s')+' por KayKit reales';
 }
 function switchMode(next){
  mode=next;if(ghost)ghost.visible=next==='place';
@@ -396,11 +435,12 @@ async function createGhost(id){
  const group=new THREE.Group();group.visible=false;group.userData.ghostFor=id;ghost=group;
  const cube=new THREE.Mesh(new THREE.BoxGeometry(a.w,2.1,a.d),new THREE.MeshBasicMaterial({color:0x88ffe0,transparent:true,opacity:.6,wireframe:true}));
  cube.position.y=1.05;group.add(cube);scene.add(group);
- if(a.model){
+ if(realPrefab(a)){
   const model=await getGLTF(a);
   if(!model||ghost!==group)return;
-  const clone=model.clone(true),box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-  const factor=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z));
+  const clone=a.id.startsWith('npc-')?cloneRig(model):model.clone(true);
+  const box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  const factor=a.id.startsWith('npc-')?1.8/Math.max(.01,size.y):Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z));
   clone.scale.setScalar(factor);clone.position.set(-center.x*factor,-box.min.y*factor,-center.z*factor);
   clone.traverse(node=>{if(!node.isMesh)return;
    const copy=(mat)=>{const m=mat.clone();m.transparent=true;m.opacity=.56;m.depthWrite=false;return m;};
@@ -413,17 +453,31 @@ function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
- ghost.position.set(x,elevation(x,z)+.2,z);ghost.visible=true;
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1,clearTrees:!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')});
+ ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
+ ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
  const outline=ghost.children[0];
  if(outline?.material?.color)outline.material.color.setHex(check.ok?0x88ffe0:0xff6b89);
  status(check.ok?'Vista previa: '+a.label+' · X '+x+' Z '+z:'No se puede colocar aquí: '+check.why);
  render();
 }
-function selectAsset(id){chosen=id;selected=null;if(gizmo)gizmo.detach();switchMode('place');drawCatalog();showProps();status('Elegiste '+BY_ID.get(id).label+' · Tocá terreno libre para colocarlo.');createGhost(id);}
+function selectAsset(id){
+ const a=BY_ID.get(id);
+ if(!a)return;
+ chosen=id;selected=null;pendingYaw=0;pendingScale=1;if(gizmo)gizmo.detach();
+ switchMode('place');drawCatalog();showProps();
+ status('Cargando objeto 3D completo: '+a.label+'…');
+ createGhost(id);
+ if(realPrefab(a))getGLTF(a).then(mesh=>{
+  if(chosen!==id)return;
+  status(mesh?'✓ '+a.label+' completo. Tocá y arrastrá hasta donde quieras colocarlo.':
+   'Falló modelo '+a.label+'. Abrí Diagnóstico; no se colocará una caja falsa.');
+ });
+ else status('Elegiste '+a.label+' · Tocá terreno libre para colocarlo.');
+}
 function drawCatalog(){
  $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
- for(const a of base.filter(a=>a.cat===category&&a.label.toLowerCase().includes(find))){
+ for(const a of base.filter(a=>(category==='Edificios'?!!a.model:a.cat===category)&&a.cat!=='Bocetos antiguos'&&a.label.toLowerCase().includes(find))){
   const el=document.createElement('button');el.className='asset'+(chosen===a.id?' selected':'');
   if(a.model){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;img.src=url('kaykit-free/thumbs/building_'+a.model+'_red.png');
@@ -434,12 +488,14 @@ function drawCatalog(){
  }
 }
 function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
-function drawCats(){for(const cat of [...new Set(base.map(x=>x.cat))]){
+function drawCats(){for(const cat of ['Edificios','KayKit FREE','Pisos','Decoración','Naturaleza','NPC']){
  const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
 }setCategory(category);}
 function addAt(x,z){
  if(!chosen||!map)return false;
- const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
+ if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
+ const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
+ if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
  if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
@@ -452,7 +508,12 @@ function addAt(x,z){
    status('✓ '+a.label+' colocado. Ya podés MOVER, GIRAR o cambiar tamaño.');
   }
   render();
- }});
+ }}).catch(err=>{
+  // Failed assets must never become fake boxes or be saved as invisible objects.
+  const pos=records.findIndex(x=>x.id===o.id);
+  if(pos>=0){records.splice(pos,1);save();updateTrees(true);}
+  log('No se pudo colocar '+a.label,err.message,false);
+ });
  if(o.clearTrees)updateTrees(true);
  status('✓ Añadido '+a.label+' · X '+o.x+' / Z '+o.z);
  return o.id;
@@ -480,7 +541,16 @@ function selectObject(id){
  chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();switchMode('move');
 }
 function transform(action){
- const o=records.find(v=>v.id===selected);if(!o)return;
+ const o=records.find(v=>v.id===selected);
+ if(!o&&chosen){
+  if(action==='rot-left')pendingYaw-=Math.PI/12;
+  if(action==='rot-right')pendingYaw+=Math.PI/12;
+  if(action==='size-down')pendingScale=clamp(pendingScale-.1,.5,3);
+  if(action==='size-up')pendingScale=clamp(pendingScale+.1,.5,3);
+  if(ghost){ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);}
+  showProps();render();status('Vista previa: giro '+Math.round(pendingYaw*180/Math.PI)+'° · tamaño '+pendingScale.toFixed(2));return;
+ }
+ if(!o)return;
  const old={...o};recordSnapshot();
  if(action==='rot-left')o.yaw-=Math.PI/12;else if(action==='rot-right')o.yaw+=Math.PI/12;
  else if(action==='size-down')o.scale=clamp(o.scale-.1,.5,3);
@@ -492,6 +562,40 @@ function transform(action){
 function remove(){const i=records.findIndex(a=>a.id===selected);if(i<0)return;recordSnapshot();records.splice(i,1);save();rebuildPlaced();}
 function undo(){if(!history.length)return;redoStack.push(JSON.stringify(records));records=JSON.parse(history.pop());save();rebuildPlaced();status('Cambio deshecho');}
 function redo(){if(!redoStack.length)return;history.push(JSON.stringify(records));records=JSON.parse(redoStack.pop());save();rebuildPlaced();status('Cambio recuperado');}
+async function upgradeLegacy(){
+ const queue=records.filter(o=>Object.hasOwn(LEGACY_UPGRADE,o.type));
+ if(!queue.length){status('No hay bocetos antiguos para reemplazar.');return;}
+ $('upgrade-legacy').disabled=true;
+ try{
+  // Migration is opt-in, never automatic. Save exact previous document first.
+  const old=localStorage.getItem(STORE);
+  if(old)localStorage.setItem('hf-world-forge-layout-v1-backup-pre-p527-prefabs',old);
+  recordSnapshot();
+  let done=0,blocked=0,loadFailures=0;
+  for(const o of queue){
+   const id=LEGACY_UPGRADE[o.type],asset=BY_ID.get(id);
+   const prefab=await getGLTF(asset);
+   if(!prefab){loadFailures++;continue;}
+   const newItem={...o,type:id,clearTrees:true},valid=validPosition(newItem,o.id);
+   if(!valid.ok){blocked++;continue;}
+   Object.assign(o,newItem,{y:valid.y});done++;
+  }
+  if(!done)history.pop();
+  else{save();await rebuildPlaced();}
+  status(done+' boceto'+(done===1?'':'s')+' reemplazado'+(done===1?'':'s')+' por modelos KayKit completos. '+blocked+' bloqueados por terreno/colisiones; '+loadFailures+' fallos de modelo.');
+ }finally{$('upgrade-legacy').disabled=false;showProps();}
+}
+async function duplicateSelected(){
+ const source=records.find(x=>x.id===selected);if(!source)return;
+ const asset=BY_ID.get(source.type);if(!asset)return;
+ const test={...source,id:'hf-wf-'+Date.now().toString(36)+'-dup',
+   x:snap(source.x+(asset.w*source.scale+2),2)};
+ const check=validPosition(test);
+ if(!check.ok){status('No se puede duplicar aquí: '+check.why);return;}
+ test.y=check.y;recordSnapshot();records.push(test);save();
+ try{const node=await buildPlaced(test);if(node){groups.placed.add(node);viewCache.set(test.id,node);selectObject(test.id);updateTrees(true);render();}}
+ catch(err){records=records.filter(x=>x.id!==test.id);save();log('Duplicar edificio',err.message,false);}
+}
 function exportJSON(){
  const blob=new Blob([JSON.stringify({schema:1,world:'unsung-vale',objects:records},null,2)],{type:'application/json'});
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
@@ -512,6 +616,8 @@ function bindUI(){
  $('play').onclick=()=>{save();location.href=new URL('../?hfworld=1',import.meta.url).href;};
  for(const id of ['rot-left','rot-right','size-down','size-up'])$(id).onclick=()=>transform(id);
  $('remove').onclick=remove;
+ $('duplicate').onclick=duplicateSelected;
+ $('upgrade-legacy').onclick=upgradeLegacy;
  $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
  $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
@@ -537,10 +643,31 @@ function bindUI(){
    recordSnapshot();
    if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
+  }else if(mode==='move'&&selected&&!gizmo?.dragging&&clickPlaced(e)===selected){
+   // Directly grab the complete model, just like Age of Empires object placement.
+   const data=records.find(o=>o.id===selected),root=viewCache.get(selected);
+   if(data&&root){
+    e.preventDefault();activePointer=e.pointerId;
+    canvas.setPointerCapture?.(e.pointerId);
+    movingExisting={id:selected,old:{...data}};
+    gizmo?.detach();
+    status('Arrastrá '+BY_ID.get(data.type).label+' por el terreno y soltá para confirmar.');
+   }
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
   if(mode==='place')previewGhost(e);
+  if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
+   const hit=hitTerrain(e),root=viewCache.get(movingExisting.id),saved=movingExisting.old;
+   if(hit&&root){
+    const nx=snap(hit.x,1),nz=snap(hit.z,1),
+      safety=validPosition({...saved,x:nx,z:nz},saved.id);
+    root.position.set(nx,(safety.ok?safety.y:elevation(nx,nz))+.035,nz);
+    status(safety.ok?'✓ Soltá para ubicar '+BY_ID.get(saved.type).label+' en X '+nx+' Z '+nz:
+      'Posición bloqueada: '+safety.why);
+    render();
+   }
+  }
   if(mode==='place'&&activePointer===e.pointerId){
    const h=hitTerrain(e);
    if(dragPainting&&lastPaint&&h){paintLine(lastPaint,h);lastPaint=h;}
@@ -549,6 +676,27 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(movingExisting&&mode==='move'&&activePointer===e.pointerId){
+   const item=records.find(x=>x.id===movingExisting.id),root=viewCache.get(movingExisting.id),old=movingExisting.old;
+   if(item&&root){
+    const candidate={...old,x:snap(root.position.x,1),z:snap(root.position.z,1)};
+    const safety=validPosition(candidate,item.id);
+    if(safety.ok){
+     if(candidate.x!==old.x||candidate.z!==old.z){
+      recordSnapshot();Object.assign(item,candidate,{y:safety.y});save();
+      updateTrees(true);
+     }
+     root.position.set(item.x,safety.y+.035,item.z);
+     status('✓ '+BY_ID.get(item.type).label+' colocado en X '+item.x+' Z '+item.z);
+    }else{
+     root.position.set(old.x,old.y+.035,old.z);
+     status('No se movió: '+safety.why);
+    }
+    gizmo?.attach(root);showProps();render();
+   }
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   movingExisting=null;activePointer=null;downPos=null;return;
+  }
   if(mode==='place'&&activePointer===e.pointerId){
    if(pendingDrop){
     const h=hitTerrain(e)||pendingDrop;
@@ -565,6 +713,11 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(movingExisting&&activePointer===e.pointerId){
+   const root=viewCache.get(movingExisting.id),old=movingExisting.old;
+   if(root){root.position.set(old.x,old.y+.035,old.z);gizmo?.attach(root);render();}
+   movingExisting=null;
+  }
   if(activePointer===e.pointerId){
    activePointer=null;pendingDrop=null;dragPainting=false;lastPaint=null;
    if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
@@ -585,12 +738,16 @@ function installGizmo(){
   o.yaw=root.rotation.y;o.scale=mode==='scale'?clamp(Math.round(old.scale*Math.max(.2,(root.scale.x+root.scale.z)*.5)*100)/100,.5,3):old.scale;
   const check=validPosition(o,o.id);
   if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;root.scale.setScalar(1);status('Ubicación bloqueada: '+check.why);}
-  else{o.y=check.y;root.position.y=o.y;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
+  else{o.y=check.y;root.position.y=o.y+.035;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
   if(mode==='scale')rebuildPlaced();else if(mode==='move')updateTrees(true);
   showProps();render();
  });
  gizmo.addEventListener('objectChange',()=>{
-  const obj=viewCache.get(selected);if(obj&&mode==='move')obj.position.y=elevation(obj.position.x,obj.position.z);
+  const obj=viewCache.get(selected);if(obj&&mode==='move'){
+   const o=records.find(x=>x.id===selected);
+   if(o){const g=validPosition({...o,x:obj.position.x,z:obj.position.z},o.id);
+    obj.position.y=(g.ok?g.y:elevation(obj.position.x,obj.position.z))+.035;}
+  }
   render();
  });
 }
@@ -629,7 +786,14 @@ if(new URLSearchParams(location.search).has('hfqa')){
    const ndc=world.project(cam),r=renderer.domElement.getBoundingClientRect();
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
-  objects(){return records.map(x=>({...x}));}
+  objects(){return records.map(x=>({...x}));},
+  ready(id){return prefabReady.has(id);},
+  inspect(id){
+   const root=viewCache.get(id);if(!root)return null;
+   let meshes=0,foundation=0,faces=0;
+   root.traverse(o=>{if(o.isMesh){meshes++;if(o.userData.foundation)foundation++;faces+=o.geometry?.index?.count||0;}});
+   return {meshes,foundation,faces,children:root.children.length,y:root.position.y,position:{x:root.position.x,z:root.position.z}};
+  }
  };
 }
 boot();

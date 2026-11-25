@@ -4,10 +4,10 @@ const html=fs.readFileSync('public/highfly/world-forge.html','utf8');
 const js=fs.readFileSync('public/highfly/world-forge.js','utf8');
 const build=fs.readFileSync('scripts/f0-build.mjs','utf8');
 const png=fs.readFileSync('scripts/p523-native-terrain-png.py','utf8');
-assert.match(html,/WORLD FORGE · V0\.[3456]/);
+assert.match(html,/WORLD FORGE · V0\.[34567]/);
 for(const id of ['diagnostics-toggle','diagnostics','diagnostics-log','diagnostics-copy','diagnostics-retry'])
  assert.ok(html.includes('id="'+id+'"'),id);
-assert.match(html,/world-forge\.js\?v=p52[3456]-/);
+assert.match(html,/world-forge\.js\?v=p52[34567]-/);
 assert.ok(!js.includes("loadImage(meta.core,'core_h.bin')"));
 assert.ok(!js.includes('DecompressionStream'),'Do not decode gzip at browser');
 assert.ok(!js.includes("new URL('../world/world.json'"),'Avoid old JSON CDN path');
