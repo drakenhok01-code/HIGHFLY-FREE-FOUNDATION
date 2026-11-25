@@ -57,6 +57,9 @@ const nearLine=(x,z,road)=>{
 };
 export function eastbrookClearing(x,z){
  if(!Number.isFinite(x)||!Number.isFinite(z))return false;
+ // 99.99% of native Unsung's 91k trees are outside the city.
+ // Eliminate them before checking any expensive civic road segment.
+ if(x<-705||x>-515||z<-138||z>18)return false;
  if(Math.hypot(x-EASTBROOK_SQUARE.x,z-EASTBROOK_SQUARE.z)<EASTBROOK_SQUARE.radius+.6)return true;
  for(const o of EASTBROOK_LOTS){
   const c=Math.cos(o.yaw),s=Math.sin(o.yaw),dx=x-o.x,dz=z-o.z;
