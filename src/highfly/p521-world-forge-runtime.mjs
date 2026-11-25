@@ -12,7 +12,8 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-export const WORLD_FORGE_KEY='hf-world-forge-layout-v1';
+const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
+export const WORLD_FORGE_KEY=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
