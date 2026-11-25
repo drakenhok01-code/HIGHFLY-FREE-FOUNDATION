@@ -205,42 +205,74 @@ function originalRender(){
   if(!treeIndex.has(key))treeIndex.set(key,[]);treeIndex.get(key).push(t);
  }
  overview.treeIndex=treeIndex;
- const kinds=[0xd18b69,0xd9acc3,0xc7b9d9,0x416950,0x5d996b],trunk=new THREE.CylinderGeometry(.3,.42,1,5),crown=new THREE.IcosahedronGeometry(1,1),column=new THREE.ConeGeometry(1,1,6);
+ // Actual Unsung procedural branches and leaf geometry close to the camera;
+ // distant forest remains lightweight instancing to preserve editor FPS.
+ const colors=[0xd18b69,0xd9acc3,0xc7b9d9,0x416950,0x5d996b],
+  trunk=new THREE.CylinderGeometry(.3,.42,1,5),
+  crown=new THREE.IcosahedronGeometry(1,1),column=new THREE.ConeGeometry(1,1,6),
+  species=['ember','blossom','elder','cypress','green'];
  trunk.translate(0,.5,0);column.translate(0,.5,0);
+ const lods=[];
  for(let k=0;k<5;k++){
-  const stem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),900);
-  const canopy=new THREE.InstancedMesh(k===3?column:crown,new THREE.MeshLambertMaterial({color:kinds[k],flatShading:true}),900);
-  stem.count=0;canopy.count=0;stem.frustumCulled=false;canopy.frustumCulled=false;groups.trees.add(stem,canopy);
+  const model=nativeUnsungFlora('unsung-tree-'+species[k]);
+  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,140),
+   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,140),
+   farStem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),750),
+   farLeaves=new THREE.InstancedMesh(k===3?column:crown,
+    new THREE.MeshLambertMaterial({color:colors[k],flatShading:true}),750);
+  for(const o of [nearStem,nearLeaves,farStem,farLeaves]){
+   o.count=0;o.frustumCulled=false;groups.trees.add(o);
+  }
+  lods.push({nearStem,nearLeaves,farStem,farLeaves});
  }
- updateTrees(true);
- log('Posiciones de árboles Unsung',overview.trees.length.toLocaleString('es-AR')+' instancias nativas con formas 3D simplificadas');
+ groups.trees.userData.lods=lods;updateTrees(true);
+ log('Bosque original Unsung',overview.trees.length.toLocaleString('es-AR')+
+  ' posiciones; cerca: ramas/hojas reales · lejos: LOD de bajo costo');
 }
-const dummy=new THREE.Object3D(),treeKinds=[0,0,0,1,1,2,2,3,3,4,4,4],treeH=[14,8,19,19,13],treeR=[5.2,4.2,6.0,2.2,5.0];
+const dummy=new THREE.Object3D(),treeKinds=[0,0,0,1,1,2,2,3,3,4,4,4],
+ treeH=[14,8,19,19,13],treeR=[5.2,4.2,6.0,2.2,5.0];
 function updateTrees(force=false){
  if(!overview?.treeIndex||!map||!groups.trees.visible)return;
  const x=orbit.target.x,z=orbit.target.z;
- if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
+ if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<28)return;
  treeFocus=[x,z];
- const lists=Array.from({length:5},()=>[]),rad=260;
+ const lists=Array.from({length:5},()=>({near:[],far:[]})),rad=285,nearDistance=128;
  const clearedLots=records.filter(o=>o.clearTrees===true&&BY_ID.has(o.type));
- for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
-  for(const t of overview.treeIndex.get(i+','+j)||[]){
-   if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
-   if(clearedLots.some(o=>(()=>{
-     const [dx,dz]=[t[0]-o.x,t[1]-o.z],a=BY_ID.get(o.type),c=Math.cos(o.yaw),s=Math.sin(o.yaw);
-     return Math.abs(dx*c+dz*s)<a.w*o.scale*.5+1.8&&Math.abs(-dx*s+dz*c)<a.d*o.scale*.5+1.8;
-   })()))continue;
-   const k=treeKinds[t[3]]??4;if(lists[k].length<900)lists[k].push(t);
-  }
- }
+ for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
+  for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++)
+   for(const t of overview.treeIndex.get(i+','+j)||[]){
+    const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad)continue;
+    if(clearedLots.some(o=>{
+     const dx=t[0]-o.x,dz=t[1]-o.z,a=BY_ID.get(o.type),c=Math.cos(o.yaw),sn=Math.sin(o.yaw);
+     return Math.abs(dx*c+dz*sn)<a.w*o.scale*.5+1.8&&
+      Math.abs(-dx*sn+dz*c)<a.d*o.scale*.5+1.8;
+    }))continue;
+    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?140:750;
+    if(lists[kind][key].length<limit)lists[kind][key].push(t);
+   }
  for(let kind=0;kind<5;kind++){
-  const stem=groups.trees.children[kind*2],canopy=groups.trees.children[kind*2+1];
-  let i=0;for(const [x,z,s] of lists[kind]){
-   const y=elevation(x,z),h=treeH[kind]*s;
-   dummy.position.set(x,y,z);dummy.scale.set(s*.83,h*.45,s*.83);dummy.rotation.set(0,0,0);dummy.updateMatrix();stem.setMatrixAt(i,dummy.matrix);
-   dummy.position.set(x,y+h*.66,z);dummy.scale.set(treeR[kind]*s,kind===3?h*.66:h*.36,treeR[kind]*s);dummy.updateMatrix();canopy.setMatrixAt(i,dummy.matrix);i++;
+  const {nearStem,nearLeaves,farStem,farLeaves}=groups.trees.userData.lods[kind];
+  let n=0;
+  for(const [tx,tz,scale] of lists[kind].near){
+   dummy.position.set(tx,elevation(tx,tz)-.15,tz);
+   dummy.rotation.set(0,Math.abs(Math.sin(tx*12.9898+tz*78.233)*43758.5453)%6.283,0);
+   dummy.scale.setScalar(scale);dummy.updateMatrix();
+   nearStem.setMatrixAt(n,dummy.matrix);nearLeaves.setMatrixAt(n,dummy.matrix);n++;
   }
-  stem.count=canopy.count=i;stem.instanceMatrix.needsUpdate=canopy.instanceMatrix.needsUpdate=true;
+  nearStem.count=nearLeaves.count=n;
+  nearStem.instanceMatrix.needsUpdate=nearLeaves.instanceMatrix.needsUpdate=true;
+  n=0;
+  for(const [tx,tz,scale] of lists[kind].far){
+   const h=treeH[kind]*scale,y=elevation(tx,tz);
+   dummy.rotation.set(0,0,0);
+   dummy.position.set(tx,y,tz);dummy.scale.set(scale*.83,h*.45,scale*.83);dummy.updateMatrix();
+   farStem.setMatrixAt(n,dummy.matrix);
+   dummy.position.set(tx,y+h*.66,tz);
+   dummy.scale.set(treeR[kind]*scale,kind===3?h*.66:h*.36,treeR[kind]*scale);
+   dummy.updateMatrix();farLeaves.setMatrixAt(n,dummy.matrix);n++;
+  }
+  farStem.count=farLeaves.count=n;
+  farStem.instanceMatrix.needsUpdate=farLeaves.instanceMatrix.needsUpdate=true;
  }
  render();
 }
