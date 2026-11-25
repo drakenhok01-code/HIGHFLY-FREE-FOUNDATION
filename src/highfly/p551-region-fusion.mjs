@@ -22,6 +22,7 @@ export function makeRegionFusion(nativeVisuals,elevation){
  if(!nativeVisuals?.material||typeof elevation!=='function')throw Error('Native material/heightfield required');
  const native=nativeVisuals.material,pristine=native.fragmentShader;
  const apronMaterial=native.clone(),groundMaterial=native.clone(),pathMaterial=native.clone();
+ for(const m of [apronMaterial,groundMaterial,pathMaterial])for(const k of ['uUnsungAlbedo','uUnsungDetail','uNativePath'])m.uniforms[k]={value:native.uniforms[k].value};
  const pathToken='float path=texture(uNativePath,vWorld.xz/2048.0+0.5).r;';
  if(!pristine.includes(pathToken)||!pristine.includes('void main(){'))throw Error('Native terrain shader mismatch');
  // All cloned shaders retain the exact native texture arrays. Never clone GPU textures.
