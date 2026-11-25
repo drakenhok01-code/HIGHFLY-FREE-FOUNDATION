@@ -26,7 +26,18 @@ try{
  const badResponses=[];
  page.on('response',r=>{if(r.status()===404&&r.url().includes('/kaykit-free/'))badResponses.push(r.url());});
  await page.goto(BASE+'?hfqa=1&hfchar=kaykit',{waitUntil:'domcontentloaded',timeout:60000});
- await page.waitForFunction(()=>!!window.__hfP515Eastbrook?.readyPromise,{timeout:190000});
+ try{
+  await page.waitForFunction(()=>!!window.__hfP515Eastbrook?.readyPromise,null,{timeout:190000});
+ }catch(err){
+  const debug=await page.evaluate(()=>({readyState:document.readyState,
+   game:!!window.__game,scene:!!window.__game?.pipe?.scene,
+   town:window.__hfP515Eastbrook?.id??null,world:!!window.__game?.world,
+   boot:document.querySelector('#boot')?.textContent?.slice(0,250)||''})).catch(e=>({error:String(e)}));
+  console.error('[P515 RPG BOOT DIAGNOSTIC]',JSON.stringify({debug,errors,badResponses,reason:String(err)}).slice(0,7500));
+  await page.screenshot({path:'qa-p515-eastbrook-native.png',fullPage:true,timeout:12000}).catch(()=>{});
+  fs.writeFileSync('qa-p515-eastbrook.json',JSON.stringify({debug,errors,badResponses,error:String(err)},null,2));
+  throw err;
+ }
  await page.evaluate(async()=>{await window.__hfP515Eastbrook.readyPromise;return true;});
  const status=await page.evaluate(()=>{
   const town=window.__hfP515Eastbrook,g=window.__game;
