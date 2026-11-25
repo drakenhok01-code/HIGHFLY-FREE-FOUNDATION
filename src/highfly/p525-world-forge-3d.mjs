@@ -1705,9 +1705,16 @@ if(new URLSearchParams(location.search).has('hfqa')){
   error(id){return prefabFailed.get(id)||null;},
   inspect(id){
    const root=viewCache.get(id);if(!root)return null;
-   let meshes=0,foundation=0,faces=0;
-   root.traverse(o=>{if(o.isMesh){meshes++;if(o.userData.foundation)foundation++;faces+=o.geometry?.index?.count||0;}});
-   return {meshes,foundation,faces,children:root.children.length,y:root.position.y,position:{x:root.position.x,z:root.position.z}};
+   let meshes=0,foundation=0,faces=0,platforms=0;
+   const materials=[];
+   root.traverse(o=>{if(o.isMesh){
+    meshes++;if(o.userData.foundation)foundation++;
+    if(/HIGHFLY_P542_BUILDING_OWN_BASE/.test(o.name))platforms++;
+    faces+=o.geometry?.index?.count||0;
+    const name=Array.isArray(o.material)?o.material.map(m=>m?.name).join(','):o.material?.name;
+    if(name&&!materials.includes(name))materials.push(name);
+   }});
+   return {meshes,foundation,faces,platforms,materials,children:root.children.length,y:root.position.y,position:{x:root.position.x,z:root.position.z}};
   }
  };
 }
