@@ -167,7 +167,12 @@ function buildStructure(b,o,f){
 function decorate(b,o,f,world){
  const type=o.type,[w0,d0]=BOUNDS[type],w=w0*o.scale,d=d0*o.scale;
  if(type.startsWith('floor-')){
-  const x=o.x,z=o.z,y=world.groundHeight.bind(world);
+  const x=o.x,z=o.z,y=(px,pz)=>{
+   const ground=world.groundHeight(px,pz);
+   // Align new paving with the real native Unsung plaza platform and its ramps.
+   const solid=world.floorBelow?.(px,ground+65,pz,65);
+   return num(solid)?Math.max(ground,solid):ground;
+  };
   const c=Math.cos(o.yaw),s=Math.sin(o.yaw),pos=(a,b)=>{
    const px=x+a*c-b*s,pz=z+a*s+b*c;
    return [px,y(px,pz)+.06,pz];
