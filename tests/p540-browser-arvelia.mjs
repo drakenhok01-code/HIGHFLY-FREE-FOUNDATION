@@ -12,7 +12,19 @@ try{
  let available=false;
  for(let i=0;i<90;i++){try{if((await fetch(base+'highfly/world-forge-3d.html')).ok){available=true;break;}}catch{}await delay(350);}
  if(!available)throw Error('Preview unavailable: '+logs.slice(-1300));
- browser=await puppeteer.launch({executablePath:chrome,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-gpu-sandbox']});
+ for(let attempt=1;attempt<=2&&!browser;attempt++){
+  try{
+   browser=await puppeteer.launch({executablePath:chrome,headless:true,
+    timeout:100000,protocolTimeout:120000,
+    args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl',
+     '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader',
+     '--disable-gpu-sandbox','--disable-background-networking','--no-first-run']});
+  }catch(err){
+   console.warn('[P540 Chrome launch attempt '+attempt+']',String(err).slice(0,550));
+   if(attempt===2)throw err;
+   await delay(1750);
+  }
+ }
  const page=await browser.newPage();await page.setViewport({width:1260,height:800,deviceScaleFactor:1});
  const errors=[],missingResources=[];
  page.on('pageerror',e=>errors.push('Browser JS: '+String(e).slice(0,500)));
