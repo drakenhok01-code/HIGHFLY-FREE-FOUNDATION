@@ -7,7 +7,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
-import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
+import {buildEastbrookLand,EASTBROOK_LAND_SPECS,EASTBROOK_FREE_FALLBACKS} from './p538-eastbrook-land.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
@@ -23,7 +23,8 @@ import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobb
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
 const $=id=>document.getElementById(id);
-const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true;
+const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true;
+const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true||P536_PREVIEW;
@@ -31,9 +32,9 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -118,7 +119,7 @@ holder.insertBefore(renderer.domElement,holder.firstChild);
 const cam=new THREE.PerspectiveCamera(54,1,.1,35000);
 const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=false;orbit.minDistance=8;orbit.maxDistance=4500;
 orbit.maxPolarAngle=Math.PI/2-.02;orbit.screenSpacePanning=true;
-orbit.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.PAN,RIGHT:THREE.MOUSE.PAN};
+orbit.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.PAN,RIGHT:P539_PREVIEW?null:THREE.MOUSE.PAN};
 scene.add(new THREE.HemisphereLight(0xe4f2ff,0x746251,2.15));
 const sun=new THREE.DirectionalLight(0xffedd7,2);sun.position.set(120,350,210);scene.add(sun);
 const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE.Group(),placed:new THREE.Group()};
@@ -132,7 +133,7 @@ const gltfLoader=new GLTFLoader()
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
 let nativeVisuals=null,nativeWater=null,nativeGrass=null,nativeLeaves=null;
-let gradePlans=[],gradeSpatial=null;const gradeScene=new THREE.Group();gradeScene.name='HIGHFLY_EDITABLE_EARTH_SLOPES_P537';scene.add(gradeScene);
+let adaptSlope=P539_PREVIEW;let gradePlans=[],gradeSpatial=null;const gradeScene=new THREE.Group();gradeScene.name='HIGHFLY_EDITABLE_EARTH_SLOPES_P537';scene.add(gradeScene);
 let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P536_PREVIEW||P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
@@ -182,8 +183,8 @@ function syncGradePlans(){
  for(const o of records){
   const a=BY_ID.get(o.type);if(!gradeEligible(a,o))continue;
   try{
-   const plan=gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6});
-   if(plan.slope<=1.75&&plan.y>-.1)gradePlans.push(plan);
+   const plan=gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6,dynamicApron:P539_PREVIEW});
+   if(plan.slope<=(P539_PREVIEW?24:1.75)&&plan.y>-.1)gradePlans.push(plan);
   }catch(err){log('Nivel de parcela '+o.id,err.message,false);}
  }
  gradeSpatial=indexGradePlans(gradePlans);
@@ -405,13 +406,13 @@ function validPosition(o,id=null){
   samples.push(h);
  }
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
- const grade=gradeEligible(a,o)?gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6}):null;
+ const grade=gradeEligible(a,o)?gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6,dynamicApron:P539_PREVIEW}):null;
  if(grade)samples.push(grade.groundMin,grade.y);
  if(!flat&&!npc){
   const slope=Math.max(...samples)-Math.min(...samples);
   const isBuilding=a.kind==='building'||!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
-  if(slope>(isBuilding?1.05:Math.min(5.2,1.75+o.scale*1.5)))
-   return {ok:false,why:'La parcela tiene desnivel: buscá un terreno nivelado. Evitamos bloques flotantes bajo el edificio.'};
+  if(slope>(isBuilding&&P539_PREVIEW&&adaptSlope?24:isBuilding?1.05:Math.min(5.2,1.75+o.scale*1.5)))
+   return {ok:false,why:P539_PREVIEW?'Desnivel extremo o adaptación desactivada: activá 🧱 Pendiente AUTO o buscá una parcela sin acantilado.':'La parcela tiene desnivel: buscá un terreno nivelado. Evitamos bloques flotantes bajo el edificio.'};
   if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
   // In a building lot the native trees can be *visually excluded* (same flag in RPG).
   // We never modify the Unsung terrain/forest source or the original plaza.
@@ -437,7 +438,7 @@ function restore(){
   // Migrate the user's existing P532/P531 work as a COPY into the new isolated
   // preview. Never overwrite either earlier version, and never seed CI tests.
   if(!old&&(P533_PREVIEW||P536_PREVIEW)&&!new URLSearchParams(location.search).has('hfqa')){
-   for(const previousKey of (P538_PREVIEW?['hf-world-forge-layout-p537-v1','hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P537_PREVIEW?['hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
+   for(const previousKey of (P539_PREVIEW?['hf-world-forge-layout-p538-v1','hf-world-forge-layout-p537-v1']:P538_PREVIEW?['hf-world-forge-layout-p537-v1','hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P537_PREVIEW?['hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
     try{
@@ -675,6 +676,11 @@ function selectAsset(id){
  createGhost(id);
  if(realPrefab(a))getGLTF(a).then(mesh=>{
   if(chosen!==id)return;
+  if(!mesh&&P539_PREVIEW&&id==='kaykit-blacksmith'){
+   selectAsset('kaykit-home-a');
+   status('⚒️ Herrería exacta no disponible; seleccionada Casa A CC0 como sustituto 3D.');
+   return;
+  }
   status(mesh?'✓ '+a.label+' completo. Tocá y arrastrá hasta donde quieras colocarlo.':
    'Falló modelo '+a.label+'. Abrí Diagnóstico; no se colocará una caja falsa.');
  });
@@ -1030,12 +1036,42 @@ async function loadEastbrookLand({auto=false}={}){
  if(button)button.disabled=true;
  const old=JSON.stringify(records);
  try{
-  const plan=buildEastbrookLand({
+  const resolver={
    canPlace:o=>validPosition(o),
    existing:records,
    sizeOf:type=>{const a=BY_ID.get(type);return a?[a.w,a.d]:null;},
    blockedAt:(x,z,r)=>treeNear(x,z,r)||archNear(x,z,r)
-  });
+  };
+  let buildingTypes={},plan=buildEastbrookLand({...resolver,buildingTypes});
+  // Actual asset preflight: substitute genuine FREE CC0/Unsung full meshes if
+  // another prefab fails. Recalculate footprints after each substitution.
+  // Do NOT mutate or erase the user's map unless all required roles are ready.
+  const substitutions=[];
+  if(P539_PREVIEW){
+   for(let pass=0;pass<5&&plan.complete;pass++){
+    const missing=[];
+    for(const type of new Set(plan.objects.map(o=>o.type))){
+     const asset=BY_ID.get(type);
+     if(!asset||!await getGLTF(asset))missing.push(type);
+    }
+    if(!missing.length)break;
+    let fixed=false;
+    for(const spec of EASTBROOK_LAND_SPECS){
+     const current=buildingTypes[spec.role]||spec.type;
+     if(!missing.includes(current))continue;
+     for(const candidate of EASTBROOK_FREE_FALLBACKS[current]||['kaykit-home-a','kaykit-home-b','unsung-hall']){
+      const asset=BY_ID.get(candidate);
+      if(asset&&await getGLTF(asset)){
+       buildingTypes[spec.role]=candidate;
+       substitutions.push(spec.role+': '+current+' → '+candidate);
+       fixed=true;break;
+      }
+     }
+    }
+    if(!fixed)break;
+    plan=buildEastbrookLand({...resolver,buildingTypes});
+   }
+  }
   if(!plan.complete){status('Arvelia no se aplicó: '+plan.reason+'. Centro '+plan.center.x+', '+plan.center.z+'.');return false;}
   const summary='Arvelia (solo tierra): '+plan.major+' edificios centrales, '+plan.optional+
    ' complementarios y '+plan.objects.filter(o=>o.highflyNpc).length+
@@ -1045,13 +1081,15 @@ async function loadEastbrookLand({auto=false}={}){
   const models=[...new Set(plan.objects.map(o=>o.type))].map(type=>BY_ID.get(type));
   if(models.some(a=>!a)){status('Falta un edificio o NPC en el catálogo público. Plano sin cambios.');return false;}
   const loaded=await Promise.all(models.map(async a=>({id:a.id,model:await getGLTF(a)})));
-  if(loaded.some(x=>!x.model)){status('Modelos públicos sin cargar: '+loaded.filter(x=>!x.model).map(x=>x.id).join(', ')+'. Plano intacto.');return false;}
+  if(loaded.some(x=>!x.model)){status('Faltan modelos CC0 tras reemplazos: '+loaded.filter(x=>!x.model).map(x=>x.id).join(', ')+'. Plano intacto.');return false;}
   const saved=localStorage.getItem(STORE);
-  if(saved)localStorage.setItem('hf-world-forge-layout-p538-before-eastbrook',saved);
+  if(saved)localStorage.setItem(P539_PREVIEW?'hf-world-forge-layout-p539-before-eastbrook':'hf-world-forge-layout-p538-before-eastbrook',saved);
   recordSnapshot();records.push(...plan.objects);
   save();await rebuildPlaced();focus(plan.center.x,plan.center.z,130);
-  status('✓ ARVELIA IMPORTADA: '+plan.major+' edificios base, '+plan.optional+
-   ' extras y '+plan.objects.filter(o=>o.highflyNpc).length+' NPC, todos editables. Sin puerto ni activos restringidos.');
+  status('✓ ARVELIA IMPORTADA: '+plan.major+' edificios centrales, '+plan.optional+
+   ' extras y '+plan.objects.filter(o=>o.highflyNpc).length+' NPC; sin puerto. '+
+   (P539_PREVIEW?'Herrería = Casa A CC0 (forja exacta pendiente). ':'')+
+   (substitutions.length?'Sustitutos: '+substitutions.join('; '):''));
   log('HIGHFLY P5.3.8 Eastbrook tierra',plan.objects.length+
    ' elementos en terreno validado · layout trasladado desde fuente MIT; diálogos HIGHFLY originales.');
   return true;
@@ -1397,7 +1435,7 @@ async function boot(){
   if(firstP529)await loadBeginningVillage({auto:true});
   if(P538_PREVIEW&&!new URLSearchParams(location.search).has('hfqa'))await loadEastbrookLand({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status(P538_PREVIEW?'✓ WORLD FORGE 4.6 · P5.3.8 · Arvelia terrestre importable con NPC y misiones HIGHFLY; P5.3.7 intacta.':P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
+  status(P539_PREVIEW?'✓ WORLD FORGE 4.7 · P5.3.9 · Arvelia con herrería CC0 sustituta, pendiente adaptable, WASD/flechas, mouse cámara.':P538_PREVIEW?'✓ WORLD FORGE 4.6 · P5.3.8 · Arvelia terrestre importable con NPC y misiones HIGHFLY; P5.3.7 intacta.':P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
