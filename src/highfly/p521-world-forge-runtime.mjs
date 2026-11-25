@@ -12,6 +12,7 @@ import * as NativeArch from '../world/arch/builder.js';
 import {UNSUNG_ORIGINAL_ASSETS,UNSUNG_ORIGINAL_IDS,buildUnsungOriginal} from './p530-unsung-original.mjs';
 import {buildWorldForgeCityMask} from './p530-city-ground-mask.mjs';
 import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_IDS} from './p531-kaykit-free-catalog.mjs';
+import {UNSUNG_FLORA,UNSUNG_FLORA_BY_ID,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
@@ -47,6 +48,7 @@ const BOUNDS=Object.freeze({
  'kaykit-windmill':[12,12],
  ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(KAYKIT_FREE_ALL.map(a=>[a.id,[a.w,a.d]])),
+ ...Object.fromEntries(UNSUNG_FLORA.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_ORIGINAL_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
 });
@@ -298,6 +300,17 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
+  if(UNSUNG_FLORA_BY_ID.has(o.type)){
+   const source=nativeUnsungFlora(o.type),instance=source.clone(true);
+   const box=new THREE.Box3().setFromObject(source),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+   const dims=BOUNDS[o.type],scale=Math.min(dims[0]/Math.max(.001,size.x),dims[1]/Math.max(.001,size.z))*o.scale;
+   instance.position.set(o.x-center.x*scale,fp.y-box.min.y*scale,o.z-center.z*scale);
+   instance.rotation.y=o.yaw;instance.scale.setScalar(scale);
+   instance.name='HIGHFLY_ORIGINAL_UNSUNG_TREE_'+o.type+'_'+o.id;
+   group.add(instance);
+   scenic.push({...o,y:fp.y,_instance:instance});
+   continue;
+  }
   if(UNSUNG_ORIGINAL_IDS.has(o.type)){
    // Real MIT Unsung kit pieces, same original procedural geometry and shader as native map.
    const center=nativeCenter(o.type),b=add(o),dims=BOUNDS[o.type];
@@ -354,6 +367,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // for solid pillars, tree trunks and elevated gazebo floor to protect Android.
  const scenicObjects=[];
  for(const o of scenic){
+  if(o._instance){scenicObjects.push({o,model:o._instance});continue;}
   const model=makeVillageDecor(o.type,o.scale);if(!model){skipped.push(o.id);continue;}
   model.position.set(o.x,o.y+.045,o.z);model.rotation.y=o.yaw;
   model.traverse(mesh=>{if(mesh.isMesh)mesh.frustumCulled=true;});
