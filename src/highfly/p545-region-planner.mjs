@@ -10,37 +10,44 @@ export function searchRegion(id,{overview,assetLookup,sampleTerrain,isOccupied,e
  const grid=candidateGrid(overview,{step:coastal?12:16,limit:14000,prefer,extent:coastal?1300:980});
  // Keep search local to preferred coastal areas; on land rank by requested regional theme, allow fallback.
  let anchors=coastal?grid.filter(p=>hypot(p,prefer)<270&&sampleTerrain(p.x,p.z).height<32):grid;
- const plan=findSettlementSite(id,{assetLookup,sampleTerrain,isOccupied,anchors,existing,maxCandidates:coastal?18000:28000,landOnly:coastal,maxExtent:extent});
- if(!plan.ok)return plan;
+ let partial=null;
+ for(let attempt=0;attempt<(coastal?3:5)&&anchors.length;attempt++){
+ const plan=findSettlementSite(id,{assetLookup,sampleTerrain,isOccupied,anchors,existing,maxCandidates:coastal?12000:18000,landOnly:coastal,maxExtent:extent});
+ if(!plan.ok)return partial??plan;
  const targets=nativeTargets(overview).concat(existing.flatMap(p=>p.connector?.points??[]));
  const occupied=(x,z)=>isOccupied(x,z)||existing.some(p=>inside(p,x,z))||plan.lots.some(l=>{const xs=l.corners.map(p=>p.x),zs=l.corners.map(p=>p.z);return x>Math.min(...xs)&&x<Math.max(...xs)&&z>Math.min(...zs)&&z<Math.max(...zs)});
- for(const start of [plan.roads[0].points[0],plan.roads[0].points.at(-1)]){
-  const link=connectNativeRoad(start,targets,{sampleTerrain,isOccupied:occupied,maxNodes:60000,maxExtent:extent});
+ const center={x:(plan.bounds.minX+plan.bounds.maxX)/2,z:(plan.bounds.minZ+plan.bounds.maxZ)/2};
+ const road=plan.roads[0],localTargets=targets.filter(p=>hypot(p,center)<(coastal?850:450));
+ for(const start of [road.points[0],road.points.at(-1)]){
+  const link=connectNativeRoad(start,localTargets,{sampleTerrain,isOccupied:occupied,maxNodes:coastal?18000:10000,maxExtent:extent,step:5,maxGrade:.30});
   if(link){plan.connector={id:id+'-native-link',material:'unsung-dirt',width:3.2,points:link};break}
  }
- if(!plan.connector)return {...plan,ok:false,reason:'parcela encontrada; sin ruta validada al camino nativo'};
  if(coastal){
   const docks=attachDock(plan,{sampleTerrain,isOccupied,assetLookup,occupied,maxExtent:extent});
-  if(!docks)return {...plan,ok:false,reason:'parcela terrestre localizada; falta muelle y acceso seguro'};
-  plan.objects.push(...docks.objects);plan.roads.push(docks.road);
-  plan.dock=docks.meta;
-  plan.pending.push('Completar muelles adicionales y validar colisiones de cubierta; no se importó el hexágono ni el puerto prefabricado entero.');
+  if(docks){plan.objects.push(...docks.objects);plan.roads.push(docks.road);plan.dock=docks.meta;}
  }
- return plan;
+ plan.regionStatus=plan.connector&&(!coastal||plan.dock)?'site-and-road-validated':'partial-preview';
+ plan.pending=[...plan.pending,...(!plan.connector?['Conexión interregional pendiente']:[]),...(coastal&&!plan.dock?['Muelle seguro pendiente']:[])];
+ if(plan.regionStatus==='site-and-road-validated')return plan;
+ if(!partial||((!!plan.dock)*2+(!!plan.connector))>((!!partial.dock)*2+(!!partial.connector)))partial=plan;
+ anchors=anchors.filter(p=>hypot(p,center)>42);
+ }
+ return partial??{ok:false,id,reason:'No native site'};
 }
+
 function attachDock(plan,{sampleTerrain,isOccupied,assetLookup,occupied,maxExtent}){
  const S=SCALE_REFERENCE.factor,tile=SOURCE_TILES.find(t=>t.id===(plan.id==='puerto'?'dock-ship':'dock-boats'));
  if(!tile)return null;
  const mid={x:(plan.bounds.minX+plan.bounds.maxX)/2,z:(plan.bounds.minZ+plan.bounds.maxZ)/2},candidates=[];
- const targets=[plan.roads[0].points[0],plan.roads[0].points.at(-1),...plan.connector.points];
- for(let x=mid.x-130;x<=mid.x+130;x+=3)for(let z=mid.z-130;z<=mid.z+130;z+=3){const p={x,z};if(Math.max(Math.abs(x),Math.abs(z))>maxExtent-8||hypot(p,mid)>130||inside(plan,x,z,3)||isOccupied(x,z))continue;const h=sampleTerrain(x,z);if(h.water||h.height-h.waterHeight>2.2)continue;
+ const targets=[plan.roads[0].points[0],plan.roads[0].points.at(-1),...(plan.connector?.points??[])];
+ for(let x=mid.x-150;x<=mid.x+150;x+=4)for(let z=mid.z-150;z<=mid.z+150;z+=4){const p={x,z};if(Math.max(Math.abs(x),Math.abs(z))>maxExtent-8||hypot(p,mid)>150||inside(plan,x,z,3)||isOccupied(x,z))continue;const h=sampleTerrain(x,z);if(h.water||h.height-h.waterHeight>2.2)continue;
  for(let i=0;i<16;i++){const yaw=i*Math.PI/8,dx=Math.sin(yaw),dz=Math.cos(yaw),at=(a,b)=>({x:x+Math.cos(yaw)*a*S+Math.sin(yaw)*b*S,z:z-Math.sin(yaw)*a*S+Math.cos(yaw)*b*S});
  // Positive local z is the shore-side end of these dock compositions.
  const center={x:x-dx*3.2*S,z:z-dz*3.2*S};const land={x:x+dx*1.6,z:z+dz*1.6};if(sampleTerrain(land.x,land.z).water||occupied(land.x,land.z))continue;
- const objs=[];let ok=true;for(let k=0;k<tile.pieces.length;k++){const q=tile.pieces[k],a=assetLookup(q.piece);if(!a){ok=false;break}const pos=at(q.x,q.z-3.2),h=sampleTerrain(pos.x,pos.z);const boat=/boat|ship|canoe/.test(q.piece);if((boat&&!h.water)||isOccupied(pos.x,pos.z)){ok=false;break}objs.push({id:plan.id+'-dock-'+k,lot:plan.id+'-dock',sourceId:q.piece,model:a.uri,license:a.license,...pos,yOffset:(q.y??0)*S,y:h.waterHeight+(q.y??0)*S,yaw:q.rot+yaw,tilt:q.tilt??null,scale:q.scale*S,swatchMap:q.swatchMap??null,sourceTransform:q,surface:boat?'water':'shore'});}
+ const objs=[];let ok=true;for(let k=0;k<tile.pieces.length;k++){const q=tile.pieces[k],a=assetLookup(q.piece);if(!a){ok=false;break}const pos=at(q.x,q.z-3.2),h=sampleTerrain(pos.x,pos.z);const boat=/boat|ship|canoe/.test(q.piece);if((boat&&!h.water)||isOccupied(pos.x,pos.z)){ok=false;break}objs.push({id:plan.id+'-dock-'+k,lot:plan.id+'-dock',sourceId:q.piece,model:a.uri,license:a.license,...pos,yOffset:(q.y??0)*S,y:h.waterHeight+(q.y??0)*S,yaw:(q.rot??0)+yaw,tilt:q.tilt??null,scale:q.scale*S,swatchMap:q.swatchMap??null,sourceTransform:q,surface:boat?'water':'shore'});}
  if(ok&&sampleTerrain(center.x,center.z).water)candidates.push({land,center,objs,score:hypot(land,mid)});
  }}
  candidates.sort((a,b)=>a.score-b.score);
- for(const c of candidates.slice(0,40)){const route=connectNativeRoad(c.land,targets,{sampleTerrain,isOccupied:occupied,maxNodes:15000,maxExtent});if(route)return {objects:c.objs,road:{id:plan.id+'-dock-access',material:'unsung-dirt',width:3.2,points:route},meta:{x:c.center.x,z:c.center.z,land:c.land,tile:tile.id}}}
+ for(const c of candidates.slice(0,10)){const route=connectNativeRoad(c.land,targets,{sampleTerrain,isOccupied:occupied,maxNodes:6000,maxExtent,step:3});if(route)return {objects:c.objs,road:{id:plan.id+'-dock-access',material:'unsung-dirt',width:3.2,points:route},meta:{x:c.center.x,z:c.center.z,land:c.land,tile:tile.id}}}
  return null;
 }
