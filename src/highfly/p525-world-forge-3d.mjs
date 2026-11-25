@@ -517,22 +517,73 @@ function selectAsset(id){
  });
  else status('Elegiste '+a.label+' · Tocá terreno libre para colocarlo.');
 }
+const CATALOG_TABS=[
+ {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
+ {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
+ {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
+ {id:'Unsung original',label:'🏛️ Unsung original',filter:a=>!!a.originalPrefab},
+ {id:'Pisos',label:'🧱 Pisos y caminos',filter:a=>a.cat==='Pisos'},
+ {id:'Decoración',label:'🏮 Decoración HIGHFLY',filter:a=>a.cat==='Decoración'},
+ {id:'Naturaleza',label:'🌳 Naturaleza',filter:a=>a.cat==='Naturaleza'},
+ {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
+ {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
+];
+let catalogLimit=36,brushCells=1;
+function catalogCandidates(){
+ const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
+ const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ return base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos'&&
+  (!q||[a.label,a.id,a.originalCategory,a.sourcePack,a.cat].some(v=>String(v||'')
+   .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q))));
+}
 function drawCatalog(){
- $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
- for(const a of base.filter(a=>(category==='Edificios'?!!a.model:a.cat===category)&&a.cat!=='Bocetos antiguos'&&a.label.toLowerCase().includes(find))){
-  const el=document.createElement('button');el.className='asset'+(chosen===a.id?' selected':'');
-  if(a.model){
-   const img=document.createElement('img');img.loading='lazy';img.alt=a.label;img.src=url('kaykit-free/thumbs/building_'+a.model+'_red.png');
-   img.onerror=()=>img.replaceWith(document.createTextNode(a.icon));el.append(img);
-  }else{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);}
+ const root=$('catalog');root.replaceChildren();
+ const candidates=catalogCandidates(),list=candidates.slice(0,catalogLimit);
+ $('catalog-meta').textContent=candidates.length+' modelos · '+Math.min(catalogLimit,candidates.length)+' visibles'+
+  (category.startsWith('SOURCE')?' · importar ZIP privado para acceder a los 182 GLB':'');
+ $('catalog-more').hidden=candidates.length<=catalogLimit;
+ if(!list.length){
+  const info=document.createElement('p');info.style.cssText='padding:12px;color:#e0c89c;grid-column:span 2';
+  info.textContent=category.startsWith('SOURCE')
+   ?'📦 Primero importá HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip con el botón SOURCE + Halloween.'
+   :'No hay modelos para este filtro.';root.append(info);return;
+ }
+ for(const a of list){
+  const el=document.createElement('button');el.type='button';
+  el.className='asset'+(chosen===a.id?' selected':'');
+  el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
+  if(a.model||a.originalPrefab){
+   const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
+   img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    url('kaykit-free/thumbs/building_'+a.model+'_red.png');
+   img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
+   el.append(img);
+  }else{
+   const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);
+  }
   const label=document.createElement('span');label.textContent=a.label;el.append(label);
-  el.onclick=()=>selectAsset(a.id);$('catalog').append(el);
+  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||
+   (a.originalPrefab?'UNSUNG · MIT':a.model?'KAYKIT · CC0':a.cat);el.append(type);
+  const size=document.createElement('small');size.className='asset-size';
+  size.textContent=a.w+' × '+a.d+' m · '+(a.originalPrefab?'ORIGINAL':a.privateModel?'SOURCE':'3D');
+  el.append(size);
+  el.onclick=()=>selectAsset(a.id);root.append(el);
  }
 }
-function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
-function drawCats(){for(const cat of ['Edificios','KayKit FREE','KayKit SOURCE','Pisos','Decoración','Naturaleza','NPC']){
- const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
-}setCategory(category);}
+function setCategory(a){
+ category=a;catalogLimit=36;
+ for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);
+ drawCatalog();
+}
+function drawCats(){
+ $('cats').replaceChildren();
+ for(const tab of CATALOG_TABS){
+  const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
+  const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
+  el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
+ }
+ setCategory(category);
+}
 function addAt(x,z){
  if(!chosen||!map)return false;
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
@@ -566,7 +617,10 @@ function paintLine(a,b){
  let x0=Math.round(a.x/4),z0=Math.round(a.z/4),x1=Math.round(b.x/4),z1=Math.round(b.z/4);
  let dx=Math.abs(x1-x0),dz=-Math.abs(z1-z0),sx=x0<x1?1:-1,sz=z0<z1?1:-1,err=dx+dz,guard=0;
  while(guard++<300){
-  addAt(x0*4,z0*4);
+  // Age-style brush: each pointer stroke fills a controllable 4/8/12 m band.
+  for(let ox=-(brushCells-1);ox<=brushCells-1;ox++)
+   for(let oz=-(brushCells-1);oz<=brushCells-1;oz++)
+    if(Math.hypot(ox,oz)<=Math.max(.8,brushCells-1+.1))addAt((x0+ox)*4,(z0+oz)*4);
   if(x0===x1&&z0===z1)break;
   const e=2*err;if(e>=dz){err+=dz;x0+=sx;}if(e<=dx){err+=dx;z0+=sz;}
  }
@@ -681,8 +735,9 @@ async function handlePrivateImport(ev){
  try{
   const metadata=await importPrivateSourcePack(file,message=>status(message));
   addPrivateCatalog(metadata);cache.clear();prefabReady.clear();prefabFailed.clear();
+  catalogLimit=36;
   category='KayKit SOURCE';
-  $('cats').replaceChildren();drawCats();
+  drawCats();
   await rebuildPlaced();
   status('✓ '+metadata.length+' modelos KayKit SOURCE, Halloween y Mixed Bag 2 disponibles en este Android. Buscá el catálogo KayKit SOURCE.');
   log('Importación SOURCE privada',metadata.length+' GLB válidos en IndexedDB; ningún archivo se subió a GitHub.');
@@ -694,7 +749,9 @@ function exportJSON(){
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
 }
 function bindUI(){
- $('search').oninput=drawCatalog;
+ $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
+ $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};
+ $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
  $('home').onclick=()=>focus(-512,-70);
@@ -737,7 +794,7 @@ function bindUI(){
    if(!hit)return;
    const floor=chosen.startsWith('floor-');
    recordSnapshot();
-   if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
+   if(floor){dragPainting=true;lastPaint=hit;paintLine(hit,hit);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
   }else if(mode==='move'&&selected&&!gizmo?.dragging&&clickPlaced(e)===selected){
    // Directly grab the complete model, just like Age of Empires object placement.
