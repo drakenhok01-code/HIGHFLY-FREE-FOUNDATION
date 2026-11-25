@@ -11,7 +11,7 @@
 export const EASTBROOK_LAND_ANCHOR=Object.freeze({x:-512,z:-70});
 export const EASTBROOK_LAND_SPECS=Object.freeze([
  {role:'banco',source:'eastbrook_bank',type:'kaykit-home-b',dx:-47.99,dz:-16.33,yaw:225,scale:1.15,required:true},
- {role:'herreria',source:'eastbrook_smithy',type:'kaykit-blacksmith',dx:9.80,dz:26.80,yaw:20,scale:1.18,required:true},
+ {role:'herreria',source:'eastbrook_smithy',type:'kaykit-home-a',wanted:'kaykit-blacksmith',dx:9.80,dz:26.80,yaw:20,scale:1.18,required:true},
  {role:'taberna',source:'eastbrook_inn',type:'kaykit-tavern',dx:-16.34,dz:41.37,yaw:24,scale:1.18,required:true},
  {role:'capilla',source:'eastbrook_chapel',type:'kaykit-church',dx:42.20,dz:-17.62,yaw:125,scale:1.15,required:true},
  {role:'botica',source:'eastbrook_apothecary',type:'kaykit-home-a',dx:-16.59,dz:-25.63,yaw:175,scale:1.16,required:true},
@@ -20,6 +20,18 @@ export const EASTBROOK_LAND_SPECS=Object.freeze([
  {role:'casa-norte',source:null,type:'kaykit-home-a',dx:50,dz:49,yaw:18,scale:1.05,required:false},
  {role:'casa-sur',source:null,type:'kaykit-home-b',dx:-55,dz:48,yaw:-30,scale:1.05,required:false}
 ]);
+// P539: the original FREE hexagon blacksmith did not load in the observed
+// P538 browser. Use a genuine tested CC0 house, not a restricted paid building.
+// Retain the desired ID to make the pending exact visual replacement explicit.
+export const EASTBROOK_PENDING=Object.freeze([{role:'herreria',wanted:'kaykit-blacksmith',replacement:'kaykit-home-a',reason:'El prefab completo no cargó en P538; reemplazo 3D CC0 funcional'}]);
+export const EASTBROOK_FREE_FALLBACKS=Object.freeze({
+ 'kaykit-home-a':['kaykit-home-b','kaykit-tavern','unsung-hall'],
+ 'kaykit-home-b':['kaykit-home-a','kaykit-tavern','unsung-hall'],
+ 'kaykit-tavern':['kaykit-home-a','kaykit-home-b','unsung-hall'],
+ 'kaykit-church':['kaykit-home-b','kaykit-home-a','unsung-hall'],
+ 'kaykit-market':['kaykit-home-b','kaykit-home-a','unsung-hall'],
+ 'unsung-hall':['kaykit-tavern','kaykit-home-a','kaykit-home-b']
+});
 export const EASTBROOK_NPCS=Object.freeze([
  {id:'sera',name:'Sera',type:'npc-merchant',at:'gremio',quest:'primer-encargo',dx:0,dz:-11},
  {id:'borin',name:'Borin',type:'npc-artisan',at:'herreria',quest:'primer-encargo',dx:8,dz:1},
@@ -54,16 +66,17 @@ function rotate(dx,dz,turn){
  if(turn===1)return [-dz,dx];if(turn===2)return [-dx,-dz];
  if(turn===3)return [dz,-dx];return [dx,dz];
 }
-function attempt(center,turn,{canPlace,existing,sizeOf,blockedAt}){
+function attempt(center,turn,{canPlace,existing,sizeOf,blockedAt,buildingTypes={}}){
  const result=[],missing=[],lookup=new Map(),scaleOffsets=.75;
  for(const spec of EASTBROOK_LAND_SPECS){
   const [ox,oz]=rotate(spec.dx*scaleOffsets,spec.dz*scaleOffsets,turn);
   let placed=null;
   for(const [mx,mz] of SHIFTS){
-   const o={id:'hf-p538-eastbrook-'+spec.role,type:spec.type,
+   const o={id:'hf-p538-eastbrook-'+spec.role,type:buildingTypes[spec.role]||spec.type,
      x:round(center.x+ox+mx),z:round(center.z+oz+mz),
      yaw:(spec.yaw+turn*90)*Math.PI/180,scale:spec.scale,y:0,clearTrees:false,
-     highflyTown:'arvelia',highflyRole:spec.role,highflyOrigin:'claudecraft-mit-layout'};
+     highflyTown:'arvelia',highflyRole:spec.role,highflyOrigin:'claudecraft-mit-layout',
+      highflyWantedPrefab:spec.wanted||null};
    // Plaza/stair protected and NO dock area. Never clear the native trees:
    // instead move this lot to an adjacent valid position.
    if(Math.hypot(o.x-EASTBROOK_LAND_ANCHOR.x,o.z-EASTBROOK_LAND_ANCHOR.z)>115)continue;
@@ -104,14 +117,14 @@ function attempt(center,turn,{canPlace,existing,sizeOf,blockedAt}){
  * Pure deterministic placement. Call canPlace with REAL Unsung terrain/stairs,
  * water, original geometry and local editor collisions. On failure make NO edit.
  */
-export function buildEastbrookLand({canPlace,existing=[],sizeOf,blockedAt}={}){
+export function buildEastbrookLand({canPlace,existing=[],sizeOf,blockedAt,buildingTypes={}}={}){
  if(typeof canPlace!=='function')throw Error('Arvelia: terreno original sin validador');
  if(!Array.isArray(existing))throw Error('Arvelia: plano inválido');
  if(existing.some(o=>o?.highflyTown==='arvelia'&&String(o.id).startsWith('hf-p538-')))
   return {complete:false,duplicate:true,objects:[],reason:'Arvelia ya está colocada'};
  let best=null,bestScore=-Infinity;
  for(const [x,z] of CENTERS)for(let turn=0;turn<4;turn++){
-  const candidate=attempt({x,z},turn,{canPlace,existing,sizeOf,blockedAt});
+  const candidate=attempt({x,z},turn,{canPlace,existing,sizeOf,blockedAt,buildingTypes});
   const score=candidate.major*10000+(candidate.complete?100000:0)+
    candidate.objects.length*80-Math.hypot(x-EASTBROOK_LAND_ANCHOR.x,z-EASTBROOK_LAND_ANCHOR.z)*2;
   if(score>bestScore){best=candidate;bestScore=score;}
