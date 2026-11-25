@@ -60,7 +60,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -434,16 +434,32 @@ function addAt(x,z){
  if(!chosen||!map)return false;
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
  if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
- const check=validPosition(o);if(!check.ok){status('No se puede colocar: '+check.why);return false;}
+ const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
+ if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
  o.y=check.y;records.push(o);
- buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){groups.placed.add(root);viewCache.set(o.id,root);render();}});
- status('Añadido '+a.label+' · X '+o.x+' / Z '+o.z);return true;
+ buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){
+  groups.placed.add(root);viewCache.set(o.id,root);
+  if(!o.type.startsWith('floor-')&&mode==='place'&&chosen===o.type){
+   selectObject(o.id);
+   status('✓ '+a.label+' colocado. Ya podés MOVER, GIRAR o cambiar tamaño.');
+  }
+  render();
+ }});
+ if(o.clearTrees)updateTrees(true);
+ status('✓ Añadido '+a.label+' · X '+o.x+' / Z '+o.z);
+ return o.id;
 }
 function paintLine(a,b){
  const steps=Math.max(1,Math.ceil(Math.hypot(a.x-b.x,a.z-b.z)/2));
- for(let i=0;i<=steps;i++)addAt(a.x+(b.x-a.x)*i/steps,a.z+(b.z-a.z)*i/steps);
- save();
+ // A true grid brush: never skip 4m paving cells when the finger moves quickly.
+ let x0=Math.round(a.x/4),z0=Math.round(a.z/4),x1=Math.round(b.x/4),z1=Math.round(b.z/4);
+ let dx=Math.abs(x1-x0),dz=-Math.abs(z1-z0),sx=x0<x1?1:-1,sz=z0<z1?1:-1,err=dx+dz,guard=0;
+ while(guard++<300){
+  addAt(x0*4,z0*4);
+  if(x0===x1&&z0===z1)break;
+  const e=2*err;if(e>=dz){err+=dz;x0+=sx;}if(e<=dx){err+=dx;z0+=sz;}
+ }
 }
 function clickPlaced(ev){
  positionPointer(ev);const hit=raycaster.intersectObjects(groups.placed.children,true);
@@ -499,19 +515,56 @@ function bindUI(){
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
+ // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
-  if(mode==='place'&&chosen&&e.isPrimary){
-   const h=hitTerrain(e);if(!h)return;
-   recordSnapshot();dragPainting=chosen.startsWith('floor-');lastPaint=h;
-   if(!addAt(h.x,h.z))history.pop();save();
+  if(!e.isPrimary)return;
+  downPos={x:e.clientX,y:e.clientY};
+  if(mode==='place'&&chosen){
+   e.preventDefault();
+   canvas.setPointerCapture?.(e.pointerId);
+   activePointer=e.pointerId;
+   const hit=hitTerrain(e);
+   if(!hit)return;
+   const floor=chosen.startsWith('floor-');
+   recordSnapshot();
+   if(floor){dragPainting=true;lastPaint=hit;if(!addAt(hit.x,hit.z))history.pop();}
+   else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
   if(mode==='place')previewGhost(e);
-  if(mode==='place'&&dragPainting&&(e.buttons&1)){const h=hitTerrain(e);if(h&&lastPaint){paintLine(lastPaint,h);lastPaint=h;}}
+  if(mode==='place'&&activePointer===e.pointerId){
+   const h=hitTerrain(e);
+   if(dragPainting&&lastPaint&&h){paintLine(lastPaint,h);lastPaint=h;}
+   if(pendingDrop&&h)pendingDrop=h;
+  }
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
- const end=()=>{dragPainting=false;lastPaint=null;save();};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+ canvas.addEventListener('pointerup',e=>{
+  if(mode==='place'&&activePointer===e.pointerId){
+   if(pendingDrop){
+    const h=hitTerrain(e)||pendingDrop;
+    if(!addAt(h.x,h.z))history.pop();
+    pendingDrop=null;
+   }
+   save();
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   activePointer=null;dragPainting=false;lastPaint=null;
+  }else if(mode==='orbit'&&downPos&&Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y)<9){
+   // Optional direct selection by single tap, without switching camera mode first.
+   const id=clickPlaced(e);if(id)selectObject(id);
+  }
+  downPos=null;
+ });
+ canvas.addEventListener('pointercancel',e=>{
+  if(activePointer===e.pointerId){
+   activePointer=null;pendingDrop=null;dragPainting=false;lastPaint=null;
+   if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+   save();
+  }
+  downPos=null;
+ });
 }
 function installGizmo(){
  gizmo=new TransformControls(cam,renderer.domElement);scene.add(gizmo.getHelper());
