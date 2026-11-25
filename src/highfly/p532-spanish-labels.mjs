@@ -39,7 +39,7 @@ export function spanishFreeLabel(asset){
  if(!asset?.freePath)return asset?.label||'Objeto';
  const [kind,folder,name]=asset.freePath.replace(/\.gltf$/,'').split('/');
  if(kind==='buildings'&&folder!=='neutral'){
-  const root=name.replace(/_(red|blue|green|yellow)$/,'');
+  const root=name.replace(/^building_/,'').replace(/_(red|blue|green|yellow)$/,'');
   return (BUILDING[root]||fill(root))+' · '+(COLORS[folder]||folder);
  }
  if(kind==='buildings'&&folder==='neutral')return NEUTRAL[name]||fill(name);
