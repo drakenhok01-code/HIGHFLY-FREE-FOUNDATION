@@ -628,7 +628,7 @@ async function duplicateSelected(){
  try{const node=await buildPlaced(test);if(node){groups.placed.add(node);viewCache.set(test.id,node);selectObject(test.id);updateTrees(true);render();}}
  catch(err){records=records.filter(x=>x.id!==test.id);save();log('Duplicar edificio',err.message,false);}
 }
-async function loadBeginningVillage(){
+async function loadBeginningVillage({auto=false}={}){
  if(!map||!overview){status('Necesitamos primero las alturas y el terreno original de Unsung.');return;}
  if(records.length>2100){status('No queda suficiente espacio editable. Exportá primero tu plano.');return;}
  const button=$('preset-village');button.disabled=true;
@@ -645,7 +645,7 @@ async function loadBeginningVillage(){
   const summary='Pueblo de los Inicios: '+plan.buildings+' edificios completos, '+plan.paved+
    ' piezas de piedra y '+plan.decorations+' accesorios. Centro X '+plan.center.x+
    ', Z '+plan.center.z+'. ¿Agregar a TU mundo sin borrar lo anterior?';
-  if(!window.confirm(summary))return;
+  if(!auto&&!window.confirm(summary))return;
   status('Comprobando edificios KayKit completos antes de añadir el pueblo…');
   const types=[...new Set(plan.objects.filter(o=>BY_ID.get(o.type)?.model).map(o=>o.type))];
   const loaded=await Promise.all(types.map(async type=>({type,model:await getGLTF(BY_ID.get(type))})));
@@ -653,7 +653,7 @@ async function loadBeginningVillage(){
   if(bad.length){status('Falta un prefab completo: '+bad.map(o=>o.type).join(', ')+'. No se modificó nada.');return;}
   // Strictly additive, reversible and backed up, with no replacements of Unsung's scenery.
   const old=localStorage.getItem(STORE);
-  if(old)localStorage.setItem('hf-world-forge-layout-v1-backup-pre-p528-village',old);
+  if(old)localStorage.setItem(P529_PREVIEW?'hf-world-forge-layout-p529-backup-pre-village':'hf-world-forge-layout-v1-backup-pre-p528-village',old);
   recordSnapshot();
   records.push(...plan.objects);
   save();await rebuildPlaced();focus(plan.center.x,plan.center.z,135);
@@ -855,8 +855,13 @@ async function boot(){
   originalRender();await rebuildPlaced();switchMode('orbit');render();
   status('✓ TERRRENO ORIGINAL 3D + agua + árboles. Cargando arquitectura exacta de Unsung…');
   await loadOriginalGeometry();
+  // An actual edited starting village must exist when the P529 preview first opens.
+  // Avoid seeding during headless legacy tests and NEVER overwrite a saved layout.
+  const firstP529=P529_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')&&
+   localStorage.getItem(STORE)===null;
+  if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 3D listo · Elegí un KayKit FREE, inspeccioná el mundo y colocá edificios.');
+  status('✓ WORLD FORGE 3D P5.2.9 listo · '+records.length+' construcciones y decoraciones. Editá o tocá ▶ Ver en RPG.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
