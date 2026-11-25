@@ -18,17 +18,17 @@ for(const [file,re] of [
  [manifest,/MeshBuilder/],[manifest,/buildUnsungOriginal/],
  [manifest,/unsung-original-prefabs\.bin/],[manifest,/unsung-original-prefabs\.json/],
  [editor,/loadUnsungOriginal\(a\.id,url\)/],
- [editor,/category==='Edificios'/],[editor,/SOURCE · Edificios/],
+ [editor,/id:'Edificios'/],[editor,/SOURCE · Edificios/],
  [editor,/SOURCE · Accesorios/],[editor,/Unsung original/],
  [editor,/catalogLimit=36/],[editor,/brushCells=brushCells%3\+1/],
  [editor,/no se colocará una caja falsa/],
  [runtime,/buildUnsungOriginal\(o\.type,q/],
- [runtime,/P530_PREVIEW/],
+ [runtime,/P530_PREVIEW/],[runtime,/buildWorldForgeCityMask/],
  [flat,/hf-world-forge-layout-p530-v1/],
  [flat,/Unsung original/],
  [html,/id="brush-width"/],[html,/id="catalog-more"/],
  [build,/p530-native-unsung-prefabs/],
- [build,/p530-native-unsung-thumbnails/],
+ [build,/p530-native-unsung-thumbnails/],[build,/uHighflyCityMask/],
  ])assert.match(file,re);
 assert.ok(!build.includes('KIT_COMPLETO_PARTE_01.zip'));
 assert.ok(!build.includes('HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip'));
