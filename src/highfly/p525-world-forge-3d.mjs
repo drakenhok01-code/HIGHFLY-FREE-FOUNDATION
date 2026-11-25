@@ -181,7 +181,7 @@ async function drawTerrain(){
  const mat=(t)=>new THREE.MeshLambertMaterial({map:t,side:THREE.DoubleSide});
  geo.region=new THREE.Mesh(terrain(16384,256,-.7),mat(textures[0]));geo.core=new THREE.Mesh(terrain(2048,256,-.15),mat(textures[1]));
  // Near tile uses same original samples but finer mesh; UVs refer to full 2048m core, not tile.
- const nearG=terrain(470,170,.18,movedPivot.x,movedPivot.z);
+ const nearG=terrain(470,qualityHigh?270:170,.18,movedPivot.x,movedPivot.z);
  const att=nearG.getAttribute('uv'),pp=nearG.getAttribute('position');
  for(let i=0;i<att.count;i++){att.setXY(i,pp.getX(i)/2048+.5,1-(pp.getZ(i)/2048+.5));}att.needsUpdate=true;
  geo.near=new THREE.Mesh(nearG,mat(textures[1]));scene.add(geo.region,geo.core,geo.near);
@@ -193,7 +193,7 @@ function updateNear(){
  if(Math.hypot(x-nearFocus[0],z-nearFocus[1])<80)return;
  nearFocus=[x,z];
  if(Math.max(Math.abs(x),Math.abs(z))>1050){geo.near.visible=false;return;}geo.near.visible=true;
- const g=terrain(470,170,.22,snap(x,40),snap(z,40)),u=g.getAttribute('uv'),p=g.getAttribute('position');
+ const g=terrain(470,qualityHigh?270:170,.22,snap(x,40),snap(z,40)),u=g.getAttribute('uv'),p=g.getAttribute('position');
  for(let i=0;i<u.count;i++)u.setXY(i,p.getX(i)/2048+.5,1-(p.getZ(i)/2048+.5));
  u.needsUpdate=true;geo.near.geometry.dispose();geo.near.geometry=g;render();
 }
@@ -232,8 +232,8 @@ function originalRender(){
  const lods=[];
  for(let k=0;k<5;k++){
   const model=nativeUnsungFlora('unsung-tree-'+species[k]);
-  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,140),
-   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,140),
+  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,DESKTOP_FINE?400:220),
+   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,DESKTOP_FINE?400:220),
    farStem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),750),
    farLeaves=new THREE.InstancedMesh(k===3?column:crown,
     new THREE.MeshLambertMaterial({color:colors[k],flatShading:true}),750);
@@ -253,7 +253,11 @@ function updateTrees(force=false){
  const x=orbit.target.x,z=orbit.target.z;
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<28)return;
  treeFocus=[x,z];
- const lists=Array.from({length:5},()=>({near:[],far:[]})),rad=285,nearDistance=128;
+ // Desktop editing should visualize genuine species across the entire town
+ // before switching to geometric far LOD. Lower-cost fallback for mobile.
+ const nearDistance=qualityHigh?405:155,rad=qualityHigh?585:325;
+ const nearLimit=qualityHigh?(DESKTOP_FINE?370:210):145;
+ const lists=Array.from({length:5},()=>({near:[],far:[]}));
  const clearedLots=records.filter(o=>o.clearTrees===true&&!isCurvedRoad(o)&&BY_ID.has(o.type));
  const clearedCurves=records.filter(isCurvedRoad).map(o=>({o,samples:sampleCurvedRoad(o.points,1.8)}));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
@@ -266,7 +270,7 @@ function updateTrees(force=false){
      return Math.abs(dx*c+dz*sn)<a.w*o.scale*.5+1.8&&
       Math.abs(-dx*sn+dz*c)<a.d*o.scale*.5+1.8;
     }))continue;
-    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?140:750;
+    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?nearLimit:750;
     if(lists[kind][key].length<limit)lists[kind][key].push(t);
    }
  for(let kind=0;kind<5;kind++){
@@ -970,7 +974,7 @@ function bindUI(){
   renderer.setPixelRatio(Math.min(qualityHigh?2:1.15,window.devicePixelRatio||1));
   $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
   $('quality-toggle').classList.toggle('on',qualityHigh);
-  fit();render();
+  fit();updateTrees(true);render();
   status('Calidad '+(qualityHigh?'ALTA (mallas reales Unsung y GLB a resolución de PC)':'NORMAL (menos píxeles de dibujo)')+
     '. No cambia las texturas, el mapa ni el guardado.');
  };
