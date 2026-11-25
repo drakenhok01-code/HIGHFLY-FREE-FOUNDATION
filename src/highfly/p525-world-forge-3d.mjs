@@ -10,7 +10,7 @@ const base=[
  ['house','Casa medieval','🏡','Edificios',9,8],['timber','Casa madera','🛖','Edificios',8,8],['market','Mercado','🏪','Edificios',12,9],
  ['mill','Molino','🌾','Edificios',10,10],['granary','Granero','🌽','Edificios',12,9],['warehouse','Almacén','📦','Edificios',11,9],
  ['fishery','Pesquería','🎣','Edificios',10,8],['ranger','Refugio','🏕','Edificios',9,8],
- ['floor-stone','Empedrado','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
+ ['floor-stone','Continuar plaza · piedra','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
  ['lantern','Farol original','🏮','Decoración',1.5,1.5],['well','Pozo','🕳','Decoración',4,4],
  ['fence','Valla','🚧','Decoración',4,.4],['barrel','Barril','🛢','Decoración',1.1,1.1],['bench','Banco','🪑','Decoración',3,1.4],
  ['tree','Árbol','🌳','Naturaleza',3,3],['rock','Roca','🪨','Naturaleza',3,2.5],['ore','Mineral','⛏','Naturaleza',3,3],
@@ -176,10 +176,11 @@ function updateTrees(force=false){
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
  treeFocus=[x,z];
  const lists=Array.from({length:5},()=>[]),rad=260;
+ const clearedLots=records.filter(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&BY_ID.has(o.type));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
   for(const t of overview.treeIndex.get(i+','+j)||[]){
    if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
-   if(records.some(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&BY_ID.has(o.type)&&(()=>{
+   if(clearedLots.some(o=>(()=>{
      const [dx,dz]=[t[0]-o.x,t[1]-o.z],a=BY_ID.get(o.type),c=Math.cos(o.yaw),s=Math.sin(o.yaw);
      return Math.abs(dx*c+dz*s)<a.w*o.scale*.5+1.8&&Math.abs(-dx*s+dz*c)<a.d*o.scale*.5+1.8;
    })()))continue;
@@ -528,7 +529,7 @@ function bindUI(){
    if(!hit)return;
    const floor=chosen.startsWith('floor-');
    recordSnapshot();
-   if(floor){dragPainting=true;lastPaint=hit;if(!addAt(hit.x,hit.z))history.pop();}
+   if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
