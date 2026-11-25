@@ -25,8 +25,9 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
+const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
+const STORE=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -93,6 +94,21 @@ try{
   }
  }
 }catch(err){console.warn('KayKit SOURCE local metadata not available',err);}
+// Same 12 genuine Unsung MIT prefabs used by the standalone 3D editor and playable RPG.
+for(const [id,label,icon,w,d,h] of [
+ ['unsung-lantern','Farol de Unsung','🏮',1.6,1.6,4],
+ ['unsung-bench','Banco de Unsung','🪑',2.8,1.7,2],
+ ['unsung-planter','Macetero de mármol','🪴',2,2,2],
+ ['unsung-trough','Jardinera de piedra','🌷',6,1.7,1.5],
+ ['unsung-armillary','Esfera astronómica','🌐',3.4,3.4,4],
+ ['unsung-pavilion','Pabellón original','🏛️',12,12,8],
+ ['unsung-arcade','Arquería de piedra','🏛️',11,2,8],
+ ['unsung-tower','Torre de Unsung','🏰',9,9,34],
+ ['unsung-hall','Salón monumental','⛪',25,15,20],
+ ['unsung-stairs','Escalera monumental','🪜',9,13,4],
+ ['unsung-balustrade','Balaustrada de mármol','▥',9,2,2],
+ ['unsung-spire','Aguja ornamental','🔱',9,9,20],
+])CATALOG.push({id,label,icon,cat:'Unsung original',w,d,h,originalPrefab:true});
 const BY_ID=new Map(CATALOG.map(x=>[x.id,x]));
 const ZONES=[
  {x:-519,z:-70,r:8,name:'Punto de aparición (protegido)'},
@@ -115,7 +131,7 @@ const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timb
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
+ const previous=JSON.parse(localStorage.getItem((P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -409,13 +425,16 @@ function draw(){
 function setCategory(cat){category=cat;for(const b of $('categories').children)b.classList.toggle('active',b.dataset.cat===cat);renderCatalog();}
 function renderCatalog(){
  const root=$('catalog');root.replaceChildren();
- for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:x.cat===category)){
+ for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:
+   category==='SOURCE · Edificios'?x.privateModel&&x.id.includes('building'):
+   category==='SOURCE · Accesorios'?x.privateModel&&!x.id.includes('building'):
+   x.cat===category)){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
   const label=document.createElement('span');label.textContent=it.label;
-  if(it.free){
+  if(it.free||it.originalPrefab){
    const img=document.createElement('img');img.alt=it.label;img.loading='lazy';
-   img.src=new URL('./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
+   img.src=new URL(it.originalPrefab?'./unsung-original/thumbs/'+it.id+'.png':'./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
    img.onerror=()=>{img.hidden=true;st.hidden=false;};
    st.hidden=true;btn.append(img);
   }
