@@ -345,7 +345,7 @@ copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky
 for(const name of ['p521-world-forge-runtime','p521-resume-position'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 for(const name of ['world-forge.html','world-forge.js','world-forge-3d.html'])copy(path.join(ROOT,'public/highfly/'+name),loc('public/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/p525-world-forge-3d.mjs'),loc('src/highfly/p525-world-forge-3d.mjs'));
-for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader'])
+for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask'])
  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
@@ -542,6 +542,19 @@ patch('src/world/flora/grass.js',
 patch('src/world/flora/grass.js',
  "      c.mesh.position.set(x, y, z);\\n      c.mesh.updateMatrixWorld();".replaceAll('\\n','\n'),
  "      if(c.mesh.position.x!==x||c.mesh.position.y!==y||c.mesh.position.z!==z){\\n        c.mesh.position.set(x, y, z);\\n        c.mesh.updateMatrixWorld();\\n      }".replaceAll('\\n','\n'));
+// P530: procedural ground-cover (not the terrain!) uses a single GPU mask
+// for user-painted World Forge paving. Preserves all native Unsung rocks, sky,
+// normals, grass and flowers outside our approved urban tiles.
+patch('src/world/flora/grass.js',
+ "uniform vec4 uPools[7];",
+ "uniform vec4 uPools[7];\\nuniform sampler2D uHighflyCityMask;".replaceAll('\\n','\n'));
+patch('src/world/flora/grass.js',
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);",
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);\\n  grow *= 1.0 - textureLod(uHighflyCityMask, xz / CORE_SIZE + 0.5, 0.0).r;".replaceAll('\\n','\n'));
+patch('src/world/flora/grass.js',
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },",
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },\\n      uHighflyCityMask: { value: (()=>{ const t=new THREE.DataTexture(new Uint8Array([0]),1,1,THREE.RedFormat,THREE.UnsignedByteType); t.needsUpdate=true; return t; })() },".replaceAll('\\n','\n'));
+
 // P499: mobile TAA saves eight neighbourhood texture fetches per physical
 // pixel, but keeps identical 3D geometry, output/scene resolution, fog, shadows,
 // bloom, and the original Catmull-Rom history filter. Can A/B the reference
