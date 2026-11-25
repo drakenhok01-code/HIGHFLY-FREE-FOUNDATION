@@ -41,7 +41,7 @@ export function conformingTileGrid(o,{w,d},heightAt,{anchorY=0,divisions=10,rais
  * extend DOWN to its existing ground at 9 contact positions. This is a model
  * adaptation, NOT terrain flattening, a false floating slab, or a source edit.
  */
-export function buildingSupportPlan(o,{w,d},heightAt,{clearance=.05}={}){
+export function buildingSupportPlan(o,{w,d},heightAt,{clearance=.05,topOverride=null}={}){
  if(!o||![o.x,o.z,o.yaw,o.scale,w,d].every(finite)||typeof heightAt!=='function')
   throw Error('Building support invalid');
  const c=Math.cos(o.yaw),s=Math.sin(o.yaw),rw=w*o.scale*.46,rd=d*o.scale*.46;
@@ -52,8 +52,9 @@ export function buildingSupportPlan(o,{w,d},heightAt,{clearance=.05}={}){
   pts.push({x,z,gx,gz,ground});
  }
  const top=Math.max(...pts.map(p=>p.ground))+clearance;
+ const baseTop=finite(topOverride)?Math.max(top,topOverride):top;
  const minimum=Math.min(...pts.map(p=>p.ground));
- return {top,minimum,relief:top-minimum,positions:pts.map(p=>({...p,
+ return {top:baseTop,minimum,relief:baseTop-minimum,positions:pts.map(p=>({...p,
   // Local support column spans between source ground and the level structural base.
-  height:Math.max(0,top-p.ground),centerY:(p.ground+top)*.5-top})),source:'UNSUNG_ORIGINAL',deformsTerrain:false};
+  height:Math.max(0,baseTop-p.ground),centerY:(p.ground+baseTop)*.5-baseTop})),source:'UNSUNG_ORIGINAL',deformsTerrain:false};
 }
