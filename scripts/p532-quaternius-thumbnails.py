@@ -54,7 +54,7 @@ for rec in items:
    inds=ind[:n*3].reshape((-1,3))
    if len(inds)>6500:inds=inds[::int(np.ceil(len(inds)/6500))]
    material=doc.get('materials',[])
-   m=material[obj['material']] if obj.get('material',0)<len(material) else {}
+   m=material[obj['material']] if 'material' in obj and obj['material']<len(material) else {}
    tint=m.get('pbrMetallicRoughness',{}).get('baseColorFactor',[1,1,1,1])
    tint=np.array(tint[:3],dtype=float)
    if np.max(tint)-np.min(tint)<.07 and np.min(tint)>.8:tint=np.ones(3)
