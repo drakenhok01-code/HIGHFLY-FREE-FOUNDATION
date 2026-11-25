@@ -340,6 +340,9 @@ copy(path.join(ROOT,'src/highfly/p508-world-clock.mjs'),loc('src/highfly/p508-wo
 copy(path.join(ROOT,'src/highfly/p510-world-alive.mjs'),loc('src/highfly/p510-world-alive.mjs'));
 copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky-events.mjs'));
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
+// P515: static world content only. Never copy World Forge modules or interfaces.
+for(const name of ['p515-eastbrook-layout','p515-eastbrook-native'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
+copy(path.join(ROOT,'scripts/p515-kaykit-free-native.mjs'),loc('tools/p515-kaykit-free-native.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p510-shadows.mjs'),loc('src/highfly/qa-p510-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('scripts/qa-p495-stairs.mjs'));
@@ -551,6 +554,7 @@ patch('src/main.js',"const __hfPixelLab=installAndroidPhysicalResolution(pipe,{s
  "const __hfPixelLab=installAndroidPhysicalResolution(pipe,{search:location.search});\\nwindow.__hfP499Perf=installP499GpuDiagnostics(pipe,{search:location.search});\\nwindow.__hfP501Profiler=installP501StageProfiler(pipe,{search:location.search});\\nwindow.__hfP502Audit=installP502AutoProfiler(pipe,{search:location.search});\\nwindow.__hfP503Copy=installP503OpaqueCopy(pipe,{search:location.search});\\nwindow.__hfP505PacingControl=installP505FramePacing(pipe,{search:location.search});".replaceAll('\\n','\n'));
 patch('src/main.js',"import { installHighflyGraphics } from './highfly/visual-profile.mjs';","import { installHighflyGraphics } from './highfly/visual-profile.mjs';\nimport { installP508WorldClock } from './highfly/p508-world-clock.mjs';");
 patch('src/main.js',"import { installP508WorldClock } from './highfly/p508-world-clock.mjs';","import { installP508WorldClock } from './highfly/p508-world-clock.mjs';\nimport { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';");
+patch('src/main.js',"import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';","import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';\nimport { installNativeEastbrook,eastbrookClearing } from './highfly/p515-eastbrook-native.mjs';");
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
@@ -671,13 +675,38 @@ patch('src/game/input.js',inputEnd,inputEnd+'\n    applyHighflyTouch(this);');
 patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.highflyTouch) return; // never lock mouse for touch input");
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
+// P515: Native Eastbrook is permanent RPG terrain content, not an editor asset.
+// Exclude forest trees at our immutable buildings/roads before forest GPU buffers
+// are allocated. Core heightfields, sky, combat and all original architecture remain.
+patch('src/main.js',"forest.populate((x, z) => onRoute(x, z) || clear.some(",
+ "forest.populate((x, z) => eastbrookClearing(x,z) || onRoute(x, z) || clear.some(");
+patch('src/world/flora/forest.js',
+ "for (const e of extra) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });",
+ "for (const e of extra) if(!globalThis.__hfEastbrookClear?.(e.x,e.z)) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });");
+patch('src/main.js',"forest.populate((x, z) => eastbrookClearing(x,z) || onRoute(x, z) || clear.some(",
+ "globalThis.__hfEastbrookClear=eastbrookClearing;\nforest.populate((x, z) => eastbrookClearing(x,z) || onRoute(x, z) || clear.some(");
+// Native meadow and flower shaders receive the same once-uploaded 1024x1024
+// R8 ground mask; no extra render passes, no per-frame scene processing.
+patch('src/world/flora/grass.js',"uniform sampler2D uPathTex;",
+ "uniform sampler2D uPathTex;\nuniform sampler2D uHFEastbrook;");
+patch('src/world/flora/grass.js',
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);",
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);\n  grow *= 1.0 - textureLod(uHFEastbrook, xz / CORE_SIZE + 0.5, 0.0).r;");
+patch('src/world/flora/grass.js',
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },",
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },\n      uHFEastbrook: { value: (()=>{ const t=new THREE.DataTexture(new Uint8Array([0]),1,1,THREE.RedFormat,THREE.UnsignedByteType);t.needsUpdate=true;return t; })() },");
+patch('src/main.js',"if(params.get('hfworkshop')==='1')window.__hfProfessionYard=installProfessionYard(game,pipe);",
+ "window.__hfP515Eastbrook=installNativeEastbrook(game,{cover});\nif(params.get('hfworkshop')==='1')window.__hfProfessionYard=installProfessionYard(game,pipe);");
+
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/engine/sky.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/engine/sky.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/world/flora/forest.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
 if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Error('World generation diff not limited to 3 Pages URLs');
 run('npm',['ci','--no-audit','--no-fund'],origin);
+run('node',['tools/p515-kaykit-free-native.mjs'],origin);
+if(!fs.existsSync(loc('public/highfly/kaykit-free/manifest.json')))throw Error('P515 frozen KayKit official FREE CC0 not staged');
 run('npm',['run','build','--','--base',pagesBase],origin);
 if(!fs.existsSync(loc('dist/index.html')))throw Error('No Vite output');
 fs.cpSync(loc('dist'),output,{recursive:true});
