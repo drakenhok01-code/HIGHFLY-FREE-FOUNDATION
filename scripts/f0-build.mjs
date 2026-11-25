@@ -731,6 +731,18 @@ if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Erro
 run('npm',['ci','--no-audit','--no-fund'],origin);
 // Vite 8 no longer ships esbuild; pin only this standalone editor bundler in the disposable checkout.
 run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2'],origin);
+ // P532: Quaternius CC0 GLBs contain genuine KTX2/BasisU texture payloads.
+ // Copy the MIT-licensed Three.js BasisU transcoder with the exact installed
+ // Three.js runtime: no CDN calls, no loss of material color or image quality.
+ const basisSource=loc('node_modules/three/examples/jsm/libs/basis');
+ const basisDest=loc('public/highfly/basis');
+ for(const file of ['basis_transcoder.js','basis_transcoder.wasm']){
+  const input=path.join(basisSource,file);
+  if(!fs.existsSync(input)||fs.statSync(input).size<5000)
+   throw Error('Missing installed Three.js BasisU decoder '+input);
+  copy(input,path.join(basisDest,file));
+ }
+ console.log('[P532 KTX2 BASISU]',fs.statSync(path.join(basisDest,'basis_transcoder.wasm')).size,'bytes');
 // Bundle only the standalone 3D editor's three.js dependencies. No game engine boot.
 run('node_modules/esbuild/bin/esbuild',['src/highfly/p525-world-forge-3d.mjs','--bundle','--platform=browser','--format=esm','--target=es2020','--minify','--outfile=public/highfly/world-forge-3d.js'],origin);
 if(!fs.existsSync(loc('public/highfly/world-forge-3d.js')))throw Error('WORLD FORGE 3D bundle not generated');
