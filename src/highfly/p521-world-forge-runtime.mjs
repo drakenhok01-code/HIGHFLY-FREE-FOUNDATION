@@ -7,7 +7,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshBuilder,M} from '../world/arch/builder.js';
 import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
-import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS} from './p528-village-layout.mjs';
+import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
@@ -222,7 +222,29 @@ function loadedLayout(storage){
 export function installHighflyWorldForge(game,{search=globalThis.location?.search??'',storage=globalThis.localStorage}={}){
  if(!game||game.__hfP521WorldForge)return game?.__hfP521WorldForge??null;
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
- const loaded=loadedLayout(storage);
+ let loaded=loadedLayout(storage);
+ // P529 demo only: the exact same editable, collision-checked town is
+ // generated on the first gameplay visit, even if World Forge wasn't opened.
+ // Existing saved layouts take precedence. Other versions are not modified.
+ if(!loaded.ok&&P529_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
+  const origin={x:-512,z:-70};
+  const plan=buildBeginningVillage({
+   origin,existing:[],
+   canPlace:o=>{
+    const fp=footprint(game.world,o);
+    if(!fp)return {ok:false,why:'Agua, pendiente o arquitectura original'};
+    return {ok:true,y:fp.y};
+   }
+  });
+  if(plan.buildings>=3&&plan.paved>=40){
+   const payload={schema:1,world:'unsung-vale',author:'HIGHFLY P529 Pueblo de los Inicios',objects:plan.objects};
+   loaded=validateWorldForgeLayout(payload);
+   if(loaded.ok){
+    try{storage.setItem(WORLD_FORGE_KEY,JSON.stringify(payload));}catch(e){console.warn('[HIGHFLY P529] Pueblo temporal sin guardado',e);}
+    console.info('[HIGHFLY P529] Pueblo de los Inicios generado en mapa nativo',plan.buildings,plan.paved,plan.decorations);
+   }
+  }
+ }
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
  const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],scenic=[],skipped=[];
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
