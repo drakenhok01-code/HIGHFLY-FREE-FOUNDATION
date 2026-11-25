@@ -41,7 +41,8 @@ for record in records:
    screen=(proj-mid)*scale+np.array([96,96])
    image=Image.new('RGBA',(192,192),(0,0,0,0))
    draw=ImageDraw.Draw(image,'RGBA')
-   order=np.argsort(np.mean(pos[idx,:,0]+pos[idx,:,2]+.2*pos[idx,:,1],axis=1))
+   tri=pos[idx]
+   order=np.argsort(np.mean(tri[:,:,0]+tri[:,:,2]+.2*tri[:,:,1],axis=1))
    for i in order:
      a,b,c=map(int,idx[i])
      normal=np.cross(pos[b]-pos[a],pos[c]-pos[a])
