@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {gradePlanFor,gradeHeightAt} from '../src/highfly/p537-grade-parcels.mjs';
+const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
+
+test('P541: manual-only World Forge P539 editor; no auto Arvelia nor experimental P540',()=>{
+ const editor=read('../src/highfly/p525-world-forge-3d.mjs');
+ const runtime=read('../src/highfly/p521-world-forge-runtime.mjs');
+ const html=read('../public/highfly/world-forge-3d.html');
+ assert(editor.includes("const P541_PREVIEW="));
+ assert(runtime.includes("const P541_PREVIEW="));
+ assert(editor.includes("'hf-world-forge-layout-p541-manual-v1'"));
+ assert(runtime.includes("'hf-world-forge-layout-p541-manual-v1'"));
+ assert(editor.includes("if(P538_PREVIEW&&!P541_PREVIEW"));
+ assert(runtime.includes("if(!P541_PREVIEW&&P538_PREVIEW"));
+ assert(editor.includes("!P541_PREVIEW&&(P533_PREVIEW||P536_PREVIEW)"));
+ assert(editor.includes("['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']"));
+ assert(editor.includes("!o.highflyTown&&!o.highflyMaster"));
+ assert(runtime.includes("!o.highflyTown&&!o.highflyMaster"));
+ assert(html.includes("WORLD FORGE 4.9"));
+ assert(html.includes('v=p541'));
+ assert(html.includes('id="pilot-eastbrook" hidden'));
+ assert(html.includes('id="preset-village" hidden'));
+ assert(html.includes('id="slope-toggle" class="on"'));
+ assert(!html.includes('Arvelia FINAL'));
+ assert(!html.includes('P5.4.0'));
+});
+test('P541: 20m real native ground rise can be leveled as soil, without floating boxes',()=>{
+ const base=(x,z)=>204+.55*x+.125*z;
+ const obj={id:'test',type:'kaykit-home-a',x:0,z:0,yaw:0,scale:1};
+ const terrace=gradePlanFor(obj,{w:12,d:10},base,{apron:3,dynamicApron:true});
+ assert(terrace.slope>6);
+ assert(terrace.slope<24);
+ assert(terrace.apron>5);
+ assert.equal(gradeHeightAt(0,0,base(0,0),terrace),terrace.y);
+ assert.equal(gradeHeightAt(80,80,base(80,80),terrace),base(80,80));
+});
+test('P541: old user work remains but automated towns are excluded and sources never overwritten',()=>{
+ const e=read('../src/highfly/p525-world-forge-3d.mjs');
+ const r=read('../src/highfly/p521-world-forge-runtime.mjs');
+ assert(e.includes("!o.id?.startsWith('hf-p538-eastbrook-')"));
+ assert(e.includes("!o.id?.startsWith('hf-p540-')"));
+ assert(e.includes("localStorage.setItem(STORE,old)"));
+ assert(r.includes("!o.id?.startsWith('hf-p538-eastbrook-')"));
+ assert(r.includes("!o.id?.startsWith('hf-p540-')"));
+ assert(e.includes('adaptSlope=P539_PREVIEW'));
+ assert(e.includes('dynamicApron:P539_PREVIEW'));
+ assert(r.includes('dynamicApron:P539_PREVIEW'));
+});
