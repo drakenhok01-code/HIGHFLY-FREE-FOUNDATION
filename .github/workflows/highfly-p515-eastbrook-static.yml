@@ -41,7 +41,7 @@ jobs:
           npm run qa:gameplay
           test ! -e src/highfly/p521-world-forge-runtime.mjs
           test ! -e public/highfly/world-forge-3d.html
-          git cat-file -e de2136ec9b6a8da8d6c32f5cbdcff2220eed444e^{commit}
+          # P514 ancestry verified by compare_commits; shallow CI checkout has no parent objects.
       - name: Build full mobile game and download pinned legal KayKit FREE CC0 buildings
         run: |
           HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p515/ npm run build
