@@ -671,8 +671,43 @@ patch('src/game/input.js',inputEnd,inputEnd+'\n    applyHighflyTouch(this);');
 patch('src/game/input.js',"  lockPointer() {","  lockPointer() {\n    if (this.highflyTouch) return; // never lock mouse for touch input");
 patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {","    canvas.addEventListener('mousedown', (e) => {\n      if (this.highflyTouch) return; // never turn touch into native mouse attack");
 
+
+// P5.1.5 STATIC EASTBROOK — independent of World Forge. Clean P5.1.4 base.
+// Original ClaudeCraft civic building roles from MIT layout; only approved
+// FREE KayKit CC0 models and the exact native Unsung MIT guild/tower are built.
+for(const name of ['p515-eastbrook-static','p530-unsung-original','p533-curved-road-path','p533-curved-road-3d'])
+ copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
+copy(path.join(ROOT,'scripts/p524-kaykit-free-buildings.mjs'),loc('tools/p515-kaykit-free-buildings.mjs'));
+run('node',['tools/p515-kaykit-free-buildings.mjs'],origin);
+patch('src/main.js',
+ "import { installP508WorldClock } from './highfly/p508-world-clock.mjs';",
+ "import { installP508WorldClock } from './highfly/p508-world-clock.mjs';\nimport {installP515Eastbrook,p515EastbrookTreeClearing} from './highfly/p515-eastbrook-static.mjs';");
+patch('src/main.js',
+ "window.__highflyIntro=installHighflyIntro();",
+ "window.__highflyIntro=installHighflyIntro();\nwindow.__hfP515Eastbrook=installP515Eastbrook(game);");
+patch('src/main.js',
+ "window.__forest = forest;",
+ "window.__forest = forest;\nwindow.__hfP515ClearTrees=p515EastbrookTreeClearing;");
+patch('src/main.js',
+ "forest.populate((x, z) => onRoute(x, z) || clear.some(",
+ "forest.populate((x, z) => p515EastbrookTreeClearing(x,z) || onRoute(x, z) || clear.some(");
+patch('src/world/flora/forest.js',
+ "for (const e of extra) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });",
+ "for (const e of extra) if(!globalThis.__hfP515ClearTrees?.(e.x,e.z)) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });");
+// Mask only the urban stone and licensed buildings, preserving all natural
+// Unsung flora elsewhere. One R8 texture upload, no per-frame CPU work.
+patch('src/world/flora/grass.js',
+ "uniform vec4 uPools[7];",
+ "uniform vec4 uPools[7];\nuniform sampler2D uHighflyCityMask;");
+patch('src/world/flora/grass.js',
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);",
+ "  grow *= 1.0 - smoothstep(0.25, 0.7, textureLod(uPathTex, xz / CORE_SIZE + 0.5, 0.0).r);\n  grow *= 1.0 - textureLod(uHighflyCityMask, xz / CORE_SIZE + 0.5, 0.0).r;");
+patch('src/world/flora/grass.js',
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },",
+ "      uPools: { value: POOLS.map((p) => new THREE.Vector4(p.x, p.z, p.r, p.level)) },\n      uHighflyCityMask: { value: (()=>{ const t=new THREE.DataTexture(new Uint8Array([0]),1,1,THREE.RedFormat,THREE.UnsignedByteType); t.needsUpdate=true; return t; })() },");
+
 const changed=capture('git',['diff','--name-only'],origin).split('\n').filter(Boolean);
-const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/engine/sky.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
+const allowed=new Set(['index.html','src/engine/pipeline.js','src/engine/governor.js','src/engine/post.js','src/engine/sky.js','src/game/camera.js','src/game/people.js','src/world/terrain.js','src/world/arch/sites.js','src/world/flora/grass.js','src/world/flora/forest.js','src/main.js','src/anim/hero.js','src/audio/audio.js','src/ui/ui.js','src/game/input.js','src/game/game.js','src/game/quests.js','src/game/player.js','src/game/enemies.js','src/game/collision.js']);
 if(changed.some(x=>!allowed.has(x)))throw Error('Original Unsung world source modified illegally');
 const terrainDiff=capture('git',['diff','--','src/world/terrain.js'],origin);
 const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
