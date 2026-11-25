@@ -38,7 +38,7 @@ export function makeRegionSampler(d,p,native){
  return {sample,source,nearest};
 }
 export function sourceScaleAudit(d,assets){
- const doors=(d.doorways??[]).map(x=>x.height).filter(x=>Number.isFinite(x)&&x>0).map(x=>x*d.scale).sort((a,b)=>a-b);
+ const doors=(d.doorways??[]).map(x=>x.h??x.height).filter(x=>Number.isFinite(x)&&x>0).map(x=>x*d.scale).sort((a,b)=>a-b);
  const range=a=>a.length?{min:a[0],median:a[Math.floor(a.length/2)],max:a.at(-1)}:null;
  const trees=d.pieces.filter(q=>treeId(q.piece)),shrubs=d.pieces.filter(q=>shrubId(q.piece));
  const sizes=trees.map(q=>(assets.get(q.piece)?.size?.[1]??0)*(q.scale??1)*d.scale).filter(n=>n>0).sort((a,b)=>a-b);
