@@ -795,7 +795,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW||P536_PREVIEW,cameraPan=null,objectClipboard=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=!P542_PREVIEW&&(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW||P536_PREVIEW),cameraPan=null,objectClipboard=null;
 let roadNodes=[],roadHover=null,roadPreview=null,roadEditId=null,roadDragIndex=-1,roadPreviewStamp=0;
 function disposeRoadPreview(){
  if(roadPreview){scene.remove(roadPreview);disposeCurvedRoadGeometry(roadPreview);roadPreview=null;}
@@ -1228,6 +1228,10 @@ function bindUI(){
  };
  $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
  $('quality-toggle').classList.toggle('on',qualityHigh);
+ if(P542_PREVIEW){
+  $('tool-dirt').onclick=()=>{selectAsset('floor-earth');status('🟫 Tierra ORIGINAL de Unsung: arrastrá para pintar un camino continuo con textura nativa y desniveles intactos.');};
+  $('tool-grass').onclick=()=>{selectAsset('floor-grass');status('🌿 Pasto ORIGINAL de Unsung: arrastrá para pintar sobre el relieve sin elevar ni cortar el terreno.');};
+ }
  $('brush-width').onclick=()=>{
   brushCells=brushCells%3+1;
   $('brush-width').textContent='🧱 Ancho '+ROAD_WIDTHS[brushCells-1]+' m';
@@ -1295,7 +1299,7 @@ function bindUI(){
   adaptSlope=!adaptSlope;
   $('slope-toggle').textContent='🧱 Pendiente AUTO: '+(adaptSlope?'SÍ':'NO');
   $('slope-toggle').classList.toggle('on',adaptSlope);
-  status(adaptSlope?'✓ Edificios sobre pendientes: el suelo nativo se adapta sin losas flotantes.':'Modo plano: solo permite edificios en parcelas casi niveladas.');
+  status(P542_PREVIEW?(adaptSlope?'✓ Base del EDIFICIO adaptable: el terreno original NO se modifica.':'Sólo parcelas casi niveladas.'):adaptSlope?'✓ Edificios sobre pendientes: el suelo nativo se adapta sin losas flotantes.':'Modo plano: solo permite edificios en parcelas casi niveladas.');
  };
  const heldMove=new Set();let navFrame=0,navLast=0;
  const fly=(now)=>{
@@ -1332,6 +1336,11 @@ function bindUI(){
  $('p536-bend-wide').onclick=()=>selectAsset('floor-stone-curve-wide');
  const canvas=renderer.domElement;
  canvas.addEventListener('dblclick',e=>{
+  if(P542_PREVIEW&&mode!=='road'){
+   const hit=clickPlaced(e);
+   if(hit){e.preventDefault();selectObject(hit);
+    status('✓ Objeto seleccionado con doble clic, listo para mover, girar o escalar.');return;}
+  }
   if(mode==='road'){e.preventDefault();const h=hitTerrain(e);if(h&&roadNodes.length<24){
    const point=[snap(h.x,.5),snap(h.z,.5)];
    if(!roadNodes.length||Math.hypot(roadNodes.at(-1)[0]-point[0],roadNodes.at(-1)[1]-point[1])>.85)
@@ -1365,6 +1374,13 @@ function bindUI(){
    canvas.setPointerCapture?.(e.pointerId);return;
   }
   if(!e.isPrimary||e.button!==0)return;
+  if(P542_PREVIEW&&mode!=='road'&&!(mode==='place'&&chosen?.startsWith('floor-')&&e.detail<2)){
+   const picked=clickPlaced(e);
+   if(picked&&!(mode==='move'&&picked===selected)){
+    e.preventDefault();downPos=null;selectObject(picked);
+    status('✓ Seleccionado con un clic. Usá Mover, Girar, Escala o Borrar sin activar Selección.');return;
+   }
+  }
   downPos={x:e.clientX,y:e.clientY};
   if(mode==='place'&&chosen){
    e.preventDefault();
@@ -1460,7 +1476,10 @@ function bindUI(){
      root.position.set(old.x,old.y+.035,old.z);
      status('No se movió: '+safety.why);
     }
-    gizmo?.attach(root);showProps();render();
+    if(P542_PREVIEW&&safety.ok){
+     const id=item.id;
+     rebuildPlaced().then(()=>{if(viewCache.has(id))selectObject(id);});
+    }else{gizmo?.attach(root);showProps();render();}
    }
    if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
    movingExisting=null;activePointer=null;downPos=null;return;
@@ -1474,7 +1493,7 @@ function bindUI(){
    save();
    if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
    activePointer=null;dragPainting=false;lastPaint=null;
-  }else if(mode==='orbit'&&downPos&&Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y)<9){
+  }else if((mode==='orbit'||P542_PREVIEW&&['move','rotate','scale','select'].includes(mode))&&downPos&&Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y)<9){
    // Optional direct selection by single tap, without switching camera mode first.
    const id=clickPlaced(e);if(id)selectObject(id);
   }
