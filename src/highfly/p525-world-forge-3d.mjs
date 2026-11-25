@@ -9,12 +9,14 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
 import {loadUnsungOriginal} from './p530-unsung-loader.mjs';
+import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_GROUPS} from './p531-kaykit-free-catalog.mjs';
 const $=id=>document.getElementById(id);
+const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -43,6 +45,13 @@ const base=[
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
 ].concat(VILLAGE_DECOR_ASSETS.map(a=>[a.id,a.label,a.icon,a.cat,a.w,a.d]))
  .map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
+// Extend the 16 legacy red houses in place; all 221 FREE models remain
+// uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
+for(const extra of KAYKIT_FREE_ALL){
+ const prev=base.find(x=>x.id===extra.id);
+ if(prev)Object.assign(prev,extra);
+ else base.push({...extra});
+}
 // Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 function addPrivateCatalog(models){
  for(const x of models){
@@ -88,7 +97,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=P531_PREVIEW?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -277,7 +286,7 @@ function validPosition(o,id=null){
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
  if(!flat&&!npc){
   const slope=Math.max(...samples)-Math.min(...samples);
-  const isBuilding=!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
+  const isBuilding=a.kind==='building'||!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
   if(slope>(isBuilding?1.05:Math.min(5.2,1.75+o.scale*1.5)))
    return {ok:false,why:'La parcela tiene desnivel: buscá un terreno nivelado. Evitamos bloques flotantes bajo el edificio.'};
   if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
@@ -308,10 +317,10 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||!!a.privateModel||!!a.originalPrefab||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.freeModel||!!a.privateModel||!!a.originalPrefab||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
- :url('kaykit-free/building_'+a.model+'_red.gltf');
+ :a.freeModel?url('kaykit-free/all/'+a.freePath):url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
@@ -426,7 +435,7 @@ async function buildPlaced(o){
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
-   else if((a.model||(a.privateModel&&a.kind==='building'))&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
+   else if((a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
  }else root.add(makeModel(a,o));
@@ -495,7 +504,7 @@ function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||a.kind==='building'||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
  ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
  ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
  const outline=ghost.children[0];
@@ -589,7 +598,7 @@ function addAt(x,z){
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
  if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
- if(chosen.startsWith('floor-')||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
+ if(chosen.startsWith('floor-')||a.kind==='building'||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
