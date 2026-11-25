@@ -52,7 +52,7 @@ test('P542: both Forge and RPG prohibit creating artificial terrain terraces, sh
  assert(e.includes("const picked=clickPlaced(e)"));
  assert(e.includes("canvas.addEventListener('dblclick'"));
  assert(h.includes('id="tool-dirt"')&&h.includes('id="tool-grass"'));
- assert(h.includes("WORLD FORGE 5.0")&&h.includes('v=p542'));
+ assert(/WORLD FORGE 5\.[01]/.test(h)&&/v=p54[23]/.test(h));
  assert(b.includes("'p542-native-conform'"));
  assert.equal(NATIVE_CONFORM_VERSION,'p542-native-1');
 });
