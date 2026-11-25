@@ -25,7 +25,7 @@ import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p
 import {guildhallPlan,GUILDHALL_OPTIONS,GUILDHALL_KEY} from './p542-guildhall-prefabs.mjs';
 import {installSettlementLab} from './p544-world-forge-settlement-lab.mjs';
 const $=id=>document.getElementById(id);
-const P544_PREVIEW=globalThis.location?.pathname?.includes('/preview-p544/')===true;
+const P544_PREVIEW=/\/preview-p54[45]\//.test(globalThis.location?.pathname??'');
 const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true||P544_PREVIEW;
 const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
