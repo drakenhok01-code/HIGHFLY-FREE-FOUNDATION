@@ -21,7 +21,7 @@ try{
  // Missing favicons are not failures of the 3D town or playable RPG.
  page.on('response',r=>{if(r.status()<400)return;
   const path=new URL(r.url()).pathname;
-  if(/\\/favicon\\.ico$/i.test(path))return;
+  if(path.endsWith('/favicon.ico'))return;
   missingResources.push({status:r.status(),url:r.url()});
  });
  page.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource: the server responded with a status of 404/i.test(m.text()))errors.push(m.text().slice(0,350));});
