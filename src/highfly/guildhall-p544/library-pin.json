@@ -1,0 +1,15 @@
+{
+  "schema": "hf-guildhall-library-pin-v1",
+  "upstream": "https://guildhall.codestz.dev/library/ea594dd361b4",
+  "libraryBase": "https://highfly-guildhall-assets-p544.vercel.app/",
+  "immutableDeploymentBase": "https://highfly-guildhall-assets-p544-pvqczoxy2.vercel.app/",
+  "auditPath": "asset-audit.json",
+  "deploymentId": "dpl_2TDhai2xPXyqCXCWcDveucxh5NBG",
+  "required": 214,
+  "verified": 214,
+  "missing": 0,
+  "bytes": 3222708,
+  "privateAssetsIncluded": false,
+  "license": "CC0 per upstream pack declarations",
+  "status": "asset-library-ready; not integrated into runtime"
+}
