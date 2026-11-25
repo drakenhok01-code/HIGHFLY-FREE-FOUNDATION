@@ -19,7 +19,7 @@ export function buildWorldForgeCityMask(objects,bounds,{resolution=1024,worldSiz
   const minZ=Math.max(0,px(o.z-radius)),maxZ=Math.min(resolution-1,px(o.z+radius));
   if(minX>maxX||minZ>maxZ)continue;
   surfaces++;
-  const margin=o.type.startsWith('floor-')?.28:.12;
+  const margin=o.type.startsWith('floor-') ? .28 : .12;
   for(let iz=minZ;iz<=maxZ;iz++){
    const z=(iz+.5)*step-origin,rz=z-o.z;
    for(let ix=minX;ix<=maxX;ix++){
