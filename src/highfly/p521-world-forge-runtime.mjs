@@ -21,6 +21,7 @@ import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid} from '.
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {gradePlanFor,gradePatchGrid} from './p537-grade-parcels.mjs';
+import {conformingTileGrid,buildingSupportPlan} from './p542-native-conform.mjs';
 import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
 import {installArveliaQuests} from './p538-arvelia-quests.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
@@ -28,7 +29,8 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true;
+const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true;
+const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
@@ -38,12 +40,12 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
  warehouse:[11,9],fishery:[10,8],ranger:[9,8],
- 'floor-stone':[4,4],'floor-earth':[4,4],'floor-wood':[4,4],
+ 'floor-stone':[4,4],'floor-earth':[4,4],'floor-grass':[4,4],'floor-wood':[4,4],
  lantern:[1.5,1.5],well:[4,4],fence:[4,.4],barrel:[1.1,1.1],
  bench:[3,1.4],tree:[3,3],rock:[3,2.5],ore:[3,3],
  'npc-merchant':[1,1],'npc-guard':[1,1],'npc-artisan':[1,1],
@@ -125,6 +127,8 @@ export function validateWorldForgeLayout(data){
  }
  return {ok:true,objects:all};
 }
+function adaptPlayableBuilding(o){return Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||
+  KAYKIT_FREE_BY_ID.get(o.type)?.kind==='building'||QUATERNIUS_CC0_BY_ID.get(o.type)?.kind==='building';}
 function footprint(world,o){
  if(isCurvedRoad(o)){
   const y=world.groundHeight(o.x,o.z);
@@ -140,11 +144,14 @@ function footprint(world,o){
  }
  const basicY=Math.max(...heights),basicSlope=basicY-Math.min(...heights);
  const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type)||UNSUNG_ORIGINAL_ASSETS.find(a=>a.id===o.type);
- const gradeBuilding=P537_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
+ const gradeBuilding=!P542_PREVIEW&&P537_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
   ((asset?.kind==='building')||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||['guild','forge','inn','house','timber','granary','warehouse','mill','fishery','ranger'].includes(o.type));
  const grade=gradeBuilding?gradePlanFor(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{apron:3,subdivisions:6,dynamicApron:P539_PREVIEW}):null;
- const y=grade?grade.y:basicY,slope=grade?grade.slope:basicSlope;
- if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>(P539_PREVIEW&&gradeBuilding?24:Math.min(5.2,1.75+o.scale*1.5)))
+ const support=P542_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
+   (asset?.kind==='building'||Object.hasOwn(KAYKIT_FREE_NAMES,o.type))
+   ?buildingSupportPlan(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{topOverride:basicY+.05}):null;
+ const y=support?.top??(grade?grade.y:basicY),slope=support?.relief??(grade?grade.slope:basicSlope);
+ if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>(P542_PREVIEW&&adaptPlayableBuilding(o)?24:P539_PREVIEW&&gradeBuilding?24:Math.min(5.2,1.75+o.scale*1.5)))
   return null;
  if(!o.type.startsWith('floor-')){
   const r=Math.hypot(w,d)*.22;
@@ -274,7 +281,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // P541: manual build only. When the RPG opens before the Forge, import
  // only personally placed structures. Never spawn Eastbrook automatically.
  if(P541_PREVIEW&&!loaded.ok&&storage?.getItem(WORLD_FORGE_KEY)===null){
-  for(const source of ['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']){
+  for(const source of (P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'])){
    let prior;
    try{prior=validateWorldForgeLayout(JSON.parse(storage?.getItem(source)||'null'));}catch{continue;}
    if(!prior?.ok)continue;
