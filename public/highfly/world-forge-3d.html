@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<title>HIGHFLY WORLD FORGE 4.4 · Materiales Unsung reales + módulos de adoquín</title>
+<title>HIGHFLY WORLD FORGE 4.5 · Edificios a ras de suelo Unsung</title>
 <style>
 :root{color-scheme:dark;--bg:#17142b;--gold:#efd39a;--lilac:#c6aaff}
 *{box-sizing:border-box}
@@ -52,7 +52,7 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.4 · P5.3.6 · UNSUNG MIT + KAYKIT CC0</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.5 · P5.3.7 · UNSUNG MIT + KAYKIT CC0</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
 <button id="preset-village" title="Distribución automática experimental, no replica la referencia aprobada">🏡 Arvelia · borrador</button><button id="import-source" hidden style="display:none" title="Deshabilitado: laboratorio solo CC0/MIT público">📦 SOURCE (no se usa en P5.3.2)</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
@@ -63,7 +63,7 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 <input id="search" placeholder="🔎 Buscar modelos, oficios, árboles, arquitectura…" aria-label="Buscar objetos"/>
 <div id="catalog-meta" aria-live="polite">Cargando catálogo…</div>
 <div id="catalog"></div><button id="catalog-more" hidden>Mostrar otros 36 objetos</button>
-<div id="props"><strong>WORLD FORGE 4.4 · Materiales del juego</strong><small>Elegí un prefab auténtico y tocá el mapa. Los edificios se anclan en explanadas reales; los pisos se pintan arrastrando. Las curvas de piedra se colocan como piezas completas y se giran de a 90 grados. El terreno original de Unsung queda intacto.</small>
+<div id="props"><strong>WORLD FORGE 4.5 · Construcción integrada al suelo</strong><small>Elegí un prefab auténtico y tocá el mapa. Los edificios se anclan en explanadas reales; los pisos se pintan arrastrando. Las curvas de piedra se colocan como piezas completas y se giran de a 90 grados. Las construcciones se asientan sobre explanadas de tierra suavizadas y sin losas artificiales; el relieve original se conserva como fuente.</small>
 <div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="copy-object" title="Copiar objeto seleccionado (Ctrl+C)">⧉ Copiar</button><button id="paste-object" title="Pegar modelo con el mouse (Ctrl+V)">📋 Pegar</button><button id="road-edit" hidden title="Editar y mover los puntos del camino seleccionado">✏️ Editar curva</button><button id="duplicate" title="Duplicar al costado (Ctrl+D)">↗ Duplicar</button><button id="remove">🗑 Borrar</button></div>
 </div><button id="upgrade-legacy" hidden style="margin:6px 8px;border:1px solid #dbb777;color:#ffe4b4;white-space:normal">✨ Reemplazar bocetos antiguos por edificios KayKit</button></aside>
 <section id="canvas-holder">
@@ -87,5 +87,5 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p536"></script>
+<script type="module" src="./world-forge-3d.js?v=p537"></script>
 </body></html>
