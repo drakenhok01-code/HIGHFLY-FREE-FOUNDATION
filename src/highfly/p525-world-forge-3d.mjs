@@ -22,8 +22,10 @@ import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-r
 import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
+import {conformingTileGrid,buildingSupportPlan} from './p542-native-conform.mjs';
 const $=id=>document.getElementById(id);
-const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true;
+const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true;
+const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
 const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
@@ -33,16 +35,16 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P542_PREVIEW?'hf-world-forge-view-p542-conform-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P542_PREVIEW?'hf-world-forge-layout-p542-before-edit':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
  ['house','Casa medieval','🏡','Edificios',9,8],['timber','Casa madera','🛖','Edificios',8,8],['market','Mercado','🏪','Edificios',12,9],
  ['mill','Molino','🌾','Edificios',10,10],['granary','Granero','🌽','Edificios',12,9],['warehouse','Almacén','📦','Edificios',11,9],
  ['fishery','Pesquería','🎣','Edificios',10,8],['ranger','Refugio','🏕','Edificios',9,8],
- ['floor-stone','Continuar plaza · piedra','▩','Pisos',4,4],['floor-earth','Camino de tierra','🟫','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
+ ['floor-stone','Continuar plaza · piedra','▩','Pisos',4,4],['floor-earth','Tierra original Unsung','🟫','Pisos',4,4],['floor-grass','Pasto original Unsung','🌿','Pisos',4,4],['floor-wood','Tablas de madera','🟨','Pisos',4,4],
  ['lantern','Farol original','🏮','Decoración',1.5,1.5],['well','Pozo','🕳','Decoración',4,4],
  ['fence','Valla','🚧','Decoración',4,.4],['barrel','Barril','🛢','Decoración',1.1,1.1],['bench','Banco','🪑','Decoración',3,1.4],
  ['tree','Árbol','🌳','Naturaleza',3,3],['rock','Roca','🪨','Naturaleza',3,2.5],['ore','Mineral','⛏','Naturaleza',3,3],
@@ -175,11 +177,11 @@ function elevation(x,z){
 }
 
 function gradeEligible(a,o){
- return P537_PREVIEW&&a&&o&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
+ return !P542_PREVIEW&&P537_PREVIEW&&a&&o&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
   (a.kind==='building'||a.cat==='Edificios'||!!a.model);
 }
 function syncGradePlans(){
- if(!P537_PREVIEW||!map){gradePlans=[];gradeSpatial=null;return;}
+ if(P542_PREVIEW||!P537_PREVIEW||!map){gradePlans=[];gradeSpatial=null;return;}
  gradePlans=[];
  for(const o of records){
   const a=BY_ID.get(o.type);if(!gradeEligible(a,o))continue;
@@ -192,10 +194,10 @@ function syncGradePlans(){
 }
 function gradedElevation(x,z){
  const original=elevation(x,z);
- return P537_PREVIEW?fastGradeHeightAt(x,z,original,gradeSpatial):original;
+ return P542_PREVIEW?original:P537_PREVIEW?fastGradeHeightAt(x,z,original,gradeSpatial):original;
 }
 function redrawGradedTerrain(){
- if(!P537_PREVIEW||!map||!geo.core||!geo.near)return;
+ if(P542_PREVIEW||!P537_PREVIEW||!map||!geo.core||!geo.near)return;
  const core=terrain(2048,256,-.15);geo.core.geometry.dispose();geo.core.geometry=core;
  nearFocus=[Infinity,Infinity];updateNear();
  for(const mesh of [...gradeScene.children]){gradeScene.remove(mesh);mesh.geometry.dispose();}
@@ -425,7 +427,13 @@ function validPosition(o,id=null){
    if(Math.hypot(o.x-b.x,o.z-b.z)<(Math.hypot(w,d)+Math.hypot(q.w*b.scale,q.d*b.scale))*.31)return {ok:false,why:'Edificio superpuesto'};
   }
  }
- return {ok:true,y:grade?grade.y:Math.max(...samples),slope:grade?grade.slope:Math.max(...samples)-Math.min(...samples)};
+ // P542: buildings now have an adaptive STRUCTURAL base, not an artificial
+ // change to the native heightfield. Use all 9 footing samples, not just 4 corners.
+ const support=P542_PREVIEW&&!flat&&!npc&&
+  (a.kind==='building'||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building')
+   ?buildingSupportPlan(o,{w:a.w,d:a.d},elevation,{topOverride:Math.max(...samples)+.045}):null;
+ return {ok:true,y:support?.top??(grade?grade.y:Math.max(...samples)),
+  slope:support?.relief??(grade?grade.slope:Math.max(...samples)-Math.min(...samples))};
 }
 function save(show=false){
  try{localStorage.setItem(STORE,JSON.stringify({schema:1,world:'unsung-vale',author:'HIGHFLY WORLD FORGE 3D',objects:records}));if(show)status('✓ Diseño guardado; compartido con vista 2D y RPG');}
@@ -440,7 +448,7 @@ function restore(){
   // only the player's own work. Imported P538/P539/P540 towns are excluded.
   // Both the source save and the old Pages previews remain untouched.
   if(P541_PREVIEW&&!old&&!new URLSearchParams(location.search).has('hfqa')){
-   const originalKeys=['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'];
+   const originalKeys=P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'];
    for(const previousKey of originalKeys){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
@@ -1505,7 +1513,7 @@ async function boot(){
   if(firstP529)await loadBeginningVillage({auto:true});
   if(P538_PREVIEW&&!P541_PREVIEW&&!new URLSearchParams(location.search).has('hfqa'))await loadEastbrookLand({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status(P541_PREVIEW?'✓ WORLD FORGE 4.9 · P5.4.1 MANUAL · mundo original de Unsung; nada se genera solo. Pendiente AUTO: SÍ, edificaciones adaptadas al terreno, WASD/flechas y cámara mouse. Guardado nuevo aislado.':P539_PREVIEW?'✓ WORLD FORGE 4.7 · P5.3.9 · Arvelia con herrería CC0 sustituta, pendiente adaptable, WASD/flechas, mouse cámara.':P538_PREVIEW?'✓ WORLD FORGE 4.6 · P5.3.8 · Arvelia terrestre importable con NPC y misiones HIGHFLY; P5.3.7 intacta.':P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
+  status(P542_PREVIEW?'✓ WORLD FORGE 5.0 · P5.4.2 · TERRENO ORIGINAL INTACTO: edificios con soportes adaptables, pisos y tierra/pasto que siguen las curvas, clic directo selecciona.':P541_PREVIEW?'✓ WORLD FORGE 4.9 · P5.4.1 MANUAL · mundo original de Unsung; nada se genera solo. Pendiente AUTO: SÍ, edificaciones adaptadas al terreno, WASD/flechas y cámara mouse. Guardado nuevo aislado.':P539_PREVIEW?'✓ WORLD FORGE 4.7 · P5.3.9 · Arvelia con herrería CC0 sustituta, pendiente adaptable, WASD/flechas, mouse cámara.':P538_PREVIEW?'✓ WORLD FORGE 4.6 · P5.3.8 · Arvelia terrestre importable con NPC y misiones HIGHFLY; P5.3.7 intacta.':P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
