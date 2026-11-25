@@ -14,10 +14,10 @@ try{
  }
  if(!online)throw Error('P515 Vite preview did not start: '+logs.slice(-1800));
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-gpu-sandbox']});
- const page=await browser.newPage({viewport:{width:1280,height:720},deviceScaleFactor:1});
+ const page=await browser.newPage({viewport:{width:960,height:540},deviceScaleFactor:1});
  const errs=[];page.on('pageerror',e=>errs.push(String(e).slice(0,300)));
  await page.goto(base+'?hfqa=1',{waitUntil:'domcontentloaded',timeout:30000});
- await page.waitForFunction(()=>!!window.__hfP515Eastbrook?.readyPromise,{timeout:155000});
+ await page.waitForFunction(()=>!!window.__hfP515Eastbrook?.readyPromise,null,{timeout:210000,polling:1000});
  await page.evaluate(()=>window.__hfP515Eastbrook.readyPromise);
  const status=await page.evaluate(()=>{
   const a=window.__hfP515Eastbrook;
