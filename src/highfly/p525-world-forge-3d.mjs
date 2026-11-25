@@ -10,6 +10,7 @@ import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} f
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
 import {loadUnsungOriginal} from './p530-unsung-loader.mjs';
 import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_GROUPS} from './p531-kaykit-free-catalog.mjs';
+import {UNSUNG_FLORA,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 const $=id=>document.getElementById(id);
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
@@ -63,7 +64,8 @@ function addPrivateCatalog(models){
   BY_ID.set(a.id,a);
  }
 }
-// Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
+for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
+ // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
 addPrivateCatalog(loadPrivateSourceCatalog());
@@ -317,14 +319,15 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||!!a.freeModel||!!a.privateModel||!!a.originalPrefab||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.freeModel||!!a.privateModel||!!a.originalPrefab||!!a.nativeFlora||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
  :a.freeModel?url('kaykit-free/all/'+a.freePath):url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
-  cache.set(a.id,(a.originalPrefab?
+  cache.set(a.id,(a.nativeFlora?Promise.resolve({scene:nativeUnsungFlora(a.id)}):
+  a.originalPrefab?
   loadUnsungOriginal(a.id,url).then(scene=>({scene})):
   a.privateModel?
   readPrivateSourceGLB(a.id).then(data=>gltfLoader.parseAsync(data,'')):
@@ -536,6 +539,7 @@ const CATALOG_TABS=[
  {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
  {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
  {id:'Unsung original',label:'🏛️ Unsung original',filter:a=>!!a.originalPrefab},
+ {id:'Unsung árboles',label:'🌸 Árboles Unsung',filter:a=>!!a.nativeFlora},
  {id:'Pisos',label:'🧱 Pisos y caminos',filter:a=>a.cat==='Pisos'},
  {id:'Decoración',label:'🏮 Decoración HIGHFLY',filter:a=>a.cat==='Decoración'},
  {id:'Naturaleza',label:'🌳 Naturaleza',filter:a=>a.cat==='Naturaleza'},
