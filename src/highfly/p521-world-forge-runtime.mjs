@@ -226,7 +226,15 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
-  if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){kaykitBuildings.push({o,fp});continue;}
+  if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
+   // A real native Unsung stone foundation follows the max of all footprint corners.
+   // Matches the editor's solid plinth, prevents a complete building sinking into slopes.
+   const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
+   builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
+    q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
+   });
+   kaykitBuildings.push({o,fp});continue;
+  }
   if(o.type==='ore'||o.type==='tree')resources.push({...o,y:fp.y});
   const builder=add(o);
   if(['guild','forge','inn','house','timber','market','mill','granary','warehouse','fishery','ranger'].includes(o.type))
