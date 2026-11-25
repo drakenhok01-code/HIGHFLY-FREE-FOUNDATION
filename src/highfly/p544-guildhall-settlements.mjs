@@ -18,18 +18,20 @@ export const SETTLEMENTS = [
   "name": "Ciudad de los Inicios",
   "terrain": "plaza/llanura",
   "parts": [
-   "great-hall",
+   "town-hall-plaza",
    "market-square",
-   "market-stalls",
    "tavern-yard",
-   "smithy-works",
    "townhouse-shop",
-   "townhouse-corner",
+   "house-pair",
    "house-porch",
-   "castle-ward",
-   "well-square"
+   "smithy-works",
+   "market",
+   "cottage-garden",
+   "well-square",
+   "townhouse-corner",
+   "house-pair"
   ],
-  "guildTile": "great-hall",
+  "guildTile": "town-hall-plaza",
   "pending": [
    "muralla perimetral",
    "portones",
@@ -38,7 +40,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-stone",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "pesquero",
@@ -46,13 +49,15 @@ export const SETTLEMENTS = [
   "terrain": "orilla de lago",
   "parts": [
    "town-hall-plaza",
-   "dock-boats",
    "boathouse",
-   "harbour-quay",
-   "quay",
-   "warehouse",
    "house-pair",
-   "tavern-garden"
+   "warehouse",
+   "market-stalls",
+   "tavern-garden",
+   "cottage",
+   "storehouse",
+   "dock-boats",
+   "quay"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
@@ -62,7 +67,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": true,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "agricola",
@@ -70,25 +76,27 @@ export const SETTLEMENTS = [
   "terrain": "pradera llana",
   "parts": [
    "town-hall-plaza",
-   "field",
-   "field",
    "farmstead-yard",
+   "wheat-field",
+   "wheat-field",
+   "field",
    "pasture",
-   "orchard",
    "windmill",
-   "watermill",
+   "farmstead",
    "homestead",
+   "cottage-veg",
+   "orchard",
    "market"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
-   "campos de trigo adicionales",
    "cartel de gremio"
   ],
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "forestal",
@@ -97,12 +105,13 @@ export const SETTLEMENTS = [
   "parts": [
    "town-hall-plaza",
    "lumber",
-   "lumber",
-   "hunter",
-   "campsite",
    "cottage-garden",
    "warehouse",
-   "house-porch",
+   "hunter",
+   "house-pair",
+   "campsite",
+   "storehouse",
+   "lumber",
    "tavern"
   ],
   "guildTile": "town-hall-plaza",
@@ -113,7 +122,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "minero",
@@ -122,11 +132,12 @@ export const SETTLEMENTS = [
   "parts": [
    "town-hall-plaza",
    "mine",
-   "mine",
    "smithy-works",
-   "storehouse",
    "warehouse",
+   "storehouse",
    "house-pair",
+   "rocky",
+   "smithy-yard",
    "tavern"
   ],
   "guildTile": "town-hall-plaza",
@@ -137,7 +148,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "artesanal",
@@ -145,13 +157,14 @@ export const SETTLEMENTS = [
   "terrain": "meseta suave",
   "parts": [
    "town-hall-plaza",
+   "market",
    "smithy-works",
-   "market-stalls",
-   "market-carts",
    "townhouse-shop",
-   "warehouse",
+   "market-stalls",
+   "house-pair",
    "storehouse",
-   "house-porch",
+   "warehouse",
+   "market-carts",
    "tavern-garden"
   ],
   "guildTile": "town-hall-plaza",
@@ -162,7 +175,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-stone",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "arcano",
@@ -170,12 +184,12 @@ export const SETTLEMENTS = [
   "terrain": "lago elevado/cascada",
   "parts": [
    "great-hall",
+   "chapel",
+   "cottage-garden",
    "monastery-compound",
    "well-square",
-   "cottage-garden",
-   "chapel",
-   "market-square",
-   "townhouse-corner"
+   "house-pair",
+   "market-stalls"
   ],
   "guildTile": "great-hall",
   "pending": [
@@ -185,27 +199,26 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-stone",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "fortaleza",
   "name": "Fortaleza militar",
   "terrain": "meseta elevada",
   "parts": [
-   "great-hall",
+   "town-hall-plaza",
    "castle",
-   "castle-ward",
    "castle-tower",
    "castle-drill",
    "castle-stables",
    "castle-stores",
-   "castle-well",
-   "castle-yard",
    "training-arena",
    "archery-range",
-   "barracks"
+   "castle-well",
+   "house-pair"
   ],
-  "guildTile": "great-hall",
+  "guildTile": "town-hall-plaza",
   "pending": [
    "murallas y portones continuos",
    "cartel de gremio"
@@ -213,7 +226,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "ruinas",
@@ -221,12 +235,12 @@ export const SETTLEMENTS = [
   "terrain": "zona aislada",
   "parts": [
    "town-hall-plaza",
-   "ruins",
+   "cottage",
    "ruins",
    "graveyard-yard",
+   "ruins",
    "chapel",
-   "watchtower",
-   "house-porch"
+   "campsite"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
@@ -236,26 +250,28 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "puerto",
   "name": "Puerto comercial",
   "terrain": "costa amplia",
   "parts": [
-   "great-hall",
-   "harbour-quay",
-   "quay",
-   "quay-b",
-   "dock-ship",
-   "dock-boats",
-   "lighthouse",
+   "town-hall-plaza",
+   "boathouse",
    "warehouse",
    "storehouse",
    "market-carts",
-   "tavern-garden"
+   "tavern-garden",
+   "house-pair",
+   "lighthouse",
+   "dock-ship",
+   "dock-boats",
+   "harbour-quay",
+   "quay"
   ],
-  "guildTile": "great-hall",
+  "guildTile": "town-hall-plaza",
   "pending": [
    "alinear muelles y botes a costa real",
    "cartel de gremio"
@@ -263,7 +279,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": true,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "santuario",
@@ -272,11 +289,12 @@ export const SETTLEMENTS = [
   "parts": [
    "town-hall-plaza",
    "monastery-compound",
-   "monastery",
-   "chapel",
    "orchard",
    "well-square",
-   "cottage-garden"
+   "cottage-garden",
+   "chapel",
+   "cottage",
+   "house-pair"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
@@ -286,7 +304,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-stone",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "cazadores",
@@ -295,11 +314,11 @@ export const SETTLEMENTS = [
   "parts": [
    "town-hall-plaza",
    "hunter",
-   "hunter",
    "campsite",
    "archery-range",
-   "shepherd",
+   "cottage",
    "warehouse",
+   "shepherd",
    "tavern"
   ],
   "guildTile": "town-hall-plaza",
@@ -310,7 +329,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "montana",
@@ -318,12 +338,13 @@ export const SETTLEMENTS = [
   "terrain": "meseta alta",
   "parts": [
    "town-hall-plaza",
-   "fort-tower",
    "watchtower",
    "house-porch",
-   "cottage-garden",
+   "cottage",
+   "house-pair",
    "smithy-yard",
-   "storehouse"
+   "storehouse",
+   "well-square"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
@@ -333,7 +354,8 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  },
  {
   "id": "japonesa",
@@ -361,11 +383,12 @@ export const SETTLEMENTS = [
   "parts": [
    "town-hall-plaza",
    "fort-tower",
-   "watchtower",
    "barracks",
-   "training-arena",
    "storehouse",
-   "campsite"
+   "campsite",
+   "house-pair",
+   "archery",
+   "market-stalls"
   ],
   "guildTile": "town-hall-plaza",
   "pending": [
@@ -375,10 +398,15 @@ export const SETTLEMENTS = [
   "roadMaterial": "unsung-dirt",
   "coastal": false,
   "status": "draft-needs-asset-calibration",
-  "catalogVersion": "guildhall-83-pinned"
+  "catalogVersion": "guildhall-83-pinned",
+  "design": "P546 directed thematic zoning"
  }
 ];
 const TILES=new Map(SOURCE_TILES.map(t=>[t.id,t]));
+// Derived HIGHFLY composition: use the exact Guildhall wheat GLB, not corn substitutes.
+const wheat=TILES.get('farmstead-yard').pieces.find(p=>/crops-wheat-stage-b$/.test(p.piece));
+if(!wheat)throw Error('Source wheat missing');
+TILES.set('wheat-field',{id:'wheat-field',name:'Campo de trigo',ground:'soil',pieces:Array.from({length:63},(_,i)=>({...wheat,x:(i%9-4)*.67,z:(Math.floor(i/9)-3)*.78,rot:0,y:0,scale:wheat.scale??.6})),blockers:[],spots:[]});
 const COASTAL_TILES=new Set(['dock','dock-boats','dock-ship','harbour-quay','quay','quay-b','boathouse','lighthouse']);
 const PRESETS=new Map(SETTLEMENTS.map(t=>[t.id,t]));
 const finite=(...n)=>n.every(Number.isFinite);
@@ -419,7 +447,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  const g=gapMeters/metersPerUnit,half=roadWidth/metersPerUnit/2;
  const parts=preset.parts.map((t,i)=>({id:t,i})).filter(t=>!landOnly||!['dock','dock-boats','dock-ship','harbour-quay','quay','quay-b'].includes(t.id));
  // Deterministic ordering: keep guild first, dock lots on the same side.
- const rest=parts.slice(1).sort((a,b)=>((a.i*2654435761+seed*1013904223)>>>0)-((b.i*2654435761+seed*1013904223)>>>0));
+ const rest=parts.slice(1);
  const rows=[ [parts[0]],[] ];
  for(const p of rest){if(COASTAL_TILES.has(p.id))rows[1].push(p);else rows[rows[0].length<=rows[1].length?0:1].push(p)}
  const lots=[],objects=[],roads=[],floraHints=[],blockers=[];
@@ -428,7 +456,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  for(let side=0;side<2;side++){
  let x=0;
  for(const entry of rows[side]){
- const t=TILES.get(entry.id),b=tileBounds(t,assetLookup),ox=x-b[0],oz=side===0?-half-g-b[3]:half+g-b[1];
+ const source=TILES.get(entry.id),t=side===1?{...source,pieces:source.pieces.map(p=>({...p,x:-p.x,z:-p.z,rot:(p.rot??0)+Math.PI})),blockers:[]}:source,b=tileBounds(t,assetLookup),ox=x-b[0],oz=side===0?-half-g-b[3]:half+g-b[1];
  const key=id+'-'+entry.i;
  const lot={id:key,tile:t.id,role:entry.i===0?'guild':'lot',ground:t.ground,sourceBounds:[ox+b[0],oz+b[1],ox+b[2],oz+b[3]],coastal:!landOnly&&COASTAL_TILES.has(t.id)};
  lots.push(lot);
@@ -438,7 +466,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  if(isTerrain(p.piece))continue;
  if(isFlora(p.piece)){floraHints.push({...pos,original:p.piece,policy:'native-unsung-only'});continue}
  const a=assetLookup(p.piece);
- objects.push({id:key+'-'+i,lot:key,sourceId:p.piece,model:a.uri,license:a.license,...pos,yOffset:(p.y??0)*metersPerUnit,yaw:(p.rot??0)+yaw,tilt:p.tilt??null,scale:(p.scale??1)*metersPerUnit,swatchMap:p.swatchMap??null,pin:p.pin??false,sourcePieceIndex:i,sourceTransform:{...p},surface:t.ground==='water'&&/boat|ship|canoe/i.test(p.piece)?'water':t.ground==='water'?'shore':'land'});
+ objects.push({id:key+'-'+i,lot:key,sourceId:p.piece,model:a.uri,license:a.license,...pos,yOffset:(p.y??0)*metersPerUnit,yaw:(p.rot??0)+yaw,tilt:p.tilt??null,scale:(p.scale??1)*metersPerUnit,stretchX:p.stretchX??p.stretch??1,swatchMap:p.swatchMap??null,pin:p.pin??false,sourcePieceIndex:i,sourceTransform:{...p},surface:t.ground==='water'&&/boat|ship|canoe/i.test(p.piece)?'water':t.ground==='water'?'shore':'land'});
  }
  for(const b of t.blockers??[]){const p=b.of!==undefined?t.pieces[b.of]:b;if(p&&finite(p.x,p.z))blockers.push({lot:key,source:{...b},...world(ox+p.x,oz+p.z),radius:Number.isFinite(b.r)?b.r*metersPerUnit:null,objectId:b.of!==undefined?key+'-'+b.of:null})}
  const mid=ox+(b[0]+b[2])/2; roads.push({id:key+'-access',material:preset.roadMaterial,width:Math.min(roadWidth,2.5),points:[world(mid,0),world(mid,side===0?oz+b[3]:oz+b[1])],kind:'lot-access'});
@@ -447,7 +475,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  }
  roads.unshift({id:id+'-main',material:preset.roadMaterial,width:roadWidth,points:[world(minX-g,0),world(maxX+g,0)],kind:'main'});
  for(const lot of lots){const [a,b,c,d]=lot.sourceBounds;lot.corners=[[a,b],[a,d],[c,b],[c,d]].map(([x,z])=>world(x,z));}
- return {ok:true,schema:'hf-settlement-v2-draft',id,name:preset.name,seed,anchor,yaw,metersPerUnit,lots,objects,roads,floraHints,blockers,pending:[...preset.pending],npc:[],quests:[],terrainPolicy:'preserve-unsung; roads require native ground-conforming mesh; water remains native',status:'requires terrain and actual renderer validation; coastal layouts must be oriented to a real shoreline'};
+ return {ok:true,schema:'hf-settlement-v2-draft',id,name:preset.name,seed,anchor,yaw,metersPerUnit,lots,objects,roads,floraHints,blockers,pending:[...preset.pending],themeDesign:'P546 directed, ordered lots; opposite facades face main street',npc:[],quests:[],terrainPolicy:'preserve-unsung; roads require native ground-conforming mesh; water remains native',status:'requires terrain and actual renderer validation; coastal layouts must be oriented to a real shoreline'};
 }
 export function validateSite(plan,{sampleTerrain,isOccupied=()=>false,maxLotRelief=1.25,maxRoadGrade=.12,step=1}={}){
  if(!plan?.ok||typeof sampleTerrain!=='function'||!finite(maxLotRelief,maxRoadGrade,step)||step<=0)throw Error('site validator requires a real native height sampler');
