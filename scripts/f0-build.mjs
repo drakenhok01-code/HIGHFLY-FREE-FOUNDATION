@@ -561,6 +561,18 @@ patch('src/main.js',"import { installP508WorldClock } from './highfly/p508-world
 patch('src/main.js',"import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';",
  "import { installP510StagedShadows } from './highfly/p510-staged-shadows.mjs';\nimport { installHighflyWorldForge } from './highfly/p521-world-forge-runtime.mjs';\nimport { installHighflyResume } from './highfly/p521-resume-position.mjs';");
 
+// P526: native forest excludes building footprints only in opt-in ?hfworld=1.
+// Outside the editor preview, original trees remain byte-for-byte unchanged.
+patch('src/main.js',"import { installHighflyWorldForge } from './highfly/p521-world-forge-runtime.mjs';",
+ "import { installHighflyWorldForge, worldForgeTreeClearings } from './highfly/p521-world-forge-runtime.mjs';");
+patch('src/main.js',"window.__forest = forest;",
+ "window.__forest = forest;\nconst hfWFClearTree=worldForgeTreeClearings({search:location.search});\nglobalThis.__hfWFClearTree=hfWFClearTree;");
+patch('src/main.js',"forest.populate((x, z) => onRoute(x, z) || clear.some(",
+ "forest.populate((x, z) => hfWFClearTree(x,z) || onRoute(x, z) || clear.some(");
+patch('src/world/flora/forest.js',
+ "for (const e of extra) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });",
+ "for (const e of extra) if(!globalThis.__hfWFClearTree?.(e.x,e.z)) trees.push({ x: e.x, y: T.heightAt(e.x, e.z) - 0.15, z: e.z, s: e.scale ?? 1, yaw: rnd() * 6.283, seed: rnd(), v: pick(e.species) });");
+
 const pipeline=read('src/main.js').split('\n').find(x=>x.startsWith('const pipe = new Pipeline('));
 if(!pipeline)throw Error('Unsung pipeline initialization missing');
 patch('src/main.js',pipeline,pipeline+'\nwindow.__highflyFog = installHighflyFog(pipe);');
