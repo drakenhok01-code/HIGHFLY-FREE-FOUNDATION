@@ -7,13 +7,17 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshBuilder,M} from '../world/arch/builder.js';
 import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
+import * as NativeKit from '../world/arch/kit.js';
+import * as NativeArch from '../world/arch/builder.js';
+import {UNSUNG_ORIGINAL_ASSETS,UNSUNG_ORIGINAL_IDS,buildUnsungOriginal} from './p530-unsung-original.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
+const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -39,6 +43,7 @@ const BOUNDS=Object.freeze({
  'kaykit-well':[6,6],
  'kaykit-windmill':[12,12],
  ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]])),
+ ...Object.fromEntries(UNSUNG_ORIGINAL_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
 });
 // Protect actual arrival spot and original walkable geometry; broad 42m circles used
@@ -51,7 +56,7 @@ export function worldForgeTreeClearings({search=globalThis.location?.search??'',
  if(new URLSearchParams(search).get('hfworld')!=='1')return ()=>false;
  const loaded=loadedLayout(storage);
  if(!loaded.ok)return ()=>false;
- const cleared=loaded.objects.filter(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-'));
+ const cleared=loaded.objects.filter(o=>o.clearTrees===true&&!o.type.startsWith('npc-'));
  return (x,z)=>cleared.some(o=>{
   const dims=BOUNDS[o.type];if(!dims)return false;
   const dx=x-o.x,dz=z-o.z,c=Math.cos(o.yaw),s=Math.sin(o.yaw);
@@ -246,7 +251,16 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
  }
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
- const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],scenic=[],skipped=[];
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],originalBuildings=[],scenic=[],skipped=[];
+ const nativeCenters=new Map();
+ const nativeCenter=type=>{
+  if(nativeCenters.has(type))return nativeCenters.get(type);
+  const tmp=new MeshBuilder();buildUnsungOriginal(type,tmp,{kit:NativeKit,arch:NativeArch});
+  const a=tmp.pos,x=[],y=[],z=[];
+  for(let j=0;j<a.length;j+=3){x.push(a[j]);y.push(a[j+1]);z.push(a[j+2]);}
+  const result={x:(Math.min(...x)+Math.max(...x))*.5,y:Math.min(...y),z:(Math.min(...z)+Math.max(...z))*.5};
+  nativeCenters.set(type,result);return result;
+ };
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
   if(!byChunk.has(key))byChunk.set(key,new MeshBuilder());
   return byChunk.get(key);
@@ -256,6 +270,16 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
+  if(UNSUNG_ORIGINAL_IDS.has(o.type)){
+   // Real MIT Unsung kit pieces, same original procedural geometry and shader as native map.
+   const center=nativeCenter(o.type),b=add(o);
+   b.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
+    q.push().scale(o.scale,o.scale,o.scale).translate(-center.x,-center.y,-center.z);
+    buildUnsungOriginal(o.type,q,{kit:NativeKit,arch:NativeArch});
+    q.pop();
+   });
+   originalBuildings.push(o);continue;
+  }
   if(privateSourceType(o.type)&&PRIVATE_SOURCE.has(o.type)){
    const a=PRIVATE_SOURCE.get(o.type);
    if(a.kind==='building'){
@@ -421,7 +445,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   return result;
  };
- const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,sourceBuildings,kaykitObjects,kaykitFailures,scenicObjects,readyPromise,
+ const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,sourceBuildings,originalBuildings,kaykitObjects,kaykitFailures,scenicObjects,readyPromise,
   get npcCount(){return actors.length;},
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
