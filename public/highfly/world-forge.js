@@ -25,7 +25,8 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
-const STORE='hf-world-forge-layout-v1',TAU=Math.PI*2;
+const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
+const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -114,7 +115,7 @@ const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timb
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem('hf-world-forge-view-v1')||'null');
+ const previous=JSON.parse(localStorage.getItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -536,7 +537,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem('hf-world-forge-view-v1',JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
