@@ -1,0 +1,77 @@
+name: "HIGHFLY P531 - World Forge 4.1: Complete FREE KayKit + Unsung + PC Age Editor"
+on:
+  push:
+    branches: [p531-age-free-complete-editor-20261125]
+    paths: ['.github/workflows/highfly-p531-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p531-pages-safe
+  cancel-in-progress: false
+jobs:
+  stage-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Retrieve P531 release only after successful complete browser smoke and game build
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p531-all-free-world-forge
+          run-id: 45567323828
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p531-chrome-validated
+      - name: Recover previously published P530 site including all older approved versions
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45562687182
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p530-approved-site
+      - name: Verify P531 game, source-pack privacy and exact original Unsung assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="$RUNNER_TEMP/p531-chrome-validated"
+          for path in index.html highfly/world-forge.html highfly/world-forge.js highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/native-architecture-3d.bin highfly/native-architecture-3d.json highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-overview.json highfly/kaykit-free/manifest.json highfly/kaykit-free/all-manifest.json highfly/kaykit-free/all/buildings/blue/building_home_A_blue.gltf highfly/kaykit-free/all/decoration/props/barrel.gltf highfly/kaykit-free/thumbs-all/buildings-blue-building-home-a-blue.png highfly/unsung-original-prefabs.json highfly/unsung-original-prefabs.bin highfly/unsung-original/thumbs/unsung-bench.png; do
+            test -s "$GAME/$path" || { echo "FAIL: Missing P531 $path"; exit 1; }
+          done
+          grep -q 'preview-p531' "$GAME/index.html"
+          grep -q 'WORLD FORGE 4.1 · P5.3.1 · FREE' "$GAME/highfly/world-forge-3d.html"
+          grep -q 'p531' "$GAME/highfly/world-forge-3d.js"
+          GAME="$GAME" node --input-type=module -e "import fs from 'node:fs';const p=process.env.GAME;const m=JSON.parse(fs.readFileSync(p+'/highfly/native-architecture-3d.json'));const k=JSON.parse(fs.readFileSync(p+'/highfly/kaykit-free/manifest.json'));if(m.meshes.length!==73||m.totalTriangles<800000||fs.statSync(p+'/highfly/native-architecture-3d.bin').size!==m.byteLength||k.license!=='CC0-1.0'||k.models.length!==16)throw Error('P531 missing real Unsung or KayKit CC0 geometry');console.log('P531 PASS: authentic Unsung architecture and original KayKit FREE models');"
+          GAME="$GAME" node --input-type=module -e "import fs from 'node:fs';const d=process.env.GAME;const m=JSON.parse(fs.readFileSync(d+'/highfly/kaykit-free/all-manifest.json'));if(m.license!=='CC0-1.0'||m.models.length!==221||new Set(m.models.map(x=>x.id)).size!==221||m.models.filter(x=>x.kind==='building').length!==72)throw Error('P531 incomplete FREE catalog');console.log('P531 221 REAL FREE CC0 MODEL PASS');"
+          test ! -e "$GAME/KIT_COMPLETO_PARTE_01.zip"
+          test ! -e "$GAME/KIT_COMPLETO_PARTE_02.zip"
+          test ! -e "$GAME/HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip"
+          SITE="$RUNNER_TEMP/highfly-historical-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p530-approved-site/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html preview-p521/index.html preview-p522/index.html preview-p523/index.html preview-p524/index.html preview-p525/index.html preview-p526/index.html preview-p527/index.html preview-p529/index.html preview-p530/index.html; do
+            test -s "$SITE/$rel" || { echo "FAIL: Historical HIGHFLY file missing: $rel"; exit 1; }
+          done
+          test ! -e "$SITE/preview-p531"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/unchanged-older-versions.sha256"
+          mkdir -p "$SITE/preview-p531"
+          cp -a "$GAME/." "$SITE/preview-p531/"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/unchanged-older-versions.sha256" >/dev/null)
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "P531 SAFE: Previous live files unchanged. New World Forge 4.1 ALL FREE Age editor and RPG added at preview-p531."
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage-site
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish isolated P531 original Unsung RPG and World Forge 3D
+        id: deployment
+        uses: actions/deploy-pages@v4
