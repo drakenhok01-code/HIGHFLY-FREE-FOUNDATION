@@ -9,6 +9,8 @@ import {MeshBuilder,M} from '../world/arch/builder.js';
 import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
+import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
+const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
 export const WORLD_FORGE_KEY='hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
@@ -35,7 +37,8 @@ const BOUNDS=Object.freeze({
  'kaykit-watermill':[12,12],
  'kaykit-well':[6,6],
  'kaykit-windmill':[12,12],
- ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]]))
+ ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]])),
+ ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
 });
 // Protect actual arrival spot and original walkable geometry; broad 42m circles used
 // to veto even empty buildable terrain. The editor checks original footprint separately.
@@ -220,7 +223,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
  const loaded=loadedLayout(storage);
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
- const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],scenic=[],skipped=[];
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],scenic=[],skipped=[];
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
   if(!byChunk.has(key))byChunk.set(key,new MeshBuilder());
   return byChunk.get(key);
@@ -230,6 +233,17 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
+  if(privateSourceType(o.type)&&PRIVATE_SOURCE.has(o.type)){
+   const a=PRIVATE_SOURCE.get(o.type);
+   if(a.kind==='building'){
+    const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
+    builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
+     q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
+    });
+   }
+   sourceBuildings.push({o,fp});
+   continue;
+  }
   if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
    // A real native Unsung stone foundation follows the max of all footprint corners.
    // Matches the editor's solid plinth, prevents a complete building sinking into slopes.
@@ -322,10 +336,16 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  const kaykitObjects=[],kaykitFailures=[];
  const loader=new GLTFLoader(),prefabLoads=new Map();
  const getPrefab=type=>{
-  if(!prefabLoads.has(type))prefabLoads.set(type,loader.loadAsync(kaykitFreeUrl(type)));
+  if(!prefabLoads.has(type)){
+   const p=privateSourceType(type)
+    ?readPrivateSourceGLB(type).then(data=>loader.parseAsync(data,''))
+    :loader.loadAsync(kaykitFreeUrl(type));
+   prefabLoads.set(type,p);
+  }
   return prefabLoads.get(type);
  };
- const buildingsReadyPromise=Promise.allSettled(kaykitBuildings.slice(0,160).map(async ({o,fp})=>{
+ const allModelLots=[...kaykitBuildings,...sourceBuildings];
+ const buildingsReadyPromise=Promise.allSettled(allModelLots.slice(0,160).map(async ({o,fp})=>{
   const gltf=await getPrefab(o.type);
   if(disposed)return;
   const scene=gltf.scene.clone(true);
@@ -361,7 +381,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   });
   kaykitObjects.push({anchor,o,colliders:added});
  })).then(results=>{
-  results.forEach((v,i)=>{if(v.status==='rejected')kaykitFailures.push({id:kaykitBuildings[i]?.o.id,error:String(v.reason)});});
+  results.forEach((v,i)=>{if(v.status==='rejected')kaykitFailures.push({id:allModelLots[i]?.o.id,error:String(v.reason)});});
   console.info('[HIGHFLY KAYKIT FREE CC0]',kaykitObjects.length,'real medieval models,',kaykitFailures.length,'load failures');
  }).catch(err=>console.error('[HIGHFLY KAYKIT FREE]',err));
  const readyPromise=Promise.all([peopleReadyPromise,buildingsReadyPromise]);
@@ -375,7 +395,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   return result;
  };
- const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,kaykitObjects,kaykitFailures,scenicObjects,readyPromise,
+ const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,sourceBuildings,kaykitObjects,kaykitFailures,scenicObjects,readyPromise,
   get npcCount(){return actors.length;},
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
