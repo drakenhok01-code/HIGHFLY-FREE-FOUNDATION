@@ -2,11 +2,11 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/preview-p536",
+      "source": "/HIGHFLY-FREE-FOUNDATION/preview-p536",
       "destination": "/index.html"
     },
     {
-      "source": "/preview-p536/:path*",
+      "source": "/HIGHFLY-FREE-FOUNDATION/preview-p536/:path*",
       "destination": "/:path*"
     }
   ]
