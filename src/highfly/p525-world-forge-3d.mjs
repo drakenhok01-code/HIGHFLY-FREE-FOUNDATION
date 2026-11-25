@@ -619,4 +619,17 @@ async function boot(){
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
  }
 }
+// Test-only viewport inspection; available only with explicit ?hfqa query.
+if(new URLSearchParams(location.search).has('hfqa')){
+ window.__hfWorldForge3DQA={
+  focus,
+  validPosition,
+  point(x,z){
+   const world=new THREE.Vector3(x,elevation(x,z)+1,z);
+   const ndc=world.project(cam),r=renderer.domElement.getBoundingClientRect();
+   return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
+  },
+  objects(){return records.map(x=>({...x}));}
+ };
+}
 boot();
