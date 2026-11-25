@@ -280,7 +280,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    const backup=validateWorldForgeLayout(JSON.parse(storage?.getItem('hf-world-forge-layout-p537-v1')||'null'));
    const old=prior.ok?prior.objects:(backup.ok?backup.objects:[]);
    const plan=buildEastbrookLand({
-    existing:old,sizeOf:type=>BOUNDS[type]||null,
+    existing:old,buildingTypes:P539_PREVIEW?{herreria:'kaykit-home-a'}:{},sizeOf:type=>BOUNDS[type]||null,
     canPlace:o=>{
      const fp=footprint(game.world,o);
      return fp?{ok:true,y:fp.y}:{ok:false};
