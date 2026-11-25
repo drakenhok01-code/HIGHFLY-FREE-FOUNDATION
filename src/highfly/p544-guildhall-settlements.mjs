@@ -383,7 +383,7 @@ const COASTAL_TILES=new Set(['dock','dock-boats','dock-ship','harbour-quay','qua
 const PRESETS=new Map(SETTLEMENTS.map(t=>[t.id,t]));
 const finite=(...n)=>n.every(Number.isFinite);
 const rot=(x,z,a)=>[x*Math.cos(a)+z*Math.sin(a),-x*Math.sin(a)+z*Math.cos(a)];
-const isTerrain=id=>/(^|\/)hex[-_](grass|water|coast|river|road)([-_]|$)/i.test(id);
+const isTerrain=id=>/(^|\/)(?:hex[-_](grass|water|coast|river|road)|ground[-_](river|water|path))([-_]|$)/i.test(id);
 const isFlora=id=>/(?:^|\/)(?:tree[-_]|trees[-_]|bush[-_]|grass[-_])/i.test(id);
 export const ASSET_REQUIREMENTS=[...new Set(SOURCE_TILES.flatMap(t=>t.pieces.map(p=>p.piece)))].sort();
 export function auditAssets(assetLookup, presetId) {
@@ -407,17 +407,17 @@ function pieceBounds(p,a) {
 }
 function tileBounds(tile,lookup) {
  const b=tile.pieces.filter(p=>!isTerrain(p.piece)&&!isFlora(p.piece)).map(p=>pieceBounds(p,lookup(p.piece)));
- if(!b.length)throw Error('empty tile');
+ if(!b.length){const p=tile.pieces.filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.z));return p.length?[Math.min(-2.7,...p.map(p=>p.x-.7)),Math.min(-2.7,...p.map(p=>p.z-.7)),Math.max(2.7,...p.map(p=>p.x+.7)),Math.max(2.7,...p.map(p=>p.z+.7))]:[-2.7,-2.7,2.7,2.7];}
  return [Math.min(...b.map(x=>x[0])),Math.min(...b.map(x=>x[1])),Math.max(...b.map(x=>x[2])),Math.max(...b.map(x=>x[3]))];
 }
-export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,roadWidth=3.5,anchor={x:0,z:0},yaw=0,seed=7}={}){
+export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,roadWidth=3.5,anchor={x:0,z:0},yaw=0,seed=7,landOnly=false}={}){
  const preset=PRESETS.get(id);if(!preset)throw Error('unknown settlement');
  if(preset.status==='blocked-theme-assets')throw Error('Japanese architecture not verified; no European substitute permitted');
  if(typeof assetLookup!=='function'||!finite(metersPerUnit,gapMeters,roadWidth,anchor.x,anchor.z,yaw,seed)||metersPerUnit<=0||gapMeters<1||roadWidth<2)throw Error('missing real measured scale or invalid site');
  const missing=auditAssets(assetLookup,id).filter(x=>!x.ok);
  if(missing.length)return {ok:false,id,missing:missing.map(x=>x.id),reason:'exact assets missing, unlicensed or unmeasured; no substitution'};
  const g=gapMeters/metersPerUnit,half=roadWidth/metersPerUnit/2;
- const parts=preset.parts.map((t,i)=>({id:t,i}));
+ const parts=preset.parts.map((t,i)=>({id:t,i})).filter(t=>!landOnly||!['dock','dock-boats','dock-ship','harbour-quay','quay','quay-b'].includes(t.id));
  // Deterministic ordering: keep guild first, dock lots on the same side.
  const rest=parts.slice(1).sort((a,b)=>((a.i*2654435761+seed*1013904223)>>>0)-((b.i*2654435761+seed*1013904223)>>>0));
  const rows=[ [parts[0]],[] ];
@@ -430,7 +430,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  for(const entry of rows[side]){
  const t=TILES.get(entry.id),b=tileBounds(t,assetLookup),ox=x-b[0],oz=side===0?-half-g-b[3]:half+g-b[1];
  const key=id+'-'+entry.i;
- const lot={id:key,tile:t.id,role:entry.i===0?'guild':'lot',ground:t.ground,sourceBounds:[ox+b[0],oz+b[1],ox+b[2],oz+b[3]],coastal:COASTAL_TILES.has(t.id)};
+ const lot={id:key,tile:t.id,role:entry.i===0?'guild':'lot',ground:t.ground,sourceBounds:[ox+b[0],oz+b[1],ox+b[2],oz+b[3]],coastal:!landOnly&&COASTAL_TILES.has(t.id)};
  lots.push(lot);
  minX=Math.min(minX,ox+b[0]);maxX=Math.max(maxX,ox+b[2]);
  for(let i=0;i<t.pieces.length;i++){
@@ -438,7 +438,7 @@ export function buildSettlement(id,{assetLookup,metersPerUnit,gapMeters=2.5,road
  if(isTerrain(p.piece))continue;
  if(isFlora(p.piece)){floraHints.push({...pos,original:p.piece,policy:'native-unsung-only'});continue}
  const a=assetLookup(p.piece);
- objects.push({id:key+'-'+i,lot:key,sourceId:p.piece,model:a.uri,license:a.license,...pos,yOffset:(p.y??0)*metersPerUnit,yaw:(p.rot??0)+yaw,tilt:p.tilt??null,scale:(p.scale??1)*metersPerUnit,swatchMap:p.swatchMap??null,pin:p.pin??false,sourcePieceIndex:i,sourceTransform:{...p},surface:/boat/i.test(p.piece)?'water':COASTAL_TILES.has(t.id)&&/platform|planks/i.test(p.piece)?'shore':'land'});
+ objects.push({id:key+'-'+i,lot:key,sourceId:p.piece,model:a.uri,license:a.license,...pos,yOffset:(p.y??0)*metersPerUnit,yaw:(p.rot??0)+yaw,tilt:p.tilt??null,scale:(p.scale??1)*metersPerUnit,swatchMap:p.swatchMap??null,pin:p.pin??false,sourcePieceIndex:i,sourceTransform:{...p},surface:t.ground==='water'&&/boat|ship|canoe/i.test(p.piece)?'water':t.ground==='water'?'shore':'land'});
  }
  for(const b of t.blockers??[]){const p=b.of!==undefined?t.pieces[b.of]:b;if(p&&finite(p.x,p.z))blockers.push({lot:key,source:{...b},...world(ox+p.x,oz+p.z),radius:Number.isFinite(b.r)?b.r*metersPerUnit:null,objectId:b.of!==undefined?key+'-'+b.of:null})}
  const mid=ox+(b[0]+b[2])/2; roads.push({id:key+'-access',material:preset.roadMaterial,width:Math.min(roadWidth,2.5),points:[world(mid,0),world(mid,side===0?oz+b[3]:oz+b[1])],kind:'lot-access'});
