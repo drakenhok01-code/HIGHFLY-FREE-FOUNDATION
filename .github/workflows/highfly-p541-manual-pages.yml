@@ -1,7 +1,5 @@
 name: "HIGHFLY P541 Manual World Forge — clean Unsung terrain and graded buildings"
 on:
-  push:
-    branches: [p541-manual-world-forge-clean-20261125]
   workflow_dispatch:
 permissions:
   contents: read
