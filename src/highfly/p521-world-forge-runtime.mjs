@@ -256,9 +256,13 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  const nativeCenter=type=>{
   if(nativeCenters.has(type))return nativeCenters.get(type);
   const tmp=new MeshBuilder();buildUnsungOriginal(type,tmp,{kit:NativeKit,arch:NativeArch});
-  const a=tmp.pos,x=[],y=[],z=[];
-  for(let j=0;j<a.length;j+=3){x.push(a[j]);y.push(a[j+1]);z.push(a[j+2]);}
-  const result={x:(Math.min(...x)+Math.max(...x))*.5,y:Math.min(...y),z:(Math.min(...z)+Math.max(...z))*.5};
+  const a=tmp.pos;
+  let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity,minY=Infinity;
+  for(let j=0;j<a.length;j+=3){
+   minX=Math.min(minX,a[j]);maxX=Math.max(maxX,a[j]);
+   minY=Math.min(minY,a[j+1]);minZ=Math.min(minZ,a[j+2]);maxZ=Math.max(maxZ,a[j+2]);
+  }
+  const result={x:(minX+maxX)*.5,y:minY,z:(minZ+maxZ)*.5};
   nativeCenters.set(type,result);return result;
  };
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
