@@ -1,5 +1,6 @@
 /* World Forge P544 isolated settlement laboratory, no game writes. */
 import * as THREE from 'three';
+import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 import {SETTLEMENTS} from './p544-guildhall-settlements.mjs';
 import {verifiedAssetLookup,mergeDirtPathMask} from './p544-unsung-settlement-bridge.mjs';
 import {SCALE_REFERENCE,findSettlementSite,candidateGrid,connectNativeRoad} from './p544-native-site-planner.mjs';
@@ -24,7 +25,7 @@ export async function installSettlementLab({scene,loader,overview,elevation,occu
   const all=plans.flatMap(p=>p.roads.concat(p.connector?[p.connector]:[]));
   // Dirt connections use original shader's exact path mask. Stone lots remain
   // explicit draft hints until native paving shader and runtime are connected.
-  const mask=mergeDirtPathMask(originalMask,all);
+  const mask=mergeDirtPathMask(originalMask,all.map(r=>({...r,material:'unsung-dirt'})));
   nativeVisuals.pathPixels.set(mask);
   const tex=nativeVisuals.material.uniforms.uNativePath.value;tex.image.data.set(mask);tex.needsUpdate=true;refreshGrass?.();
  }
@@ -42,6 +43,7 @@ export async function installSettlementLab({scene,loader,overview,elevation,occu
   // Clear, physical guild label, not a simulated NPC.
   const guild=plan.lots.find(l=>l.role==='guild');if(guild){const x=guild.corners.reduce((s,p)=>s+p.x,0)/4,z=guild.corners.reduce((s,p)=>s+p.z,0)/4;
    const c=document.createElement('canvas');c.width=512;c.height=128;const cx=c.getContext('2d');cx.fillStyle='#261b36';cx.fillRect(0,0,512,128);cx.fillStyle='#ffdf86';cx.font='bold 50px sans-serif';cx.textAlign='center';cx.fillText('GREMIO',256,80);const tex=new THREE.CanvasTexture(c);const marker=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:true}));marker.position.set(x,datums.get(guild.id)+7,z);marker.scale.set(5,1.25,1);temp.add(marker)}
+  for(const road of plan.roads.filter(r=>r.material==='unsung-stone')){const points=road.points.map(p=>[p.x,p.z]);const r={id:road.id,type:'road-curved-stone',x:points[0][0],z:points[0][1],width:Math.max(3,road.width),points};if(Math.hypot(points[0][0]-points.at(-1)[0],points[0][1]-points.at(-1)[1])>=.65)temp.add(makeCurvedCobblestone3D(r,elevation));}
   group.add(temp);return temp;
  }
  let busy=false;
@@ -59,8 +61,9 @@ export async function installSettlementLab({scene,loader,overview,elevation,occu
  }
  async function run(all){if(busy)return;busy=true;$('hf544-one').disabled=$('hf544-all').disabled=true;try{const ids=all?SETTLEMENTS.filter(p=>p.id!=='japonesa').map(p=>p.id):[select.value];for(const id of ids){status('Buscando parcela nativa: '+id);await new Promise(r=>requestAnimationFrame(r));try{await generate(id,all?null:{x:target.x,z:target.z})}catch(e){failures.push({id,reason:e.message});setReport()}}status('P544: '+plans.length+' pueblos de prueba; '+failures.length+' incidencias. No modifica el RPG.')}finally{busy=false;$('hf544-one').disabled=$('hf544-all').disabled=false}}
  $('hf544-one').onclick=()=>run(false);$('hf544-all').onclick=()=>run(true);
- $('hf544-clear').onclick=()=>{if(busy)return;group.clear();plans.length=0;failures.length=0;paths();localStorage.removeItem(KEY);setReport();render()};
+ $('hf544-clear').onclick=()=>{if(busy)return;for(const child of group.children)disposeCurvedRoadGeometry(child);group.clear();plans.length=0;failures.length=0;paths();localStorage.removeItem(KEY);setReport();render()};
  $('hf544-export').onclick=()=>{const a=document.createElement('a'),blob=new Blob([JSON.stringify({schema:'hf-p544-settlement-drafts',world:'unsung-vale',calibration:SCALE_REFERENCE,plans,failures,readyForGame:false},null,2)],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download='HIGHFLY-P544-SETTLEMENTS.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
  window.__hfP544={plans,failures,calibration:SCALE_REFERENCE,generate:()=>run(true)};
  status('P544: biblioteca 214/214 lista. Elegí un pueblo y buscá una parcela.');
+ // Restore only by re-running native validation; saved draft is export only.
 }
