@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1';
+const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -268,7 +268,13 @@ function save(show=false){
 }
 function recordSnapshot(){history.push(JSON.stringify(records));if(history.length>60)history.shift();redoStack.length=0;}
 function restore(){
- try{const d=JSON.parse(localStorage.getItem(STORE)||'null');if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));}
+ try{
+  // Preserve user's previously placed world when first trying this experimental editor.
+  const old=localStorage.getItem(STORE);
+  if(old&&!localStorage.getItem(BACKUP))localStorage.setItem(BACKUP,old);
+  const d=JSON.parse(old||'null');
+  if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));
+ }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
 const modelUrl=a=>url('kaykit-free/building_'+a.model+'_red.gltf');
@@ -366,7 +372,7 @@ async function rebuildPlaced(){
   const node=await buildPlaced(o);if(rebuildPlaced.token!==token)return;
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
- render();showProps();
+ updateTrees(true);render();showProps();
 }
 function showProps(){
  const o=records.find(x=>x.id===selected),name=o?BY_ID.get(o.type).label:chosen?BY_ID.get(chosen).label:'EDITOR 3D';
@@ -576,11 +582,12 @@ function installGizmo(){
   if(ev.value){before=JSON.stringify(records);return;}
   const o=records.find(x=>x.id===selected),root=viewCache.get(selected);if(!o||!root)return;
   const old={...o};o.x=snap(root.position.x,1);o.z=snap(root.position.z,1);
-  o.yaw=root.rotation.y;o.scale=clamp(Math.round(root.scale.x*100)/100,.5,3);
+  o.yaw=root.rotation.y;o.scale=mode==='scale'?clamp(Math.round(old.scale*Math.max(.2,(root.scale.x+root.scale.z)*.5)*100)/100,.5,3):old.scale;
   const check=validPosition(o,o.id);
-  if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;status('Ubicación bloqueada: '+check.why);}
+  if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;root.scale.setScalar(1);status('Ubicación bloqueada: '+check.why);}
   else{o.y=check.y;root.position.y=o.y;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
-  if(mode==='scale')rebuildPlaced();showProps();render();
+  if(mode==='scale')rebuildPlaced();else if(mode==='move')updateTrees(true);
+  showProps();render();
  });
  gizmo.addEventListener('objectChange',()=>{
   const obj=viewCache.get(selected);if(obj&&mode==='move')obj.position.y=elevation(obj.position.x,obj.position.z);
