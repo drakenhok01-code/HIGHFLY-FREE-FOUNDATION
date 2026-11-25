@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<title>HIGHFLY WORLD FORGE 4.6 · Arvelia y edificios a ras de suelo Unsung</title>
+<title>HIGHFLY WORLD FORGE 4.7 · Arvelia y edificios a ras de suelo Unsung</title>
 <style>
 :root{color-scheme:dark;--bg:#17142b;--gold:#efd39a;--lilac:#c6aaff}
 *{box-sizing:border-box}
@@ -52,9 +52,9 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.6 · P5.3.8 · UNSUNG MIT + KAYKIT CC0</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.7 · P5.3.9 · UNSUNG MIT + KAYKIT CC0</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
-<button id="pilot-eastbrook" title="Importar Eastbrook terrestre con modelos CC0/MIT, NPC y misiones HIGHFLY; respeta tu plano y el original de Unsung">🏰 Importar Arvelia</button><button id="preset-village" title="Distribución automática experimental, no replica la referencia aprobada">🏡 Arvelia · borrador</button><button id="import-source" hidden style="display:none" title="Deshabilitado: laboratorio solo CC0/MIT público">📦 SOURCE (no se usa en P5.3.2)</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
+<button id="pilot-eastbrook" title="Importar Arvelia terrestre; herrería usa una casa CC0 real como sustituto temporal, sin assets premium">🏰 Importar Arvelia</button><button id="preset-village" title="Distribución automática experimental, no replica la referencia aprobada">🏡 Arvelia · borrador</button><button id="import-source" hidden style="display:none" title="Deshabilitado: laboratorio solo CC0/MIT público">📦 SOURCE (no se usa en P5.3.2)</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
 </div></header>
 <main><aside>
@@ -76,16 +76,16 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
   <button id="p536-bend-wide" title="Colocá un adoquín abierto de 8 m. Girá con Q/R de a 90 grados.">⤴ Curva 8 m</button>
   <button id="curved-road" title="Herramienta antigua de nodos; se mantiene por compatibilidad con planos previos">✏️ Trazo libre</button>
 <button id="road-finish" hidden title="Cerrar y guardar un camino curvo (Enter)">✅ Terminar curva</button>
-<button id="road-cancel" hidden title="Cancelar este trazado (Esc)">✖ Cancelar curva</button><button id="quality-toggle" title="Alternar densidad de vegetación y píxeles del editor; los materiales permanecen como en el juego">✨ Calidad ALTA</button><button id="brush-width" title="Ancho del pincel y de los caminos curvos (4, 8 y 12 metros)">🧱 Ancho 4 m</button>
+<button id="road-cancel" hidden title="Cancelar este trazado (Esc)">✖ Cancelar curva</button><button id="slope-toggle" class="on" title="Construir sobre pendientes adaptando la tierra original, sin losas flotantes; conserva las escaleras y la arquitectura">🧱 Pendiente AUTO: SÍ</button><button id="quality-toggle" title="Alternar densidad de vegetación y píxeles del editor; los materiales permanecen como en el juego">✨ Calidad ALTA</button><button id="brush-width" title="Ancho del pincel y de los caminos curvos (4, 8 y 12 metros)">🧱 Ancho 4 m</button>
 <button id="repeat-place" class="on" title="Colocar varias copias seguidas del mismo edificio como Age of Empires">↻ Repetir: SÍ</button>
 <button id="home">⌖ Inicio</button><button id="trees" class="on">🌳 Árboles</button>
 <button id="original" class="on">🏛️ Original</button><button id="water" class="on">🌊 Agua</button>
 </div>
 <div id="top-info"><div id="coords">X — / Z —</div><div id="metrics">3D editor · mapa auténtico</div></div>
 <div id="status">Preparando terreno 3D original…</div>
-<div id="tips">PC: 🛤️ Curva = clic en cada nodo y Enter/doble clic para finalizar · 1/2/3 cambia ancho · selecc. camino y ✏️ Editar curva · Ctrl+C/V edificios · botón derecho mueve cámara · rueda zoom · Ctrl+S guardar</div>
+<div id="tips">PC: WASD / flechas mueven cámara · mouse derecho rota · mouse central desplaza · rueda zoom · 🛤️ Curva = clic en cada nodo y Enter/doble clic para finalizar · 1/2/3 cambia ancho · selecc. camino y ✏️ Editar curva · Ctrl+C/V edificios · botón derecho mueve cámara · rueda zoom · Ctrl+S guardar</div>
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p538"></script>
+<script type="module" src="./world-forge-3d.js?v=p539"></script>
 </body></html>
