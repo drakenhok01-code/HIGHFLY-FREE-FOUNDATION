@@ -32,7 +32,7 @@ const sn=(x,s=2)=>Math.round(x/s)*s;
 const radius=o=>{const d=DIMENSIONS[o.type];return Math.hypot(d[0],d[1])*o.scale*.32;};
 const overlaps=(o,placed)=>placed.some(p=>Math.hypot(o.x-p.x,o.z-p.z)<radius(o)+radius(p)+1.4);
 const shifts=Object.freeze([[0,0],[6,0],[-6,0],[0,6],[0,-6],[12,0],[-12,0],[0,12],[0,-12],[9,9],[-9,-9],[9,-9],[-9,9]]);
-const centres=Object.freeze([[0,0],[24,0],[-24,0],[0,24],[0,-24],[40,0],[-40,0],[0,40],[0,-40],[24,24],[-24,-24],[24,-24],[-24,24],[56,0],[-56,0],[0,56],[0,-56]]);
+const centres=Object.freeze([[0,0],[24,0],[-24,0],[0,24],[0,-24],[40,0],[-40,0],[0,40],[0,-40],[24,24],[-24,-24],[24,-24],[-24,24],[56,0],[-56,0],[0,56],[0,-56],[-96,0],[-112,0],[-128,0],[-144,0],[-160,0],[-176,0],[-128,24],[-144,24],[-160,24],[-128,-24],[-144,-24],[-160,-24],[-176,24],[-176,-24]]);
 function buildForCenter(center,canPlace,tag){
  const placed=[],roles=[],missing=[];
  for(let i=0;i<EASTBROOK_PILOT_SPECS.length;i++){
