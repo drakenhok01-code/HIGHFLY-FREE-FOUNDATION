@@ -42,7 +42,7 @@ test('P542: both Forge and RPG prohibit creating artificial terrain terraces, sh
  assert(e.includes("m.fragmentShader=m.fragmentShader.replace(original"));
  assert(e.includes("floor-grass"));
  assert(r.includes("'floor-grass':[4,4]"));
- assert(e.includes("conformingTileGrid(o,{w:a.w,d:a.d},floorElevation"));
+ assert(e.includes("conformingTileGrid(o,{w:a.w,d:a.d},paintedNativeFloorAt"));\n assert(e.includes("nativeRenderedFloorAt(x,z)"));
  assert(r.includes("conformingTileGrid(o,{w:w0,d:d0},nativeY"));
  assert(r.includes("p542Batches"));
  assert(e.includes("const foundation=adaptableBuildingSupports(a,o"));
