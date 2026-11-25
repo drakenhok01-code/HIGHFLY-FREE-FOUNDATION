@@ -7,6 +7,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshBuilder,M} from '../world/arch/builder.js';
 import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
+import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS} from './p528-village-layout.mjs';
+import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 
 export const WORLD_FORGE_KEY='hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
@@ -33,6 +35,7 @@ const BOUNDS=Object.freeze({
  'kaykit-watermill':[12,12],
  'kaykit-well':[6,6],
  'kaykit-windmill':[12,12],
+ ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]]))
 });
 // Protect actual arrival spot and original walkable geometry; broad 42m circles used
 // to veto even empty buildable terrain. The editor checks original footprint separately.
@@ -217,7 +220,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
  const loaded=loadedLayout(storage);
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
- const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],skipped=[];
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],scenic=[],skipped=[];
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
   if(!byChunk.has(key))byChunk.set(key,new MeshBuilder());
   return byChunk.get(key);
@@ -226,6 +229,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
+  if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
   if(Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
    // A real native Unsung stone foundation follows the max of all footprint corners.
    // Matches the editor's solid plinth, prevents a complete building sinking into slopes.
@@ -249,6 +253,38 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   mesh.updateMatrixWorld(true);meshes.push(mesh);
   // Static, solid and walkable; a single original BVH for each 220m cell.
   world.addGeometry(mesh.geometry);collisions.push(mesh.geometry);
+ }
+ // The same premium low-poly meshes used by the 3D editor appear in gameplay.
+ // One static group per prop; simple nearby collision proxies are generated only
+ // for solid pillars, tree trunks and elevated gazebo floor to protect Android.
+ const scenicObjects=[];
+ for(const o of scenic){
+  const model=makeVillageDecor(o.type,o.scale);if(!model){skipped.push(o.id);continue;}
+  model.position.set(o.x,o.y+.045,o.z);model.rotation.y=o.yaw;
+  model.traverse(mesh=>{if(mesh.isMesh)mesh.frustumCulled=true;});
+  group.add(model);scenicObjects.push({o,model});
+  const addSolid=(localX,localZ,localY,w,h,d)=>{
+   const c=Math.cos(o.yaw),s=Math.sin(o.yaw),
+    wx=o.x+(localX*c-localZ*s)*o.scale,wz=o.z+(localX*s+localZ*c)*o.scale;
+   const geom=new THREE.BoxGeometry(w*o.scale,h*o.scale,d*o.scale);
+   geom.rotateY(o.yaw);geom.translate(wx,o.y+localY*o.scale,wz);
+   world.addLazy(wx,wz,Math.max(w,d)*o.scale,()=>geom);
+   collisions.push(geom);
+  };
+  if(['village-blossom','village-lilac','village-autumn'].includes(o.type))
+   addSolid(0,0,1.48,.64,2.85,.64);
+  else if(o.type==='village-gazebo'){
+   // Walkable pavilion plinth, four outside pillars; center remains accessible.
+   addSolid(0,0,.19,7.6,.4,7.6);
+   for(const [x,z] of [[3.35,0],[-3.35,0],[0,3.35],[0,-3.35]])
+    addSolid(x,z,2.35,.46,3.7,.46);
+  }else if(o.type.startsWith('village-stall-')){
+   for(const x of [-2.12,2.12])for(const z of [-1.5,1.5])
+    addSolid(x,z,1.6,.18,3.1,.18);
+  }else if(o.type==='village-lamp'||o.type==='village-banner')
+   addSolid(0,0,1.6,.25,3.15,.25);
+  else if(o.type==='village-crates')addSolid(0,0,.48,2,1,1.6);
+  else if(o.type==='village-flowerbed')addSolid(0,0,.2,2.9,.35,1.7);
  }
  const nodes=resources.map(o=>({id:'hf-wf-'+o.id,kind:o.type==='ore'?'ore':'tree',
   x:o.x,y:o.y,z:o.z,charges:8,available:true}));
@@ -339,7 +375,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   return result;
  };
- const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,kaykitObjects,kaykitFailures,readyPromise,
+ const api={key:WORLD_FORGE_KEY,loaded:true,meshes,people,resources,nodes,skipped,kaykitBuildings,kaykitObjects,kaykitFailures,scenicObjects,readyPromise,
   get npcCount(){return actors.length;},
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
@@ -347,6 +383,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    world.highflyInteractables=(world.highflyInteractables??[]).filter(n=>!nodes.includes(n));
    for(const a of actors){group.remove(a.anchor);a.mixer.stopAllAction();}
    for(const k of kaykitObjects){group.remove(k.anchor);}
+   for(const a of scenicObjects){group.remove(a.model);}
    // World collision is deliberately kept until page reload: no orphan BVH edits.
   }};
  game.__hfP521WorldForge=api;globalThis.__hfP521WorldForge=api;
