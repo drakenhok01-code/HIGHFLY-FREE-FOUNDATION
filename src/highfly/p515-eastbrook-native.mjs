@@ -112,7 +112,7 @@ function paintRoads(game){
    if(spread>1.25)continue;
    b.mat_(r>=sq.radius-1.25?M.FRIEZE:M.PAVING);
    // CCW top face.
-   b.quad(p0,p1,p2,p3);
+   b.quad(p0,p3,p2,p1); // positive +Y normal; material visible above terrain
   }
  }
  if(b.triCount===0)throw Error('P515 zero stone roads: native Unsung heightfield not ready');
