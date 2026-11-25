@@ -296,7 +296,15 @@ try{
  await page.evaluate(()=>{
   [...document.querySelectorAll('#catalog button')].find(e=>e.textContent.includes('Arbusto con flores'))?.click();
  });
- await page.waitForFunction(()=>window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers'),{timeout:40000});
+ await page.waitForFunction(()=>window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers')||
+  window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),{timeout:20000});
+ const qload=await page.evaluate(()=>({
+  ready:window.__hfWorldForge3DQA?.ready('qcc0-bush_flowers'),
+  failure:window.__hfWorldForge3DQA?.error('qcc0-bush_flowers'),
+  status:document.querySelector('#status')?.textContent,
+  diag:window.__highfly3DEditorHealth?.lines?.slice(-6)
+ }));
+ if(!qload.ready)throw Error('Actual Quaternius meshopt GLB unable to load: '+JSON.stringify({qload,errors}).slice(0,3900));
  const qspot=await page.evaluate(()=>{
   const q=window.__hfWorldForge3DQA;
   for(let dx=-66;dx<=66;dx+=6)for(let dz=-66;dz<=66;dz+=6){
