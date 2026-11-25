@@ -262,7 +262,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    minX=Math.min(minX,a[j]);maxX=Math.max(maxX,a[j]);
    minY=Math.min(minY,a[j+1]);minZ=Math.min(minZ,a[j+2]);maxZ=Math.max(maxZ,a[j+2]);
   }
-  const result={x:(minX+maxX)*.5,y:minY,z:(minZ+maxZ)*.5};
+  const result={x:(minX+maxX)*.5,y:minY,z:(minZ+maxZ)*.5,sx:maxX-minX,sz:maxZ-minZ};
   nativeCenters.set(type,result);return result;
  };
  const size=220,add=(o,kind)=>{const key=Math.floor(o.x/size)+':'+Math.floor(o.z/size);
@@ -276,9 +276,10 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
   if(UNSUNG_ORIGINAL_IDS.has(o.type)){
    // Real MIT Unsung kit pieces, same original procedural geometry and shader as native map.
-   const center=nativeCenter(o.type),b=add(o);
+   const center=nativeCenter(o.type),b=add(o),dims=BOUNDS[o.type];
+   const k=Math.min(dims[0]/Math.max(.01,center.sx),dims[1]/Math.max(.01,center.sz))*o.scale;
    b.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
-    q.push().scale(o.scale,o.scale,o.scale).translate(-center.x,-center.y,-center.z);
+    q.push().scale(k,k,k).translate(-center.x,-center.y,-center.z);
     buildUnsungOriginal(o.type,q,{kit:NativeKit,arch:NativeArch});
     q.pop();
    });
