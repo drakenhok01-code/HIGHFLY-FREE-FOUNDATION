@@ -1102,6 +1102,83 @@ async function loadEastbrookLand({auto=false}={}){
  }finally{if(button)button.disabled=false;}
 }
 
+
+async function loadArveliaMasterplan({auto=false}={}){
+ if(!P540_PREVIEW)return false;
+ if(!map||!overview||!architectPixel){status('Primero se carga el terreno original Unsung.');return false;}
+ if(records.some(o=>o.highflyMaster&&o.highflyTown==='arvelia')){
+  status('✓ Arvelia final ya está construida: podés mover, rotar, editar y guardar cada pieza.');
+  return true;
+ }
+ const button=$('pilot-eastbrook');
+ if(button)button.disabled=true;
+ const before=JSON.stringify(records);
+ const keep=records.filter(o=>o.highflyTown!=='arvelia');
+ const oldTown=records.length-keep.length;
+ try{
+  status('🏰 Preparando Arvelia final · verificando todos los edificios públicos…');
+  const buildingTypes={},substitutes=[];
+  for(const spec of EASTBROOK_LAND_SPECS){
+   const desired=BY_ID.get(spec.type);
+   if(desired&&await getGLTF(desired))continue;
+   let fallback=null;
+   for(const type of EASTBROOK_FREE_FALLBACKS[spec.type]||['kaykit-home-a','kaykit-home-b']){
+    const alt=BY_ID.get(type);
+    if(alt&&await getGLTF(alt)){fallback=type;break;}
+   }
+   if(!fallback&&spec.required){status('Falta un modelo gratuito completo para '+spec.role+'. Plano intacto.');return false;}
+   if(fallback){buildingTypes[spec.role]=fallback;substitutes.push(spec.role+': '+spec.type+' → '+fallback);}
+  }
+  const npc=BY_ID.get('npc-merchant');
+  if(!npc||!await getGLTF(npc)){status('Falta el personaje KayKit FREE. No se cambia el mapa.');return false;}
+  // Replace ONLY the previous town inside this isolated P540 preview, never P539.
+  // Recalculate against the native heightfield with the player's other objects.
+  let plan;
+  records=keep;
+  try{
+   plan=buildArveliaMasterplan({
+    existing:keep,buildingTypes,
+    canPlace:o=>validPosition(o),
+    sizeOf:type=>{const a=BY_ID.get(type);return a?[a.w,a.d]:null;},
+    blockedAt:(x,z,r)=>treeNear(x,z,r)||archNear(x,z,r)
+   });
+  }finally{records=JSON.parse(before);}
+  if(!plan.complete||!plan.master||plan.counts.buildings<6||
+    plan.counts.npcs<4||plan.counts.paving<30||plan.counts.decorations<15){
+   status('Arvelia final no encajó: '+(plan.reason||'pocos caminos o accesorios')+
+    ' · edificios '+(plan.counts?.buildings||0)+' · pisos '+(plan.counts?.paving||0)+
+    ' · decoración '+(plan.counts?.decorations||0)+'. Conservamos tu plano.');
+   return false;
+  }
+  const summary='ARVELIA FINAL P5.4.0: '+plan.counts.buildings+' edificios, '+plan.counts.npcs+
+   ' NPC, '+plan.counts.paving+' adoquines y '+plan.counts.decorations+
+   ' accesorios. Centro X '+plan.center.x+', Z '+plan.center.z+
+   '. Se reemplazarán solo las '+oldTown+' piezas de la antigua Arvelia en esta vista NUEVA. '+
+   'Tu P5.3.9 y las otras construcciones no se tocan. ¿Confirmás?';
+  if(!auto&&!window.confirm(summary))return false;
+  const snapshot=localStorage.getItem(STORE);
+  if(snapshot&&!localStorage.getItem('hf-world-forge-layout-p540-before-masterplan'))
+   localStorage.setItem('hf-world-forge-layout-p540-before-masterplan',snapshot);
+  recordSnapshot();
+  records=[...keep,...plan.objects];
+  save();
+  await rebuildPlaced();
+  focus(plan.center.x+7,plan.center.z-3,155);
+  status('✓ ARVELIA FINAL: '+plan.counts.buildings+' edificios, '+plan.counts.npcs+
+   ' NPC, '+plan.counts.paving+' adoquines conectados, '+plan.counts.decorations+
+   ' accesorios. '+(plan.fountain?'⛲ Fuente real. ':'Jardín central. ')+
+   (substitutes.length?'Sustitutos CC0: '+substitutes.join(', '):'Todos los prefabs principales FREE/MIT.'));
+  log('P5.4.0 Arvelia · plano maestro',plan.objects.length+
+    ' objetos a coordenadas X/Z exactas · plaza y escaleras originales conservadas');
+  return true;
+ }catch(err){
+  records=JSON.parse(before);
+  try{save();await rebuildPlaced();}catch{}
+  status('Arvelia final no se aplicó; guardado anterior conservado: '+err.message);
+  log('P540 Arvelia',String(err),false);return false;
+ }finally{if(button)button.disabled=false;}
+}
+
 async function handlePrivateImport(ev){
  const file=ev.target.files?.[0];ev.target.value='';if(!file)return;
  const btn=$('import-source');btn.disabled=true;
