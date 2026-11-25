@@ -1,0 +1,444 @@
+{
+  "schema": 1,
+  "project": "HIGHFLY UNSUNG 12",
+  "status": "masterplan and candidate anchors only; not placed or collision-verified",
+  "mapSource": "Unsung Vale original / src/world/layout.js / WORLD.seed 20261112",
+  "coreSizeMeters": 2048,
+  "regionSizeMeters": 16384,
+  "assumptions": [
+    "Anchors are candidate X,Z coordinates, not validated lots",
+    "Never overwrite original pools, river, spires, plazas, staircases or tall trees",
+    "Use original heightfield and Architecture/CollisionWorld to verify every individual item",
+    "Keep old versions and private asset binaries unchanged",
+    "Spawn and access paths must remain unobstructed"
+  ],
+  "settlements": [
+    {
+      "number": 1,
+      "name": "Arvelia · Pueblo de los Inicios",
+      "type": "starter",
+      "anchor": {
+        "x": -512,
+        "z": -70
+      },
+      "terrain": "Terraza del Alba, cerca del spawn original",
+      "vision": "Aldea medieval luminosa, plaza circular central, posada, gremio, herrería, casas ajardinadas, huerto.",
+      "layout": "radial",
+      "districts": [
+        "gremio y fuente",
+        "mercado y herrería",
+        "barrio residencial",
+        "huertos y pabellón"
+      ],
+      "signatureModels": [
+        "source-medieval-building-tavern-red",
+        "source-medieval-building-blacksmith-red",
+        "source-medieval-building-market-red",
+        "source-medieval-building-home-a-red",
+        "source-medieval-building-church-red"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 2,
+      "name": "Lumeria · Puerto de la Brisa",
+      "type": "fishing",
+      "anchor": {
+        "x": -20,
+        "z": 200
+      },
+      "terrain": "Borde jugable del lago central, ajustar la orilla real",
+      "vision": "Pueblo pesquero con muelles, astillero, faro y pescadores; no colocar casas en el agua.",
+      "layout": "coastal",
+      "districts": [
+        "dársena pesquera",
+        "lonja y mercado",
+        "casitas del puerto",
+        "faroles y sendero costero"
+      ],
+      "signatureModels": [
+        "source-medieval-building-docks-red",
+        "source-medieval-building-shipyard-red",
+        "source-mixedbag2-lighthouse",
+        "source-resources-food-barrel-fish"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 3,
+      "name": "Elphina · Villa de los Pétalos",
+      "type": "gardens",
+      "anchor": {
+        "x": -372,
+        "z": -392
+      },
+      "terrain": "Meseta Pétalo, cerca de la plataforma original pero lejos del estanque",
+      "vision": "Jardines de flores, templo, viviendas dispersas, puentes pequeños y miradores de cascada.",
+      "layout": "terrace",
+      "districts": [
+        "templo del alba",
+        "parques florales",
+        "viviendas y talleres",
+        "miradores"
+      ],
+      "signatureModels": [
+        "source-medieval-building-church-blue",
+        "source-medieval-building-home-a-green",
+        "source-forest-tree-1-a-color1"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 4,
+      "name": "Cantoria · Bastión de la Cascada",
+      "type": "fortress",
+      "anchor": {
+        "x": 66,
+        "z": -498
+      },
+      "terrain": "Meseta Cantor; preservar la salida de la cascada",
+      "vision": "Pueblo amurallado escalonado alrededor de su plataforma y torre musical.",
+      "layout": "fortified",
+      "districts": [
+        "puerta de piedra",
+        "cuartel y torres",
+        "plaza",
+        "camino a la catarata"
+      ],
+      "signatureModels": [
+        "source-medieval-building-barracks-red",
+        "source-medieval-building-watchtower-red",
+        "source-medieval-building-townhall-red"
+      ],
+      "walled": true,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 5,
+      "name": "Valtheria · Ciudad de la Corona",
+      "type": "capital",
+      "anchor": {
+        "x": -1005,
+        "z": -168
+      },
+      "terrain": "Meseta Corona; respetar escalera original y laguna elevada",
+      "vision": "Ciudad principal amurallada, ayuntamiento, castillo, gremio, artesanos y barrios.",
+      "layout": "fortified",
+      "districts": [
+        "castillo y consejo",
+        "plaza monumental",
+        "mercado de artesanos",
+        "barrio residencial",
+        "camino de acceso"
+      ],
+      "signatureModels": [
+        "source-medieval-building-castle-red",
+        "source-medieval-building-townhall-red",
+        "source-medieval-building-workshop-red",
+        "source-medieval-building-stables-red"
+      ],
+      "walled": true,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 6,
+      "name": "Mizuhara · Villa de la Niebla",
+      "type": "mist",
+      "anchor": {
+        "x": 150,
+        "z": -15
+      },
+      "terrain": "Meseta Choir (plataforma circular de 40 m)",
+      "vision": "Casas de madera y santuarios rodeados de bruma, faroles cálidos y pasos de piedra.",
+      "layout": "radial",
+      "districts": [
+        "santuario",
+        "plaza de faroles",
+        "barrio húmedo",
+        "mirador"
+      ],
+      "signatureModels": [
+        "source-medieval-building-shrine-green",
+        "source-halloween-lantern-standing",
+        "source-medieval-building-home-b-green"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 7,
+      "name": "Brannforja · Pueblo del Este",
+      "type": "crafting",
+      "anchor": {
+        "x": 578,
+        "z": -437
+      },
+      "terrain": "Meseta oriental y plataforma original",
+      "vision": "Distrito de mineros, fundición, herreros y establos con caminos de carga.",
+      "layout": "linear",
+      "districts": [
+        "mina",
+        "herrerías",
+        "almacenes",
+        "alojamientos"
+      ],
+      "signatureModels": [
+        "source-medieval-building-mine-red",
+        "source-medieval-building-blacksmith-red",
+        "source-rpg-anvil",
+        "source-medieval-building-stables-red"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 8,
+      "name": "Sylpharia · Huerto del Bosque",
+      "type": "forest",
+      "anchor": {
+        "x": -405,
+        "z": 435
+      },
+      "terrain": "Meseta sur 1; lejos de su poza",
+      "vision": "Aldea boscosa con madera, cultivos, jardines y caminos de tierra.",
+      "layout": "organic",
+      "districts": [
+        "aserradero",
+        "huertos",
+        "casas en claros",
+        "santuario forestal"
+      ],
+      "signatureModels": [
+        "source-medieval-building-lumbermill-red",
+        "source-medieval-building-home-a-green",
+        "source-forest-bush-1-a-color1"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 9,
+      "name": "Aurelia · Jardines del Alba",
+      "type": "gardens",
+      "anchor": {
+        "x": 136,
+        "z": 546
+      },
+      "terrain": "Meseta Aurel, plataforma oriental del sur",
+      "vision": "Pueblo de terrazas floridas, salón comunal y talleres entre árboles dorados.",
+      "layout": "terrace",
+      "districts": [
+        "salón comunal",
+        "plaza del alba",
+        "jardines",
+        "colinas"
+      ],
+      "signatureModels": [
+        "source-medieval-building-townhall-blue",
+        "source-medieval-building-home-b-blue",
+        "source-medieval-building-market-blue"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 10,
+      "name": "Juncalia · Aldea de los Juncos",
+      "type": "marsh",
+      "anchor": {
+        "x": 517,
+        "z": 437
+      },
+      "terrain": "Meseta sur 3, preservar poza y escurrimiento",
+      "vision": "Pueblo sobre pilotes y piedra, mercado de hierbas, pescadores y miradores del humedal.",
+      "layout": "coastal",
+      "districts": [
+        "pasarelas",
+        "mercado de hierbas",
+        "casitas",
+        "pequeño embarcadero"
+      ],
+      "signatureModels": [
+        "source-medieval-building-docks-green",
+        "source-medieval-building-market-green",
+        "source-medieval-building-home-a-green"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 11,
+      "name": "Faro de Orvax · Costa del Umbral",
+      "type": "coastal",
+      "anchor": {
+        "x": 810,
+        "z": 65
+      },
+      "terrain": "Costa oriental cercana a las agujas del lago: terreno por validar",
+      "vision": "Faro dominante, puerto secundario, taberna marinera y almacenes de comercio.",
+      "layout": "coastal",
+      "districts": [
+        "faro",
+        "muelle",
+        "taberna",
+        "depósito de redes"
+      ],
+      "signatureModels": [
+        "source-mixedbag2-lighthouse",
+        "source-medieval-building-shipyard-red",
+        "source-medieval-building-tavern-blue"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 12,
+      "name": "Kordran · Ciudad de los Mineros",
+      "type": "mining",
+      "anchor": {
+        "x": -750,
+        "z": 310
+      },
+      "terrain": "Laderas entre Corona y meseta sur; verificar altura y pendiente",
+      "vision": "Pueblo minero fortificado parcialmente, cantera, herrería, talleres y vagonetas.",
+      "layout": "linear",
+      "districts": [
+        "bocamina",
+        "forja",
+        "almacenes",
+        "murallas bajas"
+      ],
+      "signatureModels": [
+        "source-medieval-building-mine-red",
+        "source-medieval-building-blacksmith-red",
+        "source-medieval-building-workshop-red"
+      ],
+      "walled": true,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 13,
+      "name": "Elyndra · Retiro del Árbol Antiguo",
+      "type": "sacred",
+      "anchor": {
+        "x": 3100,
+        "z": 1550
+      },
+      "terrain": "Alrededores de la meseta del Gran Árbol, evitando el monumento",
+      "vision": "Ciudad santuario con pasarelas, hospedería, observatorios y jardines.",
+      "layout": "terrace",
+      "districts": [
+        "templo perimetral",
+        "hospedería",
+        "miradores",
+        "jardines"
+      ],
+      "signatureModels": [
+        "source-medieval-building-shrine-red",
+        "source-medieval-building-church-green",
+        "source-forest-tree-2-a-color1"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 14,
+      "name": "Doralia · Campos de las Espigas",
+      "type": "farming",
+      "anchor": {
+        "x": 1400,
+        "z": 440
+      },
+      "terrain": "Llanuras al este de la región central; verificar cosecha y desnivel",
+      "vision": "Aldea agrícola con molinos, establos, graneros, caminos largos y huertas.",
+      "layout": "organic",
+      "districts": [
+        "molinos",
+        "granjas",
+        "mercado",
+        "plaza rural"
+      ],
+      "signatureModels": [
+        "source-medieval-building-windmill-red",
+        "source-medieval-building-stables-red",
+        "source-medieval-building-market-red"
+      ],
+      "walled": false,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    },
+    {
+      "number": 15,
+      "name": "Nécrida · Villa del Eclipse",
+      "type": "dark",
+      "anchor": {
+        "x": 1750,
+        "z": -550
+      },
+      "terrain": "Mesetas y bosques orientales; revisar zona y acceso",
+      "vision": "Pueblo gótico pequeño con cementerio, criptas, casonas y faroles violetas.",
+      "layout": "fortified",
+      "districts": [
+        "casona encantada",
+        "cripta",
+        "plaza del eclipse",
+        "muralla y arcos"
+      ],
+      "signatureModels": [
+        "source-mixedbag2-haunted-manor",
+        "source-halloween-crypt",
+        "source-halloween-gravestone",
+        "source-halloween-arch-gate"
+      ],
+      "walled": true,
+      "implemented": false,
+      "verification": "awaiting original world heightfield spatial validation",
+      "lighting": "warm nighttime street lighting via existing emissive, avoid per-prop dynamic lights",
+      "android": "lazy loading and frustum+distance culling required"
+    }
+  ]
+}

@@ -6,7 +6,12 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
-const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
+import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
+const $=id=>document.getElementById(id);
+const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
+const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -36,7 +41,18 @@ const base=[
 ].concat(VILLAGE_DECOR_ASSETS.map(a=>[a.id,a.label,a.icon,a.cat,a.w,a.d]))
  .map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
 // Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
+function addPrivateCatalog(models){
+ for(const x of models){
+  const a={id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
+   cat:'KayKit SOURCE',originalCategory:x.category,kind:x.kind,w:x.width,d:x.depth,
+   privateModel:true};
+  const index=base.findIndex(v=>v.id===a.id);
+  if(index>=0)base[index]=a;else base.push(a);
+  BY_ID.set(a.id,a);
+ }
+}
 const BY_ID=new Map(base.map(a=>[a.id,a]));
+addPrivateCatalog(loadPrivateSourceCatalog());
 const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmith',inn:'kaykit-tavern',house:'kaykit-home-a',timber:'kaykit-home-b',market:'kaykit-market',mill:'kaykit-windmill',ranger:'kaykit-archeryrange'});
 // Only documented real CC0 model equivalents: granary, warehouse and fishery have no 1:1 CC0 building.
 // Protect the actual spawn and staircase, not entire 42m-radius free land parcels.
@@ -284,14 +300,16 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.privateModel||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
  :url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
-  cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>{
+  cache.set(a.id,(a.privateModel?
+  readPrivateSourceGLB(a.id).then(data=>gltfLoader.parseAsync(data,'')):
+  gltfLoader.loadAsync(modelUrl(a))).then(g=>{
    if(!g.scene?.children?.length)throw Error('El prefab no contiene geometría');
    const bounds=new THREE.Box3().setFromObject(g.scene),size=bounds.getSize(new THREE.Vector3());
    if(size.x<.01||size.z<.01||size.y<.01)throw Error('El modelo está incompleto o carece de volumen 3D');
@@ -398,7 +416,7 @@ async function buildPlaced(o){
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
-   else root.add(foundationFor(a,o,point.slope||0));
+   else if(a.model||(a.privateModel&&a.kind==='building'))root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
  }else root.add(makeModel(a,o));
@@ -467,7 +485,7 @@ function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:!!a.model||!!a.privateModel&&a.kind==='building'});
  ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
  ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
  const outline=ghost.children[0];
@@ -502,7 +520,7 @@ function drawCatalog(){
  }
 }
 function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
-function drawCats(){for(const cat of ['Edificios','KayKit FREE','Pisos','Decoración','Naturaleza','NPC']){
+function drawCats(){for(const cat of ['Edificios','KayKit FREE','KayKit SOURCE','Pisos','Decoración','Naturaleza','NPC']){
  const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
 }setCategory(category);}
 function addAt(x,z){
@@ -510,7 +528,7 @@ function addAt(x,z){
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
  if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
- if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
+ if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')&&(a.model||a.privateModel&&a.kind==='building'))o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
@@ -610,7 +628,7 @@ async function duplicateSelected(){
  try{const node=await buildPlaced(test);if(node){groups.placed.add(node);viewCache.set(test.id,node);selectObject(test.id);updateTrees(true);render();}}
  catch(err){records=records.filter(x=>x.id!==test.id);save();log('Duplicar edificio',err.message,false);}
 }
-async function loadBeginningVillage(){
+async function loadBeginningVillage({auto=false}={}){
  if(!map||!overview){status('Necesitamos primero las alturas y el terreno original de Unsung.');return;}
  if(records.length>2100){status('No queda suficiente espacio editable. Exportá primero tu plano.');return;}
  const button=$('preset-village');button.disabled=true;
@@ -627,7 +645,7 @@ async function loadBeginningVillage(){
   const summary='Pueblo de los Inicios: '+plan.buildings+' edificios completos, '+plan.paved+
    ' piezas de piedra y '+plan.decorations+' accesorios. Centro X '+plan.center.x+
    ', Z '+plan.center.z+'. ¿Agregar a TU mundo sin borrar lo anterior?';
-  if(!window.confirm(summary))return;
+  if(!auto&&!window.confirm(summary))return;
   status('Comprobando edificios KayKit completos antes de añadir el pueblo…');
   const types=[...new Set(plan.objects.filter(o=>BY_ID.get(o.type)?.model).map(o=>o.type))];
   const loaded=await Promise.all(types.map(async type=>({type,model:await getGLTF(BY_ID.get(type))})));
@@ -635,7 +653,7 @@ async function loadBeginningVillage(){
   if(bad.length){status('Falta un prefab completo: '+bad.map(o=>o.type).join(', ')+'. No se modificó nada.');return;}
   // Strictly additive, reversible and backed up, with no replacements of Unsung's scenery.
   const old=localStorage.getItem(STORE);
-  if(old)localStorage.setItem('hf-world-forge-layout-v1-backup-pre-p528-village',old);
+  if(old)localStorage.setItem(P529_PREVIEW?'hf-world-forge-layout-p529-backup-pre-village':'hf-world-forge-layout-v1-backup-pre-p528-village',old);
   recordSnapshot();
   records.push(...plan.objects);
   save();await rebuildPlaced();focus(plan.center.x,plan.center.z,135);
@@ -646,6 +664,20 @@ async function loadBeginningVillage(){
    plan.buildings+' edificios KayKit 3D · '+plan.skipped.length+' lotes inaccesibles');
  }catch(err){log('Pueblo de los Inicios',err.message,false);status('No pude crear la aldea: '+err.message);}
  finally{button.disabled=false;}
+}
+async function handlePrivateImport(ev){
+ const file=ev.target.files?.[0];ev.target.value='';if(!file)return;
+ const btn=$('import-source');btn.disabled=true;
+ try{
+  const metadata=await importPrivateSourcePack(file,message=>status(message));
+  addPrivateCatalog(metadata);cache.clear();prefabReady.clear();prefabFailed.clear();
+  category='KayKit SOURCE';
+  $('cats').replaceChildren();drawCats();
+  await rebuildPlaced();
+  status('✓ '+metadata.length+' modelos KayKit SOURCE, Halloween y Mixed Bag 2 disponibles en este Android. Buscá el catálogo KayKit SOURCE.');
+  log('Importación SOURCE privada',metadata.length+' GLB válidos en IndexedDB; ningún archivo se subió a GitHub.');
+ }catch(err){status('No se pudo importar el SOURCE: '+err.message);log('Importación KayKit',err.message,false);}
+ finally{btn.disabled=false;}
 }
 function exportJSON(){
  const blob=new Blob([JSON.stringify({schema:1,world:'unsung-vale',objects:records},null,2)],{type:'application/json'});
@@ -661,6 +693,8 @@ function bindUI(){
  for(const [id,name] of [['trees','trees'],['original','original'],['water','water']])$(id).onclick=()=>{groups[name].visible=!groups[name].visible;$(id).classList.toggle('on',groups[name].visible);if(name==='trees')updateTrees(true);render();};
  $('save').onclick=()=>save(true);$('undo').onclick=undo;$('redo').onclick=redo;$('export').onclick=exportJSON;
  $('preset-village').onclick=loadBeginningVillage;
+ $('import-source').onclick=()=>$('source-file').click();
+ $('source-file').onchange=handlePrivateImport;
  $('import').onclick=()=>$('file').click();
  $('file').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(d.schema!==1||d.world!=='unsung-vale'||!Array.isArray(d.objects)||d.objects.length>2500||!d.objects.every(o=>BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite)))throw Error('Formato no compatible');
   recordSnapshot();records=d.objects.map(o=>({...o,y:elevation(o.x,o.z)}));save();rebuildPlaced();status('Plano importado: '+records.length+' piezas');
@@ -821,8 +855,13 @@ async function boot(){
   originalRender();await rebuildPlaced();switchMode('orbit');render();
   status('✓ TERRRENO ORIGINAL 3D + agua + árboles. Cargando arquitectura exacta de Unsung…');
   await loadOriginalGeometry();
+  // An actual edited starting village must exist when the P529 preview first opens.
+  // Avoid seeding during headless legacy tests and NEVER overwrite a saved layout.
+  const firstP529=P529_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')&&
+   localStorage.getItem(STORE)===null;
+  if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 3D listo · Elegí un KayKit FREE, inspeccioná el mundo y colocá edificios.');
+  status('✓ WORLD FORGE 3D P5.2.9 listo · '+records.length+' construcciones y decoraciones. Editá o tocá ▶ Ver en RPG.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');

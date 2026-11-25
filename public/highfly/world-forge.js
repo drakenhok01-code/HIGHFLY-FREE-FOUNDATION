@@ -25,7 +25,8 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
-const STORE='hf-world-forge-layout-v1',TAU=Math.PI*2;
+const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
+const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -81,6 +82,17 @@ const CATALOG=[
  {id:'npc-guard',label:'NPC guardia',icon:'🛡️',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-artisan',label:'NPC artesano',icon:'👨‍🏭',cat:'NPC',w:1,d:1,h:1.8}
 ];
+// Local-only KayKit SOURCE metadata. Never request paid model bytes from the server.
+try{
+ const d=JSON.parse(localStorage.getItem('hf-source-kaykit-catalog-v1')||'null');
+ if(d?.schema===1&&Array.isArray(d.assets)&&d.assets.length<=450){
+  for(const x of d.assets)if(/^source-[a-z0-9-]{4,104}$/.test(x.id)&&
+     Number.isFinite(x.width)&&Number.isFinite(x.depth)){
+   CATALOG.push({id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
+    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,privateModel:true});
+  }
+ }
+}catch(err){console.warn('KayKit SOURCE local metadata not available',err);}
 const BY_ID=new Map(CATALOG.map(x=>[x.id,x]));
 const ZONES=[
  {x:-519,z:-70,r:8,name:'Punto de aparición (protegido)'},
@@ -103,7 +115,7 @@ const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timb
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem('hf-world-forge-view-v1')||'null');
+ const previous=JSON.parse(localStorage.getItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -525,7 +537,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem('hf-world-forge-view-v1',JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};

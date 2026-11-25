@@ -8,7 +8,7 @@ const aerialUI=read('public/highfly/world-forge.html');
 const export3d=read('scripts/p522-native-world-export.mjs');
 const build=read('scripts/f0-build.mjs');
 const orig=read('src/highfly/p521-world-forge-runtime.mjs');
-assert.match(ui,/WORLD FORGE · 3D V0\.[567]/);
+assert.match(ui,/WORLD FORGE · 3D V0\.[5-9]/);
 assert.match(ui,/id="canvas-holder"/);
 assert.match(ui,/world-forge-3d\.js/);
 assert.match(aerialUI,/id="view-3d"/);
@@ -32,7 +32,9 @@ assert.match(three,/native-architecture-core\.png/);
 assert.match(three,/source|Unsung/i);
 assert.ok(!three.includes('DecompressionStream'),'Must use tested Unsung PNG heights');
 assert.ok(!three.includes('src/game/game.js'),'Must not boot full gameplay');
-assert.ok(!three.includes('KayKit SOURCE'),'Must not ship private SOURCE');
+assert.match(three,/importPrivateSourcePack/,'Editor must import SOURCE locally');
+assert.ok(!build.includes('KIT_COMPLETO_PARTE_01.zip'),'Never publish actual paid SOURCE binaries');
+assert.ok(!build.includes('HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip'),'Never publish imported user-owned GLB archive');
 for(const id of [
  'kaykit-blacksmith','kaykit-tavern','kaykit-castle','kaykit-home-a',
  'kaykit-windmill','kaykit-mine','floor-stone','npc-guard']){
@@ -48,7 +50,7 @@ assert.match(build,/p525-world-forge-3d\.mjs/);
 assert.match(build,/world-forge-3d\.html/);
 assert.match(build,/esbuild.*src\/highfly\/p525-world-forge-3d/);
 assert.match(build,/--bundle/);
-assert.match(three,/STORE='hf-world-forge-layout-v1'/);
+assert.match(three,/const STORE=P529_PREVIEW\?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1'/);
 assert.match(three,/schema:1,world:'unsung-vale'/);
 assert.match(three,/location\.href=url\('world-forge\.html'\)/);
 console.log('[P525 PASS] independent 3D genuine Unsung geometry, exact PNG heightmaps, KayKit FREE prefabs, editor transforms, shared JSON and safe 2D fallback');
