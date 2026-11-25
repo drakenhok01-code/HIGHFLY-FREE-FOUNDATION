@@ -55,7 +55,7 @@ const CATALOG=[
  {id:'kaykit-watermill',label:"Molino de agua",icon:"🌊",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_watermill_red'},
  {id:'kaykit-well',label:"Pozo KayKit",icon:"🪣",cat:'KayKit FREE',w:6,d:6,h:10,free:'building_well_red'},
  {id:'kaykit-windmill',label:"Molino de viento",icon:"🌾",cat:'KayKit FREE',w:12,d:12,h:10,free:'building_windmill_red'},
- {id:'floor-stone',label:'Empedrado',icon:'▩',cat:'Pisos',w:4,d:4,h:.12,floor:true},
+ {id:'floor-stone',label:'Continuar plaza · piedra',icon:'▩',cat:'Pisos',w:4,d:4,h:.12,floor:true},
  {id:'floor-earth',label:'Sendero de tierra',icon:'🟫',cat:'Pisos',w:4,d:4,h:.12,floor:true},
  {id:'floor-wood',label:'Tablas de madera',icon:'🟨',cat:'Pisos',w:4,d:4,h:.12,floor:true},
  {id:'lantern',label:'Farol de piedra',icon:'🏮',cat:'Decoración',w:1.5,d:1.5,h:3},
@@ -72,16 +72,16 @@ const CATALOG=[
 ];
 const BY_ID=new Map(CATALOG.map(x=>[x.id,x]));
 const ZONES=[
- {x:-519,z:-70,r:42,name:'Aparición y plaza inicial'},
- {x:-372,z:-392,r:27,name:'Aguja de Pétalos'},
- {x:66,z:-498,r:31,name:'Aguja del Cantor'},
- {x:150,z:-15,r:43,name:'Aguja del Coro'},
- {x:578,z:-437,r:29,name:'Aguja del Este'},
- {x:517,z:437,r:29,name:'Aguja de los Juncos'},
- {x:136,z:546,r:29,name:'Aguja de Aurel'},
- {x:-405,z:435,r:29,name:'Aguja del Huerto'},
- {x:-1005,z:-168,r:47,name:'Aguja de la Corona'},
- {x:-179,z:-459,r:20,name:'Escalera original'}
+ {x:-519,z:-70,r:8,name:'Punto de aparición (protegido)'},
+ {x:-372,z:-392,r:7,name:'Aguja de Pétalos'},
+ {x:66,z:-498,r:7,name:'Aguja del Cantor'},
+ {x:150,z:-15,r:7,name:'Aguja del Coro'},
+ {x:578,z:-437,r:7,name:'Aguja del Este'},
+ {x:517,z:437,r:7,name:'Aguja de los Juncos'},
+ {x:136,z:546,r:7,name:'Aguja de Aurel'},
+ {x:-405,z:435,r:7,name:'Aguja del Huerto'},
+ {x:-1005,z:-168,r:7,name:'Aguja de la Corona'},
+ {x:-179,z:-459,r:7,name:'Escalera original'}
 ];
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
@@ -215,11 +215,11 @@ function siteStatus(o,ignoreId=null){
   samples.push(h);
  }
  const y=Math.max(...samples),slope=y-Math.min(...samples);
- if(!item.floor&&!o.type.startsWith('npc-')&&slope>Math.min(3.8,1.2+o.scale*1.1))return {ok:false,reason:'Pendiente excesiva ('+slope.toFixed(1)+' m)'};
+ if(!item.floor&&!o.type.startsWith('npc-')&&slope>Math.min(5.2,1.75+o.scale*1.5))return {ok:false,reason:'Pendiente excesiva ('+slope.toFixed(1)+' m)'};
  if(!item.floor){
-  if(!o.type.startsWith('npc-')&&nativeTreeNear(o,rad*.5))return {ok:false,reason:'Hay árboles originales en esta parcela'};
+  if(!o.type.startsWith('npc-')&&!o.clearTrees&&nativeTreeNear(o,rad*.5))return {ok:false,reason:'Hay árboles originales en esta parcela'};
   if(!o.type.startsWith('npc-')&&nativeStructureNear(o,rad*.64))return {ok:false,reason:'Hay una construcción original de Unsung en este lugar'};
-  for(const zone of ZONES){if(dist(o,zone)<zone.r+rad*.72)return {ok:false,reason:'Zona protegida: '+zone.name};}
+  for(const zone of ZONES){if(dist(o,zone)<zone.r+rad*.24)return {ok:false,reason:'Zona protegida: '+zone.name};}
   if(!o.type.startsWith('npc-'))for(const existing of objects){
    if(existing.id===ignoreId||existing.id===o.id)continue;
    const other=getAsset(existing);if(!other||other.floor||existing.type.startsWith('npc-'))continue;
@@ -239,6 +239,7 @@ function itemAt(x,z){
 function insert(type,x,z){
  const item=BY_ID.get(type);if(!item)return false;
  const q=item.floor?4:2,o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type,x:cell(x,q),z:cell(z,q),yaw:0,scale:1,y:0};
+ if(!item.floor&&!type.startsWith('npc-'))o.clearTrees=true;
  const status=siteStatus(o);
  if(!status.ok){safe('✕ No se puede colocar '+item.label+': '+status.reason);return false;}
  if(item.floor&&objects.some(p=>p.type===type&&dist(o,p)<1.1))return false;
