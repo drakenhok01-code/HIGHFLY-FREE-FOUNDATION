@@ -51,6 +51,6 @@ test('P539: only new Pages path enables steep ground and keyboard camera',()=>{
  assert(editor.includes("heldMove.has('w')"));
  assert(editor.includes("action:P539_PREVIEW&&e.button===2?'look':'pan'"));
  assert(html.includes('id="slope-toggle"'));
- assert(html.includes('v=p539'));
- assert(html.includes('WORLD FORGE 4.7'));
+ assert(/v=p(?:539|540)/.test(html));
+ assert(/WORLD FORGE 4\.[78]/.test(html));
 });
