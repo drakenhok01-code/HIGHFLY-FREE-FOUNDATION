@@ -360,19 +360,22 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   scene.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
   scene.traverse(mesh=>{
    if(!mesh.isMesh)return;
+   mesh.frustumCulled=true;
+   if(privateSourceType(o.type))return; // Preserve actual SOURCE GLB textured materials.
    const old=Array.isArray(mesh.material)?mesh.material[0]:mesh.material;
    mesh.material=new THREE.MeshBasicMaterial({
     map:old?.map??null,
     color:0xfff5e7,
     side:THREE.FrontSide
    });
-   mesh.frustumCulled=true;
   });
   anchor.add(scene);group.add(anchor);anchor.updateMatrixWorld(true);
   // Actual meshes, exact scale and correct terrain y, not a fake stone cube.
   let added=0;
   scene.traverse(mesh=>{
    if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
+   // Trees and loose props retain visual fidelity without treating leaves as impassable walls.
+   if(privateSourceType(o.type)&&!['building','rock'].includes(PRIVATE_SOURCE.get(o.type)?.kind))return;
    const geom=mesh.geometry.clone().applyMatrix4(mesh.matrixWorld);
    if(geom.index?.count>120000)return;
    // Only collision for interactive proximity; BVHs can remain immutable until reload.
