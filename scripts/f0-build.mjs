@@ -345,7 +345,7 @@ copy(path.join(ROOT,'src/highfly/p511-sky-events.mjs'),loc('src/highfly/p511-sky
 for(const name of ['p521-world-forge-runtime','p521-resume-position'])copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 for(const name of ['world-forge.html','world-forge.js','world-forge-3d.html'])copy(path.join(ROOT,'public/highfly/'+name),loc('public/highfly/'+name));
 copy(path.join(ROOT,'src/highfly/p525-world-forge-3d.mjs'),loc('src/highfly/p525-world-forge-3d.mjs'));
-for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora'])
+for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora','p532-spanish-labels','p532-quaternius-cc0-catalog','p532-public-urban-assets','p532-public-urban-prefabs'])
  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
@@ -731,6 +731,18 @@ if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Erro
 run('npm',['ci','--no-audit','--no-fund'],origin);
 // Vite 8 no longer ships esbuild; pin only this standalone editor bundler in the disposable checkout.
 run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2'],origin);
+ // P532: Quaternius CC0 GLBs contain genuine KTX2/BasisU texture payloads.
+ // Copy the MIT-licensed Three.js BasisU transcoder with the exact installed
+ // Three.js runtime: no CDN calls, no loss of material color or image quality.
+ const basisSource=loc('node_modules/three/examples/jsm/libs/basis');
+ const basisDest=loc('public/highfly/basis');
+ for(const file of ['basis_transcoder.js','basis_transcoder.wasm']){
+  const input=path.join(basisSource,file);
+  if(!fs.existsSync(input)||fs.statSync(input).size<5000)
+   throw Error('Missing installed Three.js BasisU decoder '+input);
+  copy(input,path.join(basisDest,file));
+ }
+ console.log('[P532 KTX2 BASISU]',fs.statSync(path.join(basisDest,'basis_transcoder.wasm')).size,'bytes');
 // Bundle only the standalone 3D editor's three.js dependencies. No game engine boot.
 run('node_modules/esbuild/bin/esbuild',['src/highfly/p525-world-forge-3d.mjs','--bundle','--platform=browser','--format=esm','--target=es2020','--minify','--outfile=public/highfly/world-forge-3d.js'],origin);
 if(!fs.existsSync(loc('public/highfly/world-forge-3d.js')))throw Error('WORLD FORGE 3D bundle not generated');
@@ -756,6 +768,20 @@ copy(path.join(ROOT,'scripts/p531-kaykit-thumbnails.py'),loc('tools/p531-kaykit-
 copy(path.join(ROOT,'src/highfly/p531-kaykit-free-catalog.mjs'),loc('public/highfly/p531-kaykit-free-catalog.mjs'));
 run('node',['tools/p531-kaykit-all-free.mjs'],origin);
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p531-kaykit-thumbnails.py'],origin);
+// P532: exactly 42 credited Quaternius CC0 files with pinned git-blob SHA,
+// model-derived thumbnails, and six genuine Unsung procedural tree previews.
+for(const name of ['p532-quaternius-cc0-catalog','p532-spanish-labels','p532-public-urban-assets'])
+ copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('public/highfly/'+name+'.mjs'));
+copy(path.join(ROOT,'scripts/p532-pinned-quaternius-cc0.mjs'),loc('tools/p532-pinned-quaternius-cc0.mjs'));
+copy(path.join(ROOT,'scripts/p532-quaternius-thumbnails.py'),loc('tools/p532-quaternius-thumbnails.py'));
+copy(path.join(ROOT,'scripts/p532-decode-quaternius-meshopt.mjs'),loc('tools/p532-decode-quaternius-meshopt.mjs'));
+copy(path.join(ROOT,'scripts/p532-unsung-tree-thumbnails.mjs'),loc('tools/p532-unsung-tree-thumbnails.mjs'));
+run('node',['tools/p532-pinned-quaternius-cc0.mjs'],origin);
+run('node',['tools/p532-decode-quaternius-meshopt.mjs'],origin);
+run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p532-quaternius-thumbnails.py'],origin);
+run('node',['tools/p532-unsung-tree-thumbnails.mjs'],origin);
+if(JSON.parse(fs.readFileSync(loc('public/highfly/quaternius-cc0/manifest.json'),'utf8')).models.length!==42)
+ throw Error('P532 incomplete pinned CC0 Quaternius originals');
 if(!fs.existsSync(loc('public/highfly/kaykit-free/all-manifest.json')))throw Error('P531 complete KayKit FREE models missing');
 if(!fs.existsSync(loc('public/highfly/kaykit-free/manifest.json')))throw Error('P524 real KayKit free CC0 missing');
 for(const name of ['native-terrain-core.png','native-terrain-region.png','native-relief-core.png','native-relief-region.png','native-terrain-manifest.json']){

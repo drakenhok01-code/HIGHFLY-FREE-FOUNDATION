@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
@@ -11,13 +13,17 @@ import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
 import {loadUnsungOriginal} from './p530-unsung-loader.mjs';
 import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_GROUPS} from './p531-kaykit-free-catalog.mjs';
 import {UNSUNG_FLORA,nativeUnsungFlora} from './p531-unsung-flora.mjs';
+import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
+import {localizePublicAsset} from './p532-spanish-labels.mjs';
+import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
 const $=id=>document.getElementById(id);
+const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -49,9 +55,10 @@ const base=[
 // Extend the 16 legacy red houses in place; all 221 FREE models remain
 // uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
 for(const extra of KAYKIT_FREE_ALL){
+ const v=P532_PREVIEW?localizePublicAsset(extra):extra;
  const prev=base.find(x=>x.id===extra.id);
- if(prev)Object.assign(prev,extra);
- else base.push({...extra});
+ if(prev)Object.assign(prev,v);
+ else base.push({...v});
 }
 // Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 function addPrivateCatalog(models){
@@ -65,6 +72,8 @@ function addPrivateCatalog(models){
  }
 }
 for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
+for(const a of QUATERNIUS_CC0_ALL)base.push({...a});
+for(const a of PUBLIC_URBAN_ASSETS)base.push({...a,publicUrban:true});
  // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
@@ -86,8 +95,13 @@ const url=f=>new URL('./'+f,import.meta.url).href;
 const holder=$('canvas-holder');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xa8c7dd);
 scene.fog=new THREE.Fog(0xa8c7dd,850,6300);
-const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});
-renderer.setPixelRatio(Math.min(1.3,window.devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;
+const DESKTOP_FINE=!!globalThis.matchMedia?.('(pointer:fine) and (min-width:900px)')?.matches;
+let qualityHigh=DESKTOP_FINE;
+const renderer=new THREE.WebGLRenderer({antialias:DESKTOP_FINE,powerPreference:DESKTOP_FINE?'high-performance':'low-power'});
+renderer.setPixelRatio(Math.min(qualityHigh?2:1.2,window.devicePixelRatio||1));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.18;
 holder.insertBefore(renderer.domElement,holder.firstChild);
 const cam=new THREE.PerspectiveCamera(54,1,.1,35000);
 const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=false;orbit.minDistance=8;orbit.maxDistance=4500;
@@ -98,8 +112,14 @@ const sun=new THREE.DirectionalLight(0xffedd7,2);sun.position.set(120,350,210);s
 const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE.Group(),placed:new THREE.Group()};
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
-const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=P531_PREVIEW?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+const ktx2Loader=new KTX2Loader()
+ .setTranscoderPath(url('basis/'))
+ .detectSupport(renderer);
+const gltfLoader=new GLTFLoader()
+ .setMeshoptDecoder(MeshoptDecoder)
+ .setKTX2Loader(ktx2Loader),
+ textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -198,42 +218,74 @@ function originalRender(){
   if(!treeIndex.has(key))treeIndex.set(key,[]);treeIndex.get(key).push(t);
  }
  overview.treeIndex=treeIndex;
- const kinds=[0xd18b69,0xd9acc3,0xc7b9d9,0x416950,0x5d996b],trunk=new THREE.CylinderGeometry(.3,.42,1,5),crown=new THREE.IcosahedronGeometry(1,1),column=new THREE.ConeGeometry(1,1,6);
+ // Actual Unsung procedural branches and leaf geometry close to the camera;
+ // distant forest remains lightweight instancing to preserve editor FPS.
+ const colors=[0xd18b69,0xd9acc3,0xc7b9d9,0x416950,0x5d996b],
+  trunk=new THREE.CylinderGeometry(.3,.42,1,5),
+  crown=new THREE.IcosahedronGeometry(1,1),column=new THREE.ConeGeometry(1,1,6),
+  species=['ember','blossom','elder','cypress','green'];
  trunk.translate(0,.5,0);column.translate(0,.5,0);
+ const lods=[];
  for(let k=0;k<5;k++){
-  const stem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),900);
-  const canopy=new THREE.InstancedMesh(k===3?column:crown,new THREE.MeshLambertMaterial({color:kinds[k],flatShading:true}),900);
-  stem.count=0;canopy.count=0;stem.frustumCulled=false;canopy.frustumCulled=false;groups.trees.add(stem,canopy);
+  const model=nativeUnsungFlora('unsung-tree-'+species[k]);
+  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,140),
+   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,140),
+   farStem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),750),
+   farLeaves=new THREE.InstancedMesh(k===3?column:crown,
+    new THREE.MeshLambertMaterial({color:colors[k],flatShading:true}),750);
+  for(const o of [nearStem,nearLeaves,farStem,farLeaves]){
+   o.count=0;o.frustumCulled=false;groups.trees.add(o);
+  }
+  lods.push({nearStem,nearLeaves,farStem,farLeaves});
  }
- updateTrees(true);
- log('Posiciones de árboles Unsung',overview.trees.length.toLocaleString('es-AR')+' instancias nativas con formas 3D simplificadas');
+ groups.trees.userData.lods=lods;updateTrees(true);
+ log('Bosque original Unsung',overview.trees.length.toLocaleString('es-AR')+
+  ' posiciones; cerca: ramas/hojas reales · lejos: LOD de bajo costo');
 }
-const dummy=new THREE.Object3D(),treeKinds=[0,0,0,1,1,2,2,3,3,4,4,4],treeH=[14,8,19,19,13],treeR=[5.2,4.2,6.0,2.2,5.0];
+const dummy=new THREE.Object3D(),treeKinds=[0,0,0,1,1,2,2,3,3,4,4,4],
+ treeH=[14,8,19,19,13],treeR=[5.2,4.2,6.0,2.2,5.0];
 function updateTrees(force=false){
  if(!overview?.treeIndex||!map||!groups.trees.visible)return;
  const x=orbit.target.x,z=orbit.target.z;
- if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
+ if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<28)return;
  treeFocus=[x,z];
- const lists=Array.from({length:5},()=>[]),rad=260;
+ const lists=Array.from({length:5},()=>({near:[],far:[]})),rad=285,nearDistance=128;
  const clearedLots=records.filter(o=>o.clearTrees===true&&BY_ID.has(o.type));
- for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
-  for(const t of overview.treeIndex.get(i+','+j)||[]){
-   if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
-   if(clearedLots.some(o=>(()=>{
-     const [dx,dz]=[t[0]-o.x,t[1]-o.z],a=BY_ID.get(o.type),c=Math.cos(o.yaw),s=Math.sin(o.yaw);
-     return Math.abs(dx*c+dz*s)<a.w*o.scale*.5+1.8&&Math.abs(-dx*s+dz*c)<a.d*o.scale*.5+1.8;
-   })()))continue;
-   const k=treeKinds[t[3]]??4;if(lists[k].length<900)lists[k].push(t);
-  }
- }
+ for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
+  for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++)
+   for(const t of overview.treeIndex.get(i+','+j)||[]){
+    const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad)continue;
+    if(clearedLots.some(o=>{
+     const dx=t[0]-o.x,dz=t[1]-o.z,a=BY_ID.get(o.type),c=Math.cos(o.yaw),sn=Math.sin(o.yaw);
+     return Math.abs(dx*c+dz*sn)<a.w*o.scale*.5+1.8&&
+      Math.abs(-dx*sn+dz*c)<a.d*o.scale*.5+1.8;
+    }))continue;
+    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?140:750;
+    if(lists[kind][key].length<limit)lists[kind][key].push(t);
+   }
  for(let kind=0;kind<5;kind++){
-  const stem=groups.trees.children[kind*2],canopy=groups.trees.children[kind*2+1];
-  let i=0;for(const [x,z,s] of lists[kind]){
-   const y=elevation(x,z),h=treeH[kind]*s;
-   dummy.position.set(x,y,z);dummy.scale.set(s*.83,h*.45,s*.83);dummy.rotation.set(0,0,0);dummy.updateMatrix();stem.setMatrixAt(i,dummy.matrix);
-   dummy.position.set(x,y+h*.66,z);dummy.scale.set(treeR[kind]*s,kind===3?h*.66:h*.36,treeR[kind]*s);dummy.updateMatrix();canopy.setMatrixAt(i,dummy.matrix);i++;
+  const {nearStem,nearLeaves,farStem,farLeaves}=groups.trees.userData.lods[kind];
+  let n=0;
+  for(const [tx,tz,scale] of lists[kind].near){
+   dummy.position.set(tx,elevation(tx,tz)-.15,tz);
+   dummy.rotation.set(0,Math.abs(Math.sin(tx*12.9898+tz*78.233)*43758.5453)%6.283,0);
+   dummy.scale.setScalar(scale);dummy.updateMatrix();
+   nearStem.setMatrixAt(n,dummy.matrix);nearLeaves.setMatrixAt(n,dummy.matrix);n++;
   }
-  stem.count=canopy.count=i;stem.instanceMatrix.needsUpdate=canopy.instanceMatrix.needsUpdate=true;
+  nearStem.count=nearLeaves.count=n;
+  nearStem.instanceMatrix.needsUpdate=nearLeaves.instanceMatrix.needsUpdate=true;
+  n=0;
+  for(const [tx,tz,scale] of lists[kind].far){
+   const h=treeH[kind]*scale,y=elevation(tx,tz);
+   dummy.rotation.set(0,0,0);
+   dummy.position.set(tx,y,tz);dummy.scale.set(scale*.83,h*.45,scale*.83);dummy.updateMatrix();
+   farStem.setMatrixAt(n,dummy.matrix);
+   dummy.position.set(tx,y+h*.66,tz);
+   dummy.scale.set(treeR[kind]*scale,kind===3?h*.66:h*.36,treeR[kind]*scale);
+   dummy.updateMatrix();farLeaves.setMatrixAt(n,dummy.matrix);n++;
+  }
+  farStem.count=farLeaves.count=n;
+  farStem.instanceMatrix.needsUpdate=farLeaves.instanceMatrix.needsUpdate=true;
  }
  render();
 }
@@ -319,10 +371,10 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||!!a.freeModel||!!a.privateModel||!!a.originalPrefab||!!a.nativeFlora||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.freeModel||!!a.qcc0||!!a.privateModel||!!a.originalPrefab||!!a.nativeFlora||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
- :a.freeModel?url('kaykit-free/all/'+a.freePath):url('kaykit-free/building_'+a.model+'_red.gltf');
+ :a.qcc0?url(a.freePath):a.freeModel?url('kaykit-free/all/'+a.freePath):url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
@@ -398,7 +450,7 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
- const scenic=makeVillageDecor(a.id,o.scale);
+ const scenic=makePublicUrbanPrefab(a.id,o.scale)||makeVillageDecor(a.id,o.scale);
  if(scenic)return scenic;
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
@@ -493,7 +545,7 @@ async function createGhost(id){
   });
   group.add(clone);cube.visible=false;render();
  }else{
-  const scenic=makeVillageDecor(id,1);
+  const scenic=makePublicUrbanPrefab(id,1)||makeVillageDecor(id,1);
   if(scenic){
    scenic.traverse(node=>{
     if(!node.isMesh)return;
@@ -535,6 +587,10 @@ const CATALOG_TABS=[
  {id:'KayKit FREE · Accesorios',label:'🧰 Accesorios',filter:a=>a.cat==='KayKit FREE · Accesorios'},
  {id:'KayKit FREE · Naturaleza',label:'🌳 Árboles · rocas',filter:a=>a.cat==='KayKit FREE · Naturaleza'},
  {id:'KayKit FREE · Hexágonos',label:'⬡ Hex originales',filter:a=>a.cat==='KayKit FREE · Hexágonos'},
+ {id:'Quaternius · Edificios',label:'🏘️ Quaternius · casas',filter:a=>a.cat==='Quaternius · Edificios'},
+ {id:'Quaternius · Accesorios',label:'🛒 Quaternius · objetos',filter:a=>a.cat==='Quaternius · Accesorios'},
+ {id:'Quaternius · Naturaleza',label:'🌲 Quaternius · árboles',filter:a=>a.cat==='Quaternius · Naturaleza'},
+ {id:'Urbanismo HIGHFLY',label:'⛲ Fuentes y farolas',filter:a=>a.cat==='Urbanismo HIGHFLY'},
  {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
  {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
  {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
@@ -546,12 +602,12 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW,cameraPan=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null,objectClipboard=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  return base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos'&&
-  (!q||[a.label,a.id,a.originalCategory,a.sourcePack,a.cat].some(v=>String(v||'')
+  (!q||[a.label,a.id,a.searchTags,a.originalCategory,a.sourcePack,a.cat,a.freePath].some(v=>String(v||'')
    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q))));
 }
 function drawCatalog(){
@@ -570,9 +626,11 @@ function drawCatalog(){
   const el=document.createElement('button');el.type='button';
   el.className='asset'+(chosen===a.id?' selected':'');
   el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
-  if(a.model||a.freeModel||a.originalPrefab){
+  if(a.model||a.freeModel||a.qcc0||a.nativeFlora||a.originalPrefab){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
    img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    a.nativeFlora?url('unsung-flora/thumbs/'+a.id+'.svg'):
+    a.qcc0?url('quaternius-cc0/thumbs/'+a.id+'.png'):
     a.freeModel?url('kaykit-free/thumbs-all/'+a.thumbName+'.png'):
     url('kaykit-free/thumbs/building_'+a.model+'_red.png');
    img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
@@ -596,7 +654,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>!P531_PREVIEW||!x.id.startsWith('SOURCE'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!P532_PREVIEW||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -700,6 +758,35 @@ async function upgradeLegacy(){
   status(done+' boceto'+(done===1?'':'s')+' reemplazado'+(done===1?'':'s')+' por modelos KayKit completos. '+blocked+' bloqueados por terreno/colisiones; '+loadFailures+' fallos de modelo.');
  }finally{$('upgrade-legacy').disabled=false;showProps();}
 }
+const CLIPBOARD_SESSION='hf-world-forge-public-object-clipboard-v1';
+function copySelected(){
+ const item=records.find(o=>o.id===selected);
+ if(!item){status('Primero seleccioná un edificio, árbol o accesorio para copiarlo.');return false;}
+ objectClipboard={type:item.type,yaw:item.yaw,scale:item.scale,clearTrees:!!item.clearTrees};
+ try{sessionStorage.setItem(CLIPBOARD_SESSION,JSON.stringify(objectClipboard));}catch{}
+ try{navigator.clipboard?.writeText(JSON.stringify({highflyWorldObject:1,...objectClipboard}))?.catch(()=>{});}catch{}
+ status('✓ Copiado '+BY_ID.get(item.type).label+'. Ctrl+V para elegir dónde pegarlo.');
+ return true;
+}
+async function pasteCopied(){
+ if(!objectClipboard){
+  try{objectClipboard=JSON.parse(sessionStorage.getItem(CLIPBOARD_SESSION)||'null');}catch{}
+ }
+ if(!objectClipboard&&navigator.clipboard?.readText){
+  try{const data=JSON.parse(await navigator.clipboard.readText());
+   if(data?.highflyWorldObject===1)objectClipboard=data;
+  }catch{}
+ }
+ const item=objectClipboard;
+ if(!item||!BY_ID.has(item.type)||!finite(item.scale)||!finite(item.yaw)){
+  status('Primero copiá un objeto con Ctrl+C, después pegalo con Ctrl+V.');return false;
+ }
+ selectAsset(item.type);
+ pendingYaw=item.yaw;pendingScale=clamp(item.scale,.5,3);
+ if(ghost){ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);}
+ status('📋 '+BY_ID.get(item.type).label+' listo para pegar. Mové el cursor y hacé clic donde quieras; podés pegar varias copias.');
+ return true;
+}
 async function duplicateSelected(){
  const source=records.find(x=>x.id===selected);if(!source)return;
  const asset=BY_ID.get(source.type);if(!asset)return;
@@ -776,6 +863,17 @@ function bindUI(){
   status(repeatPlacement?'Herramienta continua: podés colocar varias construcciones iguales seguidas.':
     'Colocación individual: al poner una casa pasa a Mover/Girar.');
  };
+ $('quality-toggle').onclick=()=>{
+  qualityHigh=!qualityHigh;
+  renderer.setPixelRatio(Math.min(qualityHigh?2:1.15,window.devicePixelRatio||1));
+  $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
+  $('quality-toggle').classList.toggle('on',qualityHigh);
+  fit();render();
+  status('Calidad '+(qualityHigh?'ALTA (mallas reales Unsung y GLB a resolución de PC)':'NORMAL (menos píxeles de dibujo)')+
+    '. No cambia las texturas, el mapa ni el guardado.');
+ };
+ $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
+ $('quality-toggle').classList.toggle('on',qualityHigh);
  $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
@@ -795,12 +893,16 @@ function bindUI(){
  for(const id of ['rot-left','rot-right','size-down','size-up'])$(id).onclick=()=>transform(id);
  $('remove').onclick=remove;
  $('duplicate').onclick=duplicateSelected;
+ $('copy-object').onclick=copySelected;
+ $('paste-object').onclick=pasteCopied;
  $('upgrade-legacy').onclick=upgradeLegacy;
  $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
  $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
  window.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();copySelected();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteCopied();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicateSelected();return;}
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
@@ -994,7 +1096,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 4.1 · P5.3.1 · FREE completo: 221 modelos KayKit + 18 originales Unsung. PC: clic para colocar, derecho arrastre para mover cámara, Q/R para girar.');
+  status('✓ WORLD FORGE 4.2 · P5.3.2 · 221 KayKit CC0 + 42 Quaternius CC0 + 18 originales Unsung + cuatro piezas HIGHFLY. Ctrl+C y Ctrl+V para copiar y pegar.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
@@ -1011,7 +1113,12 @@ if(new URLSearchParams(location.search).has('hfqa')){
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
   objects(){return records.map(x=>({...x}));},
+  select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
+  copy:copySelected,paste:pasteCopied,
+  clipboard(){return objectClipboard?{...objectClipboard}:null;},
+  placement(){return {mode,chosen,pendingYaw,pendingScale};},
   ready(id){return prefabReady.has(id);},
+  error(id){return prefabFailed.get(id)||null;},
   inspect(id){
    const root=viewCache.get(id);if(!root)return null;
    let meshes=0,foundation=0,faces=0;

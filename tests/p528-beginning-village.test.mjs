@@ -37,7 +37,7 @@ for(const [a,pattern] of [
  [rpg,/scenicObjects/],
  [rpg,/world\.addLazy\(wx,wz/],
  [ui,/id="preset-village"/],
- [build,/\['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora'\]/],
+ [build,/\['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora','p532-spanish-labels','p532-quaternius-cc0-catalog','p532-public-urban-assets','p532-public-urban-prefabs'\]/],
  [scenic,/function gazebo\(g\)/],
  [scenic,/function stall\(g,blue\)/],
  ])assert.match(a,pattern);

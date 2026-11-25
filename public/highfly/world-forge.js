@@ -3,6 +3,9 @@
  * Same-origin localStorage layout is read by the isolated game preview.
  */
 import {KAYKIT_FREE_ALL} from './p531-kaykit-free-catalog.mjs';
+import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
+import {localizePublicAsset} from './p532-spanish-labels.mjs';
+import {PUBLIC_URBAN_ASSETS} from './p532-public-urban-assets.mjs';
 const $=id=>document.getElementById(id);
 // Autodiagnóstico visible, copiable y sin datos personales.
 // Nunca registra coordenadas del usuario ni contenido del guardado local.
@@ -26,10 +29,11 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
+const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
+const STORE=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -85,9 +89,11 @@ const CATALOG=[
  {id:'npc-guard',label:'NPC guardia',icon:'🛡️',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-artisan',label:'NPC artesano',icon:'👨‍🏭',cat:'NPC',w:1,d:1,h:1.8}
 ];
-for(const extra of KAYKIT_FREE_ALL){const ix=CATALOG.findIndex(x=>x.id===extra.id);
+for(const source of KAYKIT_FREE_ALL){const extra=P532_PREVIEW?localizePublicAsset(source):source;const ix=CATALOG.findIndex(x=>x.id===extra.id);
  if(ix>=0)CATALOG[ix]={...CATALOG[ix],...extra,free:'building_'+extra.label};
  else CATALOG.push({...extra});}
+for(const p of QUATERNIUS_CC0_ALL)CATALOG.push({...p});
+for(const p of PUBLIC_URBAN_ASSETS)CATALOG.push({...p,publicUrban:true});
 for(const [id,label,icon,w,d,h] of [
  ['unsung-tree-ember','Arce carmesí original','🍁',12,12,15],
  ['unsung-tree-blossom','Cerezo rosa original','🌸',10,10,9],
@@ -141,10 +147,10 @@ const VILLAGE_COLORS={'village-blossom':'#e69dbd','village-lilac':'#ba95d0',
  'village-gazebo':'#e4d6bf','village-banner':'#b6475d',
  'village-lamp':'#f0c36d','village-crates':'#aa8058'};
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
-let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category=P531_PREVIEW?'KayKit FREE · Edificios':'Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
+let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem((P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
+ const previous=JSON.parse(localStorage.getItem((P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -445,10 +451,13 @@ function renderCatalog(){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
   const label=document.createElement('span');label.textContent=it.label;
-  if(it.free||it.freeModel||it.originalPrefab){
+  if(it.free||it.freeModel||it.qcc0||it.originalFlora||it.originalPrefab){
    const img=document.createElement('img');img.alt=it.label;img.loading='lazy';
-   img.src=new URL(it.originalPrefab?'./unsung-original/thumbs/'+it.id+'.png':it.freeModel?
-   './kaykit-free/thumbs-all/'+it.thumbName+'.png':'./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
+   img.src=new URL(it.originalPrefab?'./unsung-original/thumbs/'+it.id+'.png':
+   it.originalFlora?'./unsung-flora/thumbs/'+it.id+'.svg':
+   it.qcc0?'./quaternius-cc0/thumbs/'+it.id+'.png':
+   it.freeModel?'./kaykit-free/thumbs-all/'+it.thumbName+'.png':
+   './kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
    img.onerror=()=>{img.hidden=true;st.hidden=false;};
    st.hidden=true;btn.append(img);
   }
@@ -570,7 +579,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem((P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
@@ -582,7 +591,7 @@ window.addEventListener('keydown',e=>{
  if(e.key.toLowerCase()==='r'&&selectedId){$('rotate-right').click();}
 });
 window.addEventListener('resize',resize);
-for(const cat of ['KayKit FREE · Edificios','KayKit FREE · Arquitectura','KayKit FREE · Accesorios','KayKit FREE · Naturaleza','KayKit FREE · Hexágonos','Unsung original','Unsung árboles','Pisos','Decoración','Naturaleza','NPC',...(P531_PREVIEW?[]:['Edificios','SOURCE · Edificios','SOURCE · Accesorios'])]){
+for(const cat of ['KayKit FREE · Edificios','KayKit FREE · Arquitectura','KayKit FREE · Accesorios','KayKit FREE · Naturaleza','KayKit FREE · Hexágonos',...(P532_PREVIEW?['Quaternius · Edificios','Quaternius · Accesorios','Quaternius · Naturaleza','Urbanismo HIGHFLY']:[]),'Unsung original','Unsung árboles','Pisos','Decoración','Naturaleza','NPC',...((P531_PREVIEW||P532_PREVIEW)?[]:['Edificios','SOURCE · Edificios','SOURCE · Accesorios'])]){
  const btn=document.createElement('button');btn.textContent=cat;btn.dataset.cat=cat;btn.onclick=()=>setCategory(cat);$('categories').append(btn);
 }
 setCategory(category);loadLocal();resize();updateProps();syncTools();
