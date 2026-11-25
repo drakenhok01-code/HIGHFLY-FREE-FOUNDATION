@@ -717,7 +717,7 @@ async function rebuildPlaced(){
  for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);
   if(child.userData.modularRoadGeometry)disposeModularCobbleGeometry(child);}
  const retainSelection=P543_PREVIEW&&records.some(o=>o.id===selected)?selected:null;
- viewCache.clear();selected=null;if(gizmo)gizmo.detach();
+ viewCache.clear();if(!P543_PREVIEW)selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
   let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
   if(rebuildPlaced.token!==token)return;
@@ -1031,6 +1031,31 @@ function selectObject(id){
  switchMode(isRoad?'select':'move');roadUI();
  if(isRoad)status('Camino curvo seleccionado. Pulsá ✏️ Editar curva para mover o añadir nodos.');
 }
+// Edit continuously without reselecting: arrow keys shift the CURRENT prefab
+// relative to the camera, Q/E rotate. Native ground remains untouched.
+function nudgeSelected(direction,metres=1){
+ const o=records.find(v=>v.id===selected);
+ if(!P543_PREVIEW||!o)return false;
+ const forward=orbit.target.clone().sub(cam.position);forward.y=0;
+ if(forward.lengthSq()<.0001)forward.set(0,0,-1);else forward.normalize();
+ const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();
+ const move=direction==='arrowup'?forward:
+  direction==='arrowdown'?forward.negate():
+  direction==='arrowright'?right:right.negate();
+ const candidate={...o,x:snap(o.x+move.x*metres,.25),z:snap(o.z+move.z*metres,.25)};
+ const valid=validPosition(candidate,o.id);
+ if(!valid.ok){status('No se puede desplazar '+BY_ID.get(o.type).label+': '+valid.why);return false;}
+ if(candidate.x===o.x&&candidate.z===o.z)return true;
+ recordSnapshot();
+ Object.assign(o,candidate,{y:valid.y});save();
+ const root=viewCache.get(o.id);
+ if(root)root.position.set(o.x,o.y+.035,o.z);
+ const id=o.id;
+ rebuildPlaced().then(()=>{
+  if(selected===id)status('✓ '+BY_ID.get(o.type).label+' X '+o.x.toFixed(2)+' · Z '+o.z.toFixed(2)+' · flechas para seguir moviendo, Q/E para girar.');
+ });
+ return true;
+}
 function transform(action){
  const o=records.find(v=>v.id===selected);
  if(!o&&chosen){
@@ -1298,6 +1323,11 @@ function bindUI(){
  }catch(err){status('Error importando: '+err.message);}e.target.value='';};
  $('play').onclick=()=>{save();location.href=new URL('../?hfworld=1',import.meta.url).href;};
  for(const id of ['rot-left','rot-right','size-down','size-up'])$(id).onclick=()=>transform(id);
+ if(P543_PREVIEW){
+  for(const dir of ['up','down','left','right']){
+   $('nudge-'+dir).onclick=()=>nudgeSelected('arrow'+dir,1);
+  }
+ }
  $('remove').onclick=remove;
  $('duplicate').onclick=duplicateSelected;
  $('copy-object').onclick=copySelected;
@@ -1320,6 +1350,20 @@ function bindUI(){
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteCopied();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicateSelected();return;}
+  if(P543_PREVIEW&&selected&&mode!=='road'&&!e.ctrlKey&&!e.metaKey){
+   const key=e.key.toLowerCase();
+   if(['arrowup','arrowdown','arrowleft','arrowright'].includes(key)){
+    e.preventDefault();e.stopImmediatePropagation();
+    // Long key holds don't force 100 simultaneous GLTF rebuilds.
+    if(!e.repeat)nudgeSelected(key,e.altKey?.25:e.shiftKey?2:1);
+    return;
+   }
+   if(key==='q'||key==='e'){
+    e.preventDefault();e.stopImmediatePropagation();
+    if(!e.repeat)transform(key==='q'?'rot-left':'rot-right');
+    return;
+   }
+  }
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
    const k=e.key.toLowerCase();
    if(['q','r'].includes(k)&&mode==='place'){e.preventDefault();transform(k==='q'?'rot-left':'rot-right');return;}
