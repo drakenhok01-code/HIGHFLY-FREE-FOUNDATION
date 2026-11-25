@@ -557,6 +557,27 @@ function floorElevation(x,z){
  }
  return y;
 }
+// P542: the editor's near terrain is a lower-resolution mesh offset +0.22m
+// above the source heightfield. Read its actual triangles so the new floor
+// conforms to what is VISIBLE, not just the raw height data below.
+function nativeRenderedFloorAt(x,z){
+ const p=geo.near?.geometry?.getAttribute('position');
+ if(!geo.near?.visible||!p)return elevation(x,z)-.15;
+ const n=Math.round(Math.sqrt(p.count))-1;
+ if(n<2||n>600)return elevation(x,z)-.15;
+ const x0=p.getX(0),z0=p.getZ(0),sx=(p.getX(n)-x0)/n,
+  sz=(p.getZ(n*(n+1))-z0)/n;
+ if(sx<=0||sz<=0)return elevation(x,z)-.15;
+ const fx=(x-x0)/sx,fz=(z-z0)/sz;
+ if(fx<0||fz<0||fx>=n||fz>=n)return elevation(x,z)-.15;
+ const i=Math.floor(fx),j=Math.floor(fz),tx=fx-i,tz=fz-j,k=j*(n+1)+i;
+ const h00=p.getY(k),h10=p.getY(k+1),h01=p.getY(k+n+1),h11=p.getY(k+n+2);
+ return tx+tz<=1?h00+(h10-h00)*tx+(h01-h00)*tz:
+   h11+(h01-h11)*(1-tx)+(h10-h11)*(1-tz);
+}
+function paintedNativeFloorAt(x,z){
+ return Math.max(floorElevation(x,z),nativeRenderedFloorAt(x,z))+.075;
+}
 // Editor-only detailed previews. The real RPG uses original procedural M.PAVING material.
 const floorMats=new Map();
 function floorMaterial(type){
@@ -618,8 +639,8 @@ function makeModel(a,o,anchorY=o.y){
   if(P542_PREVIEW){
    // Each 4m tile has 10x10 patches following the ACTUAL high-resolution
    // Unsung height sample and/or original plaza ramps, never a flat floating quad.
-   const p=conformingTileGrid(o,{w:a.w,d:a.d},floorElevation,{
-    anchorY,divisions:10,raise:.15});
+   const p=conformingTileGrid(o,{w:a.w,d:a.d},paintedNativeFloorAt,{
+    anchorY,divisions:10,raise:0});
    const g=new THREE.BufferGeometry();
    g.setAttribute('position',new THREE.Float32BufferAttribute(p.position,3));
    g.setAttribute('uv',new THREE.Float32BufferAttribute(p.uv,2));
