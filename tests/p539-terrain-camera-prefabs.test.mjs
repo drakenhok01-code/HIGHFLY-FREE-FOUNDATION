@@ -20,7 +20,7 @@ test('P539: importer uses genuine CC0 3D house instead of broken blacksmith asse
  const smith=EASTBROOK_LAND_SPECS.find(x=>x.role==='herreria');
  assert.equal(smith.type,'kaykit-blacksmith');
  assert.equal(smith.wanted,'kaykit-blacksmith');
- assert(EASTBROOK_PENDING.some(x=>x.role==='herreria'&&x.replacement===smith.type));
+ assert(EASTBROOK_PENDING.some(x=>x.role==='herreria'&&x.wanted===smith.type&&x.replacement==='kaykit-home-a'));
  assert(EASTBROOK_FREE_FALLBACKS['kaykit-blacksmith'].includes('kaykit-home-a'));
  const plan=buildEastbrookLand({canPlace:()=>({ok:true,y:212.5})});
  assert(plan.complete);
