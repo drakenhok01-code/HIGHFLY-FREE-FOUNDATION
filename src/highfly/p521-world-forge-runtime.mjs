@@ -13,15 +13,18 @@ import {UNSUNG_ORIGINAL_ASSETS,UNSUNG_ORIGINAL_IDS,buildUnsungOriginal} from './
 import {buildWorldForgeCityMask} from './p530-city-ground-mask.mjs';
 import {KAYKIT_FREE_ALL,KAYKIT_FREE_BY_ID,KAYKIT_FREE_IDS} from './p531-kaykit-free-catalog.mjs';
 import {UNSUNG_FLORA,UNSUNG_FLORA_BY_ID,nativeUnsungFlora} from './p531-unsung-flora.mjs';
+import {QUATERNIUS_CC0_ALL,QUATERNIUS_CC0_BY_ID,QUATERNIUS_CC0_IDS} from './p532-quaternius-cc0-catalog.mjs';
+import {PUBLIC_URBAN_ASSETS,PUBLIC_URBAN_IDS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
+const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -48,6 +51,8 @@ const BOUNDS=Object.freeze({
  'kaykit-windmill':[12,12],
  ...Object.fromEntries(VILLAGE_DECOR_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(KAYKIT_FREE_ALL.map(a=>[a.id,[a.w,a.d]])),
+  ...Object.fromEntries(QUATERNIUS_CC0_ALL.map(a=>[a.id,[a.w,a.d]])),
+  ...Object.fromEntries(PUBLIC_URBAN_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_FLORA.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_ORIGINAL_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
@@ -299,7 +304,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
-  if(VILLAGE_DECOR_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
+  if(VILLAGE_DECOR_IDS.has(o.type)||PUBLIC_URBAN_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
   if(UNSUNG_FLORA_BY_ID.has(o.type)){
    const source=nativeUnsungFlora(o.type),instance=source.clone(true);
    const box=new THREE.Box3().setFromObject(source),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
@@ -333,12 +338,12 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    sourceBuildings.push({o,fp});
    continue;
   }
-  if(KAYKIT_FREE_IDS.has(o.type)||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
+  if(KAYKIT_FREE_IDS.has(o.type)||QUATERNIUS_CC0_IDS.has(o.type)||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)){
    // A real native Unsung stone foundation follows the max of all footprint corners.
    // Matches the editor's solid plinth, prevents a complete building sinking into slopes.
    // Flat parcels place the authentic model directly on Unsung terrain.
    // Only steep building lots get a subtle foot slab, never props or vegetation.
-   const asset=KAYKIT_FREE_BY_ID.get(o.type);
+   const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type);
    if((asset?.kind==='building'||!asset)&&fp.slope>.35){
     const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
     builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
@@ -368,7 +373,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  const scenicObjects=[];
  for(const o of scenic){
   if(o._instance){scenicObjects.push({o,model:o._instance});continue;}
-  const model=makeVillageDecor(o.type,o.scale);if(!model){skipped.push(o.id);continue;}
+  const model=makePublicUrbanPrefab(o.type,o.scale)||makeVillageDecor(o.type,o.scale);if(!model){skipped.push(o.id);continue;}
   model.position.set(o.x,o.y+.045,o.z);model.rotation.y=o.yaw;
   model.traverse(mesh=>{if(mesh.isMesh)mesh.frustumCulled=true;});
   group.add(model);scenicObjects.push({o,model});
@@ -434,6 +439,8 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(!prefabLoads.has(type)){
    const p=privateSourceType(type)
     ?readPrivateSourceGLB(type).then(data=>loader.parseAsync(data,''))
+    :QUATERNIUS_CC0_IDS.has(type)
+    ?loader.loadAsync(import.meta.env.BASE_URL+'highfly/'+QUATERNIUS_CC0_BY_ID.get(type).freePath)
     :loader.loadAsync(kaykitFreeUrl(type));
    prefabLoads.set(type,p);
   }
@@ -449,14 +456,14 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(size.x<.01||size.z<.01)throw Error('Modelo KayKit sin volumen '+o.type);
   const scale=Math.min(fp.w/size.x,fp.d/size.z);
   const anchor=new THREE.Group();
-  anchor.name='HIGHFLY_KAYKIT_FREE_'+o.type+'_'+o.id;
+  anchor.name='HIGHFLY_PUBLIC_CC0_'+o.type+'_'+o.id;
   anchor.position.set(o.x,fp.y+.03,o.z);anchor.rotation.y=o.yaw;
   scene.scale.setScalar(scale);
   scene.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
   scene.traverse(mesh=>{
    if(!mesh.isMesh)return;
    mesh.frustumCulled=true;
-   if(privateSourceType(o.type))return; // Preserve actual SOURCE GLB textured materials.
+   if(privateSourceType(o.type)||QUATERNIUS_CC0_IDS.has(o.type))return; // Keep true CC0 Quaternius PBR maps/colors.
    const old=Array.isArray(mesh.material)?mesh.material[0]:mesh.material;
    mesh.material=new THREE.MeshBasicMaterial({
     map:old?.map??null,
@@ -471,7 +478,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
    // Trees, bushes, clouds, small props and hex pieces should not create
    // leaf-shaped or terrain-blocking collision meshes in the playable RPG.
-   const freeAsset=KAYKIT_FREE_BY_ID.get(o.type);
+   const freeAsset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type);
    if(freeAsset&&!['building','structure'].includes(freeAsset.kind))return;
    // Trees and loose props retain visual fidelity without treating leaves as impassable walls.
    if(privateSourceType(o.type)&&!['building','rock'].includes(PRIVATE_SOURCE.get(o.type)?.kind))return;
