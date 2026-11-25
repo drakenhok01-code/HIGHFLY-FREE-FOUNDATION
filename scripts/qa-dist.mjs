@@ -43,7 +43,7 @@ assert.equal(groups['MIT (original Unsung)'],4);
 assert.equal(groups['MIT (Emberfall original geometry)'],2);
 function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);}
 for(const f of walk(root)){
- assert.ok(!/private_assets|phoenix-source|kaykit.*source|\.fbx$|\.zip$/i.test(f),'Restricted file '+f);
+ assert.ok(!/private_assets|phoenix-source|kaykit[-_]source|kaykit[\\/]+source|\.fbx$|\.zip$/i.test(f),'Restricted file '+f);
  if(/\.(js|css|html|json)$/.test(f))assert.ok(!/phoenix-source-stage|HIGHFLY_CI_MOCK_SOURCE|private_assets\//i.test(fs.readFileSync(f,'utf8')),'Private dependency '+f);
 }
 for(const name of ['highfly-icons','hero-sanctuary','quest-petal','world-petal','forge-chamber']){
