@@ -32,7 +32,8 @@ const base=[
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
 ].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat,w,d,model}));
 const BY_ID=new Map(base.map(a=>[a.id,a]));
-const safety=[[-519,-70,42],[-372,-392,27],[66,-498,31],[150,-15,43],[578,-437,29],[517,437,29],[136,546,29],[-405,435,29],[-1005,-168,47],[-179,-459,20]];
+// Protect the actual spawn and staircase, not entire 42m-radius free land parcels.
+const safety=[[-519,-70,8],[-179,-459,7]];
 const logData={phase:'inicio',lines:[],errors:[]};
 const log=(message,detail='',ok=true)=>{
  const s=(ok?'✓ ':'✕ ')+message+(detail?' — '+detail:'');
@@ -178,6 +179,10 @@ function updateTrees(force=false){
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
   for(const t of overview.treeIndex.get(i+','+j)||[]){
    if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
+   if(records.some(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&BY_ID.has(o.type)&&(()=>{
+     const [dx,dz]=[t[0]-o.x,t[1]-o.z],a=BY_ID.get(o.type),c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+     return Math.abs(dx*c+dz*s)<a.w*o.scale*.5+1.8&&Math.abs(-dx*s+dz*c)<a.d*o.scale*.5+1.8;
+   })()))continue;
    const k=treeKinds[t[3]]??4;if(lists[k].length<900)lists[k].push(t);
   }
  }
@@ -242,9 +247,11 @@ function validPosition(o,id=null){
  }
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
  if(!flat&&!npc){
-  if(Math.max(...samples)-Math.min(...samples)>Math.min(3.8,1.2+o.scale*1.1))return {ok:false,why:'Pendiente excesiva'};
-  if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.7))return {ok:false,why:'Zona original protegida'};
-  if(treeNear(o.x,o.z,rad*.5))return {ok:false,why:'Árbol original'};
+  if(Math.max(...samples)-Math.min(...samples)>Math.min(5.2,1.75+o.scale*1.5))return {ok:false,why:'Pendiente excesiva (buscá una explanada)'};
+  if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
+  // In a building lot the native trees can be *visually excluded* (same flag in RPG).
+  // We never modify the Unsung terrain/forest source or the original plaza.
+  if(!o.clearTrees&&treeNear(o.x,o.z,rad*.5))return {ok:false,why:'Árbol original: activá despeje automático'};
   if(archNear(o.x,o.z,rad*.6))return {ok:false,why:'Arquitectura original'};
   for(const b of records){
    if(b.id===id||b.id===o.id||b.type.startsWith('floor-')||b.type.startsWith('npc-'))continue;
@@ -351,7 +358,7 @@ function previewGhost(ev){
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
  ghost.position.set(x,elevation(x,z)+.2,z);ghost.visible=true;
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:0,scale:1,clearTrees:!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')});
  const outline=ghost.children[0];
  if(outline?.material?.color)outline.material.color.setHex(check.ok?0x88ffe0:0xff6b89);
  status(check.ok?'Vista previa: '+a.label+' · X '+x+' Z '+z:'No se puede colocar aquí: '+check.why);
@@ -377,6 +384,7 @@ function drawCats(){for(const cat of [...new Set(base.map(x=>x.cat))]){
 function addAt(x,z){
  if(!chosen||!map)return false;
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
+ if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar: '+check.why);return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
  o.y=check.y;records.push(o);
