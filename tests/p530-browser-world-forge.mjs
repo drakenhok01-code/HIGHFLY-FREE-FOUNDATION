@@ -105,11 +105,24 @@ try{
  await page.evaluate(()=>{const b=[...document.querySelectorAll('#cats button')].find(e=>e.dataset.cat==='Pisos');b?.click();});
  const floorChoice=await page.evaluate(()=>{const b=[...document.querySelectorAll('#catalog button')].find(e=>e.textContent.includes('plaza'));b?.click();return !!b;});
  if(!floorChoice)throw Error('Continuar plaza paving tool missing');
- await page.evaluate(({x,z})=>window.__hfWorldForge3DQA.focus(x+28,z+12,58),spot);
- await delay(200);
- const start=await page.evaluate(({x,z})=>window.__hfWorldForge3DQA.point(x+20,z+12),spot);
- const end=await page.evaluate(({x,z})=>window.__hfWorldForge3DQA.point(x+28,z+12),spot);
- if(!start.visible||!end.visible)throw Error('Paving route outside view');
+ // Paint in a *visible, testable* piece of open ground: the previous
+ // test used a cliff-side point (y=-381px, outside the canvas) that looked
+ // "visible" only because clip depth, not screen bounds, was checked.
+ await page.evaluate(({x,z})=>window.__hfWorldForge3DQA.focus(x,z,125),spot);
+ await delay(320);
+ const road=await page.evaluate(({x,z})=>{
+  const qa=window.__hfWorldForge3DQA,rect=document.querySelector('#canvas-holder canvas').getBoundingClientRect();
+  const usable=p=>p.visible&&p.x>rect.left+16&&p.x<rect.right-16&&p.y>rect.top+16&&p.y<rect.bottom-16;
+  for(const [dx,dz] of [[-16,16],[12,12],[-12,-12],[20,0],[0,20],[0,-20],[-20,0],[8,8]]){
+   const sx=Math.round((x+dx)/4)*4,sz=Math.round((z+dz)/4)*4;
+   const first=qa.point(sx,sz),last=qa.point(sx+8,sz);
+   if(usable(first)&&usable(last))return {start:first,end:last,world:[sx,sz],rect:{left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom}};
+  }
+  return null;
+ },spot);
+ if(!road)throw Error('No on-screen 8m road segment near real village terrace');
+ const {start,end}=road;
+ console.log('[P530 VISIBLE ROAD]',JSON.stringify(road));
  await page.mouse.move(start.x,start.y);await page.mouse.down();
  await page.mouse.move(end.x,end.y,{steps:12});await page.mouse.up();await delay(350);
  const floor=await page.evaluate(()=>window.__hfWorldForge3DQA.objects().filter(o=>o.type==='floor-stone'));
