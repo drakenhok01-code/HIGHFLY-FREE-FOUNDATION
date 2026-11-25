@@ -12,11 +12,21 @@ header{flex:none;min-height:44px;background:#19122e;border-bottom:1px solid #614
 .brand{font-size:14px;font-weight:900;color:var(--gold);letter-spacing:.04em}.brand small{display:block;color:#b6a9e5;font-size:10px;font-weight:600}
 #head-actions{display:flex;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:thin}
 main{display:flex;min-height:0;flex:1}
-aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;display:flex;flex-direction:column;min-height:0}
+aside{flex:none;width:265px;background:#18152b;border-right:1px solid #584472;display:flex;flex-direction:column;min-height:0}
 #cats{display:flex;gap:4px;padding:8px;overflow-x:auto;scrollbar-width:thin}
 #cats button{font-size:11px;padding:6px 8px}
 #search{margin:0 8px 6px;padding:7px;border-radius:7px;background:#120f20;color:#eee;border:1px solid #5d5078;width:calc(100% - 16px)}
-#catalog{flex:1;overflow-y:auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:5px;padding:5px 8px;overscroll-behavior:contain;touch-action:pan-y}
+#catalog{flex:1;overflow-y:auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:7px;padding:6px 8px;overscroll-behavior:contain;touch-action:pan-y}
+.catalog-heading{font-size:11px;color:#e5c78f;font-weight:800;letter-spacing:.06em;padding:9px 9px 3px}
+#catalog-meta{padding:3px 9px 6px;color:#c3b3d4;font-size:10px;flex:none}
+#catalog-more{margin:4px 8px 7px;flex:none;border-color:#c6a676}
+#cats{flex-wrap:wrap;max-height:114px;overflow-y:auto}
+#cats button{border-radius:6px;white-space:normal;text-align:center;min-height:32px}
+.asset{border-radius:7px;box-shadow:inset 0 -2px #100d24}
+.asset .asset-type{font-size:8px;letter-spacing:.02em;color:#eacfa2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asset .asset-size{font-size:9px;color:#b6adbf}
+.asset.selected{box-shadow:0 0 0 2px #e6c17d}
+#props{background:#131027}
 .asset{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:94px;white-space:normal;text-align:center;padding:5px 3px;background:#272137;border-color:#574a6d}
 .asset img{width:87px;height:62px;max-width:95%;object-fit:contain}
 .asset .emoji{font-size:26px}
@@ -42,15 +52,18 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE · 3D V0.9</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.0 · P5.3.0</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
-<button id="preset-village" title="Generar plaza, caminos y edificios sin borrar tu diseño">🏡 Pueblo de los Inicios</button><button id="import-source" title="Importar tus 182 modelos KayKit SOURCE/Halloween privados en este dispositivo">📦 Importar KayKit SOURCE</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
+<button id="preset-village" title="Propuesta automática EXPERIMENTAL, no una réplica exacta de la imagen">🏡 Arvelia · borrador</button><button id="import-source" title="Importar el paquete privado de edificios, accesorios, Halloween y Mixed Bag 2">📦 SOURCE + Halloween</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
 </div></header>
 <main><aside>
-<div id="cats"></div><input id="search" placeholder="Buscar edificios, pisos, NPC…" aria-label="Buscar objetos"/>
-<div id="catalog"></div>
-<div id="props"><strong>EDITOR TRIDIMENSIONAL</strong><small>Edificios completos KayKit. Elegí, arrastrá, soltá y girá. En PISOS, deslizá para pintar caminos. El mundo original queda intacto.</small>
+<div class="catalog-heading">🏰 CONSTRUCTOR · OBJETOS REALES</div>
+<div id="cats" role="tablist" aria-label="Colección de construcción"></div>
+<input id="search" placeholder="🔎 Buscar modelos, oficios, árboles, arquitectura…" aria-label="Buscar objetos"/>
+<div id="catalog-meta" aria-live="polite">Cargando catálogo…</div>
+<div id="catalog"></div><button id="catalog-more" hidden>Mostrar otros 36 objetos</button>
+<div id="props"><strong>WORLD FORGE 4.0</strong><small>Elegí un prefab auténtico y tocá el mapa. Los edificios se anclan en explanadas reales; los pisos se pintan arrastrando. El terreno original de Unsung queda intacto.</small>
 <div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="duplicate">⧉ Duplicar</button><button id="remove">🗑 Borrar</button></div>
 </div><button id="upgrade-legacy" hidden style="margin:6px 8px;border:1px solid #dbb777;color:#ffe4b4;white-space:normal">✨ Reemplazar bocetos antiguos por edificios KayKit</button></aside>
 <section id="canvas-holder">
@@ -58,7 +71,7 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 <button id="orbit" class="on">✋ Cámara</button>
 <button id="select">▣ Selección</button>
 <button id="move">↔ Mover</button><button id="rotate">⟳ Girar</button><button id="scale">◩ Escala</button>
-<button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button>
+<button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button><button id="brush-width" title="Ancho del pincel de pavimento">🧱 Pincel 4 m</button>
 <button id="home">⌖ Inicio</button><button id="trees" class="on">🌳 Árboles</button>
 <button id="original" class="on">🏛️ Original</button><button id="water" class="on">🌊 Agua</button>
 </div>
@@ -68,5 +81,5 @@ aside{flex:none;width:224px;background:#18152b;border-right:1px solid #584472;di
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p529"></script>
+<script type="module" src="./world-forge-3d.js?v=p530"></script>
 </body></html>

@@ -25,8 +25,9 @@ $('diagnostics-copy').onclick=async()=>{try{await navigator.clipboard.writeText(
 $('diagnostics-retry').onclick=()=>location.reload();
 diagnose('Editor iniciado','v0.4, alturas PNG originales y edificios KayKit CC0 gratuitos');
 
+const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
+const STORE=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1',TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const CATALOG=[
  {id:'guild',label:'Gremio',icon:'🏰',cat:'Bocetos antiguos',w:14,d:11,h:10},
@@ -89,10 +90,25 @@ try{
   for(const x of d.assets)if(/^source-[a-z0-9-]{4,104}$/.test(x.id)&&
      Number.isFinite(x.width)&&Number.isFinite(x.depth)){
    CATALOG.push({id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
-    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,privateModel:true});
+    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,kind:x.kind,sourcePack:x.sourcePack,privateModel:true});
   }
  }
 }catch(err){console.warn('KayKit SOURCE local metadata not available',err);}
+// Same 12 genuine Unsung MIT prefabs used by the standalone 3D editor and playable RPG.
+for(const [id,label,icon,w,d,h] of [
+ ['unsung-lantern','Farol de Unsung','🏮',1.6,1.6,4],
+ ['unsung-bench','Banco de Unsung','🪑',2.8,1.7,2],
+ ['unsung-planter','Macetero de mármol','🪴',2,2,2],
+ ['unsung-trough','Jardinera de piedra','🌷',6,1.7,1.5],
+ ['unsung-armillary','Esfera astronómica','🌐',3.4,3.4,4],
+ ['unsung-pavilion','Pabellón original','🏛️',12,12,8],
+ ['unsung-arcade','Arquería de piedra','🏛️',11,2,8],
+ ['unsung-tower','Torre de Unsung','🏰',9,9,34],
+ ['unsung-hall','Salón monumental','⛪',25,15,20],
+ ['unsung-stairs','Escalera monumental','🪜',9,13,4],
+ ['unsung-balustrade','Balaustrada de mármol','▥',9,2,2],
+ ['unsung-spire','Aguja ornamental','🔱',9,9,20],
+])CATALOG.push({id,label,icon,cat:'Unsung original',w,d,h,originalPrefab:true});
 const BY_ID=new Map(CATALOG.map(x=>[x.id,x]));
 const ZONES=[
  {x:-519,z:-70,r:8,name:'Punto de aparición (protegido)'},
@@ -115,7 +131,7 @@ const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timb
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
 try{
- const previous=JSON.parse(localStorage.getItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
+ const previous=JSON.parse(localStorage.getItem((P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'))||'null');
  if(Number.isFinite(previous?.x)&&Number.isFinite(previous?.z)){
   view.x=previous.x;view.z=previous.z;view.zoom=2.1;
  }
@@ -267,7 +283,7 @@ function itemAt(x,z){
 function insert(type,x,z){
  const item=BY_ID.get(type);if(!item||item.cat==='Bocetos antiguos')return false;
  const q=item.floor?4:2,o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type,x:cell(x,q),z:cell(z,q),yaw:0,scale:1,y:0};
- if(!item.floor&&!type.startsWith('npc-'))o.clearTrees=true;
+ if(item.floor||!type.startsWith('npc-'))o.clearTrees=true;
  const status=siteStatus(o);
  if(!status.ok){safe('✕ No se puede colocar '+item.label+': '+status.reason);return false;}
  if(item.floor&&objects.some(p=>p.type===type&&dist(o,p)<1.1))return false;
@@ -409,13 +425,16 @@ function draw(){
 function setCategory(cat){category=cat;for(const b of $('categories').children)b.classList.toggle('active',b.dataset.cat===cat);renderCatalog();}
 function renderCatalog(){
  const root=$('catalog');root.replaceChildren();
- for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:x.cat===category)){
+ for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:
+   category==='SOURCE · Edificios'?x.privateModel&&x.kind==='building':
+   category==='SOURCE · Accesorios'?x.privateModel&&x.kind!=='building':
+   x.cat===category)){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
   const label=document.createElement('span');label.textContent=it.label;
-  if(it.free){
+  if(it.free||it.originalPrefab){
    const img=document.createElement('img');img.alt=it.label;img.loading='lazy';
-   img.src=new URL('./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
+   img.src=new URL(it.originalPrefab?'./unsung-original/thumbs/'+it.id+'.png':'./kaykit-free/thumbs/'+it.free+'.png',import.meta.url).href;
    img.onerror=()=>{img.hidden=true;st.hidden=false;};
    st.hidden=true;btn.append(img);
   }
@@ -537,7 +556,7 @@ $('io-file').onchange=async e=>{
 };
 $('view-3d').onclick=()=>{
  saveLocal(false);
- try{localStorage.setItem((P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
+ try{localStorage.setItem((P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1'),JSON.stringify({x:view.x,z:view.z}));}catch{}
  location.href=new URL('./world-forge-3d.html',import.meta.url).href;
 };
 $('play').onclick=()=>{saveLocal(false);const game=new URL('../',import.meta.url);game.search='?hfworld=1';location.href=game.href;};
@@ -549,7 +568,7 @@ window.addEventListener('keydown',e=>{
  if(e.key.toLowerCase()==='r'&&selectedId){$('rotate-right').click();}
 });
 window.addEventListener('resize',resize);
-for(const cat of [...new Set(CATALOG.map(x=>x.cat))]){
+for(const cat of ['Edificios','KayKit FREE','SOURCE · Edificios','SOURCE · Accesorios','Unsung original','Pisos','Decoración','Naturaleza','NPC']){
  const btn=document.createElement('button');btn.textContent=cat;btn.dataset.cat=cat;btn.onclick=()=>setCategory(cat);$('categories').append(btn);
 }
 setCategory(category);loadLocal();resize();updateProps();syncTools();

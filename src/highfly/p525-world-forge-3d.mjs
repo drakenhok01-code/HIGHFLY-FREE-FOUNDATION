@@ -7,11 +7,14 @@ import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
+import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
+import {loadUnsungOriginal} from './p530-unsung-loader.mjs';
 const $=id=>document.getElementById(id);
+const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -45,12 +48,14 @@ function addPrivateCatalog(models){
  for(const x of models){
   const a={id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
    cat:'KayKit SOURCE',originalCategory:x.category,kind:x.kind,w:x.width,d:x.depth,
-   privateModel:true};
+   privateModel:true,sourcePack:x.sourcePack||'',license:x.license||'CC0'};
   const index=base.findIndex(v=>v.id===a.id);
   if(index>=0)base[index]=a;else base.push(a);
   BY_ID.set(a.id,a);
  }
 }
+// Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
+for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
 addPrivateCatalog(loadPrivateSourceCatalog());
 const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmith',inn:'kaykit-tavern',house:'kaykit-home-a',timber:'kaykit-home-b',market:'kaykit-market',mill:'kaykit-windmill',ranger:'kaykit-archeryrange'});
@@ -199,7 +204,7 @@ function updateTrees(force=false){
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<60)return;
  treeFocus=[x,z];
  const lists=Array.from({length:5},()=>[]),rad=260;
- const clearedLots=records.filter(o=>o.clearTrees===true&&!o.type.startsWith('floor-')&&BY_ID.has(o.type));
+ const clearedLots=records.filter(o=>o.clearTrees===true&&BY_ID.has(o.type));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++){
   for(const t of overview.treeIndex.get(i+','+j)||[]){
    if(Math.hypot(t[0]-x,t[1]-z)>rad)continue;
@@ -271,7 +276,10 @@ function validPosition(o,id=null){
  }
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
  if(!flat&&!npc){
-  if(Math.max(...samples)-Math.min(...samples)>Math.min(5.2,1.75+o.scale*1.5))return {ok:false,why:'Pendiente excesiva (buscá una explanada)'};
+  const slope=Math.max(...samples)-Math.min(...samples);
+  const isBuilding=!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
+  if(slope>(isBuilding?1.05:Math.min(5.2,1.75+o.scale*1.5)))
+   return {ok:false,why:'La parcela tiene desnivel: buscá un terreno nivelado. Evitamos bloques flotantes bajo el edificio.'};
   if(safety.some(([x,z,r])=>Math.hypot(x-o.x,z-o.z)<r+rad*.24))return {ok:false,why:'Entrada original: elegí terreno libre al lado'};
   // In a building lot the native trees can be *visually excluded* (same flag in RPG).
   // We never modify the Unsung terrain/forest source or the original plaza.
@@ -300,14 +308,16 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const realPrefab=a=>!!a.model||!!a.privateModel||a.id.startsWith('npc-');
+const realPrefab=a=>!!a.model||!!a.privateModel||!!a.originalPrefab||a.id.startsWith('npc-');
 const modelUrl=a=>a.id.startsWith('npc-')
  ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
  :url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
-  cache.set(a.id,(a.privateModel?
+  cache.set(a.id,(a.originalPrefab?
+  loadUnsungOriginal(a.id,url).then(scene=>({scene})):
+  a.privateModel?
   readPrivateSourceGLB(a.id).then(data=>gltfLoader.parseAsync(data,'')):
   gltfLoader.loadAsync(modelUrl(a))).then(g=>{
    if(!g.scene?.children?.length)throw Error('El prefab no contiene geometría');
@@ -416,7 +426,7 @@ async function buildPlaced(o){
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
-   else if(a.model||(a.privateModel&&a.kind==='building'))root.add(foundationFor(a,o,point.slope||0));
+   else if((a.model||(a.privateModel&&a.kind==='building'))&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
  }else root.add(makeModel(a,o));
@@ -485,7 +495,7 @@ function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
  const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
- const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:!!a.model||!!a.privateModel&&a.kind==='building'});
+ const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
  ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
  ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
  const outline=ghost.children[0];
@@ -507,28 +517,79 @@ function selectAsset(id){
  });
  else status('Elegiste '+a.label+' · Tocá terreno libre para colocarlo.');
 }
+const CATALOG_TABS=[
+ {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
+ {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
+ {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
+ {id:'Unsung original',label:'🏛️ Unsung original',filter:a=>!!a.originalPrefab},
+ {id:'Pisos',label:'🧱 Pisos y caminos',filter:a=>a.cat==='Pisos'},
+ {id:'Decoración',label:'🏮 Decoración HIGHFLY',filter:a=>a.cat==='Decoración'},
+ {id:'Naturaleza',label:'🌳 Naturaleza',filter:a=>a.cat==='Naturaleza'},
+ {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
+ {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
+];
+let catalogLimit=36,brushCells=1;
+function catalogCandidates(){
+ const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
+ const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ return base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos'&&
+  (!q||[a.label,a.id,a.originalCategory,a.sourcePack,a.cat].some(v=>String(v||'')
+   .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q))));
+}
 function drawCatalog(){
- $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
- for(const a of base.filter(a=>(category==='Edificios'?!!a.model:a.cat===category)&&a.cat!=='Bocetos antiguos'&&a.label.toLowerCase().includes(find))){
-  const el=document.createElement('button');el.className='asset'+(chosen===a.id?' selected':'');
-  if(a.model){
-   const img=document.createElement('img');img.loading='lazy';img.alt=a.label;img.src=url('kaykit-free/thumbs/building_'+a.model+'_red.png');
-   img.onerror=()=>img.replaceWith(document.createTextNode(a.icon));el.append(img);
-  }else{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);}
+ const root=$('catalog');root.replaceChildren();
+ const candidates=catalogCandidates(),list=candidates.slice(0,catalogLimit);
+ $('catalog-meta').textContent=candidates.length+' modelos · '+Math.min(catalogLimit,candidates.length)+' visibles'+
+  (category.startsWith('SOURCE')?' · importar ZIP privado para acceder a los 182 GLB':'');
+ $('catalog-more').hidden=candidates.length<=catalogLimit;
+ if(!list.length){
+  const info=document.createElement('p');info.style.cssText='padding:12px;color:#e0c89c;grid-column:span 2';
+  info.textContent=category.startsWith('SOURCE')
+   ?'📦 Primero importá HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip con el botón SOURCE + Halloween.'
+   :'No hay modelos para este filtro.';root.append(info);return;
+ }
+ for(const a of list){
+  const el=document.createElement('button');el.type='button';
+  el.className='asset'+(chosen===a.id?' selected':'');
+  el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
+  if(a.model||a.originalPrefab){
+   const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
+   img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    url('kaykit-free/thumbs/building_'+a.model+'_red.png');
+   img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
+   el.append(img);
+  }else{
+   const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);
+  }
   const label=document.createElement('span');label.textContent=a.label;el.append(label);
-  el.onclick=()=>selectAsset(a.id);$('catalog').append(el);
+  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||
+   (a.originalPrefab?'UNSUNG · MIT':a.model?'KAYKIT · CC0':a.cat);el.append(type);
+  const size=document.createElement('small');size.className='asset-size';
+  size.textContent=a.w+' × '+a.d+' m · '+(a.originalPrefab?'ORIGINAL':a.privateModel?'SOURCE':'3D');
+  el.append(size);
+  el.onclick=()=>selectAsset(a.id);root.append(el);
  }
 }
-function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
-function drawCats(){for(const cat of ['Edificios','KayKit FREE','KayKit SOURCE','Pisos','Decoración','Naturaleza','NPC']){
- const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
-}setCategory(category);}
+function setCategory(a){
+ category=a;catalogLimit=36;
+ for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);
+ drawCatalog();
+}
+function drawCats(){
+ $('cats').replaceChildren();
+ for(const tab of CATALOG_TABS){
+  const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
+  const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
+  el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
+ }
+ setCategory(category);
+}
 function addAt(x,z){
  if(!chosen||!map)return false;
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
  if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
- if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-')&&(a.model||a.privateModel&&a.kind==='building'))o.clearTrees=true;
+ if(chosen.startsWith('floor-')||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
@@ -556,7 +617,10 @@ function paintLine(a,b){
  let x0=Math.round(a.x/4),z0=Math.round(a.z/4),x1=Math.round(b.x/4),z1=Math.round(b.z/4);
  let dx=Math.abs(x1-x0),dz=-Math.abs(z1-z0),sx=x0<x1?1:-1,sz=z0<z1?1:-1,err=dx+dz,guard=0;
  while(guard++<300){
-  addAt(x0*4,z0*4);
+  // Age-style brush: each pointer stroke fills a controllable 4/8/12 m band.
+  for(let ox=-(brushCells-1);ox<=brushCells-1;ox++)
+   for(let oz=-(brushCells-1);oz<=brushCells-1;oz++)
+    if(Math.hypot(ox,oz)<=Math.max(.8,brushCells-1+.1))addAt((x0+ox)*4,(z0+oz)*4);
   if(x0===x1&&z0===z1)break;
   const e=2*err;if(e>=dz){err+=dz;x0+=sx;}if(e<=dx){err+=dx;z0+=sz;}
  }
@@ -671,8 +735,9 @@ async function handlePrivateImport(ev){
  try{
   const metadata=await importPrivateSourcePack(file,message=>status(message));
   addPrivateCatalog(metadata);cache.clear();prefabReady.clear();prefabFailed.clear();
+  catalogLimit=36;
   category='KayKit SOURCE';
-  $('cats').replaceChildren();drawCats();
+  drawCats();
   await rebuildPlaced();
   status('✓ '+metadata.length+' modelos KayKit SOURCE, Halloween y Mixed Bag 2 disponibles en este Android. Buscá el catálogo KayKit SOURCE.');
   log('Importación SOURCE privada',metadata.length+' GLB válidos en IndexedDB; ningún archivo se subió a GitHub.');
@@ -684,7 +749,9 @@ function exportJSON(){
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
 }
 function bindUI(){
- $('search').oninput=drawCatalog;
+ $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
+ $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};
+ $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
  $('home').onclick=()=>focus(-512,-70);
@@ -727,7 +794,7 @@ function bindUI(){
    if(!hit)return;
    const floor=chosen.startsWith('floor-');
    recordSnapshot();
-   if(floor){dragPainting=true;lastPaint=hit;addAt(hit.x,hit.z);}
+   if(floor){dragPainting=true;lastPaint=hit;paintLine(hit,hit);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
   }else if(mode==='move'&&selected&&!gizmo?.dragging&&clickPlaced(e)===selected){
    // Directly grab the complete model, just like Age of Empires object placement.
