@@ -68,5 +68,5 @@ test('Arvelia: build/editor/RPG compatibility and isolated P538 layout key',()=>
  assert(editor.includes("'hf-world-forge-layout-p538-v1'"));
  assert(runtime.includes("'hf-world-forge-layout-p538-v1'"));
  assert(html.includes('id="pilot-eastbrook"'));
- assert(/v=p53[89]/.test(html));
+ assert(/v=p(?:538|539|540)/.test(html));
 });
