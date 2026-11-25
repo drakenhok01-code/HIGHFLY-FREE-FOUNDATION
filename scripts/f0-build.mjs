@@ -678,6 +678,8 @@ patch('src/game/input.js',"    canvas.addEventListener('mousedown', (e) => {"," 
 // P515: Native Eastbrook is permanent RPG terrain content, not an editor asset.
 // Exclude forest trees at our immutable buildings/roads before forest GPU buffers
 // are allocated. Core heightfields, sky, combat and all original architecture remain.
+patch('src/main.js',"const offLimits = (x, z) => onRoute(x, z) || clear.some(",
+ "const offLimits = (x, z) => eastbrookClearing(x,z) || onRoute(x, z) || clear.some(");
 patch('src/main.js',"forest.populate((x, z) => onRoute(x, z) || clear.some(",
  "forest.populate((x, z) => eastbrookClearing(x,z) || onRoute(x, z) || clear.some(");
 patch('src/world/flora/forest.js',
