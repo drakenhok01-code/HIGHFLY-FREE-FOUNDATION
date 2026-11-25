@@ -18,7 +18,7 @@ test('P541: manual-only World Forge P539 editor; no auto Arvelia nor experimenta
  assert(editor.includes("['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']"));
  assert(editor.includes("!o.highflyTown&&!o.highflyMaster"));
  assert(runtime.includes("!o.highflyTown&&!o.highflyMaster"));
- assert(/WORLD FORGE (?:4\.9|5\.0)/.test(html));
+ assert(/WORLD FORGE (?:4\.9|5\.[01])/.test(html));
  assert(/v=p(?:541|542)/.test(html));
  assert(html.includes('id="pilot-eastbrook" hidden'));
  assert(html.includes('id="preset-village" hidden'));
