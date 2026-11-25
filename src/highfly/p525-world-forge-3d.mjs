@@ -30,8 +30,11 @@ const base=[
  ['kaykit-watermill','Molino de agua','🌊','KayKit FREE',12,12,'watermill'],
  ['kaykit-well','Pozo KayKit','🪣','KayKit FREE',6,6,'well'],
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
-].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat,w,d,model}));
+].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
+// Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 const BY_ID=new Map(base.map(a=>[a.id,a]));
+const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmith',inn:'kaykit-tavern',house:'kaykit-home-a',timber:'kaykit-home-b',market:'kaykit-market',mill:'kaykit-windmill',ranger:'kaykit-archeryrange'});
+// Only documented real CC0 model equivalents: granary, warehouse and fishery have no 1:1 CC0 building.
 // Protect the actual spawn and staircase, not entire 42m-radius free land parcels.
 const safety=[[-519,-70,8],[-179,-459,7]];
 const logData={phase:'inicio',lines:[],errors:[]};
@@ -60,7 +63,7 @@ const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
 const gltfLoader=new GLTFLoader(),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='KayKit FREE',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category='Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -423,7 +426,7 @@ function previewGhost(ev){
 function selectAsset(id){chosen=id;selected=null;if(gizmo)gizmo.detach();switchMode('place');drawCatalog();showProps();status('Elegiste '+BY_ID.get(id).label+' · Tocá terreno libre para colocarlo.');createGhost(id);}
 function drawCatalog(){
  $('catalog').replaceChildren();const find=$('search').value.toLowerCase();
- for(const a of base.filter(a=>a.cat===category&&a.label.toLowerCase().includes(find))){
+ for(const a of base.filter(a=>(category==='Edificios'?!!a.model:a.cat===category)&&a.cat!=='Bocetos antiguos'&&a.label.toLowerCase().includes(find))){
   const el=document.createElement('button');el.className='asset'+(chosen===a.id?' selected':'');
   if(a.model){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;img.src=url('kaykit-free/thumbs/building_'+a.model+'_red.png');
@@ -434,11 +437,12 @@ function drawCatalog(){
  }
 }
 function setCategory(a){category=a;for(const b of $('cats').children)b.classList.toggle('on',b.dataset.cat===a);drawCatalog();}
-function drawCats(){for(const cat of [...new Set(base.map(x=>x.cat))]){
+function drawCats(){for(const cat of ['Edificios','KayKit FREE','Pisos','Decoración','Naturaleza','NPC']){
  const el=document.createElement('button');el.dataset.cat=cat;el.textContent=cat;el.onclick=()=>setCategory(cat);$('cats').append(el);
 }setCategory(category);}
 function addAt(x,z){
  if(!chosen||!map)return false;
+ if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:0,scale:1,y:0};
  if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
