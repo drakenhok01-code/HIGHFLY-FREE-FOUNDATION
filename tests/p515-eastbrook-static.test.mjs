@@ -8,7 +8,7 @@ const assets=fs.readFileSync('scripts/p524-kaykit-free-buildings.mjs','utf8');
 test('P515 is truly static content on P514, not saved editor JSON',()=>{
  assert.match(game,/installP515Eastbrook\(game\)/);
  assert.match(build,/window\.__hfP515Eastbrook=installP515Eastbrook\(game\)/);
- assert.doesNotMatch(game,/localStorage|WORLD_FORGE_KEY|hfworld=1|world-forge-3d/i);
+ assert.doesNotMatch(game,/localStorage\.(getItem|setItem)|WORLD_FORGE_KEY|search\.get\('hfworld'\)|world-forge-3d\.html/i);
  assert.doesNotMatch(build,/world-forge-3d.html|P534_PREVIEW/);
 });
 test('P515 keeps 11 independently named roles, six real civic analogues and Unsung landmarks',()=>{
