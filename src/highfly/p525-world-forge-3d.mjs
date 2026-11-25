@@ -1108,6 +1108,7 @@ if(new URLSearchParams(location.search).has('hfqa')){
   select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
   copy:copySelected,paste:pasteCopied,
   clipboard(){return objectClipboard?{...objectClipboard}:null;},
+  placement(){return {mode,chosen,pendingYaw,pendingScale};},
   ready(id){return prefabReady.has(id);},
   inspect(id){
    const root=viewCache.get(id);if(!root)return null;
