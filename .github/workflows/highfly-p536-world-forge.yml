@@ -1,0 +1,112 @@
+name: "HIGHFLY P536 - WORLD FORGE 4.4 native materials and modular roads"
+on:
+  push:
+    branches: [p536-world-forge-modular-native-preview-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p536-native-editor
+  cancel-in-progress: true
+jobs:
+  build-and-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare frozen image tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Strict source, licensing and game regression checks
+        run: |
+          node --check scripts/f0-build.mjs
+          node --check src/highfly/p533-curved-road-3d.mjs
+          node --check src/highfly/p536-modular-cobble-kit.mjs
+          node --check src/highfly/p536-native-editor-visuals.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --check tests/p536-world-forge-native-visuals.test.mjs
+          node --test tests/p536-world-forge-native-visuals.test.mjs
+          node --test tests/p532-spanish-clipboard-quaternius.test.mjs tests/p531-kaykit-all-free.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Build complete world forge and the playable RPG together on unchanged P533 ancestry
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p536/ npm run build
+          npm run qa:dist
+          for f in index.html highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/kaykit-free/all-manifest.json highfly/unsung-original-prefabs.json highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-overview.json highfly/native-architecture-3d.bin highfly/quaternius-cc0/manifest.json; do
+            test -s "dist/$f" || { echo "MISSING $f"; exit 1; }
+          done
+          grep -q 'WORLD FORGE 4.4' dist/highfly/world-forge-3d.html
+          grep -q 'preview-p536' dist/index.html
+          grep -q 'p536-modular-cobble-kit' .work/unsung/src/highfly/p521-world-forge-runtime.mjs
+          grep -q 'nativeEditorTerrainMaterial' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          grep -q 'nativeEditorStaticDepthWater' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+      - name: Real graphics software browser diagnostic - separate from strict source/build QA
+        continue-on-error: true
+        run: |
+          cp tests/p536-browser-editor.mjs .work/unsung/tools/p536-browser-editor.mjs
+          cd .work/unsung
+          timeout 210s node tools/p536-browser-editor.mjs
+      - name: Upload test screenshots and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p536-native-editor-visual-qa
+          path: |
+            .work/unsung/p536-editor-native-screenshot.png
+            .work/unsung/p536-editor-native-qa.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Keep isolated build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p536-world-forge-44
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retrieve latest approved prior Pages release, without modifying archives
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45639807956
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p515-pages-preserved
+      - name: Append only P536 and ensure all prior files remain byte-identical
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/highfly-pages-preserved"
+          mkdir -p "$ROOT"
+          tar -xf "$RUNNER_TEMP/p515-pages-preserved/artifact.tar" -C "$ROOT"
+          for p in index.html preview-p514/index.html preview-p533/index.html preview-p533/highfly/world-forge-3d.html preview-p515/index.html; do test -s "$ROOT/$p"; done
+          test ! -e "$ROOT/preview-p536"
+          (cd "$ROOT" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/p536-old-files.sha256"
+          mkdir -p "$ROOT/preview-p536"
+          cp -a dist/. "$ROOT/preview-p536/"
+          (cd "$ROOT" && sha256sum -c "$RUNNER_TEMP/p536-old-files.sha256" > /dev/null)
+          test -s "$ROOT/preview-p536/highfly/world-forge-3d.html"
+          touch "$ROOT/.nojekyll"
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build-and-stage
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
