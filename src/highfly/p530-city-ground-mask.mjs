@@ -4,11 +4,32 @@
  * leaves the original procedural terrain/vegetation everywhere else unchanged.
  * No per-frame CPU work. Result uploaded once to both native grass shaders.
  */
+import {isCurvedRoad,roadPathValid,sampleCurvedRoad,roadWidth} from './p533-curved-road-path.mjs';
 export function buildWorldForgeCityMask(objects,bounds,{resolution=1024,worldSize=2048}={}){
  if(!Number.isInteger(resolution)||resolution<8||resolution>2048||worldSize<=0)throw Error('Invalid city mask size');
  const mask=new Uint8Array(resolution*resolution),origin=worldSize/2,step=worldSize/resolution;
  let surfaces=0,painted=0;
  for(const o of objects||[]){
+  if(isCurvedRoad(o)){
+   if(!roadPathValid(o).ok)continue;
+   const radius=roadWidth(o)*.5+.45,steps=sampleCurvedRoad(o.points,Math.max(.5,step*.42));
+   surfaces++;
+   for(const p of steps){
+    const minX=Math.max(0,Math.floor((p.x-radius+origin)/step));
+    const maxX=Math.min(resolution-1,Math.floor((p.x+radius+origin)/step));
+    const minZ=Math.max(0,Math.floor((p.z-radius+origin)/step));
+    const maxZ=Math.min(resolution-1,Math.floor((p.z+radius+origin)/step));
+    for(let iz=minZ;iz<=maxZ;iz++){
+     const z=(iz+.5)*step-origin;
+     for(let ix=minX;ix<=maxX;ix++){
+      const x=(ix+.5)*step-origin;
+      if(Math.hypot(x-p.x,z-p.z)>radius+step*.54)continue;
+      const q=iz*resolution+ix;if(!mask[q])painted++;mask[q]=255;
+     }
+    }
+   }
+   continue;
+  }
   const dims=bounds[o.type];
   if(!dims||!Number.isFinite(o.x)||!Number.isFinite(o.z)||!Number.isFinite(o.scale)||o.scale<=0)continue;
   if(!o.type.startsWith('floor-')&&!o.clearTrees)continue;

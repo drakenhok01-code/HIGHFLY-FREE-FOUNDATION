@@ -16,14 +16,17 @@ import {UNSUNG_FLORA,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
 import {localizePublicAsset} from './p532-spanish-labels.mjs';
 import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
+import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,roadClearance,ROAD_WIDTHS} from './p533-curved-road-path.mjs';
+import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 const $=id=>document.getElementById(id);
+const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -55,7 +58,7 @@ const base=[
 // Extend the 16 legacy red houses in place; all 221 FREE models remain
 // uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
 for(const extra of KAYKIT_FREE_ALL){
- const v=P532_PREVIEW?localizePublicAsset(extra):extra;
+ const v=(P532_PREVIEW||P533_PREVIEW)?localizePublicAsset(extra):extra;
  const prev=base.find(x=>x.id===extra.id);
  if(prev)Object.assign(prev,v);
  else base.push({...v});
@@ -74,6 +77,7 @@ function addPrivateCatalog(models){
 for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
 for(const a of QUATERNIUS_CC0_ALL)base.push({...a});
 for(const a of PUBLIC_URBAN_ASSETS)base.push({...a,publicUrban:true});
+if(P533_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
  // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
@@ -119,7 +123,7 @@ const gltfLoader=new GLTFLoader()
  .setMeshoptDecoder(MeshoptDecoder)
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -177,7 +181,7 @@ async function drawTerrain(){
  const mat=(t)=>new THREE.MeshLambertMaterial({map:t,side:THREE.DoubleSide});
  geo.region=new THREE.Mesh(terrain(16384,256,-.7),mat(textures[0]));geo.core=new THREE.Mesh(terrain(2048,256,-.15),mat(textures[1]));
  // Near tile uses same original samples but finer mesh; UVs refer to full 2048m core, not tile.
- const nearG=terrain(470,170,.18,movedPivot.x,movedPivot.z);
+ const nearG=terrain(470,qualityHigh?270:170,.18,movedPivot.x,movedPivot.z);
  const att=nearG.getAttribute('uv'),pp=nearG.getAttribute('position');
  for(let i=0;i<att.count;i++){att.setXY(i,pp.getX(i)/2048+.5,1-(pp.getZ(i)/2048+.5));}att.needsUpdate=true;
  geo.near=new THREE.Mesh(nearG,mat(textures[1]));scene.add(geo.region,geo.core,geo.near);
@@ -189,7 +193,7 @@ function updateNear(){
  if(Math.hypot(x-nearFocus[0],z-nearFocus[1])<80)return;
  nearFocus=[x,z];
  if(Math.max(Math.abs(x),Math.abs(z))>1050){geo.near.visible=false;return;}geo.near.visible=true;
- const g=terrain(470,170,.22,snap(x,40),snap(z,40)),u=g.getAttribute('uv'),p=g.getAttribute('position');
+ const g=terrain(470,qualityHigh?270:170,.22,snap(x,40),snap(z,40)),u=g.getAttribute('uv'),p=g.getAttribute('position');
  for(let i=0;i<u.count;i++)u.setXY(i,p.getX(i)/2048+.5,1-(p.getZ(i)/2048+.5));
  u.needsUpdate=true;geo.near.geometry.dispose();geo.near.geometry=g;render();
 }
@@ -228,8 +232,8 @@ function originalRender(){
  const lods=[];
  for(let k=0;k<5;k++){
   const model=nativeUnsungFlora('unsung-tree-'+species[k]);
-  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,140),
-   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,140),
+  const nearStem=new THREE.InstancedMesh(model.children[0].geometry,model.children[0].material,DESKTOP_FINE?400:220),
+   nearLeaves=new THREE.InstancedMesh(model.children[1].geometry,model.children[1].material,DESKTOP_FINE?400:220),
    farStem=new THREE.InstancedMesh(trunk,new THREE.MeshLambertMaterial({color:0x665246}),750),
    farLeaves=new THREE.InstancedMesh(k===3?column:crown,
     new THREE.MeshLambertMaterial({color:colors[k],flatShading:true}),750);
@@ -249,18 +253,24 @@ function updateTrees(force=false){
  const x=orbit.target.x,z=orbit.target.z;
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<28)return;
  treeFocus=[x,z];
- const lists=Array.from({length:5},()=>({near:[],far:[]})),rad=285,nearDistance=128;
- const clearedLots=records.filter(o=>o.clearTrees===true&&BY_ID.has(o.type));
+ // Desktop editing should visualize genuine species across the entire town
+ // before switching to geometric far LOD. Lower-cost fallback for mobile.
+ const nearDistance=qualityHigh?405:155,rad=qualityHigh?585:325;
+ const nearLimit=qualityHigh?(DESKTOP_FINE?370:210):145;
+ const lists=Array.from({length:5},()=>({near:[],far:[]}));
+ const clearedLots=records.filter(o=>o.clearTrees===true&&!isCurvedRoad(o)&&BY_ID.has(o.type));
+ const clearedCurves=records.filter(isCurvedRoad).map(o=>({o,samples:sampleCurvedRoad(o.points,1.8)}));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
   for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++)
    for(const t of overview.treeIndex.get(i+','+j)||[]){
     const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad)continue;
+    if(clearedCurves.some(({o,samples})=>roadClearance(t[0],t[1],o,samples)))continue;
     if(clearedLots.some(o=>{
      const dx=t[0]-o.x,dz=t[1]-o.z,a=BY_ID.get(o.type),c=Math.cos(o.yaw),sn=Math.sin(o.yaw);
      return Math.abs(dx*c+dz*sn)<a.w*o.scale*.5+1.8&&
       Math.abs(-dx*sn+dz*c)<a.d*o.scale*.5+1.8;
     }))continue;
-    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?140:750;
+    const kind=treeKinds[t[3]]??4,key=dist<nearDistance?'near':'far',limit=key==='near'?nearLimit:750;
     if(lists[kind][key].length<limit)lists[kind][key].push(t);
    }
  for(let kind=0;kind<5;kind++){
@@ -330,6 +340,12 @@ function archNear(x,z,rad){
 function validPosition(o,id=null){
  if(!map)return {ok:false,why:'Terreno sin cargar'};
  const a=BY_ID.get(o.type);if(!a)return {ok:false,why:'Modelo inexistente'};
+ if(isCurvedRoad(o)){
+  const v=roadPathValid(o);if(!v.ok)return {ok:false,why:v.reason};
+  for(const t of sampleCurvedRoad(o.points,3))
+   if(floorElevation(t.x,t.z)<-.13)return {ok:false,why:'El camino llega al agua. Usá un puente'};
+  return {ok:true,y:floorElevation(o.x,o.z),slope:0};
+ }
  const w=a.w*o.scale,d=a.d*o.scale,c=Math.cos(o.yaw),s=Math.sin(o.yaw),samples=[];
  for(const [dx,dz] of [[0,0],[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
   const x=o.x+dx*c-dz*s,z=o.z+dx*s+dz*c;
@@ -364,7 +380,24 @@ function recordSnapshot(){history.push(JSON.stringify(records));if(history.lengt
 function restore(){
  try{
   // Preserve user's previously placed world when first trying this experimental editor.
-  const old=localStorage.getItem(STORE);
+  let old=localStorage.getItem(STORE);
+  // Migrate the user's existing P532/P531 work as a COPY into the new isolated
+  // preview. Never overwrite either earlier version, and never seed CI tests.
+  if(!old&&P533_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')){
+   for(const previousKey of ['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']){
+    const previous=localStorage.getItem(previousKey);
+    if(!previous)continue;
+    try{
+     const d=JSON.parse(previous);
+     if(d?.world==='unsung-vale'&&d?.schema===1&&Array.isArray(d.objects)&&
+       d.objects.length<=2500&&d.objects.every(o=>BY_ID.has(o.type)&&
+        [o.x,o.z,o.yaw,o.scale].every(finite))){
+      old=previous;localStorage.setItem(STORE,previous);
+      log('Plano anterior conservado','copiado de '+previousKey+' a P533, sin borrar el original');break;
+     }
+    }catch{}
+   }
+  }
   if(old&&!localStorage.getItem(BACKUP))localStorage.setItem(BACKUP,old);
   const d=JSON.parse(old||'null');
   if(d?.schema===1&&Array.isArray(d.objects))records=d.objects.filter(o=>o&&BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite));
@@ -450,6 +483,9 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
+ if(isCurvedRoad(o))return makeCurvedCobblestone3D(o,floorElevation,{
+  anchorX:o.x,anchorY:floorElevation(o.x,o.z)+.035,anchorZ:o.z
+ });
  const scenic=makePublicUrbanPrefab(a.id,o.scale)||makeVillageDecor(a.id,o.scale);
  if(scenic)return scenic;
  const group=new THREE.Group();
@@ -493,12 +529,15 @@ async function buildPlaced(o){
    else if((a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
- }else root.add(makeModel(a,o));
+ }else{
+  root.add(makeModel(a,o));
+  if(isCurvedRoad(o))root.userData.roadGeometry=true;
+ }
  return root;
 }
 async function rebuildPlaced(){
  const token={};rebuildPlaced.token=token;
- for(const child of [...groups.placed.children])groups.placed.remove(child);
+ for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);}
  viewCache.clear();selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
   let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
@@ -568,6 +607,7 @@ function previewGhost(ev){
  render();
 }
 function selectAsset(id){
+ if(id===CURVED_ROAD_TYPE){startRoadDraft();return;}
  const a=BY_ID.get(id);
  if(!a)return;
  chosen=id;selected=null;pendingYaw=0;pendingScale=1;if(gizmo)gizmo.detach();
@@ -602,7 +642,87 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null,objectClipboard=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW,cameraPan=null,objectClipboard=null;
+let roadNodes=[],roadHover=null,roadPreview=null,roadEditId=null,roadDragIndex=-1,roadPreviewStamp=0;
+function disposeRoadPreview(){
+ if(roadPreview){scene.remove(roadPreview);disposeCurvedRoadGeometry(roadPreview);roadPreview=null;}
+}
+function roadUI(){
+ $('curved-road').classList.toggle('on',mode==='road');
+ $('road-finish').hidden=mode!=='road';
+ $('road-cancel').hidden=mode!=='road';
+ $('road-edit').hidden=!selected||!isCurvedRoad(records.find(o=>o.id===selected));
+}
+function roadCandidate(nodes){
+ const pts=nodes.map(p=>[snap(p[0],.5),snap(p[1],.5)]);
+ const first=pts[0];
+ return {id:roadEditId||'hf-road-'+Date.now().toString(36),type:CURVED_ROAD_TYPE,
+  x:first[0],z:first[1],y:floorElevation(first[0],first[1]),yaw:0,scale:1,
+  width:ROAD_WIDTHS[brushCells-1],points:pts,clearTrees:true};
+}
+function drawRoadPreview(force=false){
+ if(mode!=='road')return;
+ if(!force&&Date.now()-roadPreviewStamp<58)return;
+ roadPreviewStamp=Date.now();
+ disposeRoadPreview();
+ const pts=roadHover&&roadNodes.length&&Math.hypot(
+  roadNodes.at(-1)[0]-roadHover[0],roadNodes.at(-1)[1]-roadHover[1])>1
+  ?[...roadNodes,roadHover]:roadNodes;
+ if(pts.length<2)return;
+ const rd=roadCandidate(pts);if(!roadPathValid(rd).ok)return;
+ try{roadPreview=makeCurvedCobblestone3D(rd,floorElevation);roadPreview.name='HIGHFLY_ROAD_UNSAVED_PREVIEW';scene.add(roadPreview);}
+ catch(e){log('Vista previa de curva',e.message,false);}
+ render();
+}
+function startRoadDraft(editId=null){
+ if(!P533_PREVIEW)return;
+ disposeRoadPreview();
+ if(ghost)ghost.visible=false;
+ selected=null;chosen=CURVED_ROAD_TYPE;roadHover=null;
+ roadEditId=editId;
+ const existing=records.find(o=>o.id===editId);
+ roadNodes=existing?.points?.map(p=>[...p])||[];
+ if(existing?.width){
+  const i=ROAD_WIDTHS.indexOf(existing.width);
+  if(i>=0)brushCells=i+1;
+ }
+ switchMode('road');drawCatalog();showProps();roadUI();drawRoadPreview(true);
+ status(editId?
+  '✏️ Edición: arrastrá un nodo del camino para moverlo, agregá otros con clic y pulsá ✅ Terminar.':
+  '🛤️ Camino curvo: clic de inicio, clic en cada curva y DOBLE CLIC o Enter para terminar. Bordes incluidos.');
+}
+function finishRoadDraft(){
+ if(mode!=='road')return false;
+ const pts=roadNodes.filter((p,i,arr)=>i===0||Math.hypot(p[0]-arr[i-1][0],p[1]-arr[i-1][1])>.65);
+ if(pts.length<2){status('Se necesitan dos puntos separados para crear un camino.');return false;}
+ const o=roadCandidate(pts),v=validPosition(o,roadEditId);
+ if(!v.ok){status('Camino no colocado: '+v.why);return false;}
+ if(records.length>=2500&&!roadEditId){status('Límite de piezas alcanzado');return false;}
+ recordSnapshot();
+ const old=records.find(x=>x.id===roadEditId);
+ if(old)Object.assign(old,o,{id:old.id});
+ else records.push(o);
+ disposeRoadPreview();roadNodes=[];roadHover=null;roadEditId=null;roadDragIndex=-1;
+ chosen=null;selected=null;switchMode('orbit');roadUI();
+ save(true);rebuildPlaced();
+ status('✓ CAMINO CURVO con adoquines y bordillos guardado ('+pts.length+
+  ' nodos · '+o.width+' m). Ya podés continuar con otra curva desde el extremo.');
+ return true;
+}
+function cancelRoadDraft(){
+ disposeRoadPreview();roadNodes=[];roadHover=null;roadEditId=null;roadDragIndex=-1;
+ chosen=null;switchMode('orbit');roadUI();status('Diseño de camino cancelado, no se cambió el mapa.');
+}
+function addRoadNode(hit){
+ if(!hit||mode!=='road')return;
+ const point=[snap(hit.x,.5),snap(hit.z,.5)];
+ if(roadNodes.length>=24){status('Límite de 24 nodos; finalizá el tramo.');return;}
+ if(roadNodes.some(p=>Math.hypot(p[0]-point[0],p[1]-point[1])<.65)){return;}
+ roadNodes.push(point);roadHover=null;drawRoadPreview(true);
+ status('🛤️ '+roadNodes.length+' nodos · ancho '+ROAD_WIDTHS[brushCells-1]+
+  ' m · clic para curva, doble clic o Enter para terminar; Ctrl+Z quita el último nodo.');
+}
+
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -654,7 +774,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!P532_PREVIEW||x.id!=='Edificios'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW)||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -711,7 +831,10 @@ function clickPlaced(ev){
  return null;
 }
 function selectObject(id){
- chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();switchMode('move');
+ const isRoad=isCurvedRoad(records.find(o=>o.id===id));
+ chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();
+ switchMode(isRoad?'select':'move');roadUI();
+ if(isRoad)status('Camino curvo seleccionado. Pulsá ✏️ Editar curva para mover o añadir nodos.');
 }
 function transform(action){
  const o=records.find(v=>v.id===selected);
@@ -868,13 +991,22 @@ function bindUI(){
   renderer.setPixelRatio(Math.min(qualityHigh?2:1.15,window.devicePixelRatio||1));
   $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
   $('quality-toggle').classList.toggle('on',qualityHigh);
-  fit();render();
+  fit();updateTrees(true);render();
   status('Calidad '+(qualityHigh?'ALTA (mallas reales Unsung y GLB a resolución de PC)':'NORMAL (menos píxeles de dibujo)')+
     '. No cambia las texturas, el mapa ni el guardado.');
  };
  $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
  $('quality-toggle').classList.toggle('on',qualityHigh);
- $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
+ $('brush-width').onclick=()=>{
+  brushCells=brushCells%3+1;
+  $('brush-width').textContent='🧱 Ancho '+ROAD_WIDTHS[brushCells-1]+' m';
+  if(mode==='road')drawRoadPreview(true);
+  status('Ancho '+ROAD_WIDTHS[brushCells-1]+' metros. Los caminos curvos conservan ambos bordillos de piedra.');
+ };
+ $('curved-road').onclick=()=>startRoadDraft();
+ $('road-edit').onclick=()=>{if(selected)startRoadDraft(selected);};
+ $('road-finish').onclick=finishRoadDraft;
+ $('road-cancel').onclick=cancelRoadDraft;
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
  $('home').onclick=()=>focus(-512,-70);
@@ -901,6 +1033,14 @@ function bindUI(){
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
  window.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if(mode==='road'){
+   if(e.key==='Enter'){e.preventDefault();finishRoadDraft();return;}
+   if(e.key==='Escape'){e.preventDefault();cancelRoadDraft();return;}
+   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
+    e.preventDefault();roadNodes.pop();drawRoadPreview(true);
+    status('↶ Último nodo eliminado. Quedan '+roadNodes.length);return;
+   }
+  }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();copySelected();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteCopied();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
@@ -908,7 +1048,7 @@ function bindUI(){
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
    const k=e.key.toLowerCase();
    if(['q','r'].includes(k)&&mode==='place'){e.preventDefault();transform(k==='q'?'rot-left':'rot-right');return;}
-   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Pincel '+brushCells*4+' m';status('Pincel '+brushCells*4+' metros.');return;}
+   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Ancho '+ROAD_WIDTHS[brushCells-1]+' m';if(mode==='road')drawRoadPreview(true);status('Ancho '+ROAD_WIDTHS[brushCells-1]+' metros.');return;}
    if(k==='v'){$('select').click();return;}
    if(k==='c'){$('orbit').click();return;}
    if(k==='t'){$('top').click();return;}
@@ -920,6 +1060,13 @@ function bindUI(){
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ canvas.addEventListener('dblclick',e=>{
+  if(mode==='road'){e.preventDefault();const h=hitTerrain(e);if(h&&roadNodes.length<24){
+   const point=[snap(h.x,.5),snap(h.z,.5)];
+   if(!roadNodes.length||Math.hypot(roadNodes.at(-1)[0]-point[0],roadNodes.at(-1)[1]-point[1])>.85)
+    roadNodes.push(point);
+  }finishRoadDraft();}
+ });
  // For desk editing the cursor must be able to pan/zoom while a building
  // brush is selected. We don't enable competing left-drag OrbitControls.
  canvas.addEventListener('contextmenu',e=>e.preventDefault());
@@ -933,6 +1080,15 @@ function bindUI(){
  // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
  // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
+  if(mode==='road'&&e.button===0){
+   e.preventDefault();const hit=hitTerrain(e);if(!hit)return;
+   if(roadEditId){
+    const closest=roadNodes.map((p,i)=>({i,d:Math.hypot(hit.x-p[0],hit.z-p[1])})).sort((a,b)=>a.d-b.d)[0];
+    if(closest?.d<3){roadDragIndex=closest.i;canvas.setPointerCapture?.(e.pointerId);activePointer=e.pointerId;return;}
+   }
+   if(e.detail<2)addRoadNode(hit);
+   return;
+  }
   if(e.button===1||e.button===2){
    e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
    canvas.setPointerCapture?.(e.pointerId);return;
@@ -962,6 +1118,16 @@ function bindUI(){
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
+  if(mode==='road'){
+   const h=hitTerrain(e);
+   if(h){
+    if(roadDragIndex>=0&&activePointer===e.pointerId){
+     roadNodes[roadDragIndex]=[snap(h.x,.5),snap(h.z,.5)];drawRoadPreview(true);
+    }else{roadHover=[h.x,h.z];drawRoadPreview();}
+    $('coords').textContent='X '+h.x.toFixed(1)+' · Z '+h.z.toFixed(1)+' · ancho '+ROAD_WIDTHS[brushCells-1]+' m';
+   }
+   if(roadDragIndex>=0)return;
+  }
   if(cameraPan&&cameraPan.pointerId===e.pointerId){
    const dx=e.clientX-cameraPan.x,dy=e.clientY-cameraPan.y;
    cameraPan.x=e.clientX;cameraPan.y=e.clientY;
@@ -992,6 +1158,10 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(mode==='road'&&roadDragIndex>=0&&activePointer===e.pointerId){
+   roadDragIndex=-1;activePointer=null;canvas.releasePointerCapture?.(e.pointerId);drawRoadPreview(true);return;
+  }
+  if(mode==='road'&&e.button===0)return;
   if(cameraPan&&cameraPan.pointerId===e.pointerId){
    cameraPan=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
    return;
@@ -1033,6 +1203,9 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(mode==='road'&&roadDragIndex>=0){
+   roadDragIndex=-1;activePointer=null;drawRoadPreview(true);return;
+  }
   if(cameraPan&&cameraPan.pointerId===e.pointerId)cameraPan=null;
   if(movingExisting&&activePointer===e.pointerId){
    const root=viewCache.get(movingExisting.id),old=movingExisting.old;
@@ -1096,7 +1269,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 4.2 · P5.3.2 · 221 KayKit CC0 + 42 Quaternius CC0 + 18 originales Unsung + cuatro piezas HIGHFLY. Ctrl+C y Ctrl+V para copiar y pegar.');
+  status('✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
@@ -1113,6 +1286,9 @@ if(new URLSearchParams(location.search).has('hfqa')){
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
   objects(){return records.map(x=>({...x}));},
+  roadStart:startRoadDraft,roadAdd:(x,z)=>addRoadNode({x,z}),
+  roadFinish:finishRoadDraft,roadCancel:cancelRoadDraft,
+  roadDraft(){return {mode,nodes:roadNodes.map(a=>[...a]),editing:roadEditId};},
   select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
   copy:copySelected,paste:pasteCopied,
   clipboard(){return objectClipboard?{...objectClipboard}:null;},
