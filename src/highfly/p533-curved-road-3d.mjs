@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import {sampleCurvedRoad,roadWidth,roadPathValid} from './p533-curved-road-path.mjs';
 let cache=null;
-function stones(){
+export function cobbleMaterials(){
  if(cache)return cache;
  const c=document.createElement('canvas');c.width=c.height=512;
  const g=c.getContext('2d');
@@ -64,7 +64,7 @@ export function makeCurvedCobblestone3D(road,heightAt,options={}){
  if(typeof heightAt!=='function')throw Error('Missing exact Unsung terrain sampler');
  const samples=sampleCurvedRoad(road.points,.72),w=roadWidth(road)*.5;
  const origin={anchorX:options.anchorX??0,anchorY:options.anchorY??0,anchorZ:options.anchorZ??0};
- const mats=stones(),root=new THREE.Group();root.name='HIGHFLY_CURVED_COBBLE_'+road.id;
+ const mats=cobbleMaterials(),root=new THREE.Group();root.name='HIGHFLY_CURVED_COBBLE_'+road.id;
  const bands=[
   [-w+.08,w-.08,.105,mats.paving,'empedrado continuo'],
   [-w-.23,-w+.14,.155,mats.rim,'bordillo de piedra izquierdo'],
