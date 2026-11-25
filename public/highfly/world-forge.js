@@ -81,6 +81,17 @@ const CATALOG=[
  {id:'npc-guard',label:'NPC guardia',icon:'🛡️',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-artisan',label:'NPC artesano',icon:'👨‍🏭',cat:'NPC',w:1,d:1,h:1.8}
 ];
+// Local-only KayKit SOURCE metadata. Never request paid model bytes from the server.
+try{
+ const d=JSON.parse(localStorage.getItem('hf-source-kaykit-catalog-v1')||'null');
+ if(d?.schema===1&&Array.isArray(d.assets)&&d.assets.length<=450){
+  for(const x of d.assets)if(/^source-[a-z0-9-]{4,104}$/.test(x.id)&&
+     Number.isFinite(x.width)&&Number.isFinite(x.depth)){
+   CATALOG.push({id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
+    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,privateModel:true});
+  }
+ }
+}catch(err){console.warn('KayKit SOURCE local metadata not available',err);}
 const BY_ID=new Map(CATALOG.map(x=>[x.id,x]));
 const ZONES=[
  {x:-519,z:-70,r:8,name:'Punto de aparición (protegido)'},
