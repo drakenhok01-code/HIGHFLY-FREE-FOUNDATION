@@ -14,9 +14,17 @@ try{
  if(!available)throw Error('Preview unavailable: '+logs.slice(-1300));
  browser=await puppeteer.launch({executablePath:chrome,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-gpu-sandbox']});
  const page=await browser.newPage();await page.setViewport({width:1260,height:800,deviceScaleFactor:1});
- const errors=[];
- page.on('pageerror',e=>errors.push(String(e).slice(0,500)));
- page.on('console',m=>{if(m.type()==='error')errors.push(m.text().slice(0,350));});
+ const errors=[],missingResources=[];
+ page.on('pageerror',e=>errors.push('Browser JS: '+String(e).slice(0,500)));
+ // The generic Chromium console message 'Failed to load resource 404' does
+ // not identify the resource. Track the actual URL and status instead.
+ // Missing favicons are not failures of the 3D town or playable RPG.
+ page.on('response',r=>{if(r.status()<400)return;
+  const path=new URL(r.url()).pathname;
+  if(/\\/favicon\\.ico$/i.test(path))return;
+  missingResources.push({status:r.status(),url:r.url()});
+ });
+ page.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource: the server responded with a status of 404/i.test(m.text()))errors.push(m.text().slice(0,350));});
  await page.goto(base+'highfly/world-forge-3d.html?hfqa=1',{waitUntil:'domcontentloaded',timeout:45000});
  await page.waitForFunction(()=>['listo','fallo'].includes(window.__highfly3DEditorHealth?.phase),{timeout:200000,polling:500});
  const status=await page.evaluate(()=>{
@@ -29,9 +37,9 @@ try{
       objects:plan?.objects?.map(x=>({id:x.id,type:x.type,x:x.x,z:x.z,role:x.highflyRole,npc:x.highflyNpc}))},
     button:!!document.getElementById('pilot-eastbrook')};
  });
- fs.writeFileSync('p538-eastbrook-qa.json',JSON.stringify({status,errors},null,2));
- console.log('[P538 EASTBROOK PREVIEW]',JSON.stringify({status,errors}).slice(0,7000));
- if(status.phase!=='listo'||status.errors?.length||errors.length||!status.button)throw Error('P538 source scene or JS failed');
+ fs.writeFileSync('p538-eastbrook-qa.json',JSON.stringify({status,errors,missingResources},null,2));
+ console.log('[P538 EASTBROOK PREVIEW]',JSON.stringify({status,errors,missingResources}).slice(0,7000));
+ if(status.phase!=='listo'||status.errors?.length||errors.length||missingResources.length||!status.button)throw Error('P538 source scene or JS failed');
  if(!status.plan?.complete)throw Error('Eastbrook LAND constrained placement not complete: '+JSON.stringify(status.plan));
  if(status.plan.objects.some(x=>/quay|dock|muelle|harbor|port/i.test(x.role||x.type)))throw Error('Harbor resource in land-only layout');
  page.once('dialog',dialog=>dialog.accept());
