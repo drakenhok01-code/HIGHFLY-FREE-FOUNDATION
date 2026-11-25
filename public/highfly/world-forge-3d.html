@@ -52,7 +52,7 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 </style>
 </head><body>
 <div id="app">
-<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.2 · P5.3.2 · CC0</small></div><div id="head-actions">
+<header><div class="brand">✦ HIGHFLY<small>WORLD FORGE 4.3 · P5.3.2+P5.3.3 · CC0</small></div><div id="head-actions">
 <button id="map2d">🗺️ Vista 2D</button><button id="undo">↶</button><button id="redo">↷</button>
 <button id="preset-village" title="Distribución automática experimental, no replica la referencia aprobada">🏡 Arvelia · borrador</button><button id="import-source" hidden style="display:none" title="Deshabilitado: laboratorio solo CC0/MIT público">📦 SOURCE (no se usa en P5.3.2)</button><button id="diag-button">🩺 Diagnóstico</button><button id="save">💾 Guardar</button><button id="export">↓ JSON</button><button id="import">↑ Importar</button>
 <button id="play">▶ Ver en RPG</button>
@@ -63,24 +63,27 @@ aside{flex:none;width:310px;background:#18152b;border-right:1px solid #584472;di
 <input id="search" placeholder="🔎 Buscar modelos, oficios, árboles, arquitectura…" aria-label="Buscar objetos"/>
 <div id="catalog-meta" aria-live="polite">Cargando catálogo…</div>
 <div id="catalog"></div><button id="catalog-more" hidden>Mostrar otros 36 objetos</button>
-<div id="props"><strong>WORLD FORGE 4.2</strong><small>Elegí un prefab auténtico y tocá el mapa. Los edificios se anclan en explanadas reales; los pisos se pintan arrastrando. El terreno original de Unsung queda intacto.</small>
-<div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="copy-object" title="Copiar objeto seleccionado (Ctrl+C)">⧉ Copiar</button><button id="paste-object" title="Pegar modelo con el mouse (Ctrl+V)">📋 Pegar</button><button id="duplicate" title="Duplicar al costado (Ctrl+D)">↗ Duplicar</button><button id="remove">🗑 Borrar</button></div>
+<div id="props"><strong>WORLD FORGE 4.3</strong><small>Elegí un prefab auténtico y tocá el mapa. Los edificios se anclan en explanadas reales; los pisos se pintan arrastrando. El terreno original de Unsung queda intacto.</small>
+<div id="prop-actions"><button id="rot-left">↺ 15°</button><button id="rot-right">↻ 15°</button><button id="size-down">− Tamaño</button><button id="size-up">+ Tamaño</button><button id="copy-object" title="Copiar objeto seleccionado (Ctrl+C)">⧉ Copiar</button><button id="paste-object" title="Pegar modelo con el mouse (Ctrl+V)">📋 Pegar</button><button id="road-edit" hidden title="Editar y mover los puntos del camino seleccionado">✏️ Editar curva</button><button id="duplicate" title="Duplicar al costado (Ctrl+D)">↗ Duplicar</button><button id="remove">🗑 Borrar</button></div>
 </div><button id="upgrade-legacy" hidden style="margin:6px 8px;border:1px solid #dbb777;color:#ffe4b4;white-space:normal">✨ Reemplazar bocetos antiguos por edificios KayKit</button></aside>
 <section id="canvas-holder">
 <div class="toolbar">
 <button id="orbit" class="on">✋ Cámara</button>
 <button id="select">▣ Selección</button>
 <button id="move">↔ Mover</button><button id="rotate">⟳ Girar</button><button id="scale">◩ Escala</button>
-<button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button><button id="quality-toggle" title="Renderizado a resolución alta en PC; modo normal para ahorrar GPU">✨ Calidad ALTA</button><button id="brush-width" title="Ancho del pincel de pavimento">🧱 Pincel 4 m</button>
+<button id="iso">◈ Isométrica</button><button id="top">▦ Superior</button>
+<button id="curved-road" title="Dibujar sendero de adoquines con curvas suaves y dos bordes de piedra">🛤️ Camino curvo</button>
+<button id="road-finish" hidden title="Cerrar y guardar un camino curvo (Enter)">✅ Terminar curva</button>
+<button id="road-cancel" hidden title="Cancelar este trazado (Esc)">✖ Cancelar curva</button><button id="quality-toggle" title="Renderizado a resolución alta en PC; modo normal para ahorrar GPU">✨ Calidad ALTA</button><button id="brush-width" title="Ancho del pincel y de los caminos curvos (4, 8 y 12 metros)">🧱 Ancho 4 m</button>
 <button id="repeat-place" class="on" title="Colocar varias copias seguidas del mismo edificio como Age of Empires">↻ Repetir: SÍ</button>
 <button id="home">⌖ Inicio</button><button id="trees" class="on">🌳 Árboles</button>
 <button id="original" class="on">🏛️ Original</button><button id="water" class="on">🌊 Agua</button>
 </div>
 <div id="top-info"><div id="coords">X — / Z —</div><div id="metrics">3D editor · mapa auténtico</div></div>
 <div id="status">Preparando terreno 3D original…</div>
-<div id="tips">PC: clic para colocar · botón derecho = mover cámara · rueda = zoom · Q/R girar · Ctrl+C copiar · Ctrl+V pegar · Ctrl+D duplicar · Ctrl+S guardar · Supr borrar · pinceles 1/2/3</div>
+<div id="tips">PC: 🛤️ Curva = clic en cada nodo y Enter/doble clic para finalizar · 1/2/3 cambia ancho · selecc. camino y ✏️ Editar curva · Ctrl+C/V edificios · botón derecho mueve cámara · rueda zoom · Ctrl+S guardar</div>
 <div id="diagnostics" hidden><b>🩺 WORLD FORGE 3D — ESTADO</b><pre id="log"></pre><button id="copy-diagnostics">Copiar informe</button><button id="close-diagnostics">Cerrar</button></div>
 </section></main><input type="file" id="file" accept=".json,application/json"/><input type="file" id="source-file" accept=".zip,application/zip"/>
 </div>
-<script type="module" src="./world-forge-3d.js?v=p532"></script>
+<script type="module" src="./world-forge-3d.js?v=p533"></script>
 </body></html>
