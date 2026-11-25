@@ -1,0 +1,92 @@
+name: "HIGHFLY P515 · Native Eastbrook on clean P514 RPG (NO World Forge)"
+on:
+  push:
+    branches: [p515-eastbrook-native-rpg-from-p514-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: highfly-p515-native-eastbrook-regression
+  cancel-in-progress: true
+jobs:
+  qa-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned image tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Confirm pure pre-Forge P514 base, native town + approved assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/f0-build.mjs
+          node --check src/highfly/p515-eastbrook-layout.mjs
+          node --check src/highfly/p515-eastbrook-native.mjs
+          node --check scripts/p515-kaykit-free-native.mjs
+          node --check tests/p515-browser-native-rpg.mjs
+          node --test tests/p515-eastbrook-native.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+          grep -q "installNativeEastbrook(game,{cover})" scripts/f0-build.mjs
+          ! grep -q "world-forge-runtime\|world-forge-3d.mjs" scripts/f0-build.mjs
+          ! test -e src/highfly/p521-world-forge-runtime.mjs
+          ! test -e src/highfly/p525-world-forge-3d.mjs
+          echo "[P515] Verified P514-only source and no Forge dependence."
+      - name: Build actual original Unsung RPG with ALWAYS-ON 11 KayKit and native guild
+        shell: bash
+        run: |
+          set -euo pipefail
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p515-eastbrook/ npm run build
+          npm run qa:dist
+          test -s dist/index.html
+          grep -q 'preview-p515-eastbrook' dist/index.html
+          test -s dist/highfly/kaykit-free/manifest.json
+          test -s dist/highfly/kaykit-free/building_blacksmith_red.gltf
+          test -s dist/highfly/kaykit-free/building_church_red.gltf
+          test -s dist/highfly/kaykit-free/building_tavern_red.gltf
+          test -s dist/highfly/kaykit-free/building_home_A_red.gltf
+          test -s dist/highfly/kaykit-free/building_home_B_red.gltf
+          test -s dist/highfly/kaykit-free/building_market_red.gltf
+          test -s dist/highfly/kaykit-free/hexagons_medieval.png
+          test -s dist/highfly/kaykit-free/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0.txt
+          test ! -e dist/highfly/world-forge-3d.html
+          test ! -e dist/highfly/world-forge.html
+          test ! -e dist/highfly/world-forge.js
+          grep -q 'HF_EASTBROOK' .work/unsung/src/highfly/p515-eastbrook-native.mjs
+          grep -q 'uHFEastbrook' .work/unsung/src/world/flora/grass.js
+          grep -q 'eastbrookClearing' .work/unsung/src/main.js
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('dist/highfly/kaykit-free/manifest.json'));if(m.models.length!==16||m.license!=='CC0-1.0'||m.commit!=='84fa4e91af6a88989be7c99e0891cede11f2ca38')throw Error('Unapproved KayKit model'); console.log('[P515 CC0] 16 original buildings, 9 placed + 2 native Unsung');"
+          cp tests/p515-browser-native-rpg.mjs .work/unsung/tools/p515-browser-native-rpg.mjs
+      - name: Browser verification in genuine playable Unsung scene (not editor)
+        env:
+          PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
+        run: |
+          set -euo pipefail
+          cd .work/unsung
+          npm install --no-save --no-package-lock playwright@1.57.0 --no-audit --no-fund
+          ./node_modules/.bin/playwright install chromium --with-deps
+          node tools/p515-browser-native-rpg.mjs
+      - name: Upload native 3D browser diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p515-eastbrook-browser
+          path: |
+            .work/unsung/qa-p515-eastbrook-native.png
+            .work/unsung/qa-p515-eastbrook.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload ready-to-publish clean P514+Eastbrook RPG
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p515-clean-native-eastbrook-game
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
