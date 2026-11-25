@@ -622,6 +622,86 @@ const CATALOG_TABS=[
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
 let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW,cameraPan=null,objectClipboard=null;
+let roadNodes=[],roadHover=null,roadPreview=null,roadEditId=null,roadDragIndex=-1,roadPreviewStamp=0;
+function disposeRoadPreview(){
+ if(roadPreview){scene.remove(roadPreview);disposeCurvedRoadGeometry(roadPreview);roadPreview=null;}
+}
+function roadUI(){
+ $('curved-road').classList.toggle('on',mode==='road');
+ $('road-finish').hidden=mode!=='road';
+ $('road-cancel').hidden=mode!=='road';
+ $('road-edit').hidden=!selected||!isCurvedRoad(records.find(o=>o.id===selected));
+}
+function roadCandidate(nodes){
+ const pts=nodes.map(p=>[snap(p[0],.5),snap(p[1],.5)]);
+ const first=pts[0];
+ return {id:roadEditId||'hf-road-'+Date.now().toString(36),type:CURVED_ROAD_TYPE,
+  x:first[0],z:first[1],y:floorElevation(first[0],first[1]),yaw:0,scale:1,
+  width:ROAD_WIDTHS[brushCells-1],points:pts,clearTrees:true};
+}
+function drawRoadPreview(force=false){
+ if(mode!=='road')return;
+ if(!force&&Date.now()-roadPreviewStamp<58)return;
+ roadPreviewStamp=Date.now();
+ disposeRoadPreview();
+ const pts=roadHover&&roadNodes.length&&Math.hypot(
+  roadNodes.at(-1)[0]-roadHover[0],roadNodes.at(-1)[1]-roadHover[1])>1
+  ?[...roadNodes,roadHover]:roadNodes;
+ if(pts.length<2)return;
+ const rd=roadCandidate(pts);if(!roadPathValid(rd).ok)return;
+ try{roadPreview=makeCurvedCobblestone3D(rd,floorElevation);roadPreview.name='HIGHFLY_ROAD_UNSAVED_PREVIEW';scene.add(roadPreview);}
+ catch(e){log('Vista previa de curva',e.message,false);}
+ render();
+}
+function startRoadDraft(editId=null){
+ if(!P533_PREVIEW)return;
+ disposeRoadPreview();
+ if(ghost)ghost.visible=false;
+ selected=null;chosen=CURVED_ROAD_TYPE;roadHover=null;
+ roadEditId=editId;
+ const existing=records.find(o=>o.id===editId);
+ roadNodes=existing?.points?.map(p=>[...p])||[];
+ if(existing?.width){
+  const i=ROAD_WIDTHS.indexOf(existing.width);
+  if(i>=0)brushCells=i+1;
+ }
+ switchMode('road');drawCatalog();showProps();roadUI();drawRoadPreview(true);
+ status(editId?
+  '✏️ Edición: arrastrá un nodo del camino para moverlo, agregá otros con clic y pulsá ✅ Terminar.':
+  '🛤️ Camino curvo: clic de inicio, clic en cada curva y DOBLE CLIC o Enter para terminar. Bordes incluidos.');
+}
+function finishRoadDraft(){
+ if(mode!=='road')return false;
+ const pts=roadNodes.filter((p,i,arr)=>i===0||Math.hypot(p[0]-arr[i-1][0],p[1]-arr[i-1][1])>.65);
+ if(pts.length<2){status('Se necesitan dos puntos separados para crear un camino.');return false;}
+ const o=roadCandidate(pts),v=validPosition(o,roadEditId);
+ if(!v.ok){status('Camino no colocado: '+v.why);return false;}
+ if(records.length>=2500&&!roadEditId){status('Límite de piezas alcanzado');return false;}
+ recordSnapshot();
+ const old=records.find(x=>x.id===roadEditId);
+ if(old)Object.assign(old,o,{id:old.id});
+ else records.push(o);
+ disposeRoadPreview();roadNodes=[];roadHover=null;roadEditId=null;roadDragIndex=-1;
+ chosen=null;selected=null;switchMode('orbit');roadUI();
+ save(true);rebuildPlaced();
+ status('✓ CAMINO CURVO con adoquines y bordillos guardado ('+pts.length+
+  ' nodos · '+o.width+' m). Ya podés continuar con otra curva desde el extremo.');
+ return true;
+}
+function cancelRoadDraft(){
+ disposeRoadPreview();roadNodes=[];roadHover=null;roadEditId=null;roadDragIndex=-1;
+ chosen=null;switchMode('orbit');roadUI();status('Diseño de camino cancelado, no se cambió el mapa.');
+}
+function addRoadNode(hit){
+ if(!hit||mode!=='road')return;
+ const point=[snap(hit.x,.5),snap(hit.z,.5)];
+ if(roadNodes.length>=24){status('Límite de 24 nodos; finalizá el tramo.');return;}
+ if(roadNodes.some(p=>Math.hypot(p[0]-point[0],p[1]-point[1])<.65)){return;}
+ roadNodes.push(point);roadHover=null;drawRoadPreview(true);
+ status('🛤️ '+roadNodes.length+' nodos · ancho '+ROAD_WIDTHS[brushCells-1]+
+  ' m · clic para curva, doble clic o Enter para terminar; Ctrl+Z quita el último nodo.');
+}
+
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -730,7 +810,10 @@ function clickPlaced(ev){
  return null;
 }
 function selectObject(id){
- chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();switchMode('move');
+ const isRoad=isCurvedRoad(records.find(o=>o.id===id));
+ chosen=null;selected=id;if(ghost)ghost.visible=false;drawCatalog();showProps();
+ switchMode(isRoad?'select':'move');roadUI();
+ if(isRoad)status('Camino curvo seleccionado. Pulsá ✏️ Editar curva para mover o añadir nodos.');
 }
 function transform(action){
  const o=records.find(v=>v.id===selected);
@@ -893,7 +976,16 @@ function bindUI(){
  };
  $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
  $('quality-toggle').classList.toggle('on',qualityHigh);
- $('brush-width').onclick=()=>{brushCells=brushCells%3+1;$('brush-width').textContent='🧱 Pincel '+(brushCells*4)+' m';status('Pincel '+brushCells*4+' m · arrastrá sobre el terreno para pintar piedra o tierra.');};
+ $('brush-width').onclick=()=>{
+  brushCells=brushCells%3+1;
+  $('brush-width').textContent='🧱 Ancho '+ROAD_WIDTHS[brushCells-1]+' m';
+  if(mode==='road')drawRoadPreview(true);
+  status('Ancho '+ROAD_WIDTHS[brushCells-1]+' metros. Los caminos curvos conservan ambos bordillos de piedra.');
+ };
+ $('curved-road').onclick=()=>startRoadDraft();
+ $('road-edit').onclick=()=>{if(selected)startRoadDraft(selected);};
+ $('road-finish').onclick=finishRoadDraft;
+ $('road-cancel').onclick=cancelRoadDraft;
  $('map2d').onclick=()=>{save();localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));location.href=url('world-forge.html');};
  for(const id of ['orbit','select','move','rotate','scale'])$(id).onclick=()=>{if(['move','rotate','scale'].includes(id)&&!selected){status('Seleccioná un elemento antes.');return;}chosen=null;drawCatalog();switchMode(id);showProps();};
  $('home').onclick=()=>focus(-512,-70);
@@ -920,6 +1012,14 @@ function bindUI(){
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
  window.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if(mode==='road'){
+   if(e.key==='Enter'){e.preventDefault();finishRoadDraft();return;}
+   if(e.key==='Escape'){e.preventDefault();cancelRoadDraft();return;}
+   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
+    e.preventDefault();roadNodes.pop();drawRoadPreview(true);
+    status('↶ Último nodo eliminado. Quedan '+roadNodes.length);return;
+   }
+  }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();copySelected();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteCopied();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
@@ -927,7 +1027,7 @@ function bindUI(){
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
    const k=e.key.toLowerCase();
    if(['q','r'].includes(k)&&mode==='place'){e.preventDefault();transform(k==='q'?'rot-left':'rot-right');return;}
-   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Pincel '+brushCells*4+' m';status('Pincel '+brushCells*4+' metros.');return;}
+   if(['1','2','3'].includes(k)){brushCells=Number(k);$('brush-width').textContent='🧱 Ancho '+ROAD_WIDTHS[brushCells-1]+' m';if(mode==='road')drawRoadPreview(true);status('Ancho '+ROAD_WIDTHS[brushCells-1]+' metros.');return;}
    if(k==='v'){$('select').click();return;}
    if(k==='c'){$('orbit').click();return;}
    if(k==='t'){$('top').click();return;}
@@ -939,6 +1039,13 @@ function bindUI(){
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
  const canvas=renderer.domElement;
+ canvas.addEventListener('dblclick',e=>{
+  if(mode==='road'){e.preventDefault();const h=hitTerrain(e);if(h&&roadNodes.length<24){
+   const point=[snap(h.x,.5),snap(h.z,.5)];
+   if(!roadNodes.length||Math.hypot(roadNodes.at(-1)[0]-point[0],roadNodes.at(-1)[1]-point[1])>.85)
+    roadNodes.push(point);
+  }finishRoadDraft();}
+ });
  // For desk editing the cursor must be able to pan/zoom while a building
  // brush is selected. We don't enable competing left-drag OrbitControls.
  canvas.addEventListener('contextmenu',e=>e.preventDefault());
@@ -952,6 +1059,15 @@ function bindUI(){
  // Age/Sims-style interaction: tap/drop a house, drag a continuous floor brush.
  // Pointer capture also works on Android, where PointerEvent.buttons is often 0.
  canvas.addEventListener('pointerdown',e=>{
+  if(mode==='road'&&e.button===0){
+   e.preventDefault();const hit=hitTerrain(e);if(!hit)return;
+   if(roadEditId){
+    const closest=roadNodes.map((p,i)=>({i,d:Math.hypot(hit.x-p[0],hit.z-p[1])})).sort((a,b)=>a.d-b.d)[0];
+    if(closest?.d<3){roadDragIndex=closest.i;canvas.setPointerCapture?.(e.pointerId);activePointer=e.pointerId;return;}
+   }
+   if(e.detail<2)addRoadNode(hit);
+   return;
+  }
   if(e.button===1||e.button===2){
    e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
    canvas.setPointerCapture?.(e.pointerId);return;
@@ -981,6 +1097,16 @@ function bindUI(){
   }else if(mode==='select'&&e.isPrimary){const id=clickPlaced(e);if(id)selectObject(id);}
  });
  canvas.addEventListener('pointermove',e=>{
+  if(mode==='road'){
+   const h=hitTerrain(e);
+   if(h){
+    if(roadDragIndex>=0&&activePointer===e.pointerId){
+     roadNodes[roadDragIndex]=[snap(h.x,.5),snap(h.z,.5)];drawRoadPreview(true);
+    }else{roadHover=[h.x,h.z];drawRoadPreview();}
+    $('coords').textContent='X '+h.x.toFixed(1)+' · Z '+h.z.toFixed(1)+' · ancho '+ROAD_WIDTHS[brushCells-1]+' m';
+   }
+   if(roadDragIndex>=0)return;
+  }
   if(cameraPan&&cameraPan.pointerId===e.pointerId){
    const dx=e.clientX-cameraPan.x,dy=e.clientY-cameraPan.y;
    cameraPan.x=e.clientX;cameraPan.y=e.clientY;
@@ -1011,6 +1137,10 @@ function bindUI(){
   const hit=hitTerrain(e);if(hit)$('coords').textContent='X '+hit.x.toFixed(1)+' · Z '+hit.z.toFixed(1)+' · Suelo '+hit.y.toFixed(1)+' m';
  });
  canvas.addEventListener('pointerup',e=>{
+  if(mode==='road'&&roadDragIndex>=0&&activePointer===e.pointerId){
+   roadDragIndex=-1;activePointer=null;canvas.releasePointerCapture?.(e.pointerId);drawRoadPreview(true);return;
+  }
+  if(mode==='road'&&e.button===0)return;
   if(cameraPan&&cameraPan.pointerId===e.pointerId){
    cameraPan=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);
    return;
@@ -1052,6 +1182,9 @@ function bindUI(){
   downPos=null;
  });
  canvas.addEventListener('pointercancel',e=>{
+  if(mode==='road'&&roadDragIndex>=0){
+   roadDragIndex=-1;activePointer=null;drawRoadPreview(true);return;
+  }
   if(cameraPan&&cameraPan.pointerId===e.pointerId)cameraPan=null;
   if(movingExisting&&activePointer===e.pointerId){
    const root=viewCache.get(movingExisting.id),old=movingExisting.old;
@@ -1132,6 +1265,9 @@ if(new URLSearchParams(location.search).has('hfqa')){
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
   objects(){return records.map(x=>({...x}));},
+  roadStart:startRoadDraft,roadAdd:(x,z)=>addRoadNode({x,z}),
+  roadFinish:finishRoadDraft,roadCancel:cancelRoadDraft,
+  roadDraft(){return {mode,nodes:roadNodes.map(a=>[...a]),editing:roadEditId};},
   select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
   copy:copySelected,paste:pasteCopied,
   clipboard(){return objectClipboard?{...objectClipboard}:null;},
