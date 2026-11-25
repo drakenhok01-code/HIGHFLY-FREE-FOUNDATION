@@ -3,13 +3,8 @@
  * No paid assets, no texture downloads, no per-frame animation.
  */
 import * as THREE from 'three';
-export const PUBLIC_URBAN_ASSETS=Object.freeze([
- {id:'hf-fountain-stone',label:'Fuente de piedra con agua',icon:'⛲',cat:'Urbanismo HIGHFLY',kind:'decor',w:8,d:8,license:'MIT (original HIGHFLY)',sourcePack:'HIGHFLY original'},
- {id:'hf-streetlamp-bronze',label:'Farola de bronce encendida',icon:'🏮',cat:'Urbanismo HIGHFLY',kind:'decor',w:1.8,d:1.8,license:'MIT (original HIGHFLY)',sourcePack:'HIGHFLY original'},
- {id:'hf-wooden-signpost',label:'Poste de señalización',icon:'🪧',cat:'Urbanismo HIGHFLY',kind:'decor',w:2.6,d:1.4,license:'MIT (original HIGHFLY)',sourcePack:'HIGHFLY original'},
- {id:'hf-round-flowerbed',label:'Jardinera circular con flores',icon:'🌷',cat:'Urbanismo HIGHFLY',kind:'decor',w:4.5,d:4.5,license:'MIT (original HIGHFLY)',sourcePack:'HIGHFLY original'}
-]);
-export const PUBLIC_URBAN_IDS=new Set(PUBLIC_URBAN_ASSETS.map(a=>a.id));
+import {PUBLIC_URBAN_ASSETS,PUBLIC_URBAN_IDS} from './p532-public-urban-assets.mjs';
+export {PUBLIC_URBAN_ASSETS,PUBLIC_URBAN_IDS};
 const mat=(color,emissive=0)=>new THREE.MeshLambertMaterial({color,emissive});
 const STONE=mat(0xa7a8af),RIM=mat(0xc4c5bb),STONE_DARK=mat(0x797987),
  BRONZE=mat(0x72532f),BRIGHT=mat(0xd5a35c),WOOD=mat(0x825536),
