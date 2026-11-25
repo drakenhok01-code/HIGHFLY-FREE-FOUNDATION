@@ -1,7 +1,7 @@
 name: "HIGHFLY P526 - Native 3D World Forge Safe Preview Release"
 on:
   push:
-    branches: [p526-world-forge-native-3d-editor-20261124]
+    branches: [p526-world-forge-sims-touch-builder-20261124]
     paths: ['.github/workflows/highfly-p526-pages.yml']
   workflow_dispatch:
 permissions:
