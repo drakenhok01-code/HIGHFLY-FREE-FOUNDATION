@@ -7,6 +7,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
+import {buildEastbrookPilot} from './p534-eastbrook-pilot.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
@@ -19,14 +20,15 @@ import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-pre
 import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,roadClearance,ROAD_WIDTHS} from './p533-curved-road-path.mjs';
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 const $=id=>document.getElementById(id);
+const P534_PREVIEW=globalThis.location?.pathname?.includes('/preview-p534/')===true;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P534_PREVIEW?'hf-world-forge-layout-p534-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P534_PREVIEW?'hf-world-forge-view-p534-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P534_PREVIEW?'hf-world-forge-layout-p534-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -58,7 +60,7 @@ const base=[
 // Extend the 16 legacy red houses in place; all 221 FREE models remain
 // uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
 for(const extra of KAYKIT_FREE_ALL){
- const v=(P532_PREVIEW||P533_PREVIEW)?localizePublicAsset(extra):extra;
+ const v=(P532_PREVIEW||P533_PREVIEW||P534_PREVIEW)?localizePublicAsset(extra):extra;
  const prev=base.find(x=>x.id===extra.id);
  if(prev)Object.assign(prev,v);
  else base.push({...v});
@@ -77,7 +79,7 @@ function addPrivateCatalog(models){
 for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
 for(const a of QUATERNIUS_CC0_ALL)base.push({...a});
 for(const a of PUBLIC_URBAN_ASSETS)base.push({...a,publicUrban:true});
-if(P533_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
+if(P533_PREVIEW||P534_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
  // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
@@ -123,7 +125,7 @@ const gltfLoader=new GLTFLoader()
  .setMeshoptDecoder(MeshoptDecoder)
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P534_PREVIEW||P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -383,8 +385,8 @@ function restore(){
   let old=localStorage.getItem(STORE);
   // Migrate the user's existing P532/P531 work as a COPY into the new isolated
   // preview. Never overwrite either earlier version, and never seed CI tests.
-  if(!old&&P533_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')){
-   for(const previousKey of ['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']){
+  if(!old&&(P533_PREVIEW||P534_PREVIEW)&&!new URLSearchParams(location.search).has('hfqa')){
+   for(const previousKey of (P534_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
     try{
@@ -774,7 +776,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW)||x.id!=='Edificios'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW||P534_PREVIEW)||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -958,6 +960,48 @@ async function loadBeginningVillage({auto=false}={}){
  }catch(err){log('Pueblo de los Inicios',err.message,false);status('No pude crear la aldea: '+err.message);}
  finally{button.disabled=false;}
 }
+
+async function loadEastbrookPilot(){
+ const button=$('pilot-eastbrook');
+ if(!map||!overview){status('Primero deben cargarse las alturas y la arquitectura original de Unsung.');return;}
+ if(records.length>2450){status('No queda espacio editable para el pueblo. Exportá tu plano antes de continuar.');return;}
+ button.disabled=true;
+ const previous=JSON.stringify(records);
+ try{
+  const plan=buildEastbrookPilot({
+   origin:{x:-512,z:-70},
+   canPlace:o=>validPosition(o),
+   existing:records
+  });
+  if(!plan.complete){
+   status('Piloto Eastbrook sin aplicar: no caben los 6 edificios y el gremio. Lotes pendientes: '+plan.requiredMissing.join(', ')+'. No se modificó tu mundo.');
+   return;
+  }
+  const six=plan.primary;
+  const message='Eastbrook → Arvelia · '+six+' edificios equivalentes KayKit y gremio Unsung, '+(plan.objects.length-7)+' extras. Centro X '+plan.center.x+', Z '+plan.center.z+'. Se preservarán todas las construcciones de Unsung. ¿Añadirlos a tu diseño editable?';
+  if(!window.confirm(message))return;
+  status('Cargando geometrías reales KayKit y Unsung para el piloto Eastbrook…');
+  const types=[...new Set(plan.objects.map(o=>o.type))];
+  const models=await Promise.all(types.map(async type=>({type,scene:await getGLTF(BY_ID.get(type))})));
+  const missing=models.filter(m=>!m.scene);
+  if(missing.length){status('Faltan modelos: '+missing.map(m=>m.type).join(', ')+'. Plano intacto.');return;}
+  if(records.length+plan.objects.length>2500){status('El conjunto superaría el límite de objetos. Plano intacto.');return;}
+  const old=localStorage.getItem(STORE);
+  if(old)localStorage.setItem('hf-world-forge-layout-p534-before-eastbrook',old);
+  recordSnapshot();
+  records.push(...plan.objects);
+  save();
+  await rebuildPlaced();
+  focus(plan.center.x,plan.center.z,155);
+  status('✓ Piloto Eastbrook: '+six+'/6 roles KayKit, gremio Unsung y '+(plan.objects.length-7)+' edificios complementarios. Todos editables. No se modificaron las construcciones originales.');
+  log('P5.3.4 Eastbrook piloto',plan.objects.length+' prefabs 3D · coordenadas reales y colisiones comprobadas al colocar; FPS Android aún sin medir.');
+ }catch(err){
+  try{records=JSON.parse(previous);save();await rebuildPlaced();}catch{}
+  status('Piloto cancelado sin cambios: '+err.message);
+  log('P5.3.4 Eastbrook piloto',err.message,false);
+ }finally{button.disabled=false;}
+}
+
 async function handlePrivateImport(ev){
  const file=ev.target.files?.[0];ev.target.value='';if(!file)return;
  const btn=$('import-source');btn.disabled=true;
@@ -1015,6 +1059,7 @@ function bindUI(){
  for(const [id,name] of [['trees','trees'],['original','original'],['water','water']])$(id).onclick=()=>{groups[name].visible=!groups[name].visible;$(id).classList.toggle('on',groups[name].visible);if(name==='trees')updateTrees(true);render();};
  $('save').onclick=()=>save(true);$('undo').onclick=undo;$('redo').onclick=redo;$('export').onclick=exportJSON;
  $('preset-village').onclick=loadBeginningVillage;
+ $('pilot-eastbrook').onclick=loadEastbrookPilot;
  $('import-source').onclick=()=>$('source-file').click();
  $('source-file').onchange=handlePrivateImport;
  $('import').onclick=()=>$('file').click();
