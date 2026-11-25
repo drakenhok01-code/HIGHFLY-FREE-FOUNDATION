@@ -66,6 +66,17 @@ const CATALOG=[
  {id:'tree',label:'Árbol ornamental',icon:'🌳',cat:'Naturaleza',w:3,d:3,h:7},
  {id:'rock',label:'Roca',icon:'🪨',cat:'Naturaleza',w:3,d:2.5,h:2},
  {id:'ore',label:'Mineral',icon:'⛏️',cat:'Naturaleza',w:3,d:3,h:2},
+ {id:'village-blossom',label:'Árbol rosa · floración',icon:'🌸',cat:'Naturaleza',w:5,d:5,h:6},
+ {id:'village-lilac',label:'Árbol violeta · floración',icon:'🌺',cat:'Naturaleza',w:6,d:6,h:6},
+ {id:'village-autumn',label:'Árbol ámbar otoñal',icon:'🍁',cat:'Naturaleza',w:5,d:5,h:6},
+ {id:'village-shrub',label:'Arbusto redondeado',icon:'🌿',cat:'Naturaleza',w:2.4,d:2.4,h:2},
+ {id:'village-flowerbed',label:'Jardinera con flores',icon:'💐',cat:'Decoración',w:3,d:1.8,h:1},
+ {id:'village-stall-red',label:'Puesto de mercado rojo',icon:'🏪',cat:'Decoración',w:5,d:4,h:4},
+ {id:'village-stall-blue',label:'Puesto de mercado azul',icon:'🏪',cat:'Decoración',w:5,d:4,h:4},
+ {id:'village-gazebo',label:'Pabellón con cúpula',icon:'🏛️',cat:'Decoración',w:8,d:8,h:7},
+ {id:'village-banner',label:'Estandarte del gremio',icon:'🚩',cat:'Decoración',w:1.4,d:1.4,h:4},
+ {id:'village-lamp',label:'Farol dorado ornamental',icon:'🏮',cat:'Decoración',w:1.4,d:1.4,h:3.6},
+ {id:'village-crates',label:'Cajas y provisiones',icon:'📦',cat:'Decoración',w:2.5,d:2.5,h:2},
  {id:'npc-merchant',label:'NPC comerciante',icon:'🧙',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-guard',label:'NPC guardia',icon:'🛡️',cat:'NPC',w:1,d:1,h:1.8},
  {id:'npc-artisan',label:'NPC artesano',icon:'👨‍🏭',cat:'NPC',w:1,d:1,h:1.8}
@@ -83,6 +94,11 @@ const ZONES=[
  {x:-1005,z:-168,r:7,name:'Aguja de la Corona'},
  {x:-179,z:-459,r:7,name:'Escalera original'}
 ];
+const VILLAGE_COLORS={'village-blossom':'#e69dbd','village-lilac':'#ba95d0',
+ 'village-autumn':'#eda76c','village-shrub':'#71a76e','village-flowerbed':'#e8c68d',
+ 'village-stall-red':'#d86561','village-stall-blue':'#648bc4',
+ 'village-gazebo':'#e4d6bf','village-banner':'#b6475d',
+ 'village-lamp':'#f0c36d','village-crates':'#aa8058'};
 const COLORS={guild:'#a296bc',forge:'#c48f78',inn:'#aa866b',house:'#c09e7e',timber:'#a18465',market:'#c69a79',mill:'#d1be8d',granary:'#ae8d6c',warehouse:'#867e89',fishery:'#8ca9b8',ranger:'#789486','floor-stone':'#b2b0a4','floor-earth':'#9b7a56','floor-wood':'#b58b59',lantern:'#f6ca70',well:'#84b2c4',fence:'#c7af84',barrel:'#aa8667',bench:'#c1b69f',tree:'#4d995c',rock:'#96908a',ore:'#bdbfa3','npc-merchant':'#e6bb95','npc-guard':'#b7afe9','npc-artisan':'#d2a98f'};
 let mapData=null,coreMap,regionMap,nativeOverlay=null,nativePixels=null,objects=[],selectedId=null,selectedAsset=null,category='Edificios',tool='select',gridOn=true,history=[],future=[],drag=null,lastStamp=null,mouse={x:-512,z:-70,valid:true},frame=0;
 const view={x:-510,z:-70,zoom:2.1},canvas=$('map'),ctx=canvas.getContext('2d',{alpha:false});
@@ -288,13 +304,13 @@ function resize(){
 function drawItem(o,ghost=false){
  const item=getAsset(o),selected=o.id===selectedId,w=item.w*o.scale,d=item.d*o.scale;
  ctx.save();ctx.translate(o.x,o.z);ctx.rotate(o.yaw);
- const fill=COLORS[o.type]||'#c3a98a';
+ const fill=VILLAGE_COLORS[o.type]||COLORS[o.type]||'#c3a98a';
  ctx.globalAlpha=ghost ? .62 : 1;
  ctx.fillStyle=fill;ctx.strokeStyle=selected?'#79fff5':ghost?'#fff0a3':'#271d2b';
  ctx.lineWidth=(selected?2.6:1.4)/view.zoom;
  if(item.floor){ctx.fillRect(-w/2,-d/2,w,d);ctx.strokeRect(-w/2,-d/2,w,d);}
  else if(o.type.startsWith('npc-')){ctx.beginPath();ctx.arc(0,0,1.35*o.scale,0,TAU);ctx.fill();ctx.stroke();}
- else if(o.type==='tree'||o.type==='rock'||o.type==='ore'||o.type==='well'||o.type==='lantern'||o.type==='barrel'){
+ else if(o.type==='tree'||o.type==='rock'||o.type==='ore'||o.type==='well'||o.type==='lantern'||o.type==='barrel'||o.type==='village-blossom'||o.type==='village-lilac'||o.type==='village-autumn'||o.type==='village-shrub'||o.type==='village-lamp'){
   ctx.beginPath();ctx.arc(0,0,Math.max(w,d)*.5,0,TAU);ctx.fill();ctx.stroke();
  }else{
   ctx.shadowColor='#111';ctx.shadowBlur=ghost?0:5/view.zoom;
