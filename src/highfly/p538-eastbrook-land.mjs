@@ -25,7 +25,7 @@ export const EASTBROOK_LAND_SPECS=Object.freeze([
 // Retain the desired ID to make the pending exact visual replacement explicit.
 export const EASTBROOK_PENDING=Object.freeze([{role:'herreria',wanted:'kaykit-blacksmith',replacement:'kaykit-home-a',reason:'El prefab completo no cargó en P538; reemplazo 3D CC0 funcional'}]);
 export const EASTBROOK_FREE_FALLBACKS=Object.freeze({
- 'kaykit-blacksmith':['kaykit-home-a','kaykit-home-b','unsung-hall'],
+ 'kaykit-blacksmith':['free-building-blacksmith-blue','free-building-blacksmith-green','free-building-blacksmith-yellow','kaykit-home-a','kaykit-home-b','unsung-hall'],
  'kaykit-home-a':['kaykit-home-b','kaykit-tavern','unsung-hall'],
  'kaykit-home-b':['kaykit-home-a','kaykit-tavern','unsung-hall'],
  'kaykit-tavern':['kaykit-home-a','kaykit-home-b','unsung-hall'],
