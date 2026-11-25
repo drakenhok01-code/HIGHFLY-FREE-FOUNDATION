@@ -1,0 +1,179 @@
+name: "HIGHFLY P543 — No Platform + Original Unsung Terrain + Persistent Selection"
+on:
+  push:
+    branches: [p543-natural-fit-object-controls-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p543-native-pages
+  cancel-in-progress: true
+jobs:
+  native-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare original icon build dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Verify pure source, new floor tessellation, native material and legacy regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p542-native-conform.mjs
+          node --check src/highfly/p543-natural-surface.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --check scripts/f0-build.mjs
+          node --check tests/p543-browser-natural.mjs
+          node --test tests/p542-terrain-conform-select.test.mjs
+          node --test tests/p543-natural-fitting-selection.test.mjs
+          node --test tests/p541-manual-revert.test.mjs
+          node --test tests/p539-terrain-camera-prefabs.test.mjs
+          node --test tests/p537-ground-fit.test.mjs
+          node --test tests/p538-eastbrook-land.test.mjs
+      - name: Build full unsung game and World Forge 5.0 P543 without restricted assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p543/ npm run build
+          npm run qa:dist
+          grep -q "preview-p543" dist/index.html
+          grep -q "WORLD FORGE 5.1" dist/highfly/world-forge-3d.html
+          grep -q 'p543-natural-surface' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          grep -q 'p543-natural-surface' .work/unsung/src/highfly/p521-world-forge-runtime.mjs
+          test -s dist/highfly/native-overview.json
+          test -s dist/highfly/world-forge-3d.js
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+      - name: "Browser 3D: house never raises terrain, native dense stone+dirt+grass and controls"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp tests/p543-browser-natural.mjs .work/unsung/tools/p543-browser-natural.mjs
+          cd .work/unsung
+          timeout 530s node tools/p543-browser-natural.mjs
+      - name: Keep screenshots and source terrain evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p543-native-height-and-floors-qa
+          path: |
+            .work/unsung/p543-editor-health.json
+            .work/unsung/p543-manual-slope-evidence.json
+            .work/unsung/p543-original-terrain-empty.png
+            .work/unsung/p543-manual-slope-house.png
+            .work/unsung/p543-native-earth-grass-and-no-platform.png
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload only approved full RPG and World Forge P543
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p543-terrain-conform-approved
+          path: dist/
+          if-no-files-found: error
+          retention-days: 10
+
+  publish-pages:
+    needs: [native-qa]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download newly approved P543
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p543-terrain-conform-approved
+          path: ${{ runner.temp }}/p543-tested
+      - name: Preserve last approved P542 no-terraformation editor
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p542-terrain-conform-approved
+          run-id: 45704375954
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p542-approved
+      - name: Preserve last approved P541 manual editor
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p541-manual-unsung-graded
+          run-id: 45696929503
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p541-approved
+      - name: Preserve approved P539 slope version
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p539-arvelia-camera-slope
+          run-id: 45687558253
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p539-approved
+      - name: Preserve P537 source backup
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          run-id: 45659850899
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p537-approved
+      - name: Assemble P537 P539 P541 P542 and P543; do not include rejected P540
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/p543-pages"
+          for v in 537 539 541 542 543; do
+            SRC="$RUNNER_TEMP/p${v}-approved"
+            if [ "$v" = 543 ]; then SRC="$RUNNER_TEMP/p543-tested"; fi
+            test -s "$SRC/index.html"
+            test -s "$SRC/highfly/world-forge-3d.html"
+            test -s "$SRC/highfly/world-forge-3d.js"
+            grep -q "preview-p${v}" "$SRC/index.html"
+            mkdir -p "$ROOT/preview-p${v}"
+            cp -a "$SRC/." "$ROOT/preview-p${v}/"
+          done
+          grep -q 'WORLD FORGE 5.1' "$ROOT/preview-p543/highfly/world-forge-3d.html"
+          grep -q 'id="tool-dirt"' "$ROOT/preview-p543/highfly/world-forge-3d.html"
+          grep -q 'id="tool-grass"' "$ROOT/preview-p543/highfly/world-forge-3d.html"
+          test ! -e "$ROOT/preview-p540"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html><html lang="es"><meta charset="utf-8">
+          <title>HIGHFLY P5.4.3 — Sin plataformas y materiales nativos</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p543/">
+          <a href="./preview-p543/">Entrar a World Forge 5.0 · Pisos naturales</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "P543 approved Pages size: $SIZE bytes"
+          test "$SIZE" -lt 900000000 || { echo "::error::Site exceeds 900MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p543-natural-unique
+          path: dist-pages
+      - name: Verify Github indexes the uploaded Pages artifact before deployment
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p543-natural-unique")] | length' 2>/dev/null || echo 0)"
+            echo "Artifact index attempt $attempt: $N"
+            if [ "$N" = 1 ]; then sleep 30;exit 0;fi
+            sleep 6
+          done
+          echo "::error::Pages artifact not indexed"
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p543-natural-unique
