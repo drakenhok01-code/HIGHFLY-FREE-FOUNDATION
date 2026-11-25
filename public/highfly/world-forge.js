@@ -90,7 +90,7 @@ try{
   for(const x of d.assets)if(/^source-[a-z0-9-]{4,104}$/.test(x.id)&&
      Number.isFinite(x.width)&&Number.isFinite(x.depth)){
    CATALOG.push({id:x.id,label:x.label,icon:x.kind==='building'?'🏰':x.kind==='tree'?'🌳':'🧰',
-    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,privateModel:true});
+    cat:'KayKit SOURCE',w:x.width,d:x.depth,h:x.height,kind:x.kind,sourcePack:x.sourcePack,privateModel:true});
   }
  }
 }catch(err){console.warn('KayKit SOURCE local metadata not available',err);}
@@ -426,8 +426,8 @@ function setCategory(cat){category=cat;for(const b of $('categories').children)b
 function renderCatalog(){
  const root=$('catalog');root.replaceChildren();
  for(const it of CATALOG.filter(x=>category==='Edificios'?!!x.free:
-   category==='SOURCE · Edificios'?x.privateModel&&x.id.includes('building'):
-   category==='SOURCE · Accesorios'?x.privateModel&&!x.id.includes('building'):
+   category==='SOURCE · Edificios'?x.privateModel&&x.kind==='building':
+   category==='SOURCE · Accesorios'?x.privateModel&&x.kind!=='building':
    x.cat===category)){
   const btn=document.createElement('button');btn.className='asset'+(selectedAsset===it.id?' active':'');
   const st=document.createElement('strong');st.textContent=it.icon;
