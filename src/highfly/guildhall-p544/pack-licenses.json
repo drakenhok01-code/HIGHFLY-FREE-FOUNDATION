@@ -1,0 +1,131 @@
+{
+  "note": "Upstream pack configuration declarations, not independent verification of original vendor archives. Preserve provenance and review originals before public distribution.",
+  "packs": [
+    {
+      "id": "kaykit-hexagon",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_Medieval_Hexagon_Pack_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-hexagon.ts",
+      "sourceBlob": "07a690008108f0659f27dc93dc7bdbf90dd72c93",
+      "verified": true
+    },
+    {
+      "id": "kaykit-resources",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_ResourceBits_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-resources.ts",
+      "sourceBlob": "b791d9cad5d177feb5b57245fbb4620f45414e80",
+      "verified": true
+    },
+    {
+      "id": "kenney-graveyard",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_graveyard-kit_5.0",
+      "sourcePath": "tools/import/packs/kenney-graveyard.ts",
+      "sourceBlob": "3adf839f909639e6374986d2dd90c99d4c6ceb40",
+      "verified": true
+    },
+    {
+      "id": "kaykit-adventurers",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_Adventurers_2.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-adventurers.ts",
+      "sourceBlob": "91c9d4e3636a2c50e1487760e434da62f308cd3b",
+      "verified": true
+    },
+    {
+      "id": "kenney-nature",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_nature-kit",
+      "sourcePath": "tools/import/packs/kenney-nature.ts",
+      "sourceBlob": "bbe996bf6525c3acbb027a30e3f0bee6f92082e5",
+      "verified": true
+    },
+    {
+      "id": "kenney-town",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_fantasy-town-kit_2.0",
+      "sourcePath": "tools/import/packs/kenney-town.ts",
+      "sourceBlob": "3da32aaf62c3fa5761a1f2104d2254caaf85fcca",
+      "verified": true
+    },
+    {
+      "id": "kaykit-dungeon",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_Dungeon_Pack_1.1_FREE",
+      "sourcePath": "tools/import/packs/kaykit-dungeon.ts",
+      "sourceBlob": "b0a08317c50c4b8d43f36b09d1ab36974e11a0e9",
+      "verified": true
+    },
+    {
+      "id": "kaykit-halloween",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_HalloweenBits_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-halloween.ts",
+      "sourceBlob": "de9e0253e74599300875f678235fcc67c15aa74e",
+      "verified": true
+    },
+    {
+      "id": "kaykit-forest",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_Forest_Nature_Pack_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-forest.ts",
+      "sourceBlob": "48ca2cf8049f20bacdefa21f52aefb38ddd07ee0",
+      "verified": true
+    },
+    {
+      "id": "kenney-survival",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_survival-kit",
+      "sourcePath": "tools/import/packs/kenney-survival.ts",
+      "sourceBlob": "95c9e756e98139b9e0fd200391bb261f71c6aa2d",
+      "verified": true
+    },
+    {
+      "id": "kenney-pirate",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_pirate-kit",
+      "sourcePath": "tools/import/packs/kenney-pirate.ts",
+      "sourceBlob": "77e852a84c43461605681192a94fe3f91561c61e",
+      "verified": true
+    },
+    {
+      "id": "kaykit-weapons",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_FantasyWeaponsBits_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-weapons.ts",
+      "sourceBlob": "fa01b5f4a9b7a8ac33aeed70b8a3eb81df311f6f",
+      "verified": true
+    },
+    {
+      "id": "kenney-castle",
+      "license": "CC0",
+      "vendor": "kenney",
+      "source": "kenney_castle-kit",
+      "sourcePath": "tools/import/packs/kenney-castle.ts",
+      "sourceBlob": "c51f422da2ea26aabe2895b401d3a6b6c4b5a36c",
+      "verified": true
+    },
+    {
+      "id": "kaykit-tools",
+      "license": "CC0",
+      "vendor": "kaykit",
+      "source": "KayKit_RPGToolsBits_1.0_FREE",
+      "sourcePath": "tools/import/packs/kaykit-tools.ts",
+      "sourceBlob": "c7d1562b079041af0607ae5512ef2639429cecbf",
+      "verified": true
+    }
+  ]
+}
