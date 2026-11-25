@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshBuilder,M} from '../world/arch/builder.js';
 import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
@@ -435,7 +436,12 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // KayKit FREE (CC0): reuse glTF scene per type, but create fresh transforms for each
  // world-placed prefab. Static collision uses actual mesh triangles in world space.
  const kaykitObjects=[],kaykitFailures=[];
- const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),prefabLoads=new Map();
+ const ktx2Loader=new KTX2Loader()
+   .setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/')
+   .detectSupport(game.pipe.renderer);
+ const loader=new GLTFLoader()
+   .setMeshoptDecoder(MeshoptDecoder)
+   .setKTX2Loader(ktx2Loader),prefabLoads=new Map();
  const getPrefab=type=>{
   if(!prefabLoads.has(type)){
    const p=privateSourceType(type)
