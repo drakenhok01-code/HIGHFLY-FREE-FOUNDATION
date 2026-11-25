@@ -16,14 +16,17 @@ import {UNSUNG_FLORA,nativeUnsungFlora} from './p531-unsung-flora.mjs';
 import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
 import {localizePublicAsset} from './p532-spanish-labels.mjs';
 import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
+import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,roadClearance,ROAD_WIDTHS} from './p533-curved-road-path.mjs';
+import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 const $=id=>document.getElementById(id);
+const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -55,7 +58,7 @@ const base=[
 // Extend the 16 legacy red houses in place; all 221 FREE models remain
 // uniquely addressable and use real GLTF meshes, not procedural cube stand-ins.
 for(const extra of KAYKIT_FREE_ALL){
- const v=P532_PREVIEW?localizePublicAsset(extra):extra;
+ const v=(P532_PREVIEW||P533_PREVIEW)?localizePublicAsset(extra):extra;
  const prev=base.find(x=>x.id===extra.id);
  if(prev)Object.assign(prev,v);
  else base.push({...v});
@@ -74,6 +77,7 @@ function addPrivateCatalog(models){
 for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
 for(const a of QUATERNIUS_CC0_ALL)base.push({...a});
 for(const a of PUBLIC_URBAN_ASSETS)base.push({...a,publicUrban:true});
+if(P533_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
  // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
@@ -119,7 +123,7 @@ const gltfLoader=new GLTFLoader()
  .setMeshoptDecoder(MeshoptDecoder)
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -250,11 +254,13 @@ function updateTrees(force=false){
  if(!force&&Math.hypot(x-treeFocus[0],z-treeFocus[1])<28)return;
  treeFocus=[x,z];
  const lists=Array.from({length:5},()=>({near:[],far:[]})),rad=285,nearDistance=128;
- const clearedLots=records.filter(o=>o.clearTrees===true&&BY_ID.has(o.type));
+ const clearedLots=records.filter(o=>o.clearTrees===true&&!isCurvedRoad(o)&&BY_ID.has(o.type));
+ const clearedCurves=records.filter(isCurvedRoad).map(o=>({o,samples:sampleCurvedRoad(o.points,1.8)}));
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
   for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++)
    for(const t of overview.treeIndex.get(i+','+j)||[]){
     const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad)continue;
+    if(clearedCurves.some(({o,samples})=>roadClearance(t[0],t[1],o,samples)))continue;
     if(clearedLots.some(o=>{
      const dx=t[0]-o.x,dz=t[1]-o.z,a=BY_ID.get(o.type),c=Math.cos(o.yaw),sn=Math.sin(o.yaw);
      return Math.abs(dx*c+dz*sn)<a.w*o.scale*.5+1.8&&
@@ -330,6 +336,12 @@ function archNear(x,z,rad){
 function validPosition(o,id=null){
  if(!map)return {ok:false,why:'Terreno sin cargar'};
  const a=BY_ID.get(o.type);if(!a)return {ok:false,why:'Modelo inexistente'};
+ if(isCurvedRoad(o)){
+  const v=roadPathValid(o);if(!v.ok)return {ok:false,why:v.reason};
+  for(const t of sampleCurvedRoad(o.points,3))
+   if(floorElevation(t.x,t.z)<-.13)return {ok:false,why:'El camino llega al agua. Usá un puente'};
+  return {ok:true,y:floorElevation(o.x,o.z),slope:0};
+ }
  const w=a.w*o.scale,d=a.d*o.scale,c=Math.cos(o.yaw),s=Math.sin(o.yaw),samples=[];
  for(const [dx,dz] of [[0,0],[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
   const x=o.x+dx*c-dz*s,z=o.z+dx*s+dz*c;
@@ -450,6 +462,9 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
+ if(isCurvedRoad(o))return makeCurvedCobblestone3D(o,floorElevation,{
+  anchorX:o.x,anchorY:floorElevation(o.x,o.z)+.035,anchorZ:o.z
+ });
  const scenic=makePublicUrbanPrefab(a.id,o.scale)||makeVillageDecor(a.id,o.scale);
  if(scenic)return scenic;
  const group=new THREE.Group();
@@ -493,12 +508,15 @@ async function buildPlaced(o){
    else if((a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
- }else root.add(makeModel(a,o));
+ }else{
+  root.add(makeModel(a,o));
+  if(isCurvedRoad(o))root.userData.roadGeometry=true;
+ }
  return root;
 }
 async function rebuildPlaced(){
  const token={};rebuildPlaced.token=token;
- for(const child of [...groups.placed.children])groups.placed.remove(child);
+ for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);}
  viewCache.clear();selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
   let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
@@ -568,6 +586,7 @@ function previewGhost(ev){
  render();
 }
 function selectAsset(id){
+ if(id===CURVED_ROAD_TYPE){startRoadDraft();return;}
  const a=BY_ID.get(id);
  if(!a)return;
  chosen=id;selected=null;pendingYaw=0;pendingScale=1;if(gizmo)gizmo.detach();
@@ -602,7 +621,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null,objectClipboard=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW,cameraPan=null,objectClipboard=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -654,7 +673,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!P532_PREVIEW||x.id!=='Edificios'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW||P533_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!(P532_PREVIEW||P533_PREVIEW)||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -1096,7 +1115,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 4.2 · P5.3.2 · 221 KayKit CC0 + 42 Quaternius CC0 + 18 originales Unsung + cuatro piezas HIGHFLY. Ctrl+C y Ctrl+V para copiar y pegar.');
+  status('✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
