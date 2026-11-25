@@ -227,7 +227,21 @@ function saveLocal(show=true){
 }
 function loadLocal(){
  try{
-  const data=JSON.parse(localStorage.getItem(STORE)||'null');
+  let raw=localStorage.getItem(STORE);
+   if(!raw&&P533_PREVIEW){
+    for(const previousKey of ['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']){
+     const v=localStorage.getItem(previousKey);
+     if(!v)continue;
+     try{
+      const a=JSON.parse(v);
+      if(a?.schema===1&&a.world==='unsung-vale'&&Array.isArray(a.objects)&&
+       a.objects.length<=2500&&a.objects.every(validItem)){
+       raw=v;localStorage.setItem(STORE,v);break;
+      }
+     }catch{}
+    }
+   }
+   const data=JSON.parse(raw||'null');
   if(data?.schema===1&&Array.isArray(data.objects))objects=data.objects.filter(o=>validItem(o));
  }catch{}
  $('items').textContent=objects.length+' elementos';
@@ -487,7 +501,14 @@ function renderCatalog(){
    img.onerror=()=>{img.hidden=true;st.hidden=false;};
    st.hidden=true;btn.append(img);
   }
-  btn.append(st,label);btn.title=it.label;btn.onclick=()=>{selectedAsset=it.id;tool='place';selectedId=null;syncTools();updateProps();renderCatalog();safe('Elegiste '+it.label+'. Tocá el mapa para colocarlo.');draw();};
+  btn.append(st,label);btn.title=it.label;btn.onclick=()=>{
+    if(it.id===CURVED_ROAD_TYPE){
+     safe('Los caminos curvos se trazan desde World Forge 3D. Abriendo constructor 3D…');
+     saveLocal(false);location.href=new URL('./world-forge-3d.html',import.meta.url).href;return;
+    }
+    selectedAsset=it.id;tool='place';selectedId=null;syncTools();updateProps();renderCatalog();
+    safe('Elegiste '+it.label+'. Tocá el mapa para colocarlo.');draw();
+   };
   root.append(btn);
  }
 }
