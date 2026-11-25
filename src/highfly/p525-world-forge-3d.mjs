@@ -540,17 +540,31 @@ function floorMaterial(type){
  if(floorMats.has(type))return floorMats.get(type);
  const c=document.createElement('canvas');c.width=c.height=384;
  const g=c.getContext('2d'),seed=(a,b)=>{let n=Math.imul((a+3)*92837111,(b+7)*689287499);n^=n>>>15;return ((n>>>0)%1000)/1000;};
- const stone=type==='floor-stone',wood=type==='floor-wood';
- g.fillStyle=stone?'#5b5a50':wood?'#564838':'#826d57';g.fillRect(0,0,384,384);
+ // P542 road-earth/grass use the SAME TextureForge shader/atlas as Unsung.
+ // Only the LOCAL tile is forced to dirt or grass. The terrain itself is intact.
+ if(P542_PREVIEW&&nativeVisuals?.material?.fragmentShader&&
+    (type==='floor-earth'||type==='floor-grass')){
+  const original='float path=texture(uNativePath,vWorld.xz/2048.0+0.5).r;';
+  if(nativeVisuals.material.fragmentShader.includes(original)){
+   const m=nativeVisuals.material.clone();
+   m.fragmentShader=m.fragmentShader.replace(original,
+    'float path='+(type==='floor-earth'?'1.0':'0.0')+';');
+   m.side=THREE.DoubleSide;m.polygonOffset=true;m.polygonOffsetFactor=-2;
+   m.polygonOffsetUnits=-2;m.needsUpdate=true;
+   floorMats.set(type,m);return m;
+  }
+ }
+ const stone=type==='floor-stone',wood=type==='floor-wood',grass=type==='floor-grass';
+ g.fillStyle=stone?'#5b5a50':wood?'#564838':grass?'#557c43':'#826d57';g.fillRect(0,0,384,384);
  const rows=stone?9:wood?11:14,step=384/rows;
  for(let row=0;row<rows;row++){
   let x=-step*2*(row%3),index=0;
   while(x<386){
    const n=seed(row,index++),width=stone?step*(1.7+1.2*n):wood?384:step*(.8+1.2*n);
    const top=row*step+1.4,bottom=(row+1)*step-1.3,left=x+1.7;
-   const light=stone?Math.round(162+28*n):wood?Math.round(117+27*n):Math.round(126+26*n);
+   const light=stone?Math.round(162+28*n):wood?Math.round(117+27*n):grass?Math.round(92+22*n):Math.round(126+26*n);
    g.fillStyle=stone?'rgb('+(light+10)+','+(light+6)+','+(light-1)+')':
-     wood?'rgb('+(light+18)+','+(light+4)+','+(light-21)+')':
+     wood?'rgb('+(light+18)+','+(light+4)+','+(light-21)+')':grass?'rgb('+(light-26)+','+(light+15)+','+(light-26)+')':
        'rgb('+(light+15)+','+light+','+(light-16)+')';
    g.fillRect(left,top,Math.max(1,width-3),bottom-top);
    g.fillStyle=stone?'rgba(245,237,207,.13)':'rgba(246,224,176,.12)';
@@ -569,7 +583,7 @@ function floorMaterial(type){
  const mat=new THREE.MeshLambertMaterial({map:tx,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
  floorMats.set(type,mat);return mat;
 }
-function makeModel(a,o){
+function makeModel(a,o,anchorY=o.y){
  if(isModularCobble(o))return makeModularCobbleTile3D(o,floorElevation,{anchorY:floorElevation(o.x,o.z)+.035});
  if(isCurvedRoad(o))return makeCurvedCobblestone3D(o,floorElevation,{
   anchorX:o.x,anchorY:floorElevation(o.x,o.z)+.035,anchorZ:o.z
@@ -578,6 +592,20 @@ function makeModel(a,o){
  if(scenic)return scenic;
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
+  if(P542_PREVIEW){
+   // Each 4m tile has 10x10 patches following the ACTUAL high-resolution
+   // Unsung height sample and/or original plaza ramps, never a flat floating quad.
+   const p=conformingTileGrid(o,{w:a.w,d:a.d},floorElevation,{
+    anchorY,divisions:10,raise:.15});
+   const g=new THREE.BufferGeometry();
+   g.setAttribute('position',new THREE.Float32BufferAttribute(p.position,3));
+   g.setAttribute('uv',new THREE.Float32BufferAttribute(p.uv,2));
+   g.setIndex(p.index);g.computeVertexNormals();g.computeBoundingSphere();
+   const surface=new THREE.Mesh(g,floorMaterial(a.id));
+   surface.name='HIGHFLY_P542_TERRAIN_MATCHED_'+a.id;
+   surface.userData.terrainConform=true;group.add(surface);
+   return group;
+  }
   const w=a.w*o.scale,d=a.d*o.scale,points=[],uvs=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
   for(const [x,z] of [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]]){
    const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;
@@ -618,7 +646,7 @@ async function buildPlaced(o){
    root.add(model);
   }
  }else{
-  root.add(makeModel(a,o));
+  root.add(makeModel(a,o,footY));
   if(isCurvedRoad(o))root.userData.roadGeometry=true;
   if(isModularCobble(o))root.userData.modularRoadGeometry=true;
  }
