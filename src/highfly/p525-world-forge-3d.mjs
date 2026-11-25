@@ -23,6 +23,7 @@ import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobb
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
 import {conformingTileGrid,buildingSupportPlan} from './p542-native-conform.mjs';
+import {makeNaturalSurfaceMaterial} from './p543-natural-surface.mjs';
 const $=id=>document.getElementById(id);
 const P543_PREVIEW=globalThis.location?.pathname?.includes('/preview-p543/')===true;
 const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true||P543_PREVIEW;
@@ -592,7 +593,11 @@ function floorMaterial(type){
  const g=c.getContext('2d'),seed=(a,b)=>{let n=Math.imul((a+3)*92837111,(b+7)*689287499);n^=n>>>15;return ((n>>>0)%1000)/1000;};
  // P542 road-earth/grass use the SAME TextureForge shader/atlas as Unsung.
  // Only the LOCAL tile is forced to dirt or grass. The terrain itself is intact.
- if(P542_PREVIEW&&nativeVisuals?.material?.fragmentShader&&
+ if(P543_PREVIEW&&(type==='floor-earth'||type==='floor-grass')){
+  const nativeMaterial=makeNaturalSurfaceMaterial(THREE,nativeVisuals?.material,type);
+  if(nativeMaterial){floorMats.set(type,nativeMaterial);return nativeMaterial;}
+ }
+ if(!P543_PREVIEW&&P542_PREVIEW&&nativeVisuals?.material?.fragmentShader&&
     (type==='floor-earth'||type==='floor-grass')){
   const original='float path=texture(uNativePath,vWorld.xz/2048.0+0.5).r;';
   if(nativeVisuals.material.fragmentShader.includes(original)){
