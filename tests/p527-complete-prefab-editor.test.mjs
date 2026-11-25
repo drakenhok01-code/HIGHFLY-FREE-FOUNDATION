@@ -25,7 +25,7 @@ const checks=[
  ['skinned characters cloned properly', /cloneRig\(original\)/],
  ['terrain editor still reads native original Unsung geometry', /native-architecture-3d.bin/],
  ['materials visibly textured', /new THREE.CanvasTexture/],
- ['save shares original JSON layout', /const STORE=/],
+ ['save shares original JSON layout', /STORE='hf-world-forge-layout-v1'/],
 ];
 for(const [label,pattern] of checks)assert.match(source,pattern,label);
 assert.match(ui,/WORLD FORGE · 3D V0\.7/);
