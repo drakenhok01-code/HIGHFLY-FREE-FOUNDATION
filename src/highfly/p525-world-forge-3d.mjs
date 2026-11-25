@@ -524,21 +524,26 @@ function adaptableBuildingSupports(a,o,anchorY){
   a.cat?.includes('Edificios')||a.cat?.includes('casas')||a.cat?.includes('Arquitectura');
  if(!eligible)return null;
  const support=buildingSupportPlan(o,{w:a.w,d:a.d},elevation,{topOverride:anchorY});
- if(support.relief<.28)return null;
- const g=new THREE.Group(),material=new THREE.MeshLambertMaterial({color:0x999185,side:THREE.DoubleSide});
- const side=Math.min(1.25,Math.max(.45,Math.min(a.w,a.d)*o.scale*.07));
+ if(support.relief<.36)return null;
+ const g=new THREE.Group();
+ // P543 = NO upper rectangular foundation, NO invented stone platform.
+ // Only slim piers under actual building corners. Remaining terrain stays visible.
+ const masonry=new THREE.MeshLambertMaterial({color:0x675f50,side:THREE.DoubleSide});
+ const side=Math.min(.78,Math.max(.30,Math.min(a.w,a.d)*o.scale*.045));
  for(const p of support.positions){
-  if(p.height<.16)continue;
-  const post=new THREE.Mesh(new THREE.BoxGeometry(side,p.height+.10,side),material);
-  post.position.set(p.x,p.centerY-.05,p.z);
+  if(Math.abs(p.x)<.1||Math.abs(p.z)<.1||p.height<.34)continue;
+  const post=new THREE.Mesh(new THREE.BoxGeometry(side,p.height+.12,side),masonry);
+  post.position.set(p.x,p.centerY-.06,p.z);
+  post.name='HIGHFLY_NATURAL_CORNER_PIER';
   post.userData.foundation=true;post.userData.adaptiveSupport=true;
   g.add(post);
  }
- const header=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale*.94,.22,a.d*o.scale*.94),material);
- header.position.set(0,-.13,0);header.userData.foundation=true;g.add(header);
- g.name='HIGHFLY_P542_BUILDING_OWNED_SUPPORTS';
- g.userData.terrainChanged=false;g.userData.terrainRelief=support.relief;
- return g;
+ // The source prefab bottom and local corners touch the ORIGINAL ground.
+ // At steep slopes > 3 metres, long legs are unavoidable without terraforming.
+ g.name='HIGHFLY_P543_NO_PLATFORM_CORNER_SUPPORTS';
+ g.userData.terrainChanged=false;g.userData.hasPlatform=false;
+ g.userData.terrainRelief=support.relief;
+ return g.children.length?g:null;
 }
 function foundationFor(a,o,heightSlope){
  const h=Math.max(.16,heightSlope+.26),group=new THREE.Group();
