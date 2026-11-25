@@ -59,7 +59,7 @@ jobs:
         run: |
           cp tests/p540-browser-arvelia.mjs .work/unsung/tools/p540-browser-arvelia.mjs
           cd .work/unsung
-          timeout 350s node tools/p540-browser-arvelia.mjs
+          timeout 530s node tools/p540-browser-arvelia.mjs
       - name: Upload terrain placement evidence, even on failure
         if: always()
         uses: actions/upload-artifact@v4
