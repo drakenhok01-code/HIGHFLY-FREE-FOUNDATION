@@ -1,0 +1,79 @@
+name: "HIGHFLY P537 publish tested build to CLEAN GitHub Pages"
+on:
+  push:
+    branches: [p537-ground-fit-clean-pages-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p537-slim-release
+  cancel-in-progress: true
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Download TESTED standalone P537 build (QA + Chrome already passed)
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          run-id: 45659850899
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p537-tested-build
+      - name: Download historical Pages to EXTRACT ONLY approved P533 backup
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45639807956
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/old-pages-readonly
+      - name: Extract only P533; append P537; delete all other published previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_${{ runner.temp }}/highfly-pages-compact"
+          ARCH="$RUNNER_${{ runner.temp }}/old-pages-readonly/artifact.tar"
+          NEW="$RUNNER_${{ runner.temp }}/p537-tested-build"
+          mkdir -p "$ROOT"
+          test -s "$ARCH"
+          test -s "$NEW/index.html"
+          test -s "$NEW/highfly/world-forge-3d.html"
+          grep -q 'WORLD FORGE 4.5' "$NEW/highfly/world-forge-3d.html"
+          grep -q 'preview-p537' "$NEW/index.html"
+          # Do not use tar -T: GitHub tar filenames are prefixed by ./, and
+          # GNU tar file lists strip ./, falsely reporting files not found.
+          # --wildcards --no-anchored matches either ./preview-p533 or preview-p533.
+          tar --wildcards --no-anchored -xf "$ARCH" -C "$ROOT" 'preview-p533/*'
+          test -s "$ROOT/preview-p533/index.html"
+          test -s "$ROOT/preview-p533/highfly/world-forge-3d.html"
+          mkdir "$ROOT/preview-p537"
+          cp -a "$NEW/." "$ROOT/preview-p537/"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html><html lang="es"><meta charset="utf-8"><title>HIGHFLY RPG</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p537/">
+          <a href="./preview-p537/">HIGHFLY 5.3.7 · Jugar</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          for p in preview-p514 preview-p515 preview-p536 preview-p532 preview-p531; do
+            test ! -e "$ROOT/$p" || { echo "::error::Old preview leaked: $p"; exit 1; }
+          done
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "P537 CLEAN PAGES BYTES $SIZE; only approved preview-p533 and current preview-p537"
+          test "$SIZE" -lt 900000000 || { echo "::error::Published site >900 MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

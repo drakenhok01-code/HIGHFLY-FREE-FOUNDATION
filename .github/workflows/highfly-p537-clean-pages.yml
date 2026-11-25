@@ -1,7 +1,5 @@
 name: "HIGHFLY P537 - World Forge 4.5 terrain grade and slim Pages"
 on:
-  push:
-    branches: [p537-ground-fit-clean-pages-20261125]
   workflow_dispatch:
 permissions:
   contents: read
@@ -90,9 +88,7 @@ jobs:
           ARCHIVE="$RUNNER_TEMP/p533-readonly-old-pages/artifact.tar"
           mkdir -p "$ROOT"
           test -s "$ARCHIVE"
-          tar -tf "$ARCHIVE" | grep -E '(^|/)preview-p533/' > "$RUNNER_TEMP/p533-only.txt"
-          test "$(wc -l < "$RUNNER_TEMP/p533-only.txt")" -gt 20
-          tar -xf "$ARCHIVE" -C "$ROOT" -T "$RUNNER_TEMP/p533-only.txt"
+          tar --wildcards --no-anchored -xf "$ARCHIVE" -C "$ROOT" 'preview-p533/*'
           test -s "$ROOT/preview-p533/index.html"
           test -s "$ROOT/preview-p533/highfly/world-forge-3d.html"
           mkdir "$ROOT/preview-p537"
