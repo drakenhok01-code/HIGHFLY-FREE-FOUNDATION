@@ -37,7 +37,7 @@ for(const [a,pattern] of [
  [rpg,/scenicObjects/],
  [rpg,/world\.addLazy\(wx,wz/],
  [ui,/id="preset-village"/],
- [build,/\['p528-village-layout','p528-village-decor-3d'\]/],
+ [build,/\['p528-village-layout','p528-village-decor-3d','p529-private-source-import'\]/],
  [scenic,/function gazebo\(g\)/],
  [scenic,/function stall\(g,blue\)/],
  ])assert.match(a,pattern);
