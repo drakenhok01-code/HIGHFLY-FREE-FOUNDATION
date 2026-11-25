@@ -1111,6 +1111,7 @@ if(new URLSearchParams(location.search).has('hfqa')){
   clipboard(){return objectClipboard?{...objectClipboard}:null;},
   placement(){return {mode,chosen,pendingYaw,pendingScale};},
   ready(id){return prefabReady.has(id);},
+  error(id){return prefabFailed.get(id)||null;},
   inspect(id){
    const root=viewCache.get(id);if(!root)return null;
    let meshes=0,foundation=0,faces=0;
