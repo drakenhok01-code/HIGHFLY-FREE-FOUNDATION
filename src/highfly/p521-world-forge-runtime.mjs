@@ -22,6 +22,7 @@ import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-r
 import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {gradePlanFor,gradePatchGrid} from './p537-grade-parcels.mjs';
 import {conformingTileGrid,buildingSupportPlan} from './p542-native-conform.mjs';
+import {makeNaturalSurfaceMaterial} from './p543-natural-surface.mjs';
 import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
 import {installArveliaQuests} from './p538-arvelia-quests.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
@@ -29,7 +30,8 @@ import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true;
+const P543_PREVIEW=globalThis.location?.pathname?.includes('/preview-p543/')===true;
+const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true||P543_PREVIEW;
 const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
@@ -40,7 +42,7 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P543_PREVIEW?'hf-world-forge-layout-p543-natural-v1':P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -298,7 +300,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // P541: manual build only. When the RPG opens before the Forge, import
  // only personally placed structures. Never spawn Eastbrook automatically.
  if(P541_PREVIEW&&!loaded.ok&&storage?.getItem(WORLD_FORGE_KEY)===null){
-  for(const source of (P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'])){
+  for(const source of (P543_PREVIEW?['hf-world-forge-layout-p542-conform-v1','hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'])){
    let prior;
    try{prior=validateWorldForgeLayout(JSON.parse(storage?.getItem(source)||'null'));}catch{continue;}
    if(!prior?.ok)continue;
@@ -397,14 +399,15 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  const p542Mat=type=>{
   if(p542Mats.has(type))return p542Mats.get(type);
   const dirt=type==='floor-earth';
-  const m=gradeAtlas?new THREE.ShaderMaterial({
+  const original=P543_PREVIEW?makeNaturalSurfaceMaterial(THREE,{uniforms:{uUnsungAlbedo:{value:gradeAtlas}}},type):null;
+  const m=original??(gradeAtlas?new THREE.ShaderMaterial({
    name:'HIGHFLY_P542_NATIVE_UNSUNG_'+type,
    glslVersion:THREE.GLSL3,
    vertexShader:'out vec3 vPos;out vec3 vNorm;void main(){vec4 p=modelMatrix*vec4(position,1.0);vPos=p.xyz;vNorm=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*viewMatrix*p;}',
    fragmentShader:'precision highp float;precision highp sampler2DArray;in vec3 vPos;in vec3 vNorm;uniform sampler2DArray atlas;out vec4 fragColor;void main(){vec3 grass=texture(atlas,vec3(vPos.xz/2.6,0.0)).rgb;vec3 earth=texture(atlas,vec3(vPos.xz/3.2,1.0)).rgb;vec3 stone=texture(atlas,vec3(vPos.xz/2.2,4.0)).rgb;vec3 col='+(dirt?'mix(earth,stone,0.22)':'grass')+';float sun=0.76+0.3*max(0.0,dot(normalize(vNorm),normalize(vec3(.36,.89,.28))));fragColor=vec4(col*sun,1.0);}',
    uniforms:{atlas:{value:gradeAtlas}},side:THREE.DoubleSide,
    polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2
-  }):new THREE.MeshLambertMaterial({color:dirt?0x78624a:0x537a42,side:THREE.DoubleSide});
+  }):new THREE.MeshLambertMaterial({color:dirt?0x78624a:0x537a42,side:THREE.DoubleSide}));
   p542Mats.set(type,m);return m;
  };
  const p542Surface=(o)=>{
@@ -690,18 +693,19 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(P542_PREVIEW&&buildingAsset?.kind==='building'&&fp.slope>.28){
    const fit=buildingSupportPlan(o,{w:BOUNDS[o.type][0],d:BOUNDS[o.type][1]},
     (x,z)=>world.groundHeight(x,z),{topOverride:fp.y+.03});
-   const side=Math.min(1.25,Math.max(.45,Math.min(fp.w,fp.d)*.07));
-   const stone=new THREE.MeshLambertMaterial({color:0x999185,side:THREE.DoubleSide});
+   const side=P543_PREVIEW?Math.min(.78,Math.max(.30,Math.min(fp.w,fp.d)*.045)):
+    Math.min(1.25,Math.max(.45,Math.min(fp.w,fp.d)*.07));
+   const stone=new THREE.MeshLambertMaterial({color:P543_PREVIEW?0x675f50:0x999185,side:THREE.DoubleSide});
    for(const p of fit.positions){
-    if(p.height<.16)continue;
+    if(P543_PREVIEW&&(Math.abs(p.x)<.1||Math.abs(p.z)<.1))continue;
+    if(p.height<(P543_PREVIEW?.34:.16))continue;
     const post=new THREE.Mesh(new THREE.BoxGeometry(side,p.height+.10,side),stone);
     post.position.set(p.x,p.centerY-.05,p.z);
     post.name='HIGHFLY_P542_UNSUNG_BUILDING_FOOT';
     anchor.add(post);
    }
-   const cap=new THREE.Mesh(new THREE.BoxGeometry(fp.w*.94,.22,fp.d*.94),stone);
-   cap.position.set(0,-.13,0);cap.name='HIGHFLY_P542_BUILDING_OWN_BASE';
-   anchor.add(cap);
+   if(!P543_PREVIEW){const cap=new THREE.Mesh(new THREE.BoxGeometry(fp.w*.94,.22,fp.d*.94),stone);
+    cap.position.set(0,-.13,0);cap.name='HIGHFLY_P542_BUILDING_OWN_BASE';anchor.add(cap);}
   }
   anchor.add(scene);group.add(anchor);anchor.updateMatrixWorld(true);
   // Actual meshes, exact scale and correct terrain y, not a fake stone cube.
