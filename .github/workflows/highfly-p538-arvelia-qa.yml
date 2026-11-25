@@ -6,6 +6,11 @@ on:
 permissions:
   contents: read
   actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p538-isolated-pages
+  cancel-in-progress: true
 jobs:
   arvelia-qa:
     runs-on: ubuntu-latest
@@ -69,3 +74,63 @@ jobs:
           path: dist/
           if-no-files-found: error
           retention-days: 5
+
+  publish-pages:
+    needs: [arvelia-qa]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download freshly tested P538 Arvelia build
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p538-arvelia-world-forge
+          path: ${{ runner.temp }}/p538-tested
+      - name: Download previous P537 approved backup without modifying its branch
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          run-id: 45659850899
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p537-approved
+      - name: Assemble only P537 backup + P538 new World Forge and RPG for GitHub Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          OLD="$RUNNER_TEMP/p537-approved"
+          NEW="$RUNNER_TEMP/p538-tested"
+          ROOT="$RUNNER_TEMP/p538-pages"
+          test -s "$OLD/index.html"
+          test -s "$OLD/highfly/world-forge-3d.html"
+          test -s "$NEW/index.html"
+          test -s "$NEW/highfly/world-forge-3d.html"
+          grep -q 'preview-p537' "$OLD/index.html"
+          grep -q 'preview-p538' "$NEW/index.html"
+          grep -q 'WORLD FORGE 4.6' "$NEW/highfly/world-forge-3d.html"
+          mkdir -p "$ROOT/preview-p537" "$ROOT/preview-p538"
+          cp -a "$OLD/." "$ROOT/preview-p537/"
+          cp -a "$NEW/." "$ROOT/preview-p538/"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="es"><meta charset="utf-8"><title>HIGHFLY P5.3.8 — ARVELIA</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p538/">
+          <a href="./preview-p538/">Entrar a HIGHFLY P5.3.8 · Arvelia</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          test -s "$ROOT/preview-p538/index.html"
+          test -s "$ROOT/preview-p538/highfly/world-forge-3d.js"
+          test -s "$ROOT/preview-p537/highfly/world-forge-3d.html"
+          test ! -e "$ROOT/preview-p536"
+          test ! -e "$ROOT/preview-p534"
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "P538 PAGES SIZE: $SIZE bytes (P537 backed up + P538 new only)"
+          test "$SIZE" -lt 900000000 || { echo "::error::Pages site exceeds 900MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+      - id: deployment
+        uses: actions/deploy-pages@v4
