@@ -7,6 +7,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
+import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,importPrivateSourcePack} from './p529-private-source-import.mjs';
 import {UNSUNG_ORIGINAL_ASSETS} from './p530-unsung-original.mjs';
@@ -22,16 +23,17 @@ import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobb
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
 const $=id=>document.getElementById(id);
-const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true;
+const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true;
+const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true||P536_PREVIEW;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -435,7 +437,7 @@ function restore(){
   // Migrate the user's existing P532/P531 work as a COPY into the new isolated
   // preview. Never overwrite either earlier version, and never seed CI tests.
   if(!old&&(P533_PREVIEW||P536_PREVIEW)&&!new URLSearchParams(location.search).has('hfqa')){
-   for(const previousKey of (P537_PREVIEW?['hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
+   for(const previousKey of (P538_PREVIEW?['hf-world-forge-layout-p537-v1','hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P537_PREVIEW?['hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
     try{
@@ -1017,6 +1019,49 @@ async function loadBeginningVillage({auto=false}={}){
  }catch(err){log('Pueblo de los Inicios',err.message,false);status('No pude crear la aldea: '+err.message);}
  finally{button.disabled=false;}
 }
+
+async function loadEastbrookLand({auto=false}={}){
+ if(!map||!overview||!architectPixel){status('Primero se necesitan alturas, árboles y arquitectura nativa.');return false;}
+ const button=$('pilot-eastbrook');
+ if(records.some(o=>o.highflyTown==='arvelia'&&o.id?.startsWith('hf-p538-'))){
+  status('Arvelia ya está importada. Usá Mover, Girar o Eliminar para editarla.');return false;
+ }
+ if(records.length>2450){status('Plano muy lleno para incorporar Arvelia. Exportá tu diseño.');return false;}
+ if(button)button.disabled=true;
+ const old=JSON.stringify(records);
+ try{
+  const plan=buildEastbrookLand({
+   canPlace:o=>validPosition(o),
+   existing:records,
+   sizeOf:type=>{const a=BY_ID.get(type);return a?[a.w,a.d]:null;},
+   blockedAt:(x,z,r)=>treeNear(x,z,r)||archNear(x,z,r)
+  });
+  if(!plan.complete){status('Arvelia no se aplicó: '+plan.reason+'. Centro '+plan.center.x+', '+plan.center.z+'.');return false;}
+  const summary='Arvelia (solo tierra): '+plan.major+' edificios centrales, '+plan.optional+
+   ' complementarios y '+plan.objects.filter(o=>o.highflyNpc).length+
+   ' NPC, sin puerto. Ubicación X '+plan.center.x+', Z '+plan.center.z+
+   '. Se agrega a tu terreno original sin borrar nada. ¿Importar?';
+  if(!auto&&!window.confirm(summary))return false;
+  const models=[...new Set(plan.objects.map(o=>o.type))].map(type=>BY_ID.get(type));
+  if(models.some(a=>!a)){status('Falta un edificio o NPC en el catálogo público. Plano sin cambios.');return false;}
+  const loaded=await Promise.all(models.map(async a=>({id:a.id,model:await getGLTF(a)})));
+  if(loaded.some(x=>!x.model)){status('Modelos públicos sin cargar: '+loaded.filter(x=>!x.model).map(x=>x.id).join(', ')+'. Plano intacto.');return false;}
+  const saved=localStorage.getItem(STORE);
+  if(saved)localStorage.setItem('hf-world-forge-layout-p538-before-eastbrook',saved);
+  recordSnapshot();records.push(...plan.objects);
+  save();await rebuildPlaced();focus(plan.center.x,plan.center.z,130);
+  status('✓ ARVELIA IMPORTADA: '+plan.major+' edificios base, '+plan.optional+
+   ' extras y '+plan.objects.filter(o=>o.highflyNpc).length+' NPC, todos editables. Sin puerto ni activos restringidos.');
+  log('HIGHFLY P5.3.8 Eastbrook tierra',plan.objects.length+
+   ' elementos en terreno validado · layout trasladado desde fuente MIT; diálogos HIGHFLY originales.');
+  return true;
+ }catch(err){
+  try{records=JSON.parse(old);save();await rebuildPlaced();}catch{}
+  status('Arvelia cancelada sin modificaciones: '+err.message);
+  log('Eastbrook importador',err.message,false);return false;
+ }finally{if(button)button.disabled=false;}
+}
+
 async function handlePrivateImport(ev){
  const file=ev.target.files?.[0];ev.target.value='';if(!file)return;
  const btn=$('import-source');btn.disabled=true;
@@ -1037,6 +1082,7 @@ function exportJSON(){
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
 }
 function bindUI(){
+ if($('pilot-eastbrook'))$('pilot-eastbrook').onclick=()=>loadEastbrookLand();
  $('search').oninput=()=>{catalogLimit=36;drawCatalog();};
  $('catalog-more').onclick=()=>{catalogLimit+=36;drawCatalog();};
  $('repeat-place').onclick=()=>{repeatPlacement=!repeatPlacement;
@@ -1349,8 +1395,9 @@ async function boot(){
   const firstP529=P529_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')&&
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
+  if(P538_PREVIEW&&!new URLSearchParams(location.search).has('hfqa'))await loadEastbrookLand({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status(P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
+  status(P538_PREVIEW?'✓ WORLD FORGE 4.6 · P5.3.8 · Arvelia terrestre importable con NPC y misiones HIGHFLY; P5.3.7 intacta.':P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
@@ -1361,6 +1408,7 @@ if(new URLSearchParams(location.search).has('hfqa')){
  window.__hfWorldForge3DQA={
   focus,
   validPosition,
+  eastbrookPlan:()=>buildEastbrookLand({canPlace:o=>validPosition(o),existing:records,sizeOf:t=>{const a=BY_ID.get(t);return a?[a.w,a.d]:null;},blockedAt:(x,z,r)=>treeNear(x,z,r)||archNear(x,z,r)}),
   point(x,z){
    const world=new THREE.Vector3(x,elevation(x,z)+1,z);
    const ndc=world.project(cam),r=renderer.domElement.getBoundingClientRect();
