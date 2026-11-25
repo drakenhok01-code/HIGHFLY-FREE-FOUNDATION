@@ -1,0 +1,113 @@
+name: "HIGHFLY P515: Native Eastbrook on pre-Forge P514, Android pilot"
+on:
+  push:
+    branches: [p515-eastbrook-android-preview-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p515-native-android-pages
+  cancel-in-progress: false
+jobs:
+  build-p515:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned icon generator
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Prove P514 source / P515 city and no World Forge
+        run: |
+          set -euo pipefail
+          node --check scripts/f0-build.mjs
+          node --check src/highfly/p515-eastbrook-layout.mjs
+          node --check src/highfly/p515-eastbrook-native.mjs
+          node --test tests/p515-eastbrook-native.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+          test ! -e src/highfly/p521-world-forge-runtime.mjs
+          test ! -e src/highfly/p525-world-forge-3d.mjs
+          ! grep -E 'world-forge-3d|world-forge-runtime|world-forge\.html' scripts/f0-build.mjs
+      - name: Compile native playable Eastbrook RPG with pinned KayKit FREE CC0
+        run: |
+          set -euo pipefail
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p515-eastbrook/ npm run build
+          npm run qa:dist
+          test -s dist/index.html
+          grep -q 'preview-p515-eastbrook' dist/index.html
+          test -s dist/highfly/kaykit-free/manifest.json
+          for asset in blacksmith tavern church home_A home_B market; do
+            test -s "dist/highfly/kaykit-free/building_${asset}_red.gltf"
+            test -s "dist/highfly/kaykit-free/building_${asset}_red.bin"
+          done
+          test -s dist/highfly/kaykit-free/hexagons_medieval.png
+          test -s dist/highfly/kaykit-free/LICENSE-KAYKIT-MEDIEVAL-HEXAGON-CC0.txt
+          test ! -e dist/highfly/world-forge-3d.html
+          test ! -e dist/highfly/world-forge.html
+          grep -q 'installNativeEastbrook(game,{cover})' .work/unsung/src/main.js
+          grep -q 'eastbrookClearing(x,z)' .work/unsung/src/main.js
+          grep -q 'uHFEastbrook' .work/unsung/src/world/flora/grass.js
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('dist/highfly/kaykit-free/manifest.json'));if(m.models.length!==16||m.license!=='CC0-1.0'||m.commit!=='84fa4e91af6a88989be7c99e0891cede11f2ca38')throw Error('CC0 model source mismatch');console.log('PASS P515: 16 official KayKit models, 11 town lots native')"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p515-native-eastbrook-game
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+  stage-pages:
+    needs: build-p515
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45619277434
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/approved-pages
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p515-native-eastbrook-game
+          path: ${{ runner.temp }}/native-game
+      - name: Add standalone P515 only / preserve prior versions byte-identical
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE="$RUNNER_TEMP/highfly-p515-pages"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/approved-pages/artifact.tar" -C "$SITE"
+          for f in index.html preview-v3/index.html preview-p514/index.html preview-p533/index.html preview-p534/index.html preview-p534/highfly/world-forge-3d.html; do
+            test -s "$SITE/$f" || { echo "Missing approved Pages file $f"; exit 1; }
+          done
+          test ! -e "$SITE/preview-p515-eastbrook"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/preexisting.sha256"
+          mkdir -p "$SITE/preview-p515-eastbrook"
+          cp -a "$RUNNER_TEMP/native-game/." "$SITE/preview-p515-eastbrook/"
+          test -s "$SITE/preview-p515-eastbrook/index.html"
+          test -s "$SITE/preview-p515-eastbrook/highfly/kaykit-free/manifest.json"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/preexisting.sha256" >/dev/null)
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "P515 native RPG preview added. All previous Pages files retained."
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage-pages
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
