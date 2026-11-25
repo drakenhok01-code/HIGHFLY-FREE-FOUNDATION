@@ -97,6 +97,7 @@ try{
  if(heightsAfter.gradePatches!==0||Math.abs(heightsAfter.original-heightsBefore.original)>1e-7||
     Math.abs(heightsAfter.rendered-heightsBefore.rendered)>1e-7)
   throw Error('Terrain changed after placing house and three road types: '+JSON.stringify({heightsBefore,heightsAfter}));
+ await page.click('#save');
  const savedWithPaths=await page.evaluate(()=>JSON.parse(window.__hfWorldForge3DQA.savedJSON()||'null'));
  if(savedWithPaths?.objects?.length!==4||!savedWithPaths.objects.some(o=>o.type==='floor-grass'))
   throw Error('Edited stone, native dirt, grass and house do not share the RPG layout');
