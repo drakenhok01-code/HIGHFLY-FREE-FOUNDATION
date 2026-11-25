@@ -275,16 +275,65 @@ function getGLTF(a){
  if(!cache.has(a.id))cache.set(a.id,gltfLoader.loadAsync(modelUrl(a)).then(g=>g.scene).catch(err=>{log('KayKit '+a.label,err.message,false);return null;}));
  return cache.get(a.id);
 }
+// Exact native paved court elevations from original Unsung's Architecture.buildPlayable().
+function floorElevation(x,z){
+ let y=elevation(x,z);
+ for(const f of overview?.floors||[]){
+  if(!finite(f.y))continue;
+  const inside=f.r?Math.hypot(x-f.x,z-f.z)<=f.r-.1:
+    (Math.abs(x-f.x)<=(f.w||0)*.5-.1&&Math.abs(z-f.z)<=(f.d||0)*.5-.1);
+  if(inside)y=Math.max(y,f.y);
+ }
+ return y;
+}
+// Editor-only detailed previews. The real RPG uses original procedural M.PAVING material.
+const floorMats=new Map();
+function floorMaterial(type){
+ if(floorMats.has(type))return floorMats.get(type);
+ const c=document.createElement('canvas');c.width=c.height=384;
+ const g=c.getContext('2d'),seed=(a,b)=>{let n=Math.imul((a+3)*92837111,(b+7)*689287499);n^=n>>>15;return ((n>>>0)%1000)/1000;};
+ const stone=type==='floor-stone',wood=type==='floor-wood';
+ g.fillStyle=stone?'#5b5a50':wood?'#564838':'#826d57';g.fillRect(0,0,384,384);
+ const rows=stone?9:wood?11:14,step=384/rows;
+ for(let row=0;row<rows;row++){
+  let x=-step*2*(row%3),index=0;
+  while(x<386){
+   const n=seed(row,index++),width=stone?step*(1.7+1.2*n):wood?384:step*(.8+1.2*n);
+   const top=row*step+1.4,bottom=(row+1)*step-1.3,left=x+1.7;
+   const light=stone?Math.round(162+28*n):wood?Math.round(117+27*n):Math.round(126+26*n);
+   g.fillStyle=stone?'rgb('+(light+10)+','+(light+6)+','+(light-1)+')':
+     wood?'rgb('+(light+18)+','+(light+4)+','+(light-21)+')':
+       'rgb('+(light+15)+','+light+','+(light-16)+')';
+   g.fillRect(left,top,Math.max(1,width-3),bottom-top);
+   g.fillStyle=stone?'rgba(245,237,207,.13)':'rgba(246,224,176,.12)';
+   g.fillRect(left,top,Math.max(1,width-3),1.4);
+   g.fillStyle='rgba(21,27,26,.11)';g.fillRect(left,bottom-2,Math.max(1,width-3),1.7);
+   x+=width;if(wood)break;
+  }
+ }
+ for(let k=0;k<4500;k++){
+  const x=seed(k,8)*384,y=seed(k,13)*384,n=seed(k,27);
+  g.fillStyle=n>.47?'rgba(250,241,218,.055)':'rgba(45,48,43,.05)';
+  g.fillRect(x,y,n>.7?1.7:.8,n>.7?1.5:.8);
+ }
+ const tx=new THREE.CanvasTexture(c);tx.wrapS=tx.wrapT=THREE.RepeatWrapping;
+ tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ const mat=new THREE.MeshLambertMaterial({map:tx,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+ floorMats.set(type,mat);return mat;
+}
 function makeModel(a,o){
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
-  const w=a.w*o.scale,d=a.d*o.scale,points=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+  const w=a.w*o.scale,d=a.d*o.scale,points=[],uvs=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
   for(const [x,z] of [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]]){
-   const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;points.push(x,elevation(xx,zz)-o.y+.14,z);
+   const xx=o.x+x*c-z*s,zz=o.z+x*s+z*c;
+   points.push(x,floorElevation(xx,zz)-o.y+.20,z);
+   uvs.push(xx/4,zz/4);
   }
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   geo.setIndex([0,1,2,0,2,3]);geo.computeVertexNormals();
-  group.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:a.id==='floor-stone'?0xbcb3a3:a.id==='floor-earth'?0x98775c:0xb28a60,side:THREE.DoubleSide})));
+  group.add(new THREE.Mesh(geo,floorMaterial(a.id)));
   return group;
  }
  const m=new THREE.Mesh(new THREE.BoxGeometry(a.w*o.scale,3*o.scale,a.d*o.scale),new THREE.MeshLambertMaterial({color:0xbaa99c}));
