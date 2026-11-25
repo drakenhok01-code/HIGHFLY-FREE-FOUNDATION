@@ -42,7 +42,7 @@ try{
  if(status.phase!=='listo'||status.errors?.length||errors.length||missingResources.length||!status.button)throw Error('P539 source scene or JS failed');
  if(!status.plan?.complete)throw Error('Eastbrook LAND constrained placement not complete: '+JSON.stringify(status.plan));
  const smithy=status.plan.objects.find(x=>x.role==='herreria');
- if(!['kaykit-blacksmith','kaykit-home-a'].includes(smithy?.type))throw Error('Smithy must use original CC0 or verified CC0 substitute: '+JSON.stringify(smithy));
+ if(!['kaykit-blacksmith','free-building-blacksmith-blue','free-building-blacksmith-green','free-building-blacksmith-yellow','kaykit-home-a','kaykit-home-b','unsung-hall'].includes(smithy?.type))throw Error('Smithy must use original CC0 or verified CC0 substitute: '+JSON.stringify(smithy));
  if(status.plan.objects.some(x=>/quay|dock|muelle|harbor|port/i.test(x.role||x.type)))throw Error('Harbor resource in land-only layout');
  page.once('dialog',dialog=>dialog.accept());
  await page.click('#pilot-eastbrook');
