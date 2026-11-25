@@ -423,7 +423,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   p542Batches.set(key,batch);
  };
 
- const gradeMat=P537_PREVIEW&&gradeAtlas?new THREE.ShaderMaterial({
+ const gradeMat=!P542_PREVIEW&&P537_PREVIEW&&gradeAtlas?new THREE.ShaderMaterial({
   name:'HIGHFLY_P537_ORIGINAL_UNSUNG_EARTH_LEVELING',
   glslVersion:THREE.GLSL3,
   vertexShader:'out vec3 vPos;out vec3 vN;void main(){vec4 p=modelMatrix*vec4(position,1.0);vPos=p.xyz;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*viewMatrix*p;}',
@@ -684,6 +684,25 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
     side:THREE.FrontSide
    });
   });
+  // P542: only alter the building-owned foundations, never the native
+  // Unsung ground below it. The same nine-point system is in World Forge.
+  const buildingAsset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type);
+  if(P542_PREVIEW&&buildingAsset?.kind==='building'&&fp.slope>.28){
+   const fit=buildingSupportPlan(o,{w:BOUNDS[o.type][0],d:BOUNDS[o.type][1]},
+    (x,z)=>world.groundHeight(x,z),{topOverride:fp.y+.03});
+   const side=Math.min(1.25,Math.max(.45,Math.min(fp.w,fp.d)*.07));
+   const stone=new THREE.MeshLambertMaterial({color:0x999185,side:THREE.DoubleSide});
+   for(const p of fit.positions){
+    if(p.height<.16)continue;
+    const post=new THREE.Mesh(new THREE.BoxGeometry(side,p.height+.10,side),stone);
+    post.position.set(p.x,p.centerY-.05,p.z);
+    post.name='HIGHFLY_P542_UNSUNG_BUILDING_FOOT';
+    anchor.add(post);
+   }
+   const cap=new THREE.Mesh(new THREE.BoxGeometry(fp.w*.94,.22,fp.d*.94),stone);
+   cap.position.set(0,-.13,0);cap.name='HIGHFLY_P542_BUILDING_OWN_BASE';
+   anchor.add(cap);
+  }
   anchor.add(scene);group.add(anchor);anchor.updateMatrixWorld(true);
   // Actual meshes, exact scale and correct terrain y, not a fake stone cube.
   let added=0;
