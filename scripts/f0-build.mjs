@@ -762,8 +762,10 @@ for(const name of ['p532-quaternius-cc0-catalog','p532-spanish-labels','p532-pub
  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('public/highfly/'+name+'.mjs'));
 copy(path.join(ROOT,'scripts/p532-pinned-quaternius-cc0.mjs'),loc('tools/p532-pinned-quaternius-cc0.mjs'));
 copy(path.join(ROOT,'scripts/p532-quaternius-thumbnails.py'),loc('tools/p532-quaternius-thumbnails.py'));
+copy(path.join(ROOT,'scripts/p532-decode-quaternius-meshopt.mjs'),loc('tools/p532-decode-quaternius-meshopt.mjs'));
 copy(path.join(ROOT,'scripts/p532-unsung-tree-thumbnails.mjs'),loc('tools/p532-unsung-tree-thumbnails.mjs'));
 run('node',['tools/p532-pinned-quaternius-cc0.mjs'],origin);
+run('node',['tools/p532-decode-quaternius-meshopt.mjs'],origin);
 run(process.env.HIGHFLY_ICON_PYTHON||'python3',['tools/p532-quaternius-thumbnails.py'],origin);
 run('node',['tools/p532-unsung-tree-thumbnails.mjs'],origin);
 if(JSON.parse(fs.readFileSync(loc('public/highfly/quaternius-cc0/manifest.json'),'utf8')).models.length!==42)
