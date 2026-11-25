@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
@@ -280,7 +281,10 @@ function restore(){
  }
  catch(e){log('Plano',e.message,false);}log('Guardado compartido',records.length+' elementos');
 }
-const modelUrl=a=>url('kaykit-free/building_'+a.model+'_red.gltf');
+const realPrefab=a=>!!a.model||a.id.startsWith('npc-');
+const modelUrl=a=>a.id.startsWith('npc-')
+ ?new URL('../models/hf-kaykit-knight.glb',import.meta.url).href
+ :url('kaykit-free/building_'+a.model+'_red.gltf');
 const prefabReady=new Set(),prefabFailed=new Map();
 function getGLTF(a){
  if(!cache.has(a.id)){
@@ -377,14 +381,20 @@ async function buildPlaced(o){
  const a=BY_ID.get(o.type);if(!a)return null;
  const root=new THREE.Group(),point=validPosition(o,o.id),footY=point.ok?point.y:elevation(o.x,o.z);
  root.position.set(o.x,footY+.035,o.z);root.rotation.y=o.yaw;root.userData.placeId=o.id;
- if(a.model){
+ if(realPrefab(a)){
   const original=await getGLTF(a);
   if(!original)throw Error('Prefab KayKit 3D sin cargar: '+a.label);
   if(original){
-   const model=original.clone(true),box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-   const scale=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
+   const model=a.id.startsWith('npc-')?cloneRig(original):original.clone(true);
+   const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+   const scale=a.id.startsWith('npc-')?1.8/Math.max(.01,size.y)*o.scale:
+     Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
    model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
-   root.add(foundationFor(a,o,point.slope||0));root.add(model);
+   if(a.id.startsWith('npc-'))model.traverse(x=>{
+    if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
+   });
+   else root.add(foundationFor(a,o,point.slope||0));
+   root.add(model);
   }
  }else root.add(makeModel(a,o));
  return root;
@@ -425,11 +435,12 @@ async function createGhost(id){
  const group=new THREE.Group();group.visible=false;group.userData.ghostFor=id;ghost=group;
  const cube=new THREE.Mesh(new THREE.BoxGeometry(a.w,2.1,a.d),new THREE.MeshBasicMaterial({color:0x88ffe0,transparent:true,opacity:.6,wireframe:true}));
  cube.position.y=1.05;group.add(cube);scene.add(group);
- if(a.model){
+ if(realPrefab(a)){
   const model=await getGLTF(a);
   if(!model||ghost!==group)return;
-  const clone=model.clone(true),box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-  const factor=Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z));
+  const clone=a.id.startsWith('npc-')?cloneRig(model):model.clone(true);
+  const box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  const factor=a.id.startsWith('npc-')?1.8/Math.max(.01,size.y):Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z));
   clone.scale.setScalar(factor);clone.position.set(-center.x*factor,-box.min.y*factor,-center.z*factor);
   clone.traverse(node=>{if(!node.isMesh)return;
    const copy=(mat)=>{const m=mat.clone();m.transparent=true;m.opacity=.56;m.depthWrite=false;return m;};
@@ -457,7 +468,7 @@ function selectAsset(id){
  switchMode('place');drawCatalog();showProps();
  status('Cargando objeto 3D completo: '+a.label+'…');
  createGhost(id);
- if(a.model)getGLTF(a).then(mesh=>{
+ if(realPrefab(a))getGLTF(a).then(mesh=>{
   if(chosen!==id)return;
   status(mesh?'✓ '+a.label+' completo. Tocá y arrastrá hasta donde quieras colocarlo.':
    'Falló modelo '+a.label+'. Abrí Diagnóstico; no se colocará una caja falsa.');
@@ -484,7 +495,7 @@ function addAt(x,z){
  if(!chosen||!map)return false;
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
  const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
- if(a.model&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
+ if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
  if(!chosen.startsWith('floor-')&&!chosen.startsWith('npc-'))o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
