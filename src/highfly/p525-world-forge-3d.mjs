@@ -18,15 +18,17 @@ import {localizePublicAsset} from './p532-spanish-labels.mjs';
 import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
 import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,roadClearance,ROAD_WIDTHS} from './p533-curved-road-path.mjs';
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
+import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry,squareGridSnap} from './p536-modular-cobble-kit.mjs';
 const $=id=>document.getElementById(id);
+const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -77,7 +79,8 @@ function addPrivateCatalog(models){
 for(const a of UNSUNG_FLORA)base.push({...a,cat:'Unsung árboles',nativeFlora:true});
 for(const a of QUATERNIUS_CC0_ALL)base.push({...a});
 for(const a of PUBLIC_URBAN_ASSETS)base.push({...a,publicUrban:true});
-if(P533_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
+if(P533_PREVIEW||P536_PREVIEW)base.push({...CURVED_ROAD_CATALOG});
+if(P536_PREVIEW)for(const tile of MODULAR_COBBLE_TILES)base.push({...tile});
  // Twelve authentic MIT Unsung procedural kit pieces, exported from its real source.
 for(const a of UNSUNG_ORIGINAL_ASSETS)base.push({...a,cat:'Unsung original',originalPrefab:true,w:a.w,d:a.d});
 const BY_ID=new Map(base.map(a=>[a.id,a]));
@@ -123,7 +126,7 @@ const gltfLoader=new GLTFLoader()
  .setMeshoptDecoder(MeshoptDecoder)
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
-let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
+let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P536_PREVIEW||P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
 orbit.target.set(movedPivot.x,209,movedPivot.z);cam.position.set(movedPivot.x+105,326,movedPivot.z+155);
@@ -340,6 +343,7 @@ function archNear(x,z,rad){
 function validPosition(o,id=null){
  if(!map)return {ok:false,why:'Terreno sin cargar'};
  const a=BY_ID.get(o.type);if(!a)return {ok:false,why:'Modelo inexistente'};
+ if(isModularCobble(o)&&Math.abs(o.scale-1)>.001)return {ok:false,why:'Las curvas se colocan a escala fija para encastrar'};
  if(isCurvedRoad(o)){
   const v=roadPathValid(o);if(!v.ok)return {ok:false,why:v.reason};
   for(const t of sampleCurvedRoad(o.points,3))
@@ -383,8 +387,8 @@ function restore(){
   let old=localStorage.getItem(STORE);
   // Migrate the user's existing P532/P531 work as a COPY into the new isolated
   // preview. Never overwrite either earlier version, and never seed CI tests.
-  if(!old&&P533_PREVIEW&&!new URLSearchParams(location.search).has('hfqa')){
-   for(const previousKey of ['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']){
+  if(!old&&(P533_PREVIEW||P536_PREVIEW)&&!new URLSearchParams(location.search).has('hfqa')){
+   for(const previousKey of (P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
     try{
@@ -483,6 +487,7 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
+ if(isModularCobble(o))return makeModularCobbleTile3D(o,floorElevation,{anchorY:floorElevation(o.x,o.z)+.035});
  if(isCurvedRoad(o))return makeCurvedCobblestone3D(o,floorElevation,{
   anchorX:o.x,anchorY:floorElevation(o.x,o.z)+.035,anchorZ:o.z
  });
@@ -532,12 +537,14 @@ async function buildPlaced(o){
  }else{
   root.add(makeModel(a,o));
   if(isCurvedRoad(o))root.userData.roadGeometry=true;
+  if(isModularCobble(o))root.userData.modularRoadGeometry=true;
  }
  return root;
 }
 async function rebuildPlaced(){
  const token={};rebuildPlaced.token=token;
- for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);}
+ for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);
+  if(child.userData.modularRoadGeometry)disposeModularCobbleGeometry(child);}
  viewCache.clear();selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
   let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
@@ -584,7 +591,7 @@ async function createGhost(id){
   });
   group.add(clone);cube.visible=false;render();
  }else{
-  const scenic=makePublicUrbanPrefab(id,1)||makeVillageDecor(id,1);
+  const scenic=isModularCobbleType(id)?makeModularCobbleTile3D({type:id,x:0,z:0,yaw:0,scale:1},()=>0,{anchorY:0}):makePublicUrbanPrefab(id,1)||makeVillageDecor(id,1);
   if(scenic){
    scenic.traverse(node=>{
     if(!node.isMesh)return;
@@ -597,7 +604,8 @@ async function createGhost(id){
 function previewGhost(ev){
  if(mode!=='place'||!chosen||!ghost)return;
  const hit=hitTerrain(ev);if(!hit){ghost.visible=false;render();return;}
- const a=BY_ID.get(chosen),x=snap(hit.x,chosen.startsWith('floor-')?4:2),z=snap(hit.z,chosen.startsWith('floor-')?4:2);
+ const a=BY_ID.get(chosen),grid=isModularCobbleType(chosen)?a.w:chosen.startsWith('floor-')?4:2,
+  x=snap(hit.x,grid),z=snap(hit.z,grid);
  const check=validPosition({type:chosen,id:'ghost',x,z,yaw:pendingYaw,scale:pendingScale,clearTrees:chosen.startsWith('floor-')||a.kind==='building'||!!a.model||!!a.privateModel&&a.kind==='building'||!!a.originalPrefab&&a.kind==='building'});
  ghost.position.set(x,(check.ok?check.y:elevation(x,z))+.2,z);
  ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);ghost.visible=true;
@@ -642,7 +650,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW,cameraPan=null,objectClipboard=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW||P533_PREVIEW||P536_PREVIEW,cameraPan=null,objectClipboard=null;
 let roadNodes=[],roadHover=null,roadPreview=null,roadEditId=null,roadDragIndex=-1,roadPreviewStamp=0;
 function disposeRoadPreview(){
  if(roadPreview){scene.remove(roadPreview);disposeCurvedRoadGeometry(roadPreview);roadPreview=null;}
@@ -784,12 +792,13 @@ function drawCats(){
 function addAt(x,z){
  if(!chosen||!map)return false;
  if(!BY_ID.get(chosen)?.model&&BY_ID.get(chosen)?.cat==='Bocetos antiguos'){status('Elegí un edificio completo KayKit en vez del boceto antiguo.');return false;}
- const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,chosen.startsWith('floor-')?4:2),z:snap(z,chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
+ const a=BY_ID.get(chosen),o={id:'hf-wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),type:chosen,x:snap(x,isModularCobbleType(chosen)?a.w:chosen.startsWith('floor-')?4:2),z:snap(z,isModularCobbleType(chosen)?a.w:chosen.startsWith('floor-')?4:2),yaw:pendingYaw,scale:pendingScale,y:0};
  if(realPrefab(a)&&!prefabReady.has(a.id)){status('El edificio todavía está cargando: '+a.label+'. No se guardó ninguna caja provisional.');return false;}
  if(chosen.startsWith('floor-')||a.kind==='building'||a.model||a.privateModel&&a.kind==='building'||a.originalPrefab&&a.kind==='building')o.clearTrees=true;
  const check=validPosition(o);if(!check.ok){status('No se puede colocar '+a.label+': '+check.why);return false;}
  if(records.length>=2500){status('Llegaste al límite de 2500 piezas. Exportá el plano antes de seguir.');return false;}
  if(o.type.startsWith('floor-')&&records.some(a=>a.type===o.type&&Math.hypot(a.x-o.x,a.z-o.z)<1.1))return false;
+ if(isModularCobble(o)&&records.some(p=>isModularCobble(p)&&Math.hypot(p.x-o.x,p.z-o.z)<.3))return false;
  o.y=check.y;records.push(o);
  buildPlaced(o).then(root=>{if(root&&records.some(v=>v.id===o.id)){
   groups.placed.add(root);viewCache.set(o.id,root);
@@ -839,18 +848,18 @@ function selectObject(id){
 function transform(action){
  const o=records.find(v=>v.id===selected);
  if(!o&&chosen){
-  if(action==='rot-left')pendingYaw-=Math.PI/12;
-  if(action==='rot-right')pendingYaw+=Math.PI/12;
-  if(action==='size-down')pendingScale=clamp(pendingScale-.1,.5,3);
-  if(action==='size-up')pendingScale=clamp(pendingScale+.1,.5,3);
+  if(action==='rot-left')pendingYaw-=isModularCobbleType(chosen)?Math.PI/2:Math.PI/12;
+  if(action==='rot-right')pendingYaw+=isModularCobbleType(chosen)?Math.PI/2:Math.PI/12;
+  if(!isModularCobbleType(chosen)&&action==='size-down')pendingScale=clamp(pendingScale-.1,.5,3);
+  if(!isModularCobbleType(chosen)&&action==='size-up')pendingScale=clamp(pendingScale+.1,.5,3);
   if(ghost){ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);}
   showProps();render();status('Vista previa: giro '+Math.round(pendingYaw*180/Math.PI)+'° · tamaño '+pendingScale.toFixed(2));return;
  }
  if(!o)return;
  const old={...o};recordSnapshot();
- if(action==='rot-left')o.yaw-=Math.PI/12;else if(action==='rot-right')o.yaw+=Math.PI/12;
- else if(action==='size-down')o.scale=clamp(o.scale-.1,.5,3);
- else if(action==='size-up')o.scale=clamp(o.scale+.1,.5,3);
+ if(action==='rot-left')o.yaw-=isModularCobble(o)?Math.PI/2:Math.PI/12;else if(action==='rot-right')o.yaw+=isModularCobble(o)?Math.PI/2:Math.PI/12;
+ else if(!isModularCobble(o)&&action==='size-down')o.scale=clamp(o.scale-.1,.5,3);
+ else if(!isModularCobble(o)&&action==='size-up')o.scale=clamp(o.scale+.1,.5,3);
  const check=validPosition(o,o.id);
  if(!check.ok){Object.assign(o,old);history.pop();status('No se puede modificar: '+check.why);return;}
  o.y=check.y;save();rebuildPlaced();
@@ -914,7 +923,7 @@ async function duplicateSelected(){
  const source=records.find(x=>x.id===selected);if(!source)return;
  const asset=BY_ID.get(source.type);if(!asset)return;
  const test={...source,id:'hf-wf-'+Date.now().toString(36)+'-dup',
-   x:snap(source.x+(asset.w*source.scale+2),2)};
+   x:snap(source.x+(asset.w*source.scale+(isModularCobble(source)?0:2)),isModularCobble(source)?asset.w:2)};
  const check=validPosition(test);
  if(!check.ok){status('No se puede duplicar aquí: '+check.why);return;}
  test.y=check.y;recordSnapshot();records.push(test);save();
@@ -1101,7 +1110,7 @@ function bindUI(){
    activePointer=e.pointerId;
    const hit=hitTerrain(e);
    if(!hit)return;
-   const floor=chosen.startsWith('floor-');
+   const floor=chosen.startsWith('floor-')&&!isModularCobbleType(chosen);
    recordSnapshot();
    if(floor){dragPainting=true;lastPaint=hit;paintLine(hit,hit);}
    else{pendingDrop=hit;previewGhost(e);status('Mové el dedo para ubicar la casa y soltá para colocarla.');}
@@ -1229,7 +1238,7 @@ function installGizmo(){
   if(ev.value){before=JSON.stringify(records);return;}
   const o=records.find(x=>x.id===selected),root=viewCache.get(selected);if(!o||!root)return;
   const old={...o};o.x=snap(root.position.x,1);o.z=snap(root.position.z,1);
-  o.yaw=root.rotation.y;o.scale=mode==='scale'?clamp(Math.round(old.scale*Math.max(.2,(root.scale.x+root.scale.z)*.5)*100)/100,.5,3):old.scale;
+  o.yaw=isModularCobble(o)?Math.round(root.rotation.y/(Math.PI/2))*(Math.PI/2):root.rotation.y;o.scale=isModularCobble(o)?1:mode==='scale'?clamp(Math.round(old.scale*Math.max(.2,(root.scale.x+root.scale.z)*.5)*100)/100,.5,3):old.scale;
   const check=validPosition(o,o.id);
   if(!check.ok){Object.assign(o,old);root.position.set(old.x,old.y,old.z);root.rotation.y=old.yaw;root.scale.setScalar(1);status('Ubicación bloqueada: '+check.why);}
   else{o.y=check.y;root.position.y=o.y+.035;if(before&&before!==JSON.stringify(records)){history.push(before);redoStack=[];save();}}
