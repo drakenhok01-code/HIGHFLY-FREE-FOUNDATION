@@ -1235,7 +1235,7 @@ function bindUI(){
    const k=e.key.toLowerCase();
    if(!['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift'].includes(k))return;
    heldMove.add(k);if(k!=='shift')e.preventDefault();
-   if(!navFrame){navLast=0;navFrame=requestAnimationFrame(fly);}
+   if(!navFrame){navLast=0;fly(performance.now());} // immediate first movement, even when GPU frames stall
   });
   window.addEventListener('keyup',e=>{heldMove.delete(e.key.toLowerCase());});
   window.addEventListener('blur',()=>{heldMove.clear();navLast=0;});
