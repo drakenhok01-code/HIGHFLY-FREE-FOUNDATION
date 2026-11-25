@@ -97,10 +97,10 @@ const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmi
 const safety=[[-519,-70,8],[-179,-459,7]];
 const logData={phase:'inicio',lines:[],errors:[]};
 const log=(message,detail='',ok=true)=>{
- const s=(ok?'✓ ':'✕ ')+message+(detail?' — '+detail:'');
- logData.lines.push(s);if(!ok){logData.errors.push(s);$('diagnostics').hidden=false;}
+ const s=(ok==='warn'?'⚠ ':ok?'✓ ':'✕ ')+message+(detail?' — '+detail:'');
+ logData.lines.push(s);if(ok===false){logData.errors.push(s);$('diagnostics').hidden=false;}
  $('log').textContent=['HIGHFLY WORLD FORGE 3D P5.2.5','Estado '+logData.phase,'URL '+location.pathname,'',...logData.lines].join('\n');
- console[ok?'info':'error']('[HIGHFLY WORLD FORGE 3D]',s);
+ console[ok===false?'error':ok==='warn'?'warn':'info']('[HIGHFLY WORLD FORGE 3D]',s);
 };
 const status=s=>$('status').textContent=s;
 window.__highfly3DEditorHealth=logData;
@@ -479,7 +479,7 @@ function getGLTF(a){
    prefabReady.add(a.id);
    log('Prefab completo '+a.label,meshCount+' mallas · '+size.x.toFixed(1)+' × '+size.y.toFixed(1)+' × '+size.z.toFixed(1));
    return g.scene;
-  }).catch(err=>{prefabFailed.set(a.id,err.message);log('Prefab completo '+a.label,err.message,false);return null;}));
+  }).catch(err=>{prefabFailed.set(a.id,err.message);log('Prefab no disponible '+a.label,err.message,P539_PREVIEW?'warn':false);return null;}));
  }
  return cache.get(a.id);
 }
@@ -1088,7 +1088,7 @@ async function loadEastbrookLand({auto=false}={}){
   save();await rebuildPlaced();focus(plan.center.x,plan.center.z,130);
   status('✓ ARVELIA IMPORTADA: '+plan.major+' edificios centrales, '+plan.optional+
    ' extras y '+plan.objects.filter(o=>o.highflyNpc).length+' NPC; sin puerto. '+
-   (P539_PREVIEW?'Herrería = Casa A CC0 (forja exacta pendiente). ':'')+
+   (P539_PREVIEW?'Herrería: modelo original o sustituto CC0 según carga. ':'')+
    (substitutions.length?'Sustitutos: '+substitutions.join('; '):''));
   log('HIGHFLY P5.3.8 Eastbrook tierra',plan.objects.length+
    ' elementos en terreno validado · layout trasladado desde fuente MIT; diálogos HIGHFLY originales.');
