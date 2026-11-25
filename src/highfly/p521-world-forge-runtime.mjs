@@ -20,18 +20,20 @@ import {PUBLIC_URBAN_ASSETS,PUBLIC_URBAN_IDS,makePublicUrbanPrefab} from './p532
 import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid} from './p533-curved-road-path.mjs';
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
+import {gradePlanFor,gradePatchGrid} from './p537-grade-parcels.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true;
+const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true;
+const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -131,7 +133,12 @@ function footprint(world,o){
   if(!num(h)||h<-.1||(num(water)&&water>=h-.1))return null;
   heights.push(h);
  }
- const y=Math.max(...heights),slope=y-Math.min(...heights);
+ const basicY=Math.max(...heights),basicSlope=basicY-Math.min(...heights);
+ const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type)||UNSUNG_ORIGINAL_ASSETS.find(a=>a.id===o.type);
+ const gradeBuilding=P537_PREVIEW&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
+  ((asset?.kind==='building')||Object.hasOwn(KAYKIT_FREE_NAMES,o.type)||['guild','forge','inn','house','timber','granary','warehouse','mill','fishery','ranger'].includes(o.type));
+ const grade=gradeBuilding?gradePlanFor(o,{w:w0,d:d0},(x,z)=>world.groundHeight(x,z),{apron:3,subdivisions:6}):null;
+ const y=grade?grade.y:basicY,slope=grade?grade.slope:basicSlope;
  if(!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&slope>Math.min(5.2,1.75+o.scale*1.5))
   return null;
  if(!o.type.startsWith('floor-')){
@@ -144,7 +151,7 @@ function footprint(world,o){
    if(num(top)&&top>world.groundHeight(x,z)+.75)return null;
   }
  }
- return {y,w,d,slope};
+ return {y,w,d,slope,grade};
 }
 function roof(q,w,d,h,type){
  const e=.45,peak=h+Math.min(4,d*.4);
@@ -282,7 +289,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
  }
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
- const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],originalBuildings=[],scenic=[],skipped=[],curvedRoads=[];
+ const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],originalBuildings=[],scenic=[],skipped=[],curvedRoads=[],gradeMeshes=[];
  const groundRoad=(x,z)=>{
   const g=world.groundHeight(x,z),sol=world.floorBelow?.(x,g+65,z,65);
   return num(sol)?Math.max(g,sol):g;
@@ -303,6 +310,32 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    console.info('[HIGHFLY WORLD FORGE CITY MASK]',paved.surfaces,'surfaces,',paved.painted,'2m pixels; grass and flowers cleared');
   }
  }
+
+ // Native world texture array (already baked by Unsung's own TextureForge):
+ // no duplicated procedural bake, no increase to the game's startup workload.
+ const gradeAtlas=game.terrain?.layers?.a??null;
+ const gradeMat=P537_PREVIEW&&gradeAtlas?new THREE.ShaderMaterial({
+  name:'HIGHFLY_P537_ORIGINAL_UNSUNG_EARTH_LEVELING',
+  glslVersion:THREE.GLSL3,
+  vertexShader:'out vec3 vPos;out vec3 vN;void main(){vec4 p=modelMatrix*vec4(position,1.0);vPos=p.xyz;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*viewMatrix*p;}',
+  fragmentShader:'precision highp float;precision highp sampler2DArray;in vec3 vPos;in vec3 vN;uniform sampler2DArray atlas;out vec4 fragColor;void main(){float slope=1.0-max(0.0,normalize(vN).y);vec3 grass=texture(atlas,vec3(vPos.xz/2.6,0.0)).rgb;vec3 soil=texture(atlas,vec3(vPos.xz/3.2,1.0)).rgb;vec3 col=mix(grass,soil,clamp(slope*1.25,0.08,0.83));float lit=0.78+0.22*max(0.0,dot(normalize(vN),normalize(vec3(.35,.86,.3))));fragColor=vec4(col*lit,1.0);}',
+  uniforms:{atlas:{value:gradeAtlas}},side:THREE.DoubleSide
+ }):null;
+ function attachGradedEarth(o,fp){
+  if(!P537_PREVIEW||!fp.grade)return;
+  const g=gradePatchGrid(fp.grade,(x,z)=>world.groundHeight(x,z),{step:1,raise:.095});
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(g.vertices,3));
+  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(g.uv,2));
+  geometry.setIndex(g.indices);geometry.computeVertexNormals();geometry.computeBoundingSphere();
+  const mat=gradeMat??new THREE.MeshLambertMaterial({color:0x576e3e,side:THREE.DoubleSide});
+  const mesh=new THREE.Mesh(geometry,mat);mesh.receiveShadow=true;
+  mesh.name='HIGHFLY_ORIGINAL_EARTH_GRADE_'+o.id;group.add(mesh);gradeMeshes.push(mesh);
+  // The new earth fill is a genuine walkable collision surface. The untouched
+  // Unsung terrain remains underneath; floorBelow can now follow the fill.
+  world.addLazy(o.x,o.z,Math.hypot(fp.w,fp.d)*.7+fp.grade.apron,()=>geometry.clone());
+ }
+
  const nativeCenters=new Map();
  const nativeCenter=type=>{
   if(nativeCenters.has(type))return nativeCenters.get(type);
@@ -342,6 +375,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
+  if(fp.grade)attachGradedEarth(o,fp);
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)||PUBLIC_URBAN_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
   if(UNSUNG_FLORA_BY_ID.has(o.type)){
@@ -368,7 +402,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   }
   if(privateSourceType(o.type)&&PRIVATE_SOURCE.has(o.type)){
    const a=PRIVATE_SOURCE.get(o.type);
-   if(a.kind==='building'){
+   if(a.kind==='building'&&!P537_PREVIEW){
     const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
     builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
      q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
@@ -383,7 +417,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    // Flat parcels place the authentic model directly on Unsung terrain.
    // Only steep building lots get a subtle foot slab, never props or vegetation.
    const asset=KAYKIT_FREE_BY_ID.get(o.type)||QUATERNIUS_CC0_BY_ID.get(o.type);
-   if((asset?.kind==='building'||!asset)&&fp.slope>.35){
+   if(!P537_PREVIEW&&(asset?.kind==='building'||!asset)&&fp.slope>.35){
     const slabH=Math.max(.16,fp.slope+.26),builder=add(o);
     builder.at(o.x,fp.y+.065,o.z,o.yaw,q=>{
      q.mat_(M.ASHLAR).box(-fp.w*.485,-slabH,-fp.d*.485,fp.w*.97,slabH,fp.d*.97);
@@ -503,7 +537,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   anchor.name='HIGHFLY_PUBLIC_CC0_'+o.type+'_'+o.id;
   anchor.position.set(o.x,fp.y+.03,o.z);anchor.rotation.y=o.yaw;
   scene.scale.setScalar(scale);
-  scene.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
+  scene.position.set(-center.x*scale,-box.min.y*scale-(P537_PREVIEW&&fp.grade?Math.min(.22,.16*scale):0),-center.z*scale);
   scene.traverse(mesh=>{
    if(!mesh.isMesh)return;
    mesh.frustumCulled=true;
@@ -563,6 +597,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    for(const k of kaykitObjects){group.remove(k.anchor);}
    for(const a of scenicObjects){group.remove(a.model);}
     for(const a of curvedRoads){group.remove(a.model);if(a.modular)disposeModularCobbleGeometry(a.model);else disposeCurvedRoadGeometry(a.model);}
+   for(const a of gradeMeshes){group.remove(a);a.geometry.dispose();if(a.material!==gradeMat)a.material.dispose();}gradeMat?.dispose();
    // World collision is deliberately kept until page reload: no orphan BVH edits.
   }};
  game.__hfP521WorldForge=api;globalThis.__hfP521WorldForge=api;
