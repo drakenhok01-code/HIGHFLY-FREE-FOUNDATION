@@ -5,7 +5,7 @@
 import {KAYKIT_FREE_ALL} from './p531-kaykit-free-catalog.mjs';
 import {QUATERNIUS_CC0_ALL} from './p532-quaternius-cc0-catalog.mjs';
 import {localizePublicAsset} from './p532-spanish-labels.mjs';
-import {PUBLIC_URBAN_ASSETS} from './p532-public-urban-prefabs.mjs';
+import {PUBLIC_URBAN_ASSETS} from './p532-public-urban-assets.mjs';
 const $=id=>document.getElementById(id);
 // Autodiagnóstico visible, copiable y sin datos personales.
 // Nunca registra coordenadas del usuario ni contenido del guardado local.
