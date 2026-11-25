@@ -46,6 +46,6 @@ test('P515 build: import native scene and FREE models, never map editor',()=>{
  assert.match(game,/building_/);
  assert.match(game,/addLazy/);
  assert.match(game,/HF_EASTBROOK_CURVED_COBBLE_AND_PLAZA/);
- assert.doesNotMatch(game,/World Forge.*(?:import|save\(|localStorage)/i);
+ assert.doesNotMatch(game,/p521-world-forge|world-forge-3d|localStorage\.getItem\(/i);
  assert.doesNotMatch(build,/p521-world-forge-runtime|p525-world-forge-3d|world-forge\.html/);
 });
