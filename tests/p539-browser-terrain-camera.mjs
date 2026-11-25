@@ -52,8 +52,9 @@ try{
  // Real WebGL interaction: keyboard moves the target in continuous camera space,
  // right-drag turns the scene (rather than panning like in P538).
  const camStart=await page.evaluate(()=>window.__hfWorldForge3DQA.camera());
- await page.keyboard.down('w');await delay(230);await page.keyboard.up('w');
+ await page.keyboard.down('w');await delay(1200);await page.keyboard.up('w');
  const camMoved=await page.evaluate(()=>window.__hfWorldForge3DQA.camera());
+ console.log('[P539 WASD CAMERA QA]',JSON.stringify({camStart,camMoved}));
  if(Math.hypot(camMoved.targetX-camStart.targetX,camMoved.targetZ-camStart.targetZ)<.3)
   throw Error('WASD camera movement failed');
  await page.mouse.move(950,340);await page.mouse.down({button:'right'});
