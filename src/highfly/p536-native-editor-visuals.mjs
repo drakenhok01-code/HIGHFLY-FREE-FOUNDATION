@@ -162,7 +162,8 @@ export function nativeEditorTerrainMaterial(renderer,overview,{qualityHigh=true}
 export async function nativeEditorStaticDepthWater(meta,resolveUrl){
  const loader=new THREE.TextureLoader();
  const files=await Promise.all(['core','region'].map(name=>loader.loadAsync(resolveUrl('native-terrain-'+name+'.png'))));
- files.forEach(f=>{f.colorSpace=THREE.NoColorSpace;f.minFilter=f.magFilter=THREE.NearestFilter;f.generateMipmaps=false;});
+ // PNG rows are z=-1024 at the top: disable image Y-flip to match Unsung native DataTexture row order.
+ files.forEach(f=>{f.flipY=false;f.colorSpace=THREE.NoColorSpace;f.minFilter=f.magFilter=THREE.NearestFilter;f.generateMipmaps=false;});
  const material=new THREE.ShaderMaterial({
   glslVersion:THREE.GLSL3,vertexShader:WATERV,fragmentShader:WATERF,
   transparent:true,depthWrite:false,side:THREE.DoubleSide,

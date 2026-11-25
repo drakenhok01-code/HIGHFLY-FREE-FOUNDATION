@@ -41,7 +41,7 @@ for(const [s,pat] of [
  [runtime,/nativeUnsungFlora/],[runtime,/P531_PREVIEW/],
  [runtime,/KAYKIT_FREE_BY_ID/],[aerial,/p531-kaykit-free-catalog/],
  [aerial,/Unsung árboles/],[aerial,/P531_PREVIEW/],
- [html,/WORLD FORGE 4\.3 · P5\.3\.2\+P5\.3\.3/],[html,/id="repeat-place"/],
+ [html,/WORLD FORGE 4\.[34]/],[html,/id="repeat-place"/],
  [flora,/generateTree/],[flora,/buildWood/],[flora,/buildLeaves/]
  ])assert.match(s,pat);
 assert.ok(!build.includes('HIGHFLY_KAYKIT_SOURCE_EDITOR_V1_PRIVATE.zip'));

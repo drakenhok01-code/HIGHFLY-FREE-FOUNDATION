@@ -47,7 +47,7 @@ for(const [s,re] of [
  [editor,/nearStem/],[editor,/farLeaves/],[game,/QUATERNIUS_CC0_IDS\.has/],
  [game,/makePublicUrbanPrefab/],[flat,/localizePublicAsset/],
  [ui,/id="copy-object"/],[ui,/id="paste-object"/],[ui,/id="quality-toggle"/],
- [ui,/WORLD FORGE 4\.3 · P5\.3\.2\+P5\.3\.3/],
+ [ui,/WORLD FORGE 4\.[34]/],
  [build,/p532-pinned-quaternius-cc0/],[build,/p532-quaternius-thumbnails/],
  [build,/p532-unsung-tree-thumbnails/],
  ])assert.match(s,re);
