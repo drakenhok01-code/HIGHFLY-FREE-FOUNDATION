@@ -19,7 +19,7 @@ assert.match(editor,/location\.href=game\.href/);assert.match(editor,/hfworld=1/
 assert.match(editor,/paintLine/);assert.match(editor,/onPointerMove/);
 assert.match(editor,/JSON\.stringify/);assert.match(editor,/saveLocal/);
 assert.match(runtime,/world\.addGeometry\(mesh\.geometry\)/);
-assert.match(runtime,/WORLD_FORGE_KEY=P532_PREVIEW\?'hf-world-forge-layout-p532-v1':P531_PREVIEW\?'hf-world-forge-layout-p531-v1':P530_PREVIEW\?'hf-world-forge-layout-p530-v1':P529_PREVIEW\?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1'/);
+assert.match(runtime,/WORLD_FORGE_KEY=P533_PREVIEW\?'hf-world-forge-layout-p533-v1':P532_PREVIEW\?'hf-world-forge-layout-p532-v1':P531_PREVIEW\?'hf-world-forge-layout-p531-v1':P530_PREVIEW\?'hf-world-forge-layout-p530-v1':P529_PREVIEW\?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1'/);
 assert.match(editor,/STORE=P532_PREVIEW\?'hf-world-forge-layout-p532-v1':P531_PREVIEW\?'hf-world-forge-layout-p531-v1':P530_PREVIEW\?'hf-world-forge-layout-p530-v1':P529_PREVIEW\?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1'/);
 assert.match(runtime,/glTFLoader|GLTFLoader/);
 assert.match(runtime,/installHighflyWorldForge/);
