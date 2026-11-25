@@ -122,8 +122,9 @@ try{
  if(!copy.copied||copy.clip?.type!=='kaykit-home-a')throw Error('Ctrl+C prefab memory failed');
  await page.keyboard.down('Control');await page.keyboard.press('v');await page.keyboard.up('Control');
  await delay(160);
- const pasteState=await page.evaluate(()=>({status:document.querySelector('#status')?.textContent}));
- if(!pasteState.status.includes('listo para pegar'))throw Error('Ctrl+V did not arm mouse positioning '+JSON.stringify(pasteState));
+ const pasteState=await page.evaluate(()=>window.__hfWorldForge3DQA.placement());
+ if(pasteState.mode!=='place'||pasteState.chosen!=='kaykit-home-a'||Math.abs(pasteState.pendingYaw-Math.PI/12)>.01)
+  throw Error('Ctrl+V did not arm real mouse positioning with original yaw '+JSON.stringify(pasteState));
  const pasted=await page.evaluate(({x,z})=>{
   const q=window.__hfWorldForge3DQA;
   for(let dx=-80;dx<=80;dx+=8)for(let dz=-80;dz<=80;dz+=8){
