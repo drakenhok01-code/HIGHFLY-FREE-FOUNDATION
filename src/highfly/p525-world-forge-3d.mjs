@@ -18,10 +18,11 @@ import {localizePublicAsset} from './p532-spanish-labels.mjs';
 import {PUBLIC_URBAN_ASSETS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
 import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCurvedRoad,roadClearance,ROAD_WIDTHS} from './p533-curved-road-path.mjs';
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
-import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry,squareGridSnap} from './p536-modular-cobble-kit.mjs';
+import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
+import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
 const $=id=>document.getElementById(id);
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true;
-const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
+const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true||P536_PREVIEW;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
@@ -126,6 +127,7 @@ const gltfLoader=new GLTFLoader()
  .setMeshoptDecoder(MeshoptDecoder)
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
+let nativeVisuals=null,nativeWater=null,nativeGrass=null,nativeLeaves=null;
 let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P536_PREVIEW||P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
@@ -214,7 +216,7 @@ function focus(x=-512,z=-70,range=170){
 }
 function originalRender(){
  if(!overview)return;
- const waterMat=new THREE.MeshLambertMaterial({color:0x388eab,transparent:true,opacity:.66,depthWrite:false,side:THREE.DoubleSide});
+ const waterMat=nativeWater?.material??new THREE.MeshLambertMaterial({color:0x388eab,transparent:true,opacity:.66,depthWrite:false,side:THREE.DoubleSide});
  const sea=new THREE.Mesh(new THREE.PlaneGeometry(16384,16384).rotateX(-Math.PI/2),waterMat);sea.position.y=-.07;groups.water.add(sea);
  for(const p of overview.pools||[]){
   const lake=new THREE.Mesh(new THREE.CircleGeometry(p.r,64).rotateX(-Math.PI/2),waterMat);
@@ -551,7 +553,7 @@ async function rebuildPlaced(){
   if(rebuildPlaced.token!==token)return;
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
- updateTrees(true);render();showProps();
+ updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);render();showProps();
 }
 function showProps(){
  const o=records.find(x=>x.id===selected),name=o?BY_ID.get(o.type).label:chosen?BY_ID.get(chosen).label:'EDITOR 3D';
@@ -813,7 +815,7 @@ function addAt(x,z){
   if(pos>=0){records.splice(pos,1);save();updateTrees(true);}
   log('No se pudo colocar '+a.label,err.message,false);
  });
- if(o.clearTrees)updateTrees(true);
+ if(o.clearTrees){updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);}
  status('✓ Añadido '+a.label+' · X '+o.x+' / Z '+o.z);
  return o.id;
 }
@@ -1000,7 +1002,7 @@ function bindUI(){
   renderer.setPixelRatio(Math.min(qualityHigh?2:1.15,window.devicePixelRatio||1));
   $('quality-toggle').textContent=qualityHigh?'✨ Calidad ALTA':'⚡ Calidad NORMAL';
   $('quality-toggle').classList.toggle('on',qualityHigh);
-  fit();updateTrees(true);render();
+  fit();updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);render();
   status('Calidad '+(qualityHigh?'ALTA (mallas reales Unsung y GLB a resolución de PC)':'NORMAL (menos píxeles de dibujo)')+
     '. No cambia las texturas, el mapa ni el guardado.');
  };
@@ -1068,6 +1070,8 @@ function bindUI(){
   if(e.key==='Delete'||e.key==='Backspace')remove();
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
+ $('p536-bend-tight').onclick=()=>selectAsset('floor-stone-curve-tight');
+ $('p536-bend-wide').onclick=()=>selectAsset('floor-stone-curve-wide');
  const canvas=renderer.domElement;
  canvas.addEventListener('dblclick',e=>{
   if(mode==='road'){e.preventDefault();const h=hitTerrain(e);if(h&&roadNodes.length<24){
@@ -1255,7 +1259,7 @@ function installGizmo(){
  });
 }
 orbit.addEventListener('change',()=>{
- updateNear();updateTrees();render();
+ updateNear();updateTrees();nativeGrass?.update(orbit.target.x,orbit.target.z);render();
  $('metrics').textContent=records.length+' piezas propias · cámara '+Math.round(cam.position.distanceTo(orbit.target))+' m';
  try{localStorage.setItem(VIEW,JSON.stringify({x:orbit.target.x,z:orbit.target.z}));}catch{}
 });
@@ -1267,9 +1271,29 @@ async function boot(){
   focus(movedPivot.x,movedPivot.z);updateNear();
   const data=await fetch(url('native-overview.json'));if(!data.ok)throw Error('Mapa original: HTTP '+data.status);
   overview=await data.json();
+  if(P536_PREVIEW){
+   try{
+    nativeVisuals=nativeEditorTerrainMaterial(renderer,overview,{qualityHigh});
+    const old=[geo.region.material,geo.core.material,geo.near.material],textures=new Set(old.map(m=>m.map).filter(Boolean));
+    for(const part of [geo.region,geo.core,geo.near])part.material=nativeVisuals.material;
+    old.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
+    nativeWater=await nativeEditorStaticDepthWater(map.meta,url);
+    log('Terreno original Unsung · TEXTURAS REALES','9 capas PBR del TextureForge MIT, caminos de tierra del mapa original; sin texturas cartográficas');
+    log('Agua estática con PROFUNDIDAD','alturas originales de Unsung; turquesa en orilla, azul profundo en lago · sin olas ni reflejos');
+   }catch(err){log('Texturas nativas',err.message,false);}
+  }
   const img=await loadPicture('native-architecture-core.png'),c=document.createElement('canvas');c.width=c.height=2048;
   const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);architectPixel=cx.getImageData(0,0,2048,2048).data;
-  originalRender();await rebuildPlaced();switchMode('orbit');render();
+  originalRender();
+  if(P536_PREVIEW){
+   try{
+    nativeGrass=nativeEditorOriginalGrass({scene,elevation,overview,pathPixels:nativeVisuals?.pathPixels??new Uint8Array(1024*1024),qualityHigh:()=>qualityHigh,records:()=>records});
+    nativeGrass.update(orbit.target.x,orbit.target.z,true);
+    nativeLeaves=nativeEditorOriginalLeaves(renderer,groups.trees,{qualityHigh});
+    log('Pasto, árboles y flores originales','briznas 3D de Unsung por instancias + hojas reales del atlas MIT en las cinco especies');
+   }catch(err){log('Vegetación nativa',err.message,false);}
+  }
+  await rebuildPlaced();switchMode('orbit');render();
   status('✓ TERRRENO ORIGINAL 3D + agua + árboles. Cargando arquitectura exacta de Unsung…');
   await loadOriginalGeometry();
   // An actual edited starting village must exist when the P529 preview first opens.
@@ -1278,7 +1302,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
+  status(P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
