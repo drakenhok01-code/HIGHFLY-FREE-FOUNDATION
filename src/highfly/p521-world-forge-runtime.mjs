@@ -485,6 +485,9 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   const fp=footprint(world,o);
   if(!fp){skipped.push(o.id);continue;}
   if(fp.grade)attachGradedEarth(o,fp);
+  if(P542_PREVIEW&&(o.type==='floor-earth'||o.type==='floor-grass')){
+   p542Surface(o);continue;
+  }
   if(o.type.startsWith('npc-')){people.push({...o,y:fp.y});continue;}
   if(VILLAGE_DECOR_IDS.has(o.type)||PUBLIC_URBAN_IDS.has(o.type)){scenic.push({...o,y:fp.y});continue;}
   if(UNSUNG_FLORA_BY_ID.has(o.type)){
@@ -539,6 +542,15 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   if(['guild','forge','inn','house','timber','market','mill','granary','warehouse','fishery','ranger'].includes(o.type))
    buildStructure(builder,o,fp);
   else decorate(builder,o,fp,world);
+ }
+ if(P542_PREVIEW)for(const batch of p542Batches.values()){
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(batch.position,3));
+  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(batch.uv,2));
+  geometry.setIndex(batch.indices);geometry.computeVertexNormals();geometry.computeBoundingSphere();
+  const mesh=new THREE.Mesh(geometry,p542Mat(batch.type));
+  mesh.name='HIGHFLY_P542_NATIVE_'+batch.type;mesh.frustumCulled=true;mesh.receiveShadow=true;
+  group.add(mesh);p542Meshes.push(mesh);
  }
  const meshes=[],collisions=[];
  for(const [key,builder] of byChunk){
@@ -724,6 +736,8 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    for(const k of kaykitObjects){group.remove(k.anchor);}
    for(const a of scenicObjects){group.remove(a.model);}
     for(const a of curvedRoads){group.remove(a.model);if(a.modular)disposeModularCobbleGeometry(a.model);else disposeCurvedRoadGeometry(a.model);}
+   for(const mesh of p542Meshes){group.remove(mesh);mesh.geometry.dispose();}
+   for(const material of p542Mats.values())material.dispose();
    for(const a of gradeMeshes){group.remove(a);a.geometry.dispose();if(a.material!==gradeMat)a.material.dispose();}gradeMat?.dispose();
    // World collision is deliberately kept until page reload: no orphan BVH edits.
   }};
