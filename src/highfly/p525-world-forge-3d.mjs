@@ -786,7 +786,14 @@ if(new URLSearchParams(location.search).has('hfqa')){
    const ndc=world.project(cam),r=renderer.domElement.getBoundingClientRect();
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
-  objects(){return records.map(x=>({...x}));}
+  objects(){return records.map(x=>({...x}));},
+  ready(id){return prefabReady.has(id);},
+  inspect(id){
+   const root=viewCache.get(id);if(!root)return null;
+   let meshes=0,foundation=0,faces=0;
+   root.traverse(o=>{if(o.isMesh){meshes++;if(o.userData.foundation)foundation++;faces+=o.geometry?.index?.count||0;}});
+   return {meshes,foundation,faces,children:root.children.length,y:root.position.y,position:{x:root.position.x,z:root.position.z}};
+  }
  };
 }
 boot();
