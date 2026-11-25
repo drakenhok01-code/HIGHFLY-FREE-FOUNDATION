@@ -25,7 +25,7 @@ import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p
 import {guildhallPlan,GUILDHALL_OPTIONS,GUILDHALL_KEY} from './p542-guildhall-prefabs.mjs';
 import {installSettlementLab} from './p544-world-forge-settlement-lab.mjs';
 const $=id=>document.getElementById(id);
-const P544_PREVIEW=/\/preview-p54[45]\//.test(globalThis.location?.pathname??'');
+const P544_PREVIEW=/\/preview-p54[456]\//.test(globalThis.location?.pathname??'');
 const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true||P544_PREVIEW;
 const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
@@ -37,9 +37,9 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P544_PREVIEW?'hf-world-forge-layout-p544-isolated-v1':P542_PREVIEW?GUILDHALL_KEY:P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P544_PREVIEW?'hf-world-forge-view-p544-isolated-v1':P542_PREVIEW?'hf-world-forge-view-p542-guildhall-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P544_PREVIEW?'hf-world-forge-layout-p544-backup-v1':P542_PREVIEW?'hf-world-forge-layout-p542-guildhall-backup':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P544_PREVIEW?'hf-world-forge-layout-p546-isolated-v1':P542_PREVIEW?GUILDHALL_KEY:P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P544_PREVIEW?'hf-world-forge-view-p546-isolated-v1':P542_PREVIEW?'hf-world-forge-view-p542-guildhall-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P544_PREVIEW?'hf-world-forge-layout-p546-backup-v1':P542_PREVIEW?'hf-world-forge-layout-p542-guildhall-backup':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -319,7 +319,7 @@ function updateTrees(force=false){
  for(let i=Math.floor((x-rad)/128);i<=Math.floor((x+rad)/128);i++)
   for(let j=Math.floor((z-rad)/128);j<=Math.floor((z+rad)/128);j++)
    for(const t of overview.treeIndex.get(i+','+j)||[]){
-    const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad)continue;
+    const dist=Math.hypot(t[0]-x,t[1]-z);if(dist>rad||P544_PREVIEW&&window.__hfP546Cleared?.(t[0],t[1]))continue;
     if(clearedCurves.some(({o,samples})=>roadClearance(t[0],t[1],o,samples)))continue;
     if(clearedLots.some(o=>{
      const dx=t[0]-o.x,dz=t[1]-o.z,a=BY_ID.get(o.type),c=Math.cos(o.yaw),sn=Math.sin(o.yaw);
@@ -1549,7 +1549,7 @@ async function boot(){
     $('play').hidden=true;
     $('map2d').hidden=true;
     try{
-      await installSettlementLab({scene,loader:gltfLoader,overview,elevation,occupied:(x,z)=>archNear(x,z,1.8)||safety.some(([a,b,r])=>Math.hypot(x-a,z-b)<r)||records.some(o=>{const a=BY_ID.get(o.type);return a&&Math.hypot(x-o.x,z-o.z)<Math.hypot(a.w,a.d)*o.scale*.5}),nativeVisuals,render,focus,target:orbit.target,status,refreshGrass:()=>nativeGrass?.update(orbit.target.x,orbit.target.z,true)});
+      await installSettlementLab({scene,loader:gltfLoader,overview,elevation,occupied:(x,z)=>archNear(x,z,1.8)||safety.some(([a,b,r])=>Math.hypot(x-a,z-b)<r)||records.some(o=>{const a=BY_ID.get(o.type);return a&&Math.hypot(x-o.x,z-o.z)<Math.hypot(a.w,a.d)*o.scale*.5}),nativeVisuals,render,focus,target:orbit.target,status,refreshGrass:()=>{updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true)}});
     }catch(e){log('P544 Guildhall',e.message,false);status('P544: '+e.message);}
   }
 
