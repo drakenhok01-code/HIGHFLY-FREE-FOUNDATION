@@ -197,7 +197,7 @@ export function nativeEditorOriginalGrass({scene,elevation,overview,pathPixels,q
  const dummy=new THREE.Object3D(),rgb=new THREE.Color();
  let last=[Infinity,Infinity],lastQuality=null,redraws=0,nearClearings=[];
  function noGrass(x,z,y){
-  if(y<.7)return true;
+  if(y<.7||globalThis.__hfP546Cleared?.(x,z))return true;
   if(Math.abs(x)>1000||Math.abs(z)>1000)return false;
   const ix=Math.floor((x/SIZE+.5)*R),iz=Math.floor((z/SIZE+.5)*R);
   if(ix>=0&&iz>=0&&ix<R&&iz<R&&pathPixels[iz*R+ix]>48)return true;
