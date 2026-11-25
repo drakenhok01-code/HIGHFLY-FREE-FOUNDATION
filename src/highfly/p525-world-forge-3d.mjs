@@ -405,7 +405,7 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
- const scenic=makeVillageDecor(a.id,o.scale);
+ const scenic=makePublicUrbanPrefab(a.id,o.scale)||makeVillageDecor(a.id,o.scale);
  if(scenic)return scenic;
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
@@ -500,7 +500,7 @@ async function createGhost(id){
   });
   group.add(clone);cube.visible=false;render();
  }else{
-  const scenic=makeVillageDecor(id,1);
+  const scenic=makePublicUrbanPrefab(id,1)||makeVillageDecor(id,1);
   if(scenic){
    scenic.traverse(node=>{
     if(!node.isMesh)return;
@@ -542,6 +542,10 @@ const CATALOG_TABS=[
  {id:'KayKit FREE · Accesorios',label:'🧰 Accesorios',filter:a=>a.cat==='KayKit FREE · Accesorios'},
  {id:'KayKit FREE · Naturaleza',label:'🌳 Árboles · rocas',filter:a=>a.cat==='KayKit FREE · Naturaleza'},
  {id:'KayKit FREE · Hexágonos',label:'⬡ Hex originales',filter:a=>a.cat==='KayKit FREE · Hexágonos'},
+ {id:'Quaternius · Edificios',label:'🏘️ Quaternius · casas',filter:a=>a.cat==='Quaternius · Edificios'},
+ {id:'Quaternius · Accesorios',label:'🛒 Quaternius · objetos',filter:a=>a.cat==='Quaternius · Accesorios'},
+ {id:'Quaternius · Naturaleza',label:'🌲 Quaternius · árboles',filter:a=>a.cat==='Quaternius · Naturaleza'},
+ {id:'Urbanismo HIGHFLY',label:'⛲ Fuentes y farolas',filter:a=>a.cat==='Urbanismo HIGHFLY'},
  {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
  {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
  {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
@@ -553,12 +557,12 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW,cameraPan=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  return base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos'&&
-  (!q||[a.label,a.id,a.originalCategory,a.sourcePack,a.cat].some(v=>String(v||'')
+  (!q||[a.label,a.id,a.searchTags,a.originalCategory,a.sourcePack,a.cat,a.freePath].some(v=>String(v||'')
    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q))));
 }
 function drawCatalog(){
@@ -577,9 +581,11 @@ function drawCatalog(){
   const el=document.createElement('button');el.type='button';
   el.className='asset'+(chosen===a.id?' selected':'');
   el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
-  if(a.model||a.freeModel||a.originalPrefab){
+  if(a.model||a.freeModel||a.qcc0||a.nativeFlora||a.originalPrefab){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
    img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    a.nativeFlora?url('unsung-flora/thumbs/'+a.id+'.svg'):
+    a.qcc0?url('quaternius-cc0/thumbs/'+a.id+'.png'):
     a.freeModel?url('kaykit-free/thumbs-all/'+a.thumbName+'.png'):
     url('kaykit-free/thumbs/building_'+a.model+'_red.png');
    img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
@@ -603,7 +609,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS.filter(x=>!P531_PREVIEW||!x.id.startsWith('SOURCE'))){
+ for(const tab of CATALOG_TABS.filter(x=>(!(P531_PREVIEW||P532_PREVIEW)||!x.id.startsWith('SOURCE'))&&(!P532_PREVIEW||x.id!=='Edificios'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
@@ -1001,7 +1007,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status('✓ WORLD FORGE 4.1 · P5.3.1 · FREE completo: 221 modelos KayKit + 18 originales Unsung. PC: clic para colocar, derecho arrastre para mover cámara, Q/R para girar.');
+  status('✓ WORLD FORGE 4.2 · P5.3.2 · 221 KayKit CC0 + 42 Quaternius CC0 + 18 originales Unsung + cuatro piezas HIGHFLY. Ctrl+C y Ctrl+V para copiar y pegar.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
