@@ -38,7 +38,7 @@ test('Editor and RPG share original-height grading, true grass clearance, collis
  assert.match(e,/nativeEditorOriginalGrass\(\{scene,elevation:gradedElevation/);
  assert.match(g,/hf-world-forge-layout-p537-v1/);
  assert.match(e,/hf-world-forge-layout-p536-v1/);
- assert.match(read('public/highfly/world-forge-3d.html'),/WORLD FORGE 4\.[5679]/); // P538 retains P537 parcel system
+ assert.match(read('public/highfly/world-forge-3d.html'),/WORLD FORGE (?:4\.[5679]|5\.0)/); // P538 retains P537 parcel system
  assert.match(read('scripts/f0-build.mjs'),/p537-grade-parcels/);
 });
 test('Pages publishes only approved P533 and P537, below 900 MB',()=>{
