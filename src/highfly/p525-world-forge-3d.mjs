@@ -616,7 +616,8 @@ async function loadBeginningVillage(){
  const button=$('preset-village');button.disabled=true;
  try{
   const plan=buildBeginningVillage({
-   origin:{x:movedPivot.x,z:movedPivot.z},
+   // Always anchor at the real native starting plaza, not the last arbitrary camera focus.
+   origin:{x:-512,z:-70},
    canPlace:o=>validPosition(o),
    existing:records
   });
