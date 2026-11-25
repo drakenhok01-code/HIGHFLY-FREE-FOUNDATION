@@ -1202,6 +1202,44 @@ function bindUI(){
   if(e.key==='Delete'||e.key==='Backspace')remove();
   if(e.key==='Escape'){chosen=null;switchMode('orbit');drawCatalog();}
  });
+
+ if(P539_PREVIEW&&$('slope-toggle'))$('slope-toggle').onclick=()=>{
+  adaptSlope=!adaptSlope;
+  $('slope-toggle').textContent='🧱 Pendiente AUTO: '+(adaptSlope?'SÍ':'NO');
+  $('slope-toggle').classList.toggle('on',adaptSlope);
+  status(adaptSlope?'✓ Edificios sobre pendientes: el suelo nativo se adapta sin losas flotantes.':'Modo plano: solo permite edificios en parcelas casi niveladas.');
+ };
+ const heldMove=new Set();let navFrame=0,navLast=0;
+ const fly=(now)=>{
+  const dt=Math.min(.05,Math.max(.008,(now-(navLast||now-16))/1000));navLast=now;
+  const forward=orbit.target.clone().sub(cam.position);forward.y=0;
+  if(forward.lengthSq()>.00001)forward.normalize();
+  const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();
+  const move=new THREE.Vector3();
+  if(heldMove.has('w')||heldMove.has('arrowup'))move.add(forward);
+  if(heldMove.has('s')||heldMove.has('arrowdown'))move.sub(forward);
+  if(heldMove.has('d')||heldMove.has('arrowright'))move.add(right);
+  if(heldMove.has('a')||heldMove.has('arrowleft'))move.sub(right);
+  if(move.lengthSq()>.00001){
+   const speed=Math.min(110,Math.max(12,cam.position.distanceTo(orbit.target)*.34))*
+     (heldMove.has('shift')?2.5:1);
+   move.normalize().multiplyScalar(speed*dt);
+   cam.position.add(move);orbit.target.add(move);
+   orbit.update();render();
+  }
+  navFrame=heldMove.size?requestAnimationFrame(fly):0;
+ };
+ if(P539_PREVIEW){
+  window.addEventListener('keydown',e=>{
+   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;
+   const k=e.key.toLowerCase();
+   if(!['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift'].includes(k))return;
+   heldMove.add(k);if(k!=='shift')e.preventDefault();
+   if(!navFrame){navLast=0;navFrame=requestAnimationFrame(fly);}
+  });
+  window.addEventListener('keyup',e=>{heldMove.delete(e.key.toLowerCase());});
+  window.addEventListener('blur',()=>{heldMove.clear();navLast=0;});
+ }
  $('p536-bend-tight').onclick=()=>selectAsset('floor-stone-curve-tight');
  $('p536-bend-wide').onclick=()=>selectAsset('floor-stone-curve-wide');
  const canvas=renderer.domElement;
@@ -1235,7 +1273,7 @@ function bindUI(){
    return;
   }
   if(e.button===1||e.button===2){
-   e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY};
+   e.preventDefault();cameraPan={pointerId:e.pointerId,x:e.clientX,y:e.clientY,action:P539_PREVIEW&&e.button===2?'look':'pan'};
    canvas.setPointerCapture?.(e.pointerId);return;
   }
   if(!e.isPrimary||e.button!==0)return;
@@ -1276,6 +1314,13 @@ function bindUI(){
   if(cameraPan&&cameraPan.pointerId===e.pointerId){
    const dx=e.clientX-cameraPan.x,dy=e.clientY-cameraPan.y;
    cameraPan.x=e.clientX;cameraPan.y=e.clientY;
+   if(cameraPan.action==='look'){
+    const vec=cam.position.clone().sub(orbit.target);
+    const spherical=new THREE.Spherical().setFromVector3(vec);
+    spherical.theta-=dx*.007;spherical.phi=clamp(spherical.phi-dy*.006,.12,Math.PI/2-.025);
+    cam.position.copy(orbit.target).add(new THREE.Vector3().setFromSpherical(spherical));
+    orbit.update();render();return;
+   }
    const dist=Math.max(30,cam.position.distanceTo(orbit.target)),unit=dist*.0018;
    const right=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0);
    const forward=new THREE.Vector3();forward.subVectors(orbit.target,cam.position);
@@ -1459,7 +1504,8 @@ if(new URLSearchParams(location.search).has('hfqa')){
   select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
   copy:copySelected,paste:pasteCopied,
   clipboard(){return objectClipboard?{...objectClipboard}:null;},
-  placement(){return {mode,chosen,pendingYaw,pendingScale};},
+  placement(){return {mode,chosen,pendingYaw,pendingScale,adaptSlope};},
+  camera(){return {x:cam.position.x,y:cam.position.y,z:cam.position.z,targetX:orbit.target.x,targetZ:orbit.target.z};},
   ready(id){return prefabReady.has(id);},
   error(id){return prefabFailed.get(id)||null;},
   inspect(id){
