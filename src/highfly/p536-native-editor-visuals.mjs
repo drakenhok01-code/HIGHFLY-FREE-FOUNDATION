@@ -194,16 +194,14 @@ export function nativeEditorOriginalGrass({scene,elevation,overview,pathPixels,q
  blade.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
  blade.frustumCulled=false;scene.add(blade);
  const dummy=new THREE.Object3D(),rgb=new THREE.Color();
- let last=[Infinity,Infinity],lastQuality=null,redraws=0;
+ let last=[Infinity,Infinity],lastQuality=null,redraws=0,nearClearings=[];
  function noGrass(x,z,y){
   if(y<.7)return true;
   if(Math.abs(x)>1000||Math.abs(z)>1000)return false;
   const ix=Math.floor((x/SIZE+.5)*R),iz=Math.floor((z/SIZE+.5)*R);
   if(ix>=0&&iz>=0&&ix<R&&iz<R&&pathPixels[iz*R+ix]>48)return true;
   for(const pool of overview?.pools||[])if(Math.hypot(x-pool.x,z-pool.z)<pool.r+2&&y<pool.level+.5)return true;
-  for(const obj of records()){
-   if(obj.type?.startsWith('npc-'))continue;
-   if(!(obj.type?.startsWith('floor-')||obj.clearTrees))continue;
+  for(const obj of nearClearings){
    const c=Math.cos(obj.yaw||0),s=Math.sin(obj.yaw||0),dx=x-obj.x,dz=z-obj.z;
    const w=(obj.type?.startsWith('floor-')?4:11)*(obj.scale||1);
    if(Math.abs(dx*c+dz*s)<w*.55&&Math.abs(-dx*s+dz*c)<w*.55)return true;
@@ -215,6 +213,10 @@ export function nativeEditorOriginalGrass({scene,elevation,overview,pathPixels,q
   if(!force&&high===lastQuality&&Math.hypot(x-last[0],z-last[1])<34)return false;
   last=[x,z];lastQuality=high;
   const max=high?16500:6500,rad=high?118:83;
+  // Editor may contain thousands of props: broad-phase only nearby paved
+  // pieces and building footprints ONCE per camera/terrain update.
+  nearClearings=records().filter(o=>!o.type?.startsWith('npc-')&&(o.type?.startsWith('floor-')||o.clearTrees)&&
+    Math.abs(o.x-x)<rad+35&&Math.abs(o.z-z)<rad+35);
   let seed=((Math.floor(x)*60493)^(Math.floor(z)*19213)^0x5e15a131)>>>0;
   const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
   let n=0;const maxAttempts=max*2;
