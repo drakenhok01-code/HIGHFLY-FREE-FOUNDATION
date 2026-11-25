@@ -11,7 +11,7 @@ let browser;
 try{
  let up=false;
  for(let k=0;k<40;k++){
-  try{const r=await fetch(base+'highfly/world-forge-3d.html');const html=await r.text();if(r.ok&&html.includes('WORLD FORGE · 3D V0.5')){up=true;break;}}catch{}
+  try{const r=await fetch(base+'highfly/world-forge-3d.html');const html=await r.text();if(r.ok&&html.includes('WORLD FORGE · 3D V0.6')){up=true;break;}}catch{}
   await delay(400);
  }
  if(!up)throw Error('Vite preview server did not start '+serverLogs.slice(-1500));
