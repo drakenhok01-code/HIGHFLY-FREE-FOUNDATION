@@ -24,7 +24,8 @@ import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOri
 import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
 import {conformingTileGrid,buildingSupportPlan} from './p542-native-conform.mjs';
 const $=id=>document.getElementById(id);
-const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true;
+const P543_PREVIEW=globalThis.location?.pathname?.includes('/preview-p543/')===true;
+const P542_PREVIEW=globalThis.location?.pathname?.includes('/preview-p542/')===true||P543_PREVIEW;
 const P541_PREVIEW=globalThis.location?.pathname?.includes('/preview-p541/')===true||P542_PREVIEW;
 const P539_PREVIEW=globalThis.location?.pathname?.includes('/preview-p539/')===true||P541_PREVIEW;
 const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true||P539_PREVIEW;
@@ -35,9 +36,9 @@ const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===t
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P542_PREVIEW?'hf-world-forge-view-p542-conform-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P542_PREVIEW?'hf-world-forge-layout-p542-before-edit':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P543_PREVIEW?'hf-world-forge-layout-p543-natural-v1':P542_PREVIEW?'hf-world-forge-layout-p542-conform-v1':P541_PREVIEW?'hf-world-forge-layout-p541-manual-v1':P539_PREVIEW?'hf-world-forge-layout-p539-v1':P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P543_PREVIEW?'hf-world-forge-view-p543-natural-v1':P542_PREVIEW?'hf-world-forge-view-p542-conform-v1':P541_PREVIEW?'hf-world-forge-view-p541-manual-v1':P539_PREVIEW?'hf-world-forge-view-p539-v1':P538_PREVIEW?'hf-world-forge-view-p538-v1':P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P543_PREVIEW?'hf-world-forge-layout-p543-backup':P542_PREVIEW?'hf-world-forge-layout-p542-before-edit':P541_PREVIEW?'hf-world-forge-layout-p541-manual-before-edit':P539_PREVIEW?'hf-world-forge-layout-p539-before-edit':P538_PREVIEW?'hf-world-forge-layout-p538-before-edit':P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -448,7 +449,7 @@ function restore(){
   // only the player's own work. Imported P538/P539/P540 towns are excluded.
   // Both the source save and the old Pages previews remain untouched.
   if(P541_PREVIEW&&!old&&!new URLSearchParams(location.search).has('hfqa')){
-   const originalKeys=P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'];
+   const originalKeys=P543_PREVIEW?['hf-world-forge-layout-p542-conform-v1','hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:P542_PREVIEW?['hf-world-forge-layout-p541-manual-v1','hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1']:['hf-world-forge-layout-p539-v1','hf-world-forge-layout-p537-v1'];
    for(const previousKey of originalKeys){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
@@ -705,6 +706,7 @@ async function rebuildPlaced(){
  const token={};rebuildPlaced.token=token;
  for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);
   if(child.userData.modularRoadGeometry)disposeModularCobbleGeometry(child);}
+ const retainSelection=P543_PREVIEW&&records.some(o=>o.id===selected)?selected:null;
  viewCache.clear();selected=null;if(gizmo)gizmo.detach();
  for(const o of records){
   let node;try{node=await buildPlaced(o);}catch(err){log('No pude mostrar '+o.type,err.message,false);continue;}
@@ -712,6 +714,13 @@ async function rebuildPlaced(){
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
  if(P537_PREVIEW)redrawGradedTerrain();
+ // Previously rebuildPlaced() discarded selection after EVERY rotate/resize/undo.
+ // Keep the same edited object selected until the user chooses another object.
+ if(P543_PREVIEW&&retainSelection&&viewCache.has(retainSelection)){
+  selected=retainSelection;
+  if(['place','orbit','road'].includes(mode))mode='move';
+  switchMode(mode);
+ }
  updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);render();showProps();
 }
 function showProps(){
