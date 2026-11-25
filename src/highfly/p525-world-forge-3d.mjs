@@ -4,6 +4,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
@@ -111,7 +112,13 @@ const sun=new THREE.DirectionalLight(0xffedd7,2);sun.position.set(120,350,210);s
 const groups={original:new THREE.Group(),trees:new THREE.Group(),water:new THREE.Group(),placed:new THREE.Group()};
 Object.values(groups).forEach(g=>scene.add(g));
 const geo={core:null,region:null,near:null};
-const gltfLoader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
+const ktx2Loader=new KTX2Loader()
+ .setTranscoderPath(url('basis/'))
+ .detectSupport(renderer);
+const gltfLoader=new GLTFLoader()
+ .setMeshoptDecoder(MeshoptDecoder)
+ .setKTX2Loader(ktx2Loader),
+ textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
 let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
