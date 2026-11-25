@@ -47,7 +47,7 @@ jobs:
             test -s "dist/$f" || { echo "MISSING $f"; exit 1; }
           done
           grep -q 'WORLD FORGE 4.5' dist/highfly/world-forge-3d.html
-          grep -q 'preview-p536' dist/index.html
+          grep -q 'preview-p537' dist/index.html
           grep -q 'p537-grade-parcels' .work/unsung/src/highfly/p521-world-forge-runtime.mjs
           grep -q 'gradePlanFor' .work/unsung/src/highfly/p525-world-forge-3d.mjs
           grep -q 'nativeEditorStaticDepthWater' .work/unsung/src/highfly/p525-world-forge-3d.mjs
