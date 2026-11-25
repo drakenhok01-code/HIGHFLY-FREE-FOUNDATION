@@ -557,7 +557,7 @@ const CATALOG_TABS=[
  {id:'NPC',label:'🧙 NPC',filter:a=>a.cat==='NPC'},
  {id:'Todos',label:'🔎 Todo el catálogo',filter:a=>a.cat!=='Bocetos antiguos'}
 ];
-let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null;
+let catalogLimit=36,brushCells=1,repeatPlacement=P531_PREVIEW||P532_PREVIEW,cameraPan=null,objectClipboard=null;
 function catalogCandidates(){
  const tab=CATALOG_TABS.find(x=>x.id===category)||CATALOG_TABS[0];
  const q=$('search').value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -713,6 +713,35 @@ async function upgradeLegacy(){
   status(done+' boceto'+(done===1?'':'s')+' reemplazado'+(done===1?'':'s')+' por modelos KayKit completos. '+blocked+' bloqueados por terreno/colisiones; '+loadFailures+' fallos de modelo.');
  }finally{$('upgrade-legacy').disabled=false;showProps();}
 }
+const CLIPBOARD_SESSION='hf-world-forge-public-object-clipboard-v1';
+function copySelected(){
+ const item=records.find(o=>o.id===selected);
+ if(!item){status('Primero seleccioná un edificio, árbol o accesorio para copiarlo.');return false;}
+ objectClipboard={type:item.type,yaw:item.yaw,scale:item.scale,clearTrees:!!item.clearTrees};
+ try{sessionStorage.setItem(CLIPBOARD_SESSION,JSON.stringify(objectClipboard));}catch{}
+ try{navigator.clipboard?.writeText(JSON.stringify({highflyWorldObject:1,...objectClipboard}))?.catch(()=>{});}catch{}
+ status('✓ Copiado '+BY_ID.get(item.type).label+'. Ctrl+V para elegir dónde pegarlo.');
+ return true;
+}
+async function pasteCopied(){
+ if(!objectClipboard){
+  try{objectClipboard=JSON.parse(sessionStorage.getItem(CLIPBOARD_SESSION)||'null');}catch{}
+ }
+ if(!objectClipboard&&navigator.clipboard?.readText){
+  try{const data=JSON.parse(await navigator.clipboard.readText());
+   if(data?.highflyWorldObject===1)objectClipboard=data;
+  }catch{}
+ }
+ const item=objectClipboard;
+ if(!item||!BY_ID.has(item.type)||!finite(item.scale)||!finite(item.yaw)){
+  status('Primero copiá un objeto con Ctrl+C, después pegalo con Ctrl+V.');return false;
+ }
+ selectAsset(item.type);
+ pendingYaw=item.yaw;pendingScale=clamp(item.scale,.5,3);
+ if(ghost){ghost.rotation.y=pendingYaw;ghost.scale.setScalar(pendingScale);}
+ status('📋 '+BY_ID.get(item.type).label+' listo para pegar. Mové el cursor y hacé clic donde quieras; podés pegar varias copias.');
+ return true;
+}
 async function duplicateSelected(){
  const source=records.find(x=>x.id===selected);if(!source)return;
  const asset=BY_ID.get(source.type);if(!asset)return;
@@ -808,12 +837,16 @@ function bindUI(){
  for(const id of ['rot-left','rot-right','size-down','size-up'])$(id).onclick=()=>transform(id);
  $('remove').onclick=remove;
  $('duplicate').onclick=duplicateSelected;
+ $('copy-object').onclick=copySelected;
+ $('paste-object').onclick=pasteCopied;
  $('upgrade-legacy').onclick=upgradeLegacy;
  $('diag-button').onclick=()=>$('diagnostics').hidden=!$('diagnostics').hidden;
  $('close-diagnostics').onclick=()=>$('diagnostics').hidden=true;
  $('copy-diagnostics').onclick=async()=>{try{await navigator.clipboard.writeText($('log').textContent);status('Diagnóstico copiado');}catch{status('Seleccioná y copiá el informe del panel.')}};
  window.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();copySelected();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteCopied();return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save(true);return;}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();duplicateSelected();return;}
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey){
@@ -1024,6 +1057,9 @@ if(new URLSearchParams(location.search).has('hfqa')){
    return {x:r.left+(ndc.x+1)*r.width*.5,y:r.top+(1-ndc.y)*r.height*.5,visible:ndc.z<1&&ndc.z>-1};
   },
   objects(){return records.map(x=>({...x}));},
+  select(id){const o=records.find(x=>x.id===id);if(o)selectObject(id);return !!o;},
+  copy:copySelected,paste:pasteCopied,
+  clipboard(){return objectClipboard?{...objectClipboard}:null;},
   ready(id){return prefabReady.has(id);},
   inspect(id){
    const root=viewCache.get(id);if(!root)return null;
