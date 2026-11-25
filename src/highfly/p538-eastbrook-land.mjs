@@ -78,7 +78,7 @@ function attempt(center,turn,{canPlace,existing,sizeOf,blockedAt}){
  }
  const npcMissing=[];
  for(const spec of EASTBROOK_NPCS){
-  const target=lookup.get(spec.at);
+  const target=lookup.get(spec.at)||(spec.id==='mila'?lookup.get('gremio'):null);
   if(!target){npcMissing.push(spec.id);continue;}
   let placed=null;
   for(const [ox,oz] of SHIFTS){
