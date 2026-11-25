@@ -229,6 +229,23 @@ function buildStructure(b,o,f){
 function decorate(b,o,f,world){
  const type=o.type,[w0,d0]=BOUNDS[type],w=w0*o.scale,d=d0*o.scale;
  if(type.startsWith('floor-')){
+  if(P542_PREVIEW){
+   const nativeY=(x,z)=>{
+    const ground=world.groundHeight(x,z),top=world.floorBelow?.(x,ground+65,z,65);
+    return num(top)?Math.max(ground,top):ground;
+   };
+   const grid=conformingTileGrid(o,{w:w0,d:d0},nativeY,{anchorY:0,divisions:10,raise:.15});
+   b.mat_(type==='floor-stone'?M.PAVING:type==='floor-wood'?M.ROOF:M.ASHLAR);
+   for(let iz=0;iz<10;iz++)for(let ix=0;ix<10;ix++){
+    const j=iz*11+ix,v=[j,j+1,j+12,j+11];
+    const point=k=>{
+     const lx=grid.position[3*k],lz=grid.position[3*k+2],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
+     return [o.x+lx*c-lz*s,grid.position[3*k+1],o.z+lx*s+lz*c];
+    };
+    b.quad(point(v[3]),point(v[2]),point(v[1]),point(v[0]));
+   }
+   return;
+  }
   const x=o.x,z=o.z,y=(px,pz)=>{
    const ground=world.groundHeight(px,pz);
    // Align new paving with the real native Unsung plaza platform and its ramps.
