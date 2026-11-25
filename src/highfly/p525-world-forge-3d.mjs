@@ -4,6 +4,8 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
+import {VILLAGE_DECOR_ASSETS,buildBeginningVillage} from './p528-village-layout.mjs';
+import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 const $=id=>document.getElementById(id),STORE='hf-world-forge-layout-v1',VIEW='hf-world-forge-view-v1',BACKUP='hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
@@ -31,7 +33,8 @@ const base=[
  ['kaykit-watermill','Molino de agua','🌊','KayKit FREE',12,12,'watermill'],
  ['kaykit-well','Pozo KayKit','🪣','KayKit FREE',6,6,'well'],
  ['kaykit-windmill','Molino de viento','🌾','KayKit FREE',12,12,'windmill']
-].map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
+].concat(VILLAGE_DECOR_ASSETS.map(a=>[a.id,a.label,a.icon,a.cat,a.w,a.d]))
+ .map(([id,label,icon,cat,w,d,model])=>({id,label,icon,cat:model?cat:(cat==='Edificios'?'Bocetos antiguos':cat),w,d,model}));
 // Old editor placeholders stay readable, but no new generic cube/roof buildings are offered.
 const BY_ID=new Map(base.map(a=>[a.id,a]));
 const LEGACY_UPGRADE=Object.freeze({guild:'kaykit-castle',forge:'kaykit-blacksmith',inn:'kaykit-tavern',house:'kaykit-home-a',timber:'kaykit-home-b',market:'kaykit-market',mill:'kaykit-windmill',ranger:'kaykit-archeryrange'});
@@ -355,6 +358,8 @@ function floorMaterial(type){
  floorMats.set(type,mat);return mat;
 }
 function makeModel(a,o){
+ const scenic=makeVillageDecor(a.id,o.scale);
+ if(scenic)return scenic;
  const group=new THREE.Group();
  if(a.id.startsWith('floor-')){
   const w=a.w*o.scale,d=a.d*o.scale,points=[],uvs=[],c=Math.cos(o.yaw),s=Math.sin(o.yaw);
@@ -447,6 +452,15 @@ async function createGhost(id){
    node.material=Array.isArray(node.material)?node.material.map(copy):copy(node.material);
   });
   group.add(clone);cube.visible=false;render();
+ }else{
+  const scenic=makeVillageDecor(id,1);
+  if(scenic){
+   scenic.traverse(node=>{
+    if(!node.isMesh)return;
+    node.material=node.material.clone();node.material.transparent=true;node.material.opacity=.58;node.material.depthWrite=false;
+   });
+   group.add(scenic);cube.visible=false;render();
+  }
  }
 }
 function previewGhost(ev){
@@ -596,6 +610,42 @@ async function duplicateSelected(){
  try{const node=await buildPlaced(test);if(node){groups.placed.add(node);viewCache.set(test.id,node);selectObject(test.id);updateTrees(true);render();}}
  catch(err){records=records.filter(x=>x.id!==test.id);save();log('Duplicar edificio',err.message,false);}
 }
+async function loadBeginningVillage(){
+ if(!map||!overview){status('Necesitamos primero las alturas y el terreno original de Unsung.');return;}
+ if(records.length>2100){status('No queda suficiente espacio editable. Exportá primero tu plano.');return;}
+ const button=$('preset-village');button.disabled=true;
+ try{
+  const plan=buildBeginningVillage({
+   origin:{x:movedPivot.x,z:movedPivot.z},
+   canPlace:o=>validPosition(o),
+   existing:records
+  });
+  if(plan.buildings<3||plan.paved<40){
+   status('No encontramos una explanada segura para reproducir la aldea. No se modificó tu mapa.');return;
+  }
+  const summary='Pueblo de los Inicios: '+plan.buildings+' edificios completos, '+plan.paved+
+   ' piezas de piedra y '+plan.decorations+' accesorios. Centro X '+plan.center.x+
+   ', Z '+plan.center.z+'. ¿Agregar a TU mundo sin borrar lo anterior?';
+  if(!window.confirm(summary))return;
+  status('Comprobando edificios KayKit completos antes de añadir el pueblo…');
+  const types=[...new Set(plan.objects.filter(o=>BY_ID.get(o.type)?.model).map(o=>o.type))];
+  const loaded=await Promise.all(types.map(async type=>({type,model:await getGLTF(BY_ID.get(type))})));
+  const bad=loaded.filter(o=>!o.model);
+  if(bad.length){status('Falta un prefab completo: '+bad.map(o=>o.type).join(', ')+'. No se modificó nada.');return;}
+  // Strictly additive, reversible and backed up, with no replacements of Unsung's scenery.
+  const old=localStorage.getItem(STORE);
+  if(old)localStorage.setItem('hf-world-forge-layout-v1-backup-pre-p528-village',old);
+  recordSnapshot();
+  records.push(...plan.objects);
+  save();await rebuildPlaced();focus(plan.center.x,plan.center.z,135);
+  status('✓ Aldea colocada: '+plan.buildings+' edificios, '+plan.paved+' adoquines, '+
+   plan.decorations+' accesorios. Omitidos por relieve: '+plan.skipped.length+
+   '. Editá cada elemento o entrá al RPG para recorrerla.');
+  log('P5.2.8 Pueblo de los Inicios',records.length+' objetos totales · '+
+   plan.buildings+' edificios KayKit 3D · '+plan.skipped.length+' lotes inaccesibles');
+ }catch(err){log('Pueblo de los Inicios',err.message,false);status('No pude crear la aldea: '+err.message);}
+ finally{button.disabled=false;}
+}
 function exportJSON(){
  const blob=new Blob([JSON.stringify({schema:1,world:'unsung-vale',objects:records},null,2)],{type:'application/json'});
  const path=URL.createObjectURL(blob),a=document.createElement('a');a.href=path;a.download='HIGHFLY-WORLD-FORGE.json';a.click();setTimeout(()=>URL.revokeObjectURL(path),1200);
@@ -609,6 +659,7 @@ function bindUI(){
  $('iso').onclick=()=>{const p=orbit.target;cam.position.set(p.x+140,p.y+150,p.z+140);orbit.update();render();};
  for(const [id,name] of [['trees','trees'],['original','original'],['water','water']])$(id).onclick=()=>{groups[name].visible=!groups[name].visible;$(id).classList.toggle('on',groups[name].visible);if(name==='trees')updateTrees(true);render();};
  $('save').onclick=()=>save(true);$('undo').onclick=undo;$('redo').onclick=redo;$('export').onclick=exportJSON;
+ $('preset-village').onclick=loadBeginningVillage;
  $('import').onclick=()=>$('file').click();
  $('file').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(d.schema!==1||d.world!=='unsung-vale'||!Array.isArray(d.objects)||d.objects.length>2500||!d.objects.every(o=>BY_ID.has(o.type)&&[o.x,o.z,o.yaw,o.scale].every(finite)))throw Error('Formato no compatible');
   recordSnapshot();records=d.objects.map(o=>({...o,y:elevation(o.x,o.z)}));save();rebuildPlaced();status('Plano importado: '+records.length+' piezas');
