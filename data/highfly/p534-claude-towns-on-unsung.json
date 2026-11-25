@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "project": "HIGHFLY UNSUNG 13",
+  "version": "P5.3.4",
+  "kind": "urban-placement-survey",
+  "source": "HIGHFLY-CLAUDE-AUDIT P0.6 + HIGHFLY p529 masterplan + Unsung layout.js",
+  "status": "candidate-only; no per-parcel height/collision confirmation",
+  "restore": {
+    "stableRPG": {
+      "branch": "backup-p514-last-playable-before-settlements-20261124",
+      "sha": "de2136ec9b6a8da8d6c32f5cbdcff2220eed444e"
+    },
+    "fpsComparison": {
+      "branch": "backup-p507-suprema-approved-20261124",
+      "sha": "8e8af06d42c697ecb36fd3f321507b12b29704b5"
+    },
+    "editorBase": {
+      "branch": "p533-curved-cobble-unsung-real-forest-20261125",
+      "sha": "a52639e6b4520d4384cfef8acef73237e1b43d5e"
+    }
+  },
+  "restrictions": [
+    "Original Unsung architecture, plazas, rivers, pools, stairs, landing, and Elder are immutable",
+    "KayKit FREE/CC0 only in public Github Pages; no private SOURCE binaries",
+    "ClaudeCraft layout is a design blueprint only; Tidehold GLBs may be with-project-only",
+    "Town anchors are not approved lots. Sample true elevation and collisions before insertion",
+    "Exported objects remain schema 1 in World Forge; do not auto-deploy or overwrite older previews"
+  ],
+  "towns": [
+    {
+      "claudecraft": "eastbrook",
+      "highfly": "Arvelia · Pueblo de los Inicios",
+      "anchor": {
+        "x": -512,
+        "z": -70
+      },
+      "terrain": "Terraza del Alba / plaza original jugable",
+      "note": "Seis edificios auditados + gremio Unsung; piloto protegido",
+      "confidence": "core",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "fenbridge",
+      "highfly": "Juncalia · Aldea de los Juncos",
+      "anchor": {
+        "x": 517,
+        "z": 437
+      },
+      "terrain": "Meseta sur3 y sus accesos húmedos",
+      "note": "Debe comprobarse una orilla apta para pasarelas y pantano",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "highwatch",
+      "highfly": "Valtheria · Ciudad de la Corona",
+      "anchor": {
+        "x": -1005,
+        "z": -168
+      },
+      "terrain": "Meseta Corona",
+      "note": "Conservar la plataforma, arquerías y construcciones originales de Unsung",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "gullhaven",
+      "highfly": "Lumeria · Puerto de la Brisa",
+      "anchor": {
+        "x": -20,
+        "z": 200
+      },
+      "terrain": "Ribera del lago central",
+      "note": "Trasladar organización costera; verificar suelo seco y acceso al agua",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "wickharbor",
+      "highfly": "Faro de Orvax · Puerto Oriental",
+      "anchor": {
+        "x": 810,
+        "z": 65
+      },
+      "terrain": "Borde oriental del lago",
+      "note": "La presencia de mar/puerto debe verificarse; no prometer astillero aún",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "hedgewick",
+      "highfly": "Elphina · Villa de los Pétalos",
+      "anchor": {
+        "x": -372,
+        "z": -392
+      },
+      "terrain": "Meseta Pétalo",
+      "note": "Jardines, capilla, caminos radiales; conservar piscina/cascada originales",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "drifthaven",
+      "highfly": "Costa Oriental / estuario",
+      "anchor": null,
+      "terrain": "Estuario oriental hacia x=5200…7800",
+      "note": "Buscar playa seca y acceso marítimo medido: coordenadas aún sin validar",
+      "confidence": "needs-survey",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "bridgemere",
+      "highfly": "Isla del Lago Central",
+      "anchor": null,
+      "terrain": "Isla puenteable del lago central",
+      "note": "No colocar la posada en las agujas kársticas sin comprobar la meseta útil",
+      "confidence": "needs-survey",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "icemantle",
+      "highfly": "Región montañosa nevada",
+      "anchor": null,
+      "terrain": "Exterior montañoso de la región Unsung",
+      "note": "No existe posición nevada confirmada; nieve requiere tratamiento visual propio",
+      "confidence": "needs-survey",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "lanternmere",
+      "highfly": "Aurelia · Jardines del Alba",
+      "anchor": {
+        "x": 136,
+        "z": 546
+      },
+      "terrain": "Meseta Aurel",
+      "note": "Posada y templo junto a camino de acceso; respetar estanque elevado",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "moonrest",
+      "highfly": "Sylpharia · Huerto del Bosque",
+      "anchor": {
+        "x": -405,
+        "z": 435
+      },
+      "terrain": "Meseta sur1 / borde boscoso",
+      "note": "Santuario lunar y casas entre árboles, sin tapar los huertos originales",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "gibbetmere",
+      "highfly": "Nécrida · Villa del Eclipse",
+      "anchor": {
+        "x": 1750,
+        "z": -550
+      },
+      "terrain": "Bosque oriental",
+      "note": "Bosque oscuro/cripta; inspeccionar bosques y pendientes fuera del núcleo",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    },
+    {
+      "claudecraft": "eldershine",
+      "highfly": "Elyndra · Retiro del Árbol Antiguo",
+      "anchor": {
+        "x": 3100,
+        "z": 1550
+      },
+      "terrain": "Periferia del árbol Elder (2750,1480)",
+      "note": "Árbol original totalmente preservado; plaza radial en terreno distinto",
+      "confidence": "candidate",
+      "placed": false,
+      "terrainValidated": false,
+      "structuresValidated": false
+    }
+  ]
+}

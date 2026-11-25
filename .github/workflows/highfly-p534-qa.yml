@@ -1,0 +1,27 @@
+name: "HIGHFLY P534 - Eastbrook settlement pilot / regression guard"
+on:
+  push:
+    branches: [p534-claudecraft-settlement-pilot-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pilot-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check public-only Eastbrook plan and World Forge integration
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p534-eastbrook-pilot.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --test tests/p534-eastbrook-pilot.test.mjs
+          grep -q "pilot-eastbrook" public/highfly/world-forge-3d.html
+          grep -q "P534_PREVIEW" src/highfly/p525-world-forge-3d.mjs
+          grep -q "P534_PREVIEW" src/highfly/p521-world-forge-runtime.mjs
+          ! git diff --name-only HEAD~1..HEAD | grep -qE '^src/world/(layout|terrain|arch)/'

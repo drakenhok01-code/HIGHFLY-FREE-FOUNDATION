@@ -1,0 +1,93 @@
+name: "HIGHFLY P534 - complete RPG + Eastbrook QA + Chrome WebGL"
+on:
+  push:
+    branches: [p534-claudecraft-settlement-pilot-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: highfly-p534-full-build-qa
+  cancel-in-progress: true
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frozen image tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Validate original/3D editor source, gameplay regressions and copyright gate
+        run: |
+          node --check scripts/f0-build.mjs
+          node --check scripts/p522-native-world-export.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p528-village-layout.mjs
+          node --check src/highfly/p528-village-decor-3d.mjs
+          node --check src/highfly/p529-private-source-import.mjs
+          node --check src/highfly/p530-unsung-original.mjs
+          node --check src/highfly/p530-unsung-loader.mjs
+          node --check src/highfly/p530-city-ground-mask.mjs
+          node --check scripts/p530-native-unsung-prefabs.mjs
+          node --check src/highfly/p531-kaykit-free-catalog.mjs
+          node --check src/highfly/p531-unsung-flora.mjs
+          node --check src/highfly/p532-spanish-labels.mjs
+          node --check src/highfly/p532-quaternius-cc0-catalog.mjs
+          node --check src/highfly/p532-public-urban-assets.mjs
+          node --check src/highfly/p532-public-urban-prefabs.mjs
+          node --check src/highfly/p533-curved-road-path.mjs
+          node --check src/highfly/p533-curved-road-3d.mjs
+          node --check src/highfly/p534-eastbrook-pilot.mjs
+          node --check scripts/p532-pinned-quaternius-cc0.mjs
+          node --check scripts/p532-unsung-tree-thumbnails.mjs
+          grep -q 'KTX2Loader' src/highfly/p525-world-forge-3d.mjs
+          grep -q 'KTX2Loader' src/highfly/p521-world-forge-runtime.mjs
+          node --check scripts/p531-kaykit-all-free.mjs
+          node --check public/highfly/world-forge.js
+          grep -q 'p534-eastbrook-pilot' scripts/f0-build.mjs
+          grep -q 'P534_PREVIEW' src/highfly/p525-world-forge-3d.mjs
+          node --test tests/p534-eastbrook-pilot.test.mjs tests/p533-curved-stone-and-true-terrain.test.mjs tests/p532-spanish-clipboard-quaternius.test.mjs tests/p530-city-mask.test.mjs tests/p530-world-forge-age-catalog.test.mjs tests/p531-kaykit-all-free.test.mjs tests/p528-beginning-village.test.mjs tests/p529-private-kaykit-and-cities.test.mjs tests/p526-sims-builder.test.mjs tests/p525-native-3d-world-forge.test.mjs tests/p524-free-kaykit-buildings.test.mjs tests/p523-png-terrain.test.mjs tests/p521-world-forge.test.mjs tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Build full HIGHFLY RPG and independent genuine original-world 3D editor
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p534/ npm run build
+          npm run qa:dist
+          for path in index.html highfly/p533-curved-road-path.mjs highfly/basis/basis_transcoder.js highfly/basis/basis_transcoder.wasm highfly/quaternius-cc0/manifest.json highfly/quaternius-cc0/props/well.glb highfly/quaternius-cc0/props/lantern_wall.glb highfly/quaternius-cc0/foliage/bush_flowers.glb highfly/quaternius-cc0/thumbs/qcc0-bush_flowers.png highfly/unsung-flora/thumbs/unsung-tree-blossom.svg highfly/p532-spanish-labels.mjs highfly/p532-quaternius-cc0-catalog.mjs highfly/p532-public-urban-assets.mjs highfly/kaykit-free/all-manifest.json highfly/kaykit-free/all/buildings/blue/building_home_A_blue.gltf highfly/kaykit-free/all/decoration/props/barrel.gltf highfly/kaykit-free/all/decoration/nature/tree_single_A.gltf highfly/kaykit-free/all/tiles/roads/hex_road_A.gltf highfly/kaykit-free/thumbs-all/buildings-blue-building-home-a-blue.png highfly/kaykit-free/thumbs-all/decoration-props-barrel.png highfly/unsung-original-prefabs.json highfly/unsung-original-prefabs.bin highfly/unsung-original/thumbs/unsung-bench.png highfly/world-forge.html highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/native-architecture-3d.bin highfly/native-architecture-3d.json highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-relief-core.png highfly/native-overview.json highfly/kaykit-free/manifest.json; do
+            test -s "dist/$path"
+          done
+          grep -q 'preview-p534' dist/index.html
+          grep -q 'P5.3.4 PILOTO' dist/highfly/world-forge-3d.html
+          grep -q 'world-forge-3d.html' dist/highfly/world-forge.js
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('dist/highfly/native-architecture-3d.json'));const b=fs.statSync('dist/highfly/native-architecture-3d.bin').size;if(m.meshes.length<55||m.totalTriangles<1000||b!==m.byteLength)throw Error('Original full 3D architecture incomplete');console.log('[P529 3D NATIVE]',m.meshes.length,'original structures,',m.totalTriangles,'native triangles,',b,'bytes')"
+          node --input-type=module -e "import fs from 'node:fs';const f=JSON.parse(fs.readFileSync('dist/highfly/kaykit-free/manifest.json'));if(f.models.length!==16||f.license!=='CC0-1.0')throw Error('Official CC0 pack incomplete');console.log('[P529 KAYKIT]',f.models.length,'free authentic CC0 models')"
+          node --input-type=module -e "import fs from 'node:fs';const q=JSON.parse(fs.readFileSync('dist/highfly/quaternius-cc0/manifest.json'));if(q.models.length!==42||q.license!=='CC0-1.0'||!q.models.every(x=>/^[a-f0-9]{40}$/.test(x.gitBlob)))throw Error('P532 pinned Quaternius CC0 missing');console.log('[P532 QUATERNIUS]',q.models.length,'pinned legal GLBs')"
+          node --input-type=module -e "import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('dist/highfly/kaykit-free/all-manifest.json'));const m=x.models;if(x.license!=='CC0-1.0'||m.length!==221||new Set(m.map(a=>a.id)).size!==221||m.filter(a=>a.kind==='building').length!==72)throw Error('Complete FREE pack missing');console.log('[P531 FULL FREE]',m.length,'CC0 glTF models, four building colors, accessories, wall systems and forests')"
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+          ! grep -q 'DecompressionStream' dist/highfly/world-forge-3d.js
+          ! git diff --name-only | grep -qE '^src/world/(layout|terrain|arch)/'
+      - name: Real Chrome WebGL smoke test — 3D world must render before release
+        run: |
+          cp tests/p534-browser-eastbrook.mjs .work/unsung/tools/p534-browser-eastbrook.mjs
+          cd .work/unsung
+          node tools/p534-browser-eastbrook.mjs
+      - name: Preserve screenshot of native 3D editor from CI browser
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p534-eastbrook-browser-screenshot
+          path: .work/unsung/p534-eastbrook-world-forge.png
+          if-no-files-found: warn
+          retention-days: 5
+      - name: Save complete separate 3D preview artifact (no site overwrite)
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p534-eastbrook-full-build
+          path: dist/
+          retention-days: 5
+          if-no-files-found: error

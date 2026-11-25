@@ -1,0 +1,74 @@
+name: "HIGHFLY P534 — Publish Eastbrook pilot as isolated playable GitHub Pages preview"
+on:
+  push:
+    branches: [p534-claudecraft-settlement-pilot-20261125]
+    paths: ['.github/workflows/highfly-p534-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p534-pages-safe
+  cancel-in-progress: false
+jobs:
+  stage-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Download Chrome WebGL-verified full P534 game/editor
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p534-eastbrook-full-build
+          run-id: 45618573045
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p534-verified
+      - name: Download already published approved P533 site with all historical previews
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45605124533
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p533-approved-site
+      - name: Validate and stage ONLY preview-p534; preserve all previous folders byte-identical
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="$RUNNER_TEMP/p534-verified"
+          for rel in index.html highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/world-forge.html highfly/world-forge.js highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-architecture-3d.bin highfly/kaykit-free/all-manifest.json highfly/unsung-original-prefabs.json; do
+            test -s "$GAME/$rel" || { echo "FAIL: P534 missing $rel"; exit 1; }
+          done
+          grep -q 'preview-p534' "$GAME/index.html"
+          grep -q 'P5.3.4 PILOTO' "$GAME/highfly/world-forge-3d.html"
+          test ! -e "$GAME/KIT_COMPLETO_PARTE_01.zip"
+          test ! -e "$GAME/KIT_COMPLETO_PARTE_02.zip"
+          SITE="$RUNNER_TEMP/highfly-historical-site"
+          mkdir -p "$SITE"
+          tar -xf "$RUNNER_TEMP/p533-approved-site/artifact.tar" -C "$SITE"
+          for rel in index.html preview-v3/index.html preview-p514/index.html preview-p520/index.html preview-p529/index.html preview-p531/index.html preview-p533/index.html preview-p533/highfly/world-forge-3d.html; do
+            test -s "$SITE/$rel" || { echo "FAIL: historical preview missing $rel"; exit 1; }
+          done
+          test ! -e "$SITE/preview-p534"
+          (cd "$SITE" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/old-site-checksums.sha256"
+          mkdir -p "$SITE/preview-p534"
+          cp -a "$GAME/." "$SITE/preview-p534/"
+          (cd "$SITE" && sha256sum -c "$RUNNER_TEMP/old-site-checksums.sha256" >/dev/null)
+          test -s "$SITE/preview-p534/highfly/world-forge-3d.html"
+          touch "$SITE/.nojekyll"
+          mv "$SITE" dist-pages
+          echo "P534 READY: Eastbrook 6 KayKit role models + Unsung guild / preview-p534; approved versions untouched"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: stage-site
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish confirmed P534 full RPG and 3D World Forge without overwriting historical versions
+        id: deployment
+        uses: actions/deploy-pages@v4
