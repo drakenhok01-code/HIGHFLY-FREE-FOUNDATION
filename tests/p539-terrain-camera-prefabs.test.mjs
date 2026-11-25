@@ -18,17 +18,21 @@ test('P539: real sloping land forms supporting native earth, no levitating slab'
 });
 test('P539: importer uses genuine CC0 3D house instead of broken blacksmith asset',()=>{
  const smith=EASTBROOK_LAND_SPECS.find(x=>x.role==='herreria');
- assert.equal(smith.type,'kaykit-home-a');
+ assert.equal(smith.type,'kaykit-blacksmith');
  assert.equal(smith.wanted,'kaykit-blacksmith');
  assert(EASTBROOK_PENDING.some(x=>x.role==='herreria'&&x.replacement===smith.type));
- assert(EASTBROOK_FREE_FALLBACKS['kaykit-home-a'].length>0);
+ assert(EASTBROOK_FREE_FALLBACKS['kaykit-blacksmith'].includes('kaykit-home-a'));
  const plan=buildEastbrookLand({canPlace:()=>({ok:true,y:212.5})});
  assert(plan.complete);
  const o=plan.objects.find(x=>x.highflyRole==='herreria');
- assert.equal(o.type,'kaykit-home-a');
- assert.equal(o.highflyWantedPrefab,'kaykit-blacksmith');
+ assert.equal(o.type,'kaykit-blacksmith');
+ const fallbackPlan=buildEastbrookLand({canPlace:()=>({ok:true,y:212.5}),buildingTypes:{herreria:'kaykit-home-a'}});
+ assert(fallbackPlan.complete);
+ const replacement=fallbackPlan.objects.find(x=>x.highflyRole==='herreria');
+ assert.equal(replacement.type,'kaykit-home-a');
+ assert.equal(replacement.highflyWantedPrefab,'kaykit-blacksmith');
  assert.equal(plan.objects.filter(x=>x.highflyNpc).length,4);
- assert(!plan.objects.some(o=>o.type==='kaykit-blacksmith'));
+ assert(!fallbackPlan.objects.some(o=>o.type==='kaykit-blacksmith'));
  const repl=buildEastbrookLand({canPlace:()=>({ok:true,y:212.5}),buildingTypes:{capilla:'kaykit-home-b'}});
  assert(repl.complete);
  assert.equal(repl.objects.find(o=>o.highflyRole==='capilla').type,'kaykit-home-b');
