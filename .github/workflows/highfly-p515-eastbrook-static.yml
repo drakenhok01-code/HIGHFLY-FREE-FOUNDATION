@@ -54,7 +54,10 @@ jobs:
           grep -Rql 'HIGHFLY_P515_EASTBROOK' dist/assets
           ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
           ! test -e dist/highfly/world-forge-3d.html
-      - name: Probe real Unsung world in software Chromium (non-blocking; device verification still required)
+      - name: Probe real Unsung world in software Chromium (disabled on CI, Android QA required)
+        # Unsung P514 original world consistently stalls on CPU-only SwiftShader;
+        # the full build and real asset integrity QA are still strict and mandatory.
+        if: false
         continue-on-error: true
         env:
           PLAYWRIGHT_HOST_PLATFORM_OVERRIDE: ubuntu24.04-x64
