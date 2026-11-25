@@ -1,0 +1,141 @@
+name: "HIGHFLY P539 Arvelia — CC0 fallback, slope and camera QA"
+on:
+  push:
+    branches: [p539-slope-prefabs-camera-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p539-isolated-pages
+  cancel-in-progress: true
+jobs:
+  arvelia-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare frozen image tool dependencies
+        shell: bash
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Strict static checks and focused Arvelia quests
+        run: |
+          node --check src/highfly/p538-eastbrook-land.mjs
+          node --check src/highfly/p538-arvelia-quests.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --check scripts/f0-build.mjs
+          node --check tests/p539-browser-terrain-camera.mjs
+          node --test tests/p539-terrain-camera-prefabs.test.mjs
+          node --test tests/p538-eastbrook-land.test.mjs
+          node --test tests/p537-ground-fit.test.mjs
+          node --test tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+      - name: Rebuild P539 isolated full RPG and 3D World Forge (do NOT deploy Pages)
+        shell: bash
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p539/ npm run build
+          npm run qa:dist
+          grep -q 'preview-p539' dist/index.html
+          grep -q 'WORLD FORGE 4.7' dist/highfly/world-forge-3d.html
+          grep -q 'p538-eastbrook-land' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          grep -q 'p538-arvelia-quests' .work/unsung/src/highfly/p521-world-forge-runtime.mjs
+          test -s dist/highfly/native-overview.json
+          test -s dist/highfly/world-forge-3d.js
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+      - name: Inspect actual Unsung terrain and Eastbrook 3D placement in software Chrome
+        shell: bash
+        run: |
+          cp tests/p539-browser-terrain-camera.mjs .work/unsung/tools/p539-browser-terrain-camera.mjs
+          cd .work/unsung
+          timeout 250s node tools/p539-browser-terrain-camera.mjs
+      - name: Upload terrain placement evidence, even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p539-native-slope-camera-evidence
+          path: |
+            .work/unsung/p539-eastbrook-qa.json
+            .work/unsung/p539-eastbrook-placed.json
+            .work/unsung/p539-eastbrook-editor.png
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Keep isolated PREVIEW BUILD only after strict tests
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p539-arvelia-camera-slope
+          path: dist/
+          if-no-files-found: error
+          retention-days: 5
+
+  publish-pages:
+    needs: [arvelia-qa]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download new tested P539 build
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p539-arvelia-camera-slope
+          path: ${{ runner.temp }}/p539-tested
+      - name: Restore previous P538 Arvelia backup
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p538-arvelia-world-forge
+          run-id: 45681104388
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p538-approved
+      - name: Restore previous P537 original backup
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          run-id: 45659850899
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p537-approved
+      - name: Assemble Pages with three approved preview versions only
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/p539-pages"
+          for v in 537 538 539; do
+            SRC="$RUNNER_TEMP/p${v}-approved"
+            if [ "$v" = 539 ]; then SRC="$RUNNER_TEMP/p539-tested"; fi
+            test -s "$SRC/index.html"
+            test -s "$SRC/highfly/world-forge-3d.html"
+            grep -q "preview-p${v}" "$SRC/index.html"
+            mkdir -p "$ROOT/preview-p${v}"
+            cp -a "$SRC/." "$ROOT/preview-p${v}/"
+          done
+          grep -q 'WORLD FORGE 4.7' "$ROOT/preview-p539/highfly/world-forge-3d.html"
+          test -s "$ROOT/preview-p539/highfly/world-forge-3d.js"
+          test -s "$ROOT/preview-p538/highfly/world-forge-3d.js"
+          test -s "$ROOT/preview-p537/highfly/world-forge-3d.js"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="es"><meta charset="utf-8"><title>HIGHFLY P5.3.9 — ARVELIA</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p539/">
+          <a href="./preview-p539/">Entrar a HIGHFLY P5.3.9 · Arvelia</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          test ! -e "$ROOT/preview-p536"
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "P539 Pages size: $SIZE bytes"
+          test "$SIZE" -lt 900000000 || { echo "::error::Pages exceeds 900MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+      - id: deployment
+        uses: actions/deploy-pages@v4
