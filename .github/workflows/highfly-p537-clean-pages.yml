@@ -1,0 +1,126 @@
+name: "HIGHFLY P537 - World Forge 4.5 terrain grade and slim Pages"
+on:
+  push:
+    branches: [p537-ground-fit-clean-pages-20261125]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p537-slim-pages
+  cancel-in-progress: true
+jobs:
+  build-and-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare frozen image tools
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-icons-env"
+          "$RUNNER_TEMP/highfly-icons-env/bin/python" -m pip install --quiet "pillow==12.0.0" "numpy==2.3.4"
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-icons-env/bin/python" >> "$GITHUB_ENV"
+      - name: Strict source, licensing and game regression checks
+        run: |
+          node --check scripts/f0-build.mjs
+          node --check src/highfly/p533-curved-road-3d.mjs
+          node --check src/highfly/p536-modular-cobble-kit.mjs
+          node --check src/highfly/p536-native-editor-visuals.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --check src/highfly/p521-world-forge-runtime.mjs
+          node --check src/highfly/p537-grade-parcels.mjs
+          node --check tests/p537-ground-fit.test.mjs
+          node --test tests/p537-ground-fit.test.mjs
+          node --test tests/p515-climate-options.test.mjs tests/p514-moon-eclipse-final.test.mjs
+          npm run qa:static
+          npm run qa:gameplay
+      - name: Build complete world forge and the playable RPG together on unchanged P533 ancestry
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p537/ npm run build
+          npm run qa:dist
+          for f in index.html highfly/world-forge-3d.html highfly/world-forge-3d.js highfly/kaykit-free/all-manifest.json highfly/unsung-original-prefabs.json highfly/native-terrain-core.png highfly/native-terrain-region.png highfly/native-overview.json highfly/native-architecture-3d.bin highfly/quaternius-cc0/manifest.json; do
+            test -s "dist/$f" || { echo "MISSING $f"; exit 1; }
+          done
+          grep -q 'WORLD FORGE 4.5' dist/highfly/world-forge-3d.html
+          grep -q 'preview-p536' dist/index.html
+          grep -q 'p537-grade-parcels' .work/unsung/src/highfly/p521-world-forge-runtime.mjs
+          grep -q 'gradePlanFor' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          grep -q 'nativeEditorStaticDepthWater' .work/unsung/src/highfly/p525-world-forge-3d.mjs
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+      - name: Real graphics software browser diagnostic - separate from strict source/build QA
+        continue-on-error: true
+        run: |
+          cp tests/p537-browser-ground-fit.mjs .work/unsung/tools/p537-browser-ground-fit.mjs
+          cd .work/unsung
+          timeout 210s node tools/p537-browser-ground-fit.mjs
+      - name: Upload test screenshots and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p537-graded-ground-visual-qa
+          path: |
+            .work/unsung/p537-editor-ground-screenshot.png
+            .work/unsung/p537-editor-ground-qa.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Keep isolated build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p537-world-forge-45
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retrieve P533 backup from historical archive for selective extraction
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: 45639807956
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/p533-readonly-old-pages
+      - name: Publish clean Pages - P533 approved and P537 current ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/highfly-pages-slim"
+          ARCHIVE="$RUNNER_TEMP/p533-readonly-old-pages/artifact.tar"
+          mkdir -p "$ROOT"
+          test -s "$ARCHIVE"
+          tar -tf "$ARCHIVE" | grep -E '(^|/)preview-p533/' > "$RUNNER_TEMP/p533-only.txt"
+          test "$(wc -l < "$RUNNER_TEMP/p533-only.txt")" -gt 20
+          tar -xf "$ARCHIVE" -C "$ROOT" -T "$RUNNER_TEMP/p533-only.txt"
+          test -s "$ROOT/preview-p533/index.html"
+          test -s "$ROOT/preview-p533/highfly/world-forge-3d.html"
+          mkdir "$ROOT/preview-p537"
+          cp -a dist/. "$ROOT/preview-p537/"
+          cat > "$ROOT/index.html" <<'HTML'
+          <!doctype html><html lang="es"><meta charset="utf-8"><title>HIGHFLY</title>
+          <meta http-equiv="refresh" content="0;url=./preview-p537/">
+          <a href="./preview-p537/">Entrar a HIGHFLY P5.3.7</a></html>
+          HTML
+          touch "$ROOT/.nojekyll"
+          test -s "$ROOT/preview-p537/index.html"
+          test -s "$ROOT/preview-p537/highfly/world-forge-3d.html"
+          test ! -e "$ROOT/preview-p515"
+          test ! -e "$ROOT/preview-p536"
+          SIZE="$(du -sb "$ROOT" | cut -f1)"
+          echo "CLEAN PAGES SIZE: $SIZE bytes; backed-up P533 plus current P537 only"
+          test "$SIZE" -lt 900000000 || { echo "::error::Pages over 900MB"; exit 1; }
+          mv "$ROOT" dist-pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+  deploy:
+    needs: build-and-stage
+    runs-on: ubuntu-latest
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
