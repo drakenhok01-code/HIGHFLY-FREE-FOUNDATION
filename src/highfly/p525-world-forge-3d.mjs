@@ -20,16 +20,18 @@ import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid,sampleCu
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 import {MODULAR_COBBLE_TILES,isModularCobble,isModularCobbleType,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {nativeEditorTerrainMaterial,nativeEditorStaticDepthWater,nativeEditorOriginalGrass,nativeEditorOriginalLeaves} from './p536-native-editor-visuals.mjs';
+import {gradePlanFor,fastGradeHeightAt,indexGradePlans,gradePatchGrid} from './p537-grade-parcels.mjs';
 const $=id=>document.getElementById(id);
-const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true;
+const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true;
+const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true||P536_PREVIEW;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-const STORE=P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
-const VIEW=P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
-const BACKUP=P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
+const STORE=P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+const VIEW=P537_PREVIEW?'hf-world-forge-view-p537-v1':P536_PREVIEW?'hf-world-forge-view-p536-v1':P533_PREVIEW?'hf-world-forge-view-p533-v1':P532_PREVIEW?'hf-world-forge-view-p532-v1':P531_PREVIEW?'hf-world-forge-view-p531-v1':P530_PREVIEW?'hf-world-forge-view-p530-v1':P529_PREVIEW?'hf-world-forge-view-p529-v1':'hf-world-forge-view-v1';
+const BACKUP=P537_PREVIEW?'hf-world-forge-layout-p537-backup':P536_PREVIEW?'hf-world-forge-layout-p536-backup':P533_PREVIEW?'hf-world-forge-layout-p533-backup':P532_PREVIEW?'hf-world-forge-layout-p532-backup':P531_PREVIEW?'hf-world-forge-layout-p531-backup':P530_PREVIEW?'hf-world-forge-layout-p530-backup':P529_PREVIEW?'hf-world-forge-layout-p529-backup':'hf-world-forge-layout-v1-backup-pre-p526';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),snap=(x,s=1)=>Math.round(x/s)*s,finite=n=>typeof n==='number'&&Number.isFinite(n);
 const base=[
  ['guild','Gremio','🏰','Edificios',14,11],['forge','Herrería','⚒️','Edificios',11,9],['inn','Posada','🏠','Edificios',12,10],
@@ -128,6 +130,7 @@ const gltfLoader=new GLTFLoader()
  .setKTX2Loader(ktx2Loader),
  textureLoader=new THREE.TextureLoader(),cache=new Map(),objectViews=new Map();
 let nativeVisuals=null,nativeWater=null,nativeGrass=null,nativeLeaves=null;
+let gradePlans=[],gradeSpatial=null;const gradeScene=new THREE.Group();gradeScene.name='HIGHFLY_EDITABLE_EARTH_SLOPES_P537';scene.add(gradeScene);
 let map=null,overview=null,architectPixel=null,records=[],history=[],redoStack=[],mode='orbit',chosen=null,selected=null,category=(P536_PREVIEW||P533_PREVIEW||P532_PREVIEW||P531_PREVIEW)?'KayKit FREE · Edificios':'Edificios',gizmo=null,rendering=0,treeFocus=[Infinity,Infinity],nearFocus=[Infinity,Infinity],dragPainting=false,lastPaint=null,ghost=null,pendingDrop=null,activePointer=null,downPos=null,pendingYaw=0,pendingScale=1,movingExisting=null;
 let movedPivot={x:-512,z:-70};
 try{const v=JSON.parse(localStorage.getItem(VIEW)||'null');if(finite(v?.x)&&finite(v?.z))movedPivot={x:v.x,z:v.z};}catch{}
@@ -166,11 +169,51 @@ function elevation(x,z){
  const hc=sample(map.core,map.meta.core,x,z);if(e<=.90)return hc;
  const t=(e-.90)/.085,w=1-t*t*(3-2*t);return hr+(hc-hr)*w;
 }
+
+function gradeEligible(a,o){
+ return P537_PREVIEW&&a&&o&&!o.type.startsWith('floor-')&&!o.type.startsWith('npc-')&&
+  (a.kind==='building'||a.cat==='Edificios'||!!a.model);
+}
+function syncGradePlans(){
+ if(!P537_PREVIEW||!map){gradePlans=[];gradeSpatial=null;return;}
+ gradePlans=[];
+ for(const o of records){
+  const a=BY_ID.get(o.type);if(!gradeEligible(a,o))continue;
+  try{
+   const plan=gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6});
+   if(plan.slope<=1.75&&plan.y>-.1)gradePlans.push(plan);
+  }catch(err){log('Nivel de parcela '+o.id,err.message,false);}
+ }
+ gradeSpatial=indexGradePlans(gradePlans);
+}
+function gradedElevation(x,z){
+ const original=elevation(x,z);
+ return P537_PREVIEW?fastGradeHeightAt(x,z,original,gradeSpatial):original;
+}
+function redrawGradedTerrain(){
+ if(!P537_PREVIEW||!map||!geo.core||!geo.near)return;
+ const core=terrain(2048,256,-.15);geo.core.geometry.dispose();geo.core.geometry=core;
+ nearFocus=[Infinity,Infinity];updateNear();
+ for(const mesh of [...gradeScene.children]){gradeScene.remove(mesh);mesh.geometry.dispose();}
+ if(!nativeVisuals)return;
+ for(const plan of gradePlans){
+  const g=gradePatchGrid(plan,elevation,{step:.95,raise:.245});
+  const ge=new THREE.BufferGeometry();
+  ge.setAttribute('position',new THREE.Float32BufferAttribute(g.vertices,3));
+  ge.setAttribute('uv',new THREE.Float32BufferAttribute(g.uv,2));
+  ge.setIndex(g.indices);ge.computeVertexNormals();ge.computeBoundingSphere();
+  const mesh=new THREE.Mesh(ge,nativeVisuals.material);
+  mesh.name='Explanada natural de '+plan.id;mesh.receiveShadow=true;
+  gradeScene.add(mesh);
+ }
+ nativeGrass?.update(orbit.target.x,orbit.target.z,true);
+}
+
 function terrain(size,steps,offset=0,ox=0,oz=0){
  const n=steps+1,pos=new Float32Array(n*n*3),uv=new Float32Array(n*n*2),idx=new Uint32Array(steps*steps*6);let a=0,u=0,k=0;
  for(let z=0;z<=steps;z++)for(let x=0;x<=steps;x++){
   const gx=ox+(x/steps-.5)*size,gz=oz+(z/steps-.5)*size;
-  pos[a++]=gx;pos[a++]=elevation(gx,gz)+offset;pos[a++]=gz;
+  pos[a++]=gx;pos[a++]=gradedElevation(gx,gz)+offset;pos[a++]=gz;
   uv[u++]=gx/size+.5;uv[u++]=1-(gz/size+.5);
  }
  for(let z=0;z<steps;z++)for(let x=0;x<steps;x++){
@@ -360,6 +403,8 @@ function validPosition(o,id=null){
   samples.push(h);
  }
  const rad=Math.hypot(w,d)*.5,flat=o.type.startsWith('floor-'),npc=o.type.startsWith('npc-');
+ const grade=gradeEligible(a,o)?gradePlanFor(o,{w:a.w,d:a.d},elevation,{apron:3,subdivisions:6}):null;
+ if(grade)samples.push(grade.groundMin,grade.y);
  if(!flat&&!npc){
   const slope=Math.max(...samples)-Math.min(...samples);
   const isBuilding=a.kind==='building'||!!a.model||(a.privateModel&&a.kind==='building')||(a.originalPrefab&&a.kind==='building');
@@ -376,7 +421,7 @@ function validPosition(o,id=null){
    if(Math.hypot(o.x-b.x,o.z-b.z)<(Math.hypot(w,d)+Math.hypot(q.w*b.scale,q.d*b.scale))*.31)return {ok:false,why:'Edificio superpuesto'};
   }
  }
- return {ok:true,y:Math.max(...samples),slope:Math.max(...samples)-Math.min(...samples)};
+ return {ok:true,y:grade?grade.y:Math.max(...samples),slope:grade?grade.slope:Math.max(...samples)-Math.min(...samples)};
 }
 function save(show=false){
  try{localStorage.setItem(STORE,JSON.stringify({schema:1,world:'unsung-vale',author:'HIGHFLY WORLD FORGE 3D',objects:records}));if(show)status('✓ Diseño guardado; compartido con vista 2D y RPG');}
@@ -390,7 +435,7 @@ function restore(){
   // Migrate the user's existing P532/P531 work as a COPY into the new isolated
   // preview. Never overwrite either earlier version, and never seed CI tests.
   if(!old&&(P533_PREVIEW||P536_PREVIEW)&&!new URLSearchParams(location.search).has('hfqa')){
-   for(const previousKey of (P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
+   for(const previousKey of (P537_PREVIEW?['hf-world-forge-layout-p536-v1','hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1']:P536_PREVIEW?['hf-world-forge-layout-p533-v1','hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1']:['hf-world-forge-layout-p532-v1','hf-world-forge-layout-p531-v1'])){
     const previous=localStorage.getItem(previousKey);
     if(!previous)continue;
     try{
@@ -399,7 +444,7 @@ function restore(){
        d.objects.length<=2500&&d.objects.every(o=>BY_ID.has(o.type)&&
         [o.x,o.z,o.yaw,o.scale].every(finite))){
       old=previous;localStorage.setItem(STORE,previous);
-      log('Plano anterior conservado','copiado de '+previousKey+' a P533, sin borrar el original');break;
+      log('Plano anterior conservado','copiado de '+previousKey+' a '+STORE+', sin borrar el original');break;
      }
     }catch{}
    }
@@ -444,7 +489,7 @@ function foundationFor(a,o,heightSlope){
 }
 // Exact native paved court elevations from original Unsung's Architecture.buildPlayable().
 function floorElevation(x,z){
- let y=elevation(x,z);
+ let y=gradedElevation(x,z);
  for(const f of overview?.floors||[]){
   if(!finite(f.y))continue;
   const inside=f.r?Math.hypot(x-f.x,z-f.z)<=f.r-.1:
@@ -529,11 +574,11 @@ async function buildPlaced(o){
    const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
    const scale=a.id.startsWith('npc-')?1.8/Math.max(.01,size.y)*o.scale:
      Math.min(a.w/Math.max(.001,size.x),a.d/Math.max(.001,size.z))*o.scale;
-   model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
+   model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale-(gradeEligible(a,o)?Math.min(.22,.16*scale):0),-center.z*scale);
    if(a.id.startsWith('npc-'))model.traverse(x=>{
     if(x.isMesh&&/sword|shield|helmet|visor|cape|dagger|bow|staff/i.test(x.name))x.visible=false;
    });
-   else if((a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
+   else if(!P537_PREVIEW&&(a.model||a.kind==='building')&&(point.slope||0)>.35)root.add(foundationFor(a,o,point.slope||0));
    root.add(model);
   }
  }else{
@@ -544,6 +589,7 @@ async function buildPlaced(o){
  return root;
 }
 async function rebuildPlaced(){
+ syncGradePlans();
  const token={};rebuildPlaced.token=token;
  for(const child of [...groups.placed.children]){groups.placed.remove(child);if(child.userData.roadGeometry)disposeCurvedRoadGeometry(child);
   if(child.userData.modularRoadGeometry)disposeModularCobbleGeometry(child);}
@@ -553,6 +599,7 @@ async function rebuildPlaced(){
   if(rebuildPlaced.token!==token)return;
   if(node){groups.placed.add(node);viewCache.set(o.id,node);}
  }
+ if(P537_PREVIEW)redrawGradedTerrain();
  updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);render();showProps();
 }
 function showProps(){
@@ -816,6 +863,7 @@ function addAt(x,z){
   log('No se pudo colocar '+a.label,err.message,false);
  });
  if(o.clearTrees){updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true);}
+ if(P537_PREVIEW){syncGradePlans();redrawGradedTerrain();}
  status('✓ Añadido '+a.label+' · X '+o.x+' / Z '+o.z);
  return o.id;
 }
@@ -1267,7 +1315,7 @@ async function boot(){
  try{
   logData.phase='datos reales y geometría 3D';drawCats();bindUI();installGizmo();fit();restore();
   status('Cargando alturas originales de Unsung sin iniciar el RPG…');
-  await loadHeights();await drawTerrain();
+  await loadHeights();if(P537_PREVIEW)syncGradePlans();await drawTerrain();
   focus(movedPivot.x,movedPivot.z);updateNear();
   const data=await fetch(url('native-overview.json'));if(!data.ok)throw Error('Mapa original: HTTP '+data.status);
   overview=await data.json();
@@ -1287,7 +1335,7 @@ async function boot(){
   originalRender();
   if(P536_PREVIEW){
    try{
-    nativeGrass=nativeEditorOriginalGrass({scene,elevation,overview,pathPixels:nativeVisuals?.pathPixels??new Uint8Array(1024*1024),qualityHigh:()=>qualityHigh,records:()=>records});
+    nativeGrass=nativeEditorOriginalGrass({scene,elevation:gradedElevation,overview,pathPixels:nativeVisuals?.pathPixels??new Uint8Array(1024*1024),qualityHigh:()=>qualityHigh,records:()=>records});
     nativeGrass.update(orbit.target.x,orbit.target.z,true);
     nativeLeaves=nativeEditorOriginalLeaves(renderer,groups.trees,{qualityHigh});
     log('Pasto, árboles y flores originales','briznas 3D de Unsung por instancias + hojas reales del atlas MIT en las cinco especies');
@@ -1302,7 +1350,7 @@ async function boot(){
    localStorage.getItem(STORE)===null;
   if(firstP529)await loadBeginningVillage({auto:true});
   logData.phase='listo';log('Editor 3D autónomo','sin combate ni simulación; colocaciones JSON idénticas a la vista 2D');
-  status(P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
+  status(P537_PREVIEW?'✓ WORLD FORGE 4.5 · P5.3.7 · edificios asentados en terreno Unsung, explanadas de tierra suave sin losas flotantes, adoquines modulares y agua estática.':P536_PREVIEW?'✓ WORLD FORGE 4.4 · P5.3.6 · materiales nativos Unsung, caminos originales de tierra, pasto 3D, hojas reales y agua estática con profundidad. Curvas modulares girables de 4 y 8 metros.':'✓ WORLD FORGE 4.3 · P5.3.2+P5.3.3 · mapa Unsung auténtico, 221 KayKit FREE, 42 Quaternius, caminos curvos y bordillos continuos.');
  }catch(err){
   logData.phase='fallo';log('INICIO 3D',err.stack?.slice(0,250)||String(err),false);
   status('Fallo 3D. Abrí 🩺 Diagnóstico; el editor 2D original continúa disponible.');
