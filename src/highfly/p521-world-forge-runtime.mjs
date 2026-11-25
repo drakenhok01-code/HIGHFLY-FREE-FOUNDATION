@@ -21,19 +21,22 @@ import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid} from '.
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
 import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {gradePlanFor,gradePatchGrid} from './p537-grade-parcels.mjs';
+import {buildEastbrookLand} from './p538-eastbrook-land.mjs';
+import {installArveliaQuests} from './p538-arvelia-quests.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
-const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true;
+const P538_PREVIEW=globalThis.location?.pathname?.includes('/preview-p538/')===true;
+const P537_PREVIEW=globalThis.location?.pathname?.includes('/preview-p537/')===true||P538_PREVIEW;
 const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true||P537_PREVIEW;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P538_PREVIEW?'hf-world-forge-layout-p538-v1':P537_PREVIEW?'hf-world-forge-layout-p537-v1':P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -266,6 +269,36 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  if(!game||game.__hfP521WorldForge)return game?.__hfP521WorldForge??null;
  if(new URLSearchParams(search).get('hfworld')!=='1')return null;
  let loaded=loadedLayout(storage);
+
+ // P538: autoload the same terrain-validated town in the playable RPG
+ // even if the user enters the game before opening the editor. Preserve P537
+ // as a READ-ONLY backup, including the player's placed structures.
+ if(P538_PREVIEW&&storage?.getItem(WORLD_FORGE_KEY)===null){
+  try{
+   const prior=validateWorldForgeLayout(JSON.parse(storage?.getItem('hf-world-forge-layout-p537-v1')||'null'));
+   const old=prior.ok?prior.objects:[];
+   const plan=buildEastbrookLand({
+    existing:old,sizeOf:type=>BOUNDS[type]||null,
+    canPlace:o=>{
+     const fp=footprint(game.world,o);
+     return fp?{ok:true,y:fp.y}:{ok:false};
+    }
+   });
+   const objects=plan.complete?[...old,...plan.objects]:old;
+   if(objects.length){
+    const payload={schema:1,world:'unsung-vale',
+     author:'HIGHFLY P538 Arvelia — P537 preserved, no restricted assets',objects};
+    const check=validateWorldForgeLayout(payload);
+    if(check.ok){
+     storage?.setItem(WORLD_FORGE_KEY,JSON.stringify(payload));
+     loaded=check;
+     console.info('[HIGHFLY P538]',plan.complete?
+      'Arvelia auto-loaded (land-only, buildings + NPCs)':
+      'P537 objects preserved; town blocked by terrain',plan.reason||'',plan.center);
+    }
+   }
+  }catch(err){console.warn('[HIGHFLY P538] No changes; import from 3D editor',err);}
+ }
  // P529 demo only: the exact same editable, collision-checked town is
  // generated on the first gameplay visit, even if World Forge wasn't opened.
  // Existing saved layouts take precedence. Other versions are not modified.
@@ -497,7 +530,21 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
       p.type==='npc-guard'?0xb0b8e6:p.type==='npc-artisan'?0xd7b185:0xbf98d9,
       side:THREE.DoubleSide,transparent:!!old?.transparent,alphaTest:old?.alphaTest??0});
     });
-    anchor.add(model);anchor.visible=false;group.add(anchor);
+    anchor.add(model);
+    if(p.highflyName&&typeof document!=='undefined'){
+     const canvas=document.createElement('canvas');canvas.width=256;canvas.height=64;
+     const ctx=canvas.getContext('2d');
+     if(ctx){
+      ctx.fillStyle='rgba(18,14,32,.8)';ctx.fillRect(3,8,250,48);
+      ctx.strokeStyle='#c7a4ed';ctx.strokeRect(3,8,250,48);
+      ctx.fillStyle='#fff4db';ctx.font='bold 27px system-ui';ctx.textAlign='center';
+      ctx.fillText(p.highflyName,128,41);
+      const tex=new THREE.CanvasTexture(canvas);
+      const label=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
+      label.position.set(0,2.55,0);label.scale.set(3.8,.95,1);anchor.add(label);
+     }
+    }
+    anchor.visible=false;group.add(anchor);
     const mixer=new THREE.AnimationMixer(model);if(idle)mixer.clipAction(idle).play();
     actors.push({anchor,mixer,p});
    }
@@ -572,13 +619,17 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   console.info('[HIGHFLY KAYKIT COMPLETE FREE CC0]',kaykitObjects.length,'real medieval models,',kaykitFailures.length,'load failures');
  }).catch(err=>console.error('[HIGHFLY KAYKIT FREE]',err));
  const readyPromise=Promise.all([peopleReadyPromise,buildingsReadyPromise]);
+ const arveliaQuestUI=P538_PREVIEW?installArveliaQuests({people,storage}):null;
  let lastUpdate=game.update;
  game.update=function(realDt){
   const result=lastUpdate.call(this,realDt);
-  if(!disposed&&this.player?.pos)for(const a of actors){
+  if(!disposed&&this.player?.pos){
+   arveliaQuestUI?.update(this.player.pos);
+   for(const a of actors){
    const d=Math.hypot(a.p.x-this.player.pos.x,a.p.z-this.player.pos.z);
    a.anchor.visible=d<130;
    if(d<65){a.mixer.update(Math.min(.05,Math.max(0,realDt||0)));a.anchor.updateMatrixWorld(true);}
+   }
   }
   return result;
  };
@@ -586,7 +637,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   get npcCount(){return actors.length;},
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
-   disposed=true;game.update=lastUpdate;
+   disposed=true;game.update=lastUpdate;arveliaQuestUI?.dispose();
    if(cityTexture&&cover?.grassMat?.uniforms?.uHighflyCityMask){
     cover.grassMat.uniforms.uHighflyCityMask.value=oldCoverTex;
     cover.flowerMat.uniforms.uHighflyCityMask.value=oldCoverTex;
