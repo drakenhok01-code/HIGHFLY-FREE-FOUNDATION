@@ -83,7 +83,7 @@ if(begin<0||end<0)throw Error('Unsung forest populate anchors missing');
 // Original native source (commit pinned by HIGHFLY config) executes forest exclusion,
 // sampling, procedural seed and hand-placed species. Not approximated random dots.
 const nativeForestSource=source.slice(begin,end);
-(new Function('POOLS','routes','sites','forest',nativeForestSource))(POOLS,routes,sites,forest);
+(new Function('POOLS','routes','sites','forest','hfWFClearTree',nativeForestSource))(POOLS,routes,sites,forest,()=>false);
 const trees=forest.trees.map(t=>[
  +t.x.toFixed(2),+t.z.toFixed(2),+t.s.toFixed(3),t.v
 ]);
