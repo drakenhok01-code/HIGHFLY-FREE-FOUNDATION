@@ -527,6 +527,11 @@ function selectAsset(id){
  else status('Elegiste '+a.label+' · Tocá terreno libre para colocarlo.');
 }
 const CATALOG_TABS=[
+ {id:'KayKit FREE · Edificios',label:'🏘️ Casas · 4 colores',filter:a=>a.cat==='KayKit FREE · Edificios'},
+ {id:'KayKit FREE · Arquitectura',label:'🏰 Puentes · muros',filter:a=>a.cat==='KayKit FREE · Arquitectura'},
+ {id:'KayKit FREE · Accesorios',label:'🧰 Accesorios',filter:a=>a.cat==='KayKit FREE · Accesorios'},
+ {id:'KayKit FREE · Naturaleza',label:'🌳 Árboles · rocas',filter:a=>a.cat==='KayKit FREE · Naturaleza'},
+ {id:'KayKit FREE · Hexágonos',label:'⬡ Hex originales',filter:a=>a.cat==='KayKit FREE · Hexágonos'},
  {id:'Edificios',label:'🏰 KayKit FREE',filter:a=>!!a.model},
  {id:'SOURCE · Edificios',label:'🏘️ SOURCE edificios',filter:a=>a.privateModel&&a.kind==='building'},
  {id:'SOURCE · Accesorios',label:'🧰 SOURCE accesorios',filter:a=>a.privateModel&&a.kind!=='building'},
@@ -561,9 +566,10 @@ function drawCatalog(){
   const el=document.createElement('button');el.type='button';
   el.className='asset'+(chosen===a.id?' selected':'');
   el.title=a.label+' · '+a.w+' × '+a.d+' m'+(a.sourcePack?' · '+a.sourcePack:'');
-  if(a.model||a.originalPrefab){
+  if(a.model||a.freeModel||a.originalPrefab){
    const img=document.createElement('img');img.loading='lazy';img.alt=a.label;
    img.src=a.originalPrefab?url('unsung-original/thumbs/'+a.id+'.png'):
+    a.freeModel?url('kaykit-free/thumbs-all/'+a.thumbName+'.png'):
     url('kaykit-free/thumbs/building_'+a.model+'_red.png');
    img.onerror=()=>{const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;img.replaceWith(icon);};
    el.append(img);
@@ -571,8 +577,8 @@ function drawCatalog(){
    const icon=document.createElement('strong');icon.className='emoji';icon.textContent=a.icon;el.append(icon);
   }
   const label=document.createElement('span');label.textContent=a.label;el.append(label);
-  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||
-   (a.originalPrefab?'UNSUNG · MIT':a.model?'KAYKIT · CC0':a.cat);el.append(type);
+  const type=document.createElement('small');type.className='asset-type';type.textContent=a.sourcePack||a.originalCategory||a.sub||
+   (a.originalPrefab?'UNSUNG · MIT':a.freeModel||a.model?'KAYKIT FREE · CC0':a.cat);el.append(type);
   const size=document.createElement('small');size.className='asset-size';
   size.textContent=a.w+' × '+a.d+' m · '+(a.originalPrefab?'ORIGINAL':a.privateModel?'SOURCE':'3D');
   el.append(size);
@@ -586,7 +592,7 @@ function setCategory(a){
 }
 function drawCats(){
  $('cats').replaceChildren();
- for(const tab of CATALOG_TABS){
+ for(const tab of CATALOG_TABS.filter(x=>!P531_PREVIEW||!x.id.startsWith('SOURCE'))){
   const el=document.createElement('button');el.type='button';el.dataset.cat=tab.id;
   const count=base.filter(a=>tab.filter(a)&&a.cat!=='Bocetos antiguos').length;
   el.textContent=tab.label+' ('+count+')';el.onclick=()=>setCategory(tab.id);$('cats').append(el);
