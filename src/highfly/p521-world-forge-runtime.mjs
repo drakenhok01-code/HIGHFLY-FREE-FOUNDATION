@@ -19,17 +19,19 @@ import {QUATERNIUS_CC0_ALL,QUATERNIUS_CC0_BY_ID,QUATERNIUS_CC0_IDS} from './p532
 import {PUBLIC_URBAN_ASSETS,PUBLIC_URBAN_IDS,makePublicUrbanPrefab} from './p532-public-urban-prefabs.mjs';
 import {CURVED_ROAD_TYPE,CURVED_ROAD_CATALOG,isCurvedRoad,roadPathValid} from './p533-curved-road-path.mjs';
 import {makeCurvedCobblestone3D,disposeCurvedRoadGeometry} from './p533-curved-road-3d.mjs';
+import {MODULAR_COBBLE_TILES,isModularCobble,makeModularCobbleTile3D,disposeModularCobbleGeometry} from './p536-modular-cobble-kit.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
 const PRIVATE_SOURCE=new Map(loadPrivateSourceCatalog().map(a=>[a.id,a]));
 
+const P536_PREVIEW=globalThis.location?.pathname?.includes('/preview-p536/')===true;
 const P533_PREVIEW=globalThis.location?.pathname?.includes('/preview-p533/')===true;
 const P532_PREVIEW=globalThis.location?.pathname?.includes('/preview-p532/')===true;
 const P531_PREVIEW=globalThis.location?.pathname?.includes('/preview-p531/')===true;
 const P530_PREVIEW=globalThis.location?.pathname?.includes('/preview-p530/')===true;
 const P529_PREVIEW=globalThis.location?.pathname?.includes('/preview-p529/')===true;
-export const WORLD_FORGE_KEY=P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
+export const WORLD_FORGE_KEY=P536_PREVIEW?'hf-world-forge-layout-p536-v1':P533_PREVIEW?'hf-world-forge-layout-p533-v1':P532_PREVIEW?'hf-world-forge-layout-p532-v1':P531_PREVIEW?'hf-world-forge-layout-p531-v1':P530_PREVIEW?'hf-world-forge-layout-p530-v1':P529_PREVIEW?'hf-world-forge-layout-p529-v1':'hf-world-forge-layout-v1';
 const BOUNDS=Object.freeze({
  guild:[14,11],forge:[11,9],inn:[12,10],house:[9,8],
  timber:[8,8],market:[12,9],mill:[10,10],granary:[12,9],
@@ -59,6 +61,7 @@ const BOUNDS=Object.freeze({
   ...Object.fromEntries(QUATERNIUS_CC0_ALL.map(a=>[a.id,[a.w,a.d]])),
   ...Object.fromEntries(PUBLIC_URBAN_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  [CURVED_ROAD_TYPE]:[6,6],
+ ...Object.fromEntries(MODULAR_COBBLE_TILES.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_FLORA.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries(UNSUNG_ORIGINAL_ASSETS.map(a=>[a.id,[a.w,a.d]])),
  ...Object.fromEntries([...PRIVATE_SOURCE.values()].map(a=>[a.id,[a.width,a.depth]]))
@@ -108,6 +111,7 @@ export function validateWorldForgeLayout(data){
      !Object.hasOwn(BOUNDS,o.type)||![o.x,o.z,o.yaw,o.scale].every(num)||
      Math.abs(o.x)>8120||Math.abs(o.z)>8120||o.scale<.5||o.scale>3)
     return {ok:false,reason:'invalid item',objects:[]};
+  if(isModularCobble(o)&&Math.abs(o.scale-1)>.001)return {ok:false,reason:'modular stone must have fixed scale',objects:[]};
   if(isCurvedRoad(o)&&!roadPathValid(o).ok)
    return {ok:false,reason:'invalid curved cobblestone path',objects:[]};
   ids.add(o.id);all.push({...o});
@@ -317,6 +321,17 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   return byChunk.get(key);
  };
  for(const o of loaded.objects){
+  if(isModularCobble(o)){
+   const fp=footprint(world,o);
+   if(!fp){skipped.push(o.id);continue;}
+   try{
+    const tile=new THREE.Group();tile.position.set(o.x,fp.y+.035,o.z);tile.rotation.y=o.yaw;
+    tile.name='HIGHFLY_PLAYABLE_MODULAR_STONE_'+o.id;
+    tile.add(makeModularCobbleTile3D(o,groundRoad,{anchorY:fp.y+.035}));
+    group.add(tile);curvedRoads.push({o,model:tile,modular:true});
+   }catch(err){skipped.push(o.id);console.warn('[HIGHFLY MODULAR COBBLE]',err.message);}
+   continue;
+  }
   if(isCurvedRoad(o)){
    try{
     const model=makeCurvedCobblestone3D(o,groundRoad);
@@ -547,7 +562,7 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
    for(const a of actors){group.remove(a.anchor);a.mixer.stopAllAction();}
    for(const k of kaykitObjects){group.remove(k.anchor);}
    for(const a of scenicObjects){group.remove(a.model);}
-    for(const a of curvedRoads){group.remove(a.model);disposeCurvedRoadGeometry(a.model);}
+    for(const a of curvedRoads){group.remove(a.model);if(a.modular)disposeModularCobbleGeometry(a.model);else disposeCurvedRoadGeometry(a.model);}
    // World collision is deliberately kept until page reload: no orphan BVH edits.
   }};
  game.__hfP521WorldForge=api;globalThis.__hfP521WorldForge=api;
