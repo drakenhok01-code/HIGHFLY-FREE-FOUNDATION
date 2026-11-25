@@ -10,6 +10,7 @@ import {lantern,bench,hall,pavilion} from '../world/arch/kit.js';
 import * as NativeKit from '../world/arch/kit.js';
 import * as NativeArch from '../world/arch/builder.js';
 import {UNSUNG_ORIGINAL_ASSETS,UNSUNG_ORIGINAL_IDS,buildUnsungOriginal} from './p530-unsung-original.mjs';
+import {buildWorldForgeCityMask} from './p530-city-ground-mask.mjs';
 import {VILLAGE_DECOR_ASSETS,VILLAGE_DECOR_IDS,buildBeginningVillage} from './p528-village-layout.mjs';
 import {makeVillageDecor} from './p528-village-decor-3d.mjs';
 import {loadPrivateSourceCatalog,readPrivateSourceGLB,privateSourceType} from './p529-private-source-import.mjs';
@@ -252,6 +253,22 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  }
  if(!loaded.ok){console.info('[HIGHFLY WORLD FORGE] No layout available',loaded.reason);return null;}
  const world=game.world,group=game.pipe.scene,byChunk=new Map(),people=[],resources=[],kaykitBuildings=[],sourceBuildings=[],originalBuildings=[],scenic=[],skipped=[];
+ // Original GroundCover shaders receive one R8 city mask, not thousands of CPU raycasts.
+ const cover=globalThis.__parts?.cover;
+ const oldCoverTex=cover?.grassMat?.uniforms?.uHighflyCityMask?.value??null;
+ let cityTexture=null;
+ if(cover?.grassMat?.uniforms?.uHighflyCityMask&&cover?.flowerMat?.uniforms?.uHighflyCityMask){
+  const paved=buildWorldForgeCityMask(loaded.objects,BOUNDS);
+  if(paved.painted){
+   cityTexture=new THREE.DataTexture(paved.mask,paved.resolution,paved.resolution,THREE.RedFormat,THREE.UnsignedByteType);
+   cityTexture.minFilter=THREE.LinearFilter;cityTexture.magFilter=THREE.LinearFilter;
+   cityTexture.wrapS=cityTexture.wrapT=THREE.ClampToEdgeWrapping;
+   cityTexture.needsUpdate=true;
+   cover.grassMat.uniforms.uHighflyCityMask.value=cityTexture;
+   cover.flowerMat.uniforms.uHighflyCityMask.value=cityTexture;
+   console.info('[HIGHFLY WORLD FORGE CITY MASK]',paved.surfaces,'surfaces,',paved.painted,'2m pixels; grass and flowers cleared');
+  }
+ }
  const nativeCenters=new Map();
  const nativeCenter=type=>{
   if(nativeCenters.has(type))return nativeCenters.get(type);
@@ -455,6 +472,11 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
   get placedCount(){return loaded.objects.length-skipped.length;},
   dispose(){
    disposed=true;game.update=lastUpdate;
+   if(cityTexture&&cover?.grassMat?.uniforms?.uHighflyCityMask){
+    cover.grassMat.uniforms.uHighflyCityMask.value=oldCoverTex;
+    cover.flowerMat.uniforms.uHighflyCityMask.value=oldCoverTex;
+    cityTexture.dispose();
+   }
    world.highflyInteractables=(world.highflyInteractables??[]).filter(n=>!nodes.includes(n));
    for(const a of actors){group.remove(a.anchor);a.mixer.stopAllAction();}
    for(const k of kaykitObjects){group.remove(k.anchor);}
