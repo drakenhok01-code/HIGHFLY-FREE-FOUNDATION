@@ -6,8 +6,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: highfly-p515-native-eastbrook-regression
-  cancel-in-progress: true
+  group: highfly-p515-native-eastbrook-regression-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   qa-build:
     runs-on: ubuntu-latest
