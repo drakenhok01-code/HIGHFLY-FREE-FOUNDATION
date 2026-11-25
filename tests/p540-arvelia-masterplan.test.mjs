@@ -1,0 +1,52 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {buildArveliaMasterplan,ARVELIA_MASTER_VERSION,ARVELIA_PALETTE} from '../src/highfly/p540-arvelia-masterplan.mjs';
+const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
+test('P540: real assets, exact reusable coordinates and nine genuine buildings',()=>{
+ const result=buildArveliaMasterplan({canPlace:()=>({ok:true,y:217})});
+ assert(result.complete&&result.master&&result.version===ARVELIA_MASTER_VERSION);
+ assert.equal(result.counts.buildings,9);
+ assert.equal(result.counts.npcs,4);
+ assert(result.counts.paving>=55,'Should include a continuous stone road network');
+ assert(result.counts.decorations>=20,'Should include real urban decoration');
+ assert(result.objects.length>85,'Town must be visibly more than 13 scattered objects');
+ assert(result.objects.every(o=>o.highflyMaster&&o.highflyTown==='arvelia'));
+ assert.equal(new Set(result.objects.map(o=>o.id)).size,result.objects.length);
+ assert(result.objects.every(o=>[o.x,o.y,o.z,o.yaw,o.scale].every(Number.isFinite)));
+ assert(result.objects.every(o=>!/(quay|harbor|dock|port|muelle|barco)/i.test(o.type+' '+(o.highflyZone||''))));
+ assert(result.objects.filter(o=>o.type.startsWith('floor-')).every(o=>Math.hypot(o.x+518,o.z+71)>=19));
+ assert(result.objects.some(o=>o.type==='hf-fountain-stone'),'Must use original MIT real stone fountain');
+ assert(result.objects.some(o=>o.type==='village-stall-red'||o.type==='village-stall-blue'),'Real marketplace required');
+ assert(result.objects.some(o=>o.type==='hf-streetlamp-bronze'),'Real lamp posts required');
+ assert(result.objects.some(o=>o.type==='village-flowerbed'||o.type==='hf-round-flowerbed'),'Real garden required');
+ assert(ARVELIA_PALETTE.exactAsReference===false,'Mockup is not the delivered 3D mesh');
+});
+test('P540: original Unsung safety gate fails closed',()=>{
+ const result=buildArveliaMasterplan({canPlace:()=>({ok:false})});
+ assert.equal(result.complete,false);
+ assert.deepEqual(result.objects,[]);
+});
+test('P540: P539 user objects remain untouched and fallback can be chosen',()=>{
+ const existing=[{id:'custom-seat',type:'unsung-bench',x:-180,z:10,yaw:0,scale:1,y:55}];
+ const result=buildArveliaMasterplan({existing,buildingTypes:{herreria:'kaykit-home-a'},canPlace:()=>({ok:true,y:211})});
+ assert(result.complete);
+ assert(result.objects.find(o=>o.highflyRole==='herreria')?.type==='kaykit-home-a');
+ assert.equal(existing.length,1);assert.equal(existing[0].id,'custom-seat');
+ assert(result.objects.every(o=>o.id!=='custom-seat'));
+});
+test('P540: editor/RPG share an isolated saved blueprint, P539 stays read-only',()=>{
+ const e=read('../src/highfly/p525-world-forge-3d.mjs');
+ const r=read('../src/highfly/p521-world-forge-runtime.mjs');
+ const h=read('../public/highfly/world-forge-3d.html');
+ const b=read('../scripts/f0-build.mjs');
+ assert(e.includes("'hf-world-forge-layout-p540-v1'"));
+ assert(r.includes("'hf-world-forge-layout-p540-v1'"));
+ assert(e.includes("loadArveliaMasterplan({auto:true})"));
+ assert(r.includes("buildArveliaMasterplan({"));
+ assert(e.includes("records.filter(o=>o.highflyTown!=='arvelia')"));
+ assert(e.includes("'hf-world-forge-layout-p540-before-masterplan'"));
+ assert(b.includes("'p540-arvelia-masterplan'"));
+ assert(h.includes("WORLD FORGE 4.8")&&h.includes('v=p540'));
+ assert(h.includes('id="pilot-eastbrook"'));
+});
