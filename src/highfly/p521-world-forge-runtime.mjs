@@ -391,6 +391,38 @@ export function installHighflyWorldForge(game,{search=globalThis.location?.searc
  // Native world texture array (already baked by Unsung's own TextureForge):
  // no duplicated procedural bake, no increase to the game's startup workload.
  const gradeAtlas=game.terrain?.layers?.a??null;
+ // Dirt/grass tiles share the ORIGINAL Unsung TextureForge texture array.
+ // Accumulate them per terrain chunk: one GPU draw instead of per 4m tile.
+ const p542Mats=new Map(),p542Batches=new Map(),p542Meshes=[];
+ const p542Mat=type=>{
+  if(p542Mats.has(type))return p542Mats.get(type);
+  const dirt=type==='floor-earth';
+  const m=gradeAtlas?new THREE.ShaderMaterial({
+   name:'HIGHFLY_P542_NATIVE_UNSUNG_'+type,
+   glslVersion:THREE.GLSL3,
+   vertexShader:'out vec3 vPos;out vec3 vNorm;void main(){vec4 p=modelMatrix*vec4(position,1.0);vPos=p.xyz;vNorm=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*viewMatrix*p;}',
+   fragmentShader:'precision highp float;precision highp sampler2DArray;in vec3 vPos;in vec3 vNorm;uniform sampler2DArray atlas;out vec4 fragColor;void main(){vec3 grass=texture(atlas,vec3(vPos.xz/2.6,0.0)).rgb;vec3 earth=texture(atlas,vec3(vPos.xz/3.2,1.0)).rgb;vec3 stone=texture(atlas,vec3(vPos.xz/2.2,4.0)).rgb;vec3 col='+(dirt?'mix(earth,stone,0.22)':'grass')+';float sun=0.76+0.3*max(0.0,dot(normalize(vNorm),normalize(vec3(.36,.89,.28))));fragColor=vec4(col*sun,1.0);}',
+   uniforms:{atlas:{value:gradeAtlas}},side:THREE.DoubleSide,
+   polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2
+  }):new THREE.MeshLambertMaterial({color:dirt?0x78624a:0x537a42,side:THREE.DoubleSide});
+  p542Mats.set(type,m);return m;
+ };
+ const p542Surface=(o)=>{
+  const key=o.type+'@'+Math.floor(o.x/220)+':'+Math.floor(o.z/220);
+  const batch=p542Batches.get(key)||{type:o.type,position:[],uv:[],indices:[],vertexCount:0};
+  const grid=conformingTileGrid(o,{w:BOUNDS[o.type][0],d:BOUNDS[o.type][1]},groundRoad,
+   {anchorY:0,divisions:10,raise:.16});
+  const c=Math.cos(o.yaw),s=Math.sin(o.yaw),start=batch.vertexCount;
+  for(let i=0;i<grid.position.length;i+=3){
+   const lx=grid.position[i],lz=grid.position[i+2];
+   batch.position.push(o.x+lx*c-lz*s,grid.position[i+1],o.z+lx*s+lz*c);
+  }
+  batch.uv.push(...grid.uv);
+  for(const i of grid.index)batch.indices.push(start+i);
+  batch.vertexCount+=grid.position.length/3;
+  p542Batches.set(key,batch);
+ };
+
  const gradeMat=P537_PREVIEW&&gradeAtlas?new THREE.ShaderMaterial({
   name:'HIGHFLY_P537_ORIGINAL_UNSUNG_EARTH_LEVELING',
   glslVersion:THREE.GLSL3,
