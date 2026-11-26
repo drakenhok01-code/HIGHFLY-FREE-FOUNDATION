@@ -60,13 +60,15 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
    const name=mix[Math.floor(hash(zz,xx)*mix.length)];add(xx,zz,q.y,7+hash(xx+1,zz)*6,name,hash(xx,zz)*6.283,'native-added');occupied.add(Math.floor(xx/9)+','+Math.floor(zz/9));
   }
   // Chunked shared instance batches. Frustum culling works per 100m sector.
+  if(!options.runtimeNativeForest){
   const batches=new Map();for(const t of plant){const key=t.name+'/'+Math.floor(t.x/100)+'/'+Math.floor(t.z/100);if(!batches.has(key))batches.set(key,[]);batches.get(key).push(t)}
   const dummy=new THREE.Object3D(),size=new THREE.Vector3();
   for(const list of batches.values()){yield 'tree batches';const model=nativeUnsungFlora('unsung-tree-'+list[0].name),box=new THREE.Box3().setFromObject(model);box.getSize(size);
    for(const child of model.children){const kind=species.indexOf(list[0].name),mat=child.name==='unsung_original_leaf_cards'&&kind>=0?nativeLeaves?.mats?.[kind]??child.material:child.material;const m=new THREE.InstancedMesh(child.geometry,mat,list.length);for(let i=0;i<list.length;i++){const t=list[i],s=t.h/Math.max(.1,size.y);dummy.position.set(t.x,t.y-box.min.y*s,t.z);dummy.rotation.set(0,t.rot,0);dummy.scale.setScalar(s);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)}m.instanceMatrix.needsUpdate=true;m.computeBoundingSphere();if(options.runtime){m.userData.regionVegetation=true;m.userData.regionRadius=list[0].name==='shrub'?85:190;}group.add(m)}
   }
+  }
   const gridHeight=(x,z)=>{const u=(x-b.minX)/(b.maxX-b.minX)*nx,v=(z-b.minZ)/(b.maxZ-b.minZ)*nz;if(u<0||u>nx||v<0||v>nz)return elevation(x,z);const i=Math.min(nx-1,Math.floor(u)),j=Math.min(nz-1,Math.floor(v)),a=u-i,c=v-j,k=j*(nx+1)+i;const h=n=>pos[n*3+1];return a+c<=1?h(k)+(h(k+1)-h(k))*a+(h(k+nx+1)-h(k))*c:h(k+nx+2)+(h(k+nx+1)-h(k+nx+2))*(1-a)+(h(k+1)-h(k+nx+2))*(1-c)};
-  return {group,sampler,gridHeight,stats:{...sourceScaleAudit(d,assets),replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
+  return {group,sampler,gridHeight,plants:plant,stats:{...sourceScaleAudit(d,assets),replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
  }
  function build(d,p,assets){const it=buildSteps(d,p,assets);let r;do{r=it.next()}while(!r.done);return r.value;}
  async function buildAsync(d,p,assets,onProgress=()=>{}){const it=buildSteps(d,p,assets);let r,last=performance.now();do{r=it.next();if(!r.done&&performance.now()-last>10){onProgress(r.value);await new Promise(resolve=>setTimeout(resolve,0));last=performance.now()}}while(!r.done);return r.value;}
