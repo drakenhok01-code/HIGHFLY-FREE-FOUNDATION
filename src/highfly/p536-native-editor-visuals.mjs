@@ -251,3 +251,6 @@ export function nativeEditorOriginalLeaves(renderer,treeGroup,{qualityHigh=true}
  }
  return {atlas,mats,dispose(){mats.forEach(mat=>mat.dispose());}};
 }
+
+// P555: use the game's already baked terrain layers; no additional TextureForge GPU bake.
+export function runtimeRegionVisuals(terrain){const u=terrain.surfaceUniforms;return {material:new THREE.ShaderMaterial({glslVersion:THREE.GLSL3,vertexShader:VX,fragmentShader:FR,side:THREE.DoubleSide,uniforms:{uUnsungAlbedo:u.uTA,uUnsungDetail:u.uTB,uNativePath:u.uPathTex}})}}
