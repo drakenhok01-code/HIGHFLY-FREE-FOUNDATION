@@ -34,6 +34,7 @@ export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ if(p.state==='hf_glide')return {action:'air_dive',label:p._hfGlide?.diving?'PLANEAR':'PICADA'};
  if(p.state==='hf_climb')return {action:'climb',label:'SOLTAR'};
  if(p.state==='hf_seated')return {action:'seat',label:'LEVANTAR'};
  // NPC conversations outrank nearby rocks, walls or collision capsules.
@@ -46,7 +47,7 @@ export function resolveHighflyContext(p){
   if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
      Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};
  }
- if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearSeat(p.pos))return {action:'seat',label:'SENTAR'};
+ if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearSeat(p.pos,p.yaw))return {action:'seat',label:'SENTAR'};
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
@@ -242,7 +243,7 @@ export function attachHighflyTouch(input){
 #hf-touch .hf-talk-next[hidden]{display:none!important}
 #hf-touch[data-talking="1"] .cam,#hf-touch[data-talking="1"] .stick,#hf-touch[data-talking="1"] button[data-a]:not(.hf-talk-next){pointer-events:none!important;opacity:0!important}
 #ui:has(#talk.on){z-index:9050!important;pointer-events:none!important}
-#ui #talk.on{top:7%!important;bottom:auto!important;width:min(560px,73vw)!important;max-height:35vh;overflow:auto;background:#101729ee;padding:7px 13px!important;border:1px solid #ccaf75aa;border-radius:13px;box-shadow:0 9px 24px #000a}
+#ui #talk.on{top:54%!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:min(620px,72vw)!important;max-height:58vh;overflow:auto;background:#101729ee;padding:7px 13px!important;border:1px solid #ccaf75aa;border-radius:13px;box-shadow:0 9px 24px #000a}
 #ui #talk p{font-size:clamp(11px,1.7vw,15px)!important;line-height:1.25!important;min-height:0!important;margin:6px 0!important}
 #ui #talk .who b{font-size:clamp(12px,2vw,17px)!important}
 #ui #talk .who span{font-size:clamp(9px,1.4vw,12px)!important}
@@ -445,14 +446,14 @@ export function attachHighflyTouch(input){
     t.sprintOn=!t.sprintOn;
     b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
    }else{
-    t.pressed.add(chosen);
+    t.pressed.add(chosen);if(chosen==='jump'||chosen==='dash')t.held.add(chosen);
     if(['sit','lie','cheer'].includes(a)){t.actionPanel.hidden=true;t.actionsOpen=false;}
     // One tap toggles climbing. Do not require holding the climbing button.
     if(a==='context')t.contextHeld=chosen;
    }
   });
   const up=e=>{
-    if(a==='attack')t.held.delete('attack');
+    if(a==='attack')t.held.delete('attack');if(a==='jump'||a==='dash')t.held.delete(a);
     if(a==='context')t.contextHeld=null;
     e.preventDefault();e.stopPropagation?.();
    };
@@ -550,8 +551,9 @@ export function applyHighflyTouch(input){
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
  t.radar?.update();
  const context=resolveHighflyContext(globalThis.__game?.player);
- const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'CERRAR':deploy?'PLANEAR':'SALTO';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
- t.contextAction=context.action;
+ const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'SUBIR':deploy?'PLANEAR':'SALTO';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
+ if(t.dashButton)t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':'DASH';const roll=t.root.querySelector('.roll');if(roll)roll.textContent=p?.state==='hf_glide'?'CERRAR':'ROLL';
+  t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;
    t.contextButton.setAttribute('aria-label',context.label);

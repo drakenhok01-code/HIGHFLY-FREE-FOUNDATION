@@ -10,6 +10,6 @@ export function nativeRegionMaterials(terrain,water){
  const vert='in float aRegionSoil; out float vRegionSoil; out vec3 vRegionNormal; out vec3 vWorld; void main(){vec4 w=modelMatrix*vec4(position,1.0); vWorld=w.xyz; vRegionNormal=normalize(mat3(modelMatrix)*normal); vRegionSoil=aRegionSoil; gl_Position=projectionMatrix*viewMatrix*w;}';
  const ground=new THREE.ShaderMaterial({vertexShader:vert,fragmentShader:frag,defines:{...native.defines},uniforms:native.uniforms,side:THREE.DoubleSide});
  ground.name='P565_NATIVE_UNSUNG_REGION';
- const road=ground.clone();road.uniforms=ground.uniforms;road.vertexShader=vert.replace('vRegionSoil=aRegionSoil;','vRegionSoil=1.0;');road.name='P565_NATIVE_UNSUNG_ROAD';
+ const road=ground.clone();road.uniforms=ground.uniforms;road.vertexShader=vert.replace('vRegionSoil=aRegionSoil;','vRegionSoil=1.0;');road.fragmentShader=replace(frag,'path * flat_ * 0.62','path * flat_ * 0.16');road.name='P565_NATIVE_UNSUNG_ROAD';
  return {ground,road,water:water.material};
 }

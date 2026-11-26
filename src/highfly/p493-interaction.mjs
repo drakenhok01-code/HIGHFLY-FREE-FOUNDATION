@@ -20,7 +20,7 @@ export function installP493Interaction(game){
   if(++pending%3===1){
    const active=!!game.people?.talk&&game.state==='playing';
    talk.hidden=!active;
-   if(active){const n=game.people.talk?.n?.def;talk.title=n?.name??'Continuar diálogo';}
+   if(active){const n=game.people.talk?.n?.def;talk.title=n?.name??'Continuar diálogo';const el=domTalk();if(el){for(const [k,v] of Object.entries({position:'fixed',top:'54%',left:'50%',right:'auto',bottom:'auto',transform:'translate(-50%,-50%)',width:'min(620px,72vw)',maxHeight:'58vh',zIndex:'9900'}))el.style.setProperty(k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase()),v,'important');}}
   }
   return result;
  };

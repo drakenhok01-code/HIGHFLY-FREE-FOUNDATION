@@ -6,7 +6,7 @@
  */
 import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
-import {PHOENIX,phoenixVelocity,descentCandidate} from './p564-phoenix-motion.mjs';
+import {PHOENIX,phoenixVelocity,descentCandidate,AIR_MODES,airMode} from './p564-phoenix-motion.mjs';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
@@ -189,8 +189,8 @@ function beginCliffDescent(p){
 }
 function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
 function stepPhoenix(p,dt,input,yaw){
- if(p.stamina<=0||input.pressed.has('jump')||input.pressed.has('dash')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
- const v=phoenixVelocity(p.vel,input.move,yaw,dt),before=p.pos.clone();
+ if(p.stamina<=0||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
+ const mode=airMode(input,p._hfGlide??={},dt),cfg=AIR_MODES[mode],v=phoenixVelocity(p.vel,input.move,yaw,dt,mode),before=p.pos.clone();p._hfGlide.mode=mode;
  p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
  // Do not allow the native capsule to snap up a cliff face while gliding.
  const ahead={x:p.pos.x+v.x*dt,z:p.pos.z+v.z*dt};
@@ -198,12 +198,12 @@ function stepPhoenix(p,dt,input,yaw){
  if(Number.isFinite(h)&&h>p.pos.y+.18){p.vel.x=0;p.vel.z=0;}
  if(v.y>=-PHOENIX.safeImpact)p.fallStart=p.pos.y;
  p._integrate(dt);
- p.stamina=Math.max(0,p.stamina-PHOENIX.energyPerSecond*dt);p.staminaWait=.65;
+ p.stamina=Math.max(0,p.stamina-cfg.cost*dt);p.staminaWait=.65;
  p.invulnerable=Math.max(0,(p.invulnerable??0)-dt);p.stateTime+=dt;
  if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z);p.yaw+=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw))*Math.min(1,dt*7);}
  const water=p.world.waterLevel(p.pos.x,p.pos.z);
  if(p.state!=='hf_glide'||p.grounded||p.pos.y<water+.1){endPhoenix(p,p.grounded?'land':'water-or-interrupted');}
- else if(p.pos.y>before.y+.2){p.pos.copy(before);p.viewY=p._viewY1=p.pos.y;p.vel.x=p.vel.z=0;}
+ else if(p.pos.y>before.y+Math.max(.2,Math.max(0,v.y)*dt+.15)){p.pos.copy(before);p.viewY=p._viewY1=p.pos.y;p.vel.x=p.vel.z=0;}
 }
 function beginPhoenix(p){p._hfGlide={};p._hfJumpQueued=0;p._hfJumpPrimed=false;p._hfDoubleUsed=true;p.setState('hf_glide');p.emit('highflyGlideStart');}
 /** Wall-run is a deliberate sprint+forward air maneuver alongside real raycast
@@ -486,7 +486,7 @@ export function installHighflyUniversalMotion(p){
    this.vel.set(0,0,0);this.speed=0;this.stateTime+=step;this.invulnerable=Math.max(0,this.invulnerable-step);return;
   }
   if(isMove(this)&&this.grounded&&input.pressed.has('seat')){
-   const regions=globalThis.__hfP555Regions,seat=regions?.nearSeat(this.pos);
+   const regions=globalThis.__hfP555Regions,seat=regions?.nearSeat(this.pos,this.yaw);
    if(seat){this._hfSeat={...seat,exit:this.pos.clone(),region:regions.active};this.pos.set(seat.x,seat.y,seat.z);this.viewY=this._viewY1=this.pos.y;this.yaw=seat.yaw;this.vel.set(0,0,0);this.speed=0;this.setState('hf_seated');this.emit('highflySeatStart',{id:seat.id});return;}
   }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
