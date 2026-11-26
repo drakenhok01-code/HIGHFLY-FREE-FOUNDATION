@@ -6,6 +6,7 @@
  */
 import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
+import {PHOENIX,phoenixVelocity,descentCandidate} from './p564-phoenix-motion.mjs';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
@@ -14,7 +15,7 @@ import {professionState,findProfessionTarget,prepareProfession,commitProfession,
 export const MOTION={
   secondJumpSpeed:7.58,secondJumpCost:9,secondJumpBuffer:.17,
   minAirBeforeSecond:.095,mantleTime:.42,
-  climbSpeed:1.85,climbStrafeSpeed:1.55,climbCostPerSecond:6,climbIdleCost:1.5,
+  climbSpeed:2.15,climbDownSpeed:3.1,climbStrafeSpeed:1.7,climbCostPerSecond:3.2,climbIdleCost:.7,
   combatWalk:3.25,combatRun:4.6,combatResponse:12,
   workTime:.74,
 };
@@ -79,7 +80,7 @@ function stepMantle(p,dt){
  if(t>=1){p._hfMantle=null;p.setState('move');p.grounded=true;p.vel.set(0,0,0);p.emit('highflyMantleEnd');}
 }
 function dropClimb(p){
- p._hfClimb=null;p.setState('move');p.grounded=false;p.vel.set(0,0,0);
+ p._hfClimb=null;p.setState('move');p.grounded=false;p.vel.set(0,0,0);p.fallStart=p.pos.y;
  p.emit('highflyClimbEnd');
 }
 
@@ -87,7 +88,7 @@ function dropClimb(p){
 function gripContact(p,yaw,reach=1.25){
  if(typeof p.world?.raycast!=='function')return null;
  let best=null;
- for(const delta of [0,.22,-.22,.44,-.44]){
+ for(const delta of [0,.22,-.22,.44,-.44,.7,-.7]){
   const ang=yaw+delta,dir={x:Math.sin(ang),z:Math.cos(ang)};
   for(const height of [.75,1.18,.4]){
    const d=p.world.raycast(new THREE.Vector3(p.pos.x,p.pos.y+height,p.pos.z),
@@ -125,8 +126,12 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  const before=p.pos.clone(),candidate=before.clone();
  candidate.x-=side.x*x*MOTION.climbStrafeSpeed*dt;
  candidate.z-=side.z*x*MOTION.climbStrafeSpeed*dt;
- candidate.y+=y*MOTION.climbSpeed*dt;
- const probe=gripContact({...p,pos:candidate},grip.yaw);
+ const verticalSpeed=y<0?MOTION.climbDownSpeed:MOTION.climbSpeed;
+ candidate.y+=y*verticalSpeed*dt;
+ let probe=gripContact({...p,pos:candidate},grip.yaw);
+ // When the wall flares outward at a lower elevation, step out along its normal
+ // only if the next contact is real; do not pass through heightfield.
+ if(!probe&&Math.abs(y)>.1){for(const shift of [.10,-.10,.20,-.20]){const trial=candidate.clone();trial.x+=f.x*shift;trial.z+=f.z*shift;const floor=p.world.groundHeight(trial.x,trial.z);if(Number.isFinite(floor)&&floor>trial.y+.03)continue;const hit=gripContact({...p,pos:trial},grip.yaw);if(hit){candidate.copy(trial);probe=hit;break}}}
  const top=y>.16?gripLedge({...p,pos:candidate},grip):null;
  if(top&&(!probe||probe.distance>.72)){
    startMantle(p,top);p._hfClimb=null;p._hfClimbInput={x:0,y:0};return;
@@ -134,16 +139,18 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  if(!probe){
    grip.lost+=dt;p._hfClimbInput={x:0,y:0};
    p.stateTime+=dt;p.vel.set(0,0,0);p.speed=0;
-   if(grip.lost>.52)dropClimb(p);
+   p.stamina=Math.max(0,p.stamina-MOTION.climbIdleCost*dt);p.staminaWait=.65;
+   if(grip.lost>.85)dropClimb(p);
    return;
  }
  grip.lost=0;
  // Keep the capsule near the surface; never teleport through stone.
  const correction=Math.hypot(x,y)>.08?clamp(probe.distance-.54,-.08,.07):0; // stationary grip never drifts
  candidate.x+=probe.dir.x*correction;candidate.z+=probe.dir.z*correction;
+ const turn=Math.atan2(Math.sin(probe.ang-grip.yaw),Math.cos(probe.ang-grip.yaw));grip.yaw+=turn*Math.min(1,dt*5);p.yaw=grip.yaw;
  const floor=p.world.groundHeight?.(candidate.x,candidate.z);
  if(y<-.1&&Number.isFinite(floor)&&candidate.y<floor+.02){
-  dropClimb(p);p.pos.y=Math.max(p.pos.y,floor);p.grounded=true;return;
+  dropClimb(p);p.pos.set(candidate.x,floor,candidate.z);p.grounded=true;p.viewY=p._viewY1=p.pos.y;p.fallStart=p.pos.y;return;
  }
  const resolved=candidate.clone();p.world.resolveCapsule(resolved,.36,1.82,0);
  const terrainTop=p.world.groundHeight?.(resolved.x,resolved.z);
@@ -151,21 +158,50 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  // resolver. Never accept a proposed climb point inside solid mountains.
  if(Number.isFinite(terrainTop)&&terrainTop>resolved.y+.10){
   p._hfClimbInput={x:0,y:0};p.speed=0;
-  p.stateTime+=dt;p.vel.set(0,0,0);return;
+  p.stateTime+=dt;p.vel.set(0,0,0);p.stamina=Math.max(0,p.stamina-MOTION.climbIdleCost*dt);p.staminaWait=.65;return;
  }
- if(resolved.distanceTo(candidate)<.35&&resolved.distanceTo(before)<.22)p.pos.copy(resolved);
+ if(resolved.distanceTo(candidate)<.35&&resolved.distanceTo(before)<Math.max(.22,dt*6))p.pos.copy(resolved);
  const dx=p.pos.x-before.x,dy=p.pos.y-before.y,dz=p.pos.z-before.z;
  const lateral=dx*side.x+dz*side.z;
  // Limb movement is measured from ACTUAL collision-accepted travel.
  p._hfClimbInput={
   x:Math.abs(lateral)<.001?0:clamp(-lateral/(dt*MOTION.climbStrafeSpeed),-1,1),
-  y:Math.abs(dy)<.001?0:clamp(dy/(dt*MOTION.climbSpeed),-1,1)};
+  y:Math.abs(dy)<.001?0:clamp(dy/Math.max(.001,dt*verticalSpeed),-1,1)};
  const moved=Math.hypot(dx,dy,dz);
  p.stamina=Math.max(0,p.stamina-(moved>.002?MOTION.climbCostPerSecond:MOTION.climbIdleCost)*dt);
  p.staminaWait=.65;p.stateTime+=dt;p.vel.set(0,0,0);p.grounded=false;
  p.speed=moved>.002?moved/dt:0;p.viewY=p._viewY1=p.pos.y;
 }
 
+function beginCliffDescent(p){
+ const c=descentCandidate(p.world,p.pos,p.yaw);if(!c)return false;
+ const trial=new THREE.Vector3(c.x,c.y,c.z),resolved=trial.clone();
+ p.world.resolveCapsule(resolved,.36,1.82,0);
+ if(resolved.distanceTo(trial)>.18||p.world.groundHeight(resolved.x,resolved.z)>resolved.y+.02)return false;
+ const hit=gripContact({...p,pos:resolved},c.yaw);if(!hit)return false;
+ p.pos.copy(resolved);p.viewY=p._viewY1=p.pos.y;p.yaw=c.yaw;
+ p.vel.set(0,0,0);p._hfClimb={yaw:c.yaw,lost:0};p._hfClimbInput={x:0,y:0};p.grounded=false;p.fallStart=p.pos.y;p.setState('hf_climb');
+ p.emit('highflyClimbStart',{descent:true});return true;
+}
+function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
+function stepPhoenix(p,dt,input,yaw){
+ if(p.stamina<=0||input.pressed.has('jump')||input.pressed.has('dash')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
+ const v=phoenixVelocity(p.vel,input.move,yaw,dt),before=p.pos.clone();
+ p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
+ // Do not allow the native capsule to snap up a cliff face while gliding.
+ const ahead={x:p.pos.x+v.x*dt,z:p.pos.z+v.z*dt};
+ const h=p.world.groundHeight(ahead.x,ahead.z);
+ if(Number.isFinite(h)&&h>p.pos.y+.18){p.vel.x=0;p.vel.z=0;}
+ if(v.y>=-PHOENIX.safeImpact)p.fallStart=p.pos.y;
+ p._integrate(dt);
+ p.stamina=Math.max(0,p.stamina-PHOENIX.energyPerSecond*dt);p.staminaWait=.65;
+ p.invulnerable=Math.max(0,p.invulnerable-dt);p.stateTime+=dt;
+ if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z);p.yaw+=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw))*Math.min(1,dt*7);}
+ const water=p.world.waterLevel(p.pos.x,p.pos.z);
+ if(p.state!=='hf_glide'||p.grounded||p.pos.y<water+.1){endPhoenix(p,p.grounded?'land':'water-or-interrupted');}
+ else if(p.pos.y>before.y+.2){p.pos.copy(before);p.viewY=p._viewY1=p.pos.y;p.vel.x=p.vel.z=0;}
+}
+function beginPhoenix(p){p._hfGlide={};p._hfJumpQueued=0;p._hfJumpPrimed=false;p._hfDoubleUsed=true;p.setState('hf_glide');p.emit('highflyGlideStart');}
 /** Wall-run is a deliberate sprint+forward air maneuver alongside real raycast
  * collision. It cannot run on terrain lacking near-wall samples.
  */
@@ -346,7 +382,7 @@ export function installHighflyUniversalMotion(p){
  };
  p._hfProfessionLoad();
  p.setHighflyProgression=function(level=1,verifiedPoints=0){
-  this._hfLevel=Math.max(1,Math.trunc(level));
+  this._hfLevel=clamp(Math.trunc(Number(level)||1),1,99);
   this._hfTrainingScore=Math.max(0,Math.trunc(verifiedPoints));
   const old=this._hfOxygenMax;
   this._hfOxygenMax=oxygenMax(this._hfLevel,this._hfTrainingScore);
@@ -410,7 +446,7 @@ export function installHighflyUniversalMotion(p){
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpQueued=0;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;this._hfJumpQueued=0;
-  this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
+  this._hfGlide=null;this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
@@ -437,6 +473,7 @@ export function installHighflyUniversalMotion(p){
   }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
+  if(this.state==='hf_glide'){stepPhoenix(this,step,input,camYaw);return;}
   if(this.state==='hf_wallrun'){stepWallRun(this,step,input);return;}
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
   if(this.state==='hf_climb'){stepClimb(this,step,input,camYaw,nativeUpdate);return;}
@@ -469,6 +506,7 @@ export function installHighflyUniversalMotion(p){
   }
   if((isMove(this)||this.state==='swim')&&input.pressed.has('climb')){
    const hit=probeHighflyWall(this)||gripContact(this,this.yaw);
+   if(!hit&&this.grounded&&this.stamina>3&&beginCliffDescent(this))return;
    if(hit){
     if(hit.ledge)startMantle(this,hit);
     else{
@@ -484,6 +522,11 @@ export function installHighflyUniversalMotion(p){
    for(const name of Object.keys(ACTIONS)){
     if(input.pressed.has(name)){startAction(this,name);return;}
    }
+  }
+  // Preserve double jump on the first airborne press. Subsequent descending
+  // presses, or falling from a cliff, deploy Phoenix wings in this test build.
+  if(isMove(this)&&!this.grounded&&this.vel.y<-.65&&this.airTime>.12&&input.pressed.has('jump')&&(!this._hfJumpPrimed||this._hfDoubleUsed)&&this.stamina>=PHOENIX.minEnergy){
+   beginPhoenix(this);stepPhoenix(this,step,otherInput(input,['jump']),camYaw);return;
   }
   // Only grant second jump after the first genuine Unsung ground jump.
   // Never grant it from a cliff fall, during water, ROLL, DASH or attacks.
