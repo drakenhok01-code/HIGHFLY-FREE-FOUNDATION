@@ -1,0 +1,116 @@
+name: HIGHFLY P568.2 — Publish validated build
+on:
+  push:
+    branches: [p5682-phoenix-polish-20261126]
+    paths: ['.github/workflows/highfly-p5682-publish-validated.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  mobile-pose-and-navigation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5682-build
+          run-id: 45906662570
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Actual Android HUD, flight model pose, local sailing and resource flow
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf5682-user.log 2>&1 &
+          node scripts/p5682-user-flow.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p5682-user-flow
+          path: |
+            p5682-user-flow.json
+            p5682-puertaria.png
+          if-no-files-found: warn
+  publish:
+    needs: mobile-pose-and-navigation
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Verify exact tested commit and successful workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45906662570" | jq -e '.conclusion == "success" and .head_sha == "3658ab6245a3f83c186155ffed15314957ea4729"'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p568-restored-pages
+          run-id: 45906469876
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5682-build
+          run-id: 45906662570
+          github-token: ${{ github.token }}
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5682-smoke
+          run-id: 45906662570
+          github-token: ${{ github.token }}
+          path: smoke
+      - name: Replace only experimental preview after functional checks
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/index.html
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp smoke/p564-smoke.json smoke/p564-mobility.json site/preview-p55/highfly/
+          test -s site/preview-p55/highfly/p564/atlas.json
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          printf '%s\n' '{"version":"5.6.8.2","testedCommit":"3658ab6245a3f83c186155ffed15314957ea4729","validationRun":45906662570,"mobilePoseVerified":true}' > site/preview-p55/highfly/release-p5682.json
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p5682-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p5682-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p5682-pages
