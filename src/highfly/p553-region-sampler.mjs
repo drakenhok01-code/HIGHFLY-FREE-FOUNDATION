@@ -41,7 +41,7 @@ export function makeRegionSampler(d,p,native){
   }
   // Feather the outer apron rather than creating a sharp rectangular terrain wall.
   k*=smooth(edge/Math.min(24,p.transition??24));
-  let height=q.height,water=q.water*q.coverage,level=q.waterLevel;const rv=riverAt(lx,lz);if(rv&&rv.dist<R*.66){const w=1-smooth((rv.dist/R-.40)/.26);if(w>0){height=Math.min(height,height+(rv.level-.48-height)*w);water=Math.max(water,w);if(w>.3)level=rv.level;}}const walkway=walkwayAt(lx,lz);if(walkway?.w.kind==='stairs'&&walkway.t>.05&&walkway.t<.95&&water<.5){const w=1-smooth((walkway.dist-walkway.w.half*.7)/Math.max(.05,walkway.w.half*.3+.12));height=Math.min(height,height+(walkway.y-.17-height)*w);}
+  let height=q.height,water=q.water*q.coverage,level=q.waterLevel;const rv=riverAt(lx,lz);if(rv&&rv.dist<R*.66){const w=1-smooth((rv.dist/R-.40)/.26);if(w>0){height=Math.min(height,height+(rv.level-.48-height)*w);water=Math.max(water,w);if(w>.3)level=rv.level;}}const walkway=walkwayAt(lx,lz);if(walkway?.w.kind==='stairs'&&water<.5){const w=1-smooth((walkway.dist-walkway.w.half*.7)/Math.max(.05,walkway.w.half*.3+.12));const t=walkway.t,entry=Math.min(1,t*12,(1-t)*12),target=walkway.y-.12*entry;height=height+(target-height)*w;}
   const target=p.base+height*S,original=k>=.999999?target:native(x,z),y=original+(target-original)*k;
   return {y,soil:q.soil*q.coverage*k,water:water*smooth((k-.70)/.25),level:p.base+level*S,inside:q.coverage>.5,transition:k};
  }
