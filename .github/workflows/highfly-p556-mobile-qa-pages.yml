@@ -1,0 +1,128 @@
+name: HIGHFLY P556 — mobile region streaming and walk QA
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p556-mobile-qa-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare image dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Build real game and all region assets
+        run: |
+          set -euo pipefail
+          for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy; do node --check "src/highfly/$f.mjs"; done
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          node scripts/p555-pages-regions.mjs
+          grep -q 'P556:' src/highfly/p508-world-clock.mjs
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p556-build
+          path: dist/
+          retention-days: 14
+  walk-test:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p556-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Walk all eight regions in actual browser
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site > /tmp/hf556-server.log 2>&1 &
+          node scripts/p556-browser-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p556-walk-audit
+          path: |
+            p556-browser-audit.json
+            qa-region-*.png
+          if-no-files-found: warn
+  publish:
+    needs: [build, walk-test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p555-pages-republish
+          run-id: 45733138757
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p556-build
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p556-walk-audit
+          path: qa
+      - name: Replace only experimental preview after browser checks
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/index.html
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp qa/p556-browser-audit.json site/preview-p55/highfly/regions/p556-browser-audit.json
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p556-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p556-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p556-pages
