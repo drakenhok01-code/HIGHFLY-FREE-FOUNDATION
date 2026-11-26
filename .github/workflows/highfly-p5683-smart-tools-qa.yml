@@ -1,4 +1,4 @@
-name: HIGHFLY P568.3 — SMART TOOLS QA
+name: HIGHFLY P568.3 — SMART TOOLS + CLEAN BAG + PAGES
 on:
   push:
     branches: [p5683-smart-tools-20261126]
@@ -7,6 +7,8 @@ on:
 permissions:
   contents: read
   actions: read
+  pages: write
+  id-token: write
 concurrency:
   group: highfly-p5683-qa
   cancel-in-progress: false
@@ -53,6 +55,7 @@ jobs:
           node --check src/highfly/p5683-work-tools.mjs
           node --check src/highfly/p553-continuous-region.mjs
           node --check src/highfly/premium-rpg.mjs
+          ! grep -q 'p41:loot:' src/highfly/premium-rpg.mjs
           node --check src/highfly/p568-naval-policy.mjs
           node --check src/highfly/p568-resource-policy.mjs
           node --check src/highfly/p565-native-materials.mjs
@@ -132,14 +135,14 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p566-build
-          run-id: 45893596092
+          name: highfly-p5682-build
+          run-id: 45906662570
           github-token: ${{ github.token }}
           path: game
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p566-smoke
-          run-id: 45893596092
+          name: highfly-p5682-smoke
+          run-id: 45906662570
           github-token: ${{ github.token }}
           path: audit
       - name: Verify snapshot
@@ -147,10 +150,10 @@ jobs:
           test -s game/index.html
           test -s game/highfly/regions/island-8.json
           test -s audit/p564-mobility.json
-          printf '%s\n' 'Source commit: 603e2a0f2f75542653e479409a4243367b50e834' 'Original run: 45893596092' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
+          printf '%s\n' 'Source commit: 3658ab6245a3f83c186155ffed15314957ea4729' 'Original run: 45906662570' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: HIGHFLY-P566-PLAYABLE-BACKUP-P5683
+          name: HIGHFLY-P5682-PLAYABLE-BACKUP-P5683
           path: |
             game/
             audit/
@@ -198,3 +201,69 @@ jobs:
             p565-integrity-*.json
             p565-region-*.png
           if-no-files-found: warn
+
+  publish:
+    needs: [package, smoke, archive-p566, integrity]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5682-pages
+          run-id: 45908924365
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5683-build
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5683-smoke
+          path: smoke
+      - name: Publish exact validated build; retain stable preview
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/highfly/release-p5682.json
+          jq -e '.ok == true and (.rows|length)==10 and .bag.debugShortcuts==false' smoke/p5683-tool-smoke.json
+          jq -e '.ok == true' smoke/p5683-user-flow.json
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp smoke/p564-smoke.json smoke/p564-mobility.json smoke/p5683-tool-smoke.json smoke/p5683-user-flow.json site/preview-p55/highfly/
+          test -s site/preview-p55/highfly/p564/atlas.json
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          printf '{"version":"5.6.8.3","testedCommit":"%s","validationRun":%s}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > site/preview-p55/highfly/release-p5683.json
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p5683-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p5683-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p5683-pages

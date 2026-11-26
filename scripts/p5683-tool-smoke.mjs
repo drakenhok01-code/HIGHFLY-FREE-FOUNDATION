@@ -4,6 +4,7 @@ try{
 await page.goto('http://127.0.0.1:4173/HIGHFLY-FREE-FOUNDATION/preview-p55/?hfqa=1',{waitUntil:'domcontentloaded',timeout:120000});
 await page.waitForFunction(()=>window.__hero?.workTools&&window.__game?.player?._hfProfession,{},{timeout:600000});
 await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'})});
+report.bag=await page.evaluate(()=>{const r=window.__highflyRpg;r.open('bolsa');const found=document.querySelector('.hf-p41-loot-lab,[data-hf-action^="p41:loot:"]');r.close();return {debugShortcuts:!!found}});if(report.bag.debugShortcuts)throw Error('Debug loot still visible');
 report.rows=await page.evaluate(()=>{
  const g=window.__game,p=g.player,h=window.__hero,w=p.world,prof=p._hfProfession,save=p.pos.clone(),yaw=p.yaw,old=w.highflyInteractables,inv={...prof.inventory},rows=[];const input=(press=[],x=0)=>({pressed:new Set(press),held:new Set(),move:{x,y:0},look:{x:0,y:0},zoom:0});const step=(press=[],x=0)=>{p.update(.05,input(press,x),0);h.update(.05,p)};
  const jobs=[['collectWood','woodPile','axe','wood'],['collectStone','stonePile','pickaxe','stone'],['chop','tree','axe','wood'],['mine','ore','pickaxe','ore'],['fishing','fishSpot','rod','fish'],['plant','soil','hoe',null,'empty'],['water','soil','watering_can',null,'seeded'],['harvest','soil','sickle','herb','ripe'],['smelt','furnace','tongs','ingot'],['forge','forge','hammer','blade_blank']];
@@ -14,7 +15,7 @@ report.rows=await page.evaluate(()=>{
   step([action]);const started=p.state==='hf_action';for(let i=0;i<17;i++)step();
   const prop=h.workTools.tools.get(tool);const visible=prop?.visible===true&&prop.parent===h.socket&&h.workTools.active===tool;
   const hidden=nodes.every(n=>!n.visible),line=action!=='fishing'||h.workTools.line.visible&&h.workTools.bobber.visible;
-  const beforePos=prop?.getWorldPosition(p.pos.clone());for(let i=0;i<5;i++)step();const motion=beforePos&&prop.getWorldPosition(p.pos.clone()).distanceTo(beforePos)>0.002;
+  const beforePos=prop?.getWorldPosition(p.pos.clone()),beforeAngle=prop?.quaternion.clone();for(let i=0;i<5;i++)step();const motion=!!(beforePos&&(prop.getWorldPosition(p.pos.clone()).distanceTo(beforePos)>0.002||beforeAngle.angleTo(prop.quaternion)>.025));
   for(let i=0;i<95&&p.state==='hf_action';i++)step();const restored=h.workTools.active===null&&nodes.every((n,i)=>n.visible===visibility[i])&&h.weaponMode.id===weapon&&(!prop||!prop.visible)&&!h.workTools.line.visible;
   const gain=product?(prof.inventory[product]??0)-before:0;rows.push({action,tool,started,visible,hidden,line,motion,restored,gain,product,phase:node.phase});
   p.spawn(save.x,save.y,save.z,0);p.grounded=true;p.setState('move');node.available=true;node.charges=4;if(phase)node.phase=phase;const n=product?prof.inventory[product]??0:0;step([action]);step([],1);rows.at(-1).cancelled=h.workTools.active===null&&(!product||(prof.inventory[product]??0)===n)&&nodes.every((v,i)=>v.visible===visibility[i]);

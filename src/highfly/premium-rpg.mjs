@@ -26,7 +26,7 @@ import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,u
 import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,occupiedInventorySlots,distinctInventoryItems,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
-import {grantP41TestLoot,MATERIAL_ORDER} from './p41-loot.mjs';
+
 import {HUNT_ORDER,HUNT_MISSIONS,xpRequired} from './p49-hunt-data.mjs';
 import {installP41WorldLoot} from './p41-world-loot.mjs';
 import {weaponMode,WEAPON_MODES} from './universal-gear.mjs';
@@ -288,8 +288,6 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   return '<div class="hf-rpg-three">'+panel(title('Bolsa','Categorías')+
     categories.map(cat=>menuLink('bag:'+cat,categoryIcons[cat],cat,local.category===cat)).join('')+
     '<div class="hf-rpg-space">OBJETOS DISTINTOS <strong>'+distinctInventoryItems(bag,prof().inventory)+'</strong></div>'+ 
-     '<div class="hf-p41-loot-lab"><b>✦ DEPURACIÓN TEMPORAL · BOTÍN</b><small>Para pruebas internas. También podés recoger drops reales en el mundo.</small>'+ 
-     button('🐺 LOBO','data-hf-action="p41:loot:lobo"')+button('⛏ VETA','data-hf-action="p41:loot:veta"')+button('🎁 COFRE','data-hf-action="p41:loot:cofre"')+button('◆ MUESTRAS','data-hf-action="p41:loot:muestras"')+'</div>'+ 
     '<div class="hf-rpg-mini-actions">'+button('ABRIR EQUIPO','data-hf-tab="personaje"')+
     button('✧ EXPANDIR '+(bag.items.bag_upgrade??0),'data-hf-action="expand" '+((bag.items.bag_upgrade??0)>0?'':'disabled'),'is-primary')+'</div>'+
     '<small class="hf-rpg-bag-capacity">Capacidad '+bag.slots+' / 72 · Monedas '+(bag.coins??0)+' · Los sellos se fabrican en Forja.</small>','hf-rpg-left-panel')+
@@ -739,13 +737,6 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    if(action.startsWith('gear:')){const [,kind,place,id,index]=action.split(':');showSystem('gear-upgrade',{kind,place,id,index:Number(index)||0});return;}
   if(action.startsWith('turn:')){local.heroTurn+=action==='turn:left'?-Math.PI/6:Math.PI/6;render();return;}
   // Gear is changed ONLY through real Bag <-> Character equip transactions.
-  if(action.startsWith('p41:loot:')){
-    const source=action.slice('p41:loot:'.length);
-    const result=grantP41TestLoot(bag,prof(),source);
-    if(result.ok){save();p()?._hfProfessionSave?.();local.category='Todo';local.selected=result.awarded[0]?.id??local.selected;}
-    message(result.ok?'[SIMULACIÓN] '+result.awarded.map(x=>x.name+' ×'+x.count).join(' · '):result.reason);
-    return;
-   }
    if(action.startsWith('use:')){
    const result=spendPotion(bag,p(),action.slice(4));if(result.ok)save();
    message(result.ok?'Recuperaste '+numeric(result.restored)+' de '+result.resource:result.reason);return;
