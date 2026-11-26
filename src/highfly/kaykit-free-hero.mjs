@@ -11,6 +11,7 @@ import {createPhoenixWings} from './p564-phoenix-wings.mjs';
 import {applyUALPose} from './ual-retarget.mjs';
 import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,attackAnimation,applyEquipment} from './universal-gear.mjs';
 import {planDirectionalStroke,driveHandCCD} from './directional-rig.mjs';
+import {createWorkTools} from './p5683-work-tools.mjs';
 
 const CLIPS={
  idle:'Idle',walk:'Walking_A',run:'Running_A',sprint:'Running_B',
@@ -102,7 +103,7 @@ export class KayKitFreeHero {
      });
      this.socket.add(model);model.visible=false;this.extraWeapons.set(id,model);
    }
-   applyEquipment(this,0);
+   applyEquipment(this,0);this.workTools=createWorkTools(this);
    if(this.bodyParts.size!==6)throw Error('KayKit body incomplete: '+[...this.bodyParts].join(','));
    if(!this.sword)throw Error('KayKit 1H_Sword not found for actual tip/trail');
    if(this.socket===this.root)console.warn('[HIGHFLY] KayKit FREE right-hand socket not found; using root hit-effect position without blocking character rendering');
@@ -262,7 +263,7 @@ export class KayKitFreeHero {
       const cfg=ACTIONS[p._hfAction.name];
       if(cfg){
        const seated=p._hfAction.time>.7&&cfg.idle;
-       key='raw:'+(seated?cfg.idle:cfg.clip);
+       const candidates=cfg.workClips??[cfg.clip];const clip=candidates.find(c=>this.clips.has(c))??cfg.clip;key='raw:'+(seated?cfg.idle:clip);
        duration=cfg.duration;
       }
    }
@@ -289,7 +290,7 @@ export class KayKitFreeHero {
    }
    // Upper-body attack lane MUST remain stable until the attack ends.
    const layered=p.state==='attack';
-   this.play(key,duration,layered);
+   this.workTools.sync(p);this.play(key,duration,layered);
    this._blendLower(p,dt,layered);
    if(layered&&this.current&&p.attack){
      // Emberfall-style fixed normalized action phase, exactly one sword
@@ -333,7 +334,7 @@ export class KayKitFreeHero {
    // previous compensators into 180-degree flips. UAL1 controls the strokes.
    this.actor.updateMatrixWorld(true);
    if(p.state==='hf_seated'&&p._hfSeat){const hip=this._bone('hips')??this._bone('pelvis');if(hip){const hp=hip.getWorldPosition(new THREE.Vector3());const dy=THREE.MathUtils.clamp(p._hfSeat.y+.09-hp.y,-.24,.24);this.actor.position.y+=dy;this.actor.updateMatrixWorld(true)}}
-   this._applyDirectedAttack(p);
+   this.workTools.pose(p,dt);this._applyDirectedAttack(p);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const rightBlade=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
    const {base,next}=this._swordEndpoints(rightBlade,this.socket);
@@ -349,7 +350,7 @@ export class KayKitFreeHero {
  }
 
  equip(index){
-  const mode=applyEquipment(this,index);
+  this.workTools?.end();const mode=applyEquipment(this,index);
   this.diagnostics&&(this.diagnostics.equipped=mode.id);
   return mode;
  }

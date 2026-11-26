@@ -4,16 +4,16 @@
  */
 export const STARTER_TOOLS=Object.freeze(['axe','pickaxe','rod','hoe','watering_can','sickle','knife','hammer','saw']);
 export const PROFESSION_RULES=Object.freeze({
- collectWood:{kind:'woodPile',tool:'axe',seconds:.85,product:'wood',amount:2},
- collectStone:{kind:'stonePile',tool:'pickaxe',seconds:.9,product:'stone',amount:2},
- chop:  {kind:'tree',tool:'axe',seconds:.8,product:'wood',amount:2},
- mine:  {kind:'ore',tool:'pickaxe',seconds:.9,product:'ore',amount:2},
- fishing:{kind:'fishSpot',tool:'rod',seconds:1.6,product:'fish',amount:1},
- plant: {kind:'soil',tool:'hoe',seconds:.85,requires:{seed:1}},
- water: {kind:'soil',tool:'watering_can',seconds:.8},
- harvest:{kind:'soil',tool:'sickle',seconds:.9,product:'herb',amount:2},
- smelt:{kind:'furnace',tool:null,seconds:1.5,requires:{ore:2},product:'ingot',amount:1},
- forge:{kind:'forge',tool:'hammer',seconds:1.7,requires:{ingot:2},product:'blade_blank',amount:1}
+ collectWood:{kind:'woodPile',tool:'axe',seconds:1.65,product:'wood',amount:2},
+ collectStone:{kind:'stonePile',tool:'pickaxe',seconds:1.65,product:'stone',amount:2},
+ chop:  {kind:'tree',tool:'axe',seconds:1.65,product:'wood',amount:2},
+ mine:  {kind:'ore',tool:'pickaxe',seconds:1.65,product:'ore',amount:2},
+ fishing:{kind:'fishSpot',tool:'rod',seconds:3.2,product:'fish',amount:1},
+ plant: {kind:'soil',tool:'hoe',seconds:1.65,requires:{seed:1}},
+ water: {kind:'soil',tool:'watering_can',seconds:1.5},
+ harvest:{kind:'soil',tool:'sickle',seconds:1.65,product:'herb',amount:2},
+ smelt:{kind:'furnace',tool:null,seconds:2.1,requires:{ore:2},product:'ingot',amount:1},
+ forge:{kind:'forge',tool:'hammer',seconds:2.1,requires:{ingot:2},product:'blade_blank',amount:1}
 });
 export const WORK_TARGET_ACTION=Object.freeze({
  woodPile:'collectWood',stonePile:'collectStone',tree:'chop',ore:'mine',fishSpot:'fishing',furnace:'smelt',forge:'forge'

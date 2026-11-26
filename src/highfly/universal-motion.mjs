@@ -30,16 +30,16 @@ export const ACTIONS=Object.freeze({
  cheer:{clip:'Cheer',duration:1.9,kind:'gesture'},
  pickup:{clip:'PickUp',duration:.85,kind:'interaction'},
  use:{clip:'Use_Item',duration:.8,kind:'interaction'},
- collectWood:{clip:'PickUp',duration:.85,kind:'work'},
- collectStone:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
- chop:{clip:'1H_Melee_Attack_Chop',duration:.8,kind:'work'},
- mine:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
- fishing:{clip:'Use_Item',duration:1.6,kind:'work'},
- plant:{clip:'PickUp',duration:.85,kind:'work'},
- water:{clip:'Use_Item',duration:.8,kind:'work'},
- harvest:{clip:'PickUp',duration:.9,kind:'work'},
- smelt:{clip:'Use_Item',duration:1.5,kind:'work'},
- forge:{clip:'1H_Melee_Attack_Chop',duration:1.7,kind:'work'},
+ collectWood:{clip:'1H_Melee_Attack_Chop',workClips:['1H_Melee_Attack_Chop'],duration:1.65,kind:'work'},
+ collectStone:{clip:'1H_Melee_Attack_Chop',workClips:['2H_Melee_Attack_Chop','1H_Melee_Attack_Chop'],duration:1.65,kind:'work'},
+ chop:{clip:'1H_Melee_Attack_Chop',duration:1.65,kind:'work'},
+ mine:{clip:'1H_Melee_Attack_Chop',workClips:['2H_Melee_Attack_Chop','1H_Melee_Attack_Chop'],duration:1.65,kind:'work'},
+ fishing:{clip:'Use_Item',workClips:['Fishing_Idle','Idle'],duration:3.2,kind:'work'},
+ plant:{clip:'PickUp',workClips:['Digging','2H_Melee_Attack_Chop','PickUp'],duration:1.65,kind:'work'},
+ water:{clip:'Use_Item',duration:1.5,kind:'work'},
+ harvest:{clip:'PickUp',workClips:['1H_Melee_Attack_Slice_Horizontal','PickUp'],duration:1.65,kind:'work'},
+ smelt:{clip:'Use_Item',duration:2.1,kind:'work'},
+ forge:{clip:'1H_Melee_Attack_Chop',workClips:['Hammering','1H_Melee_Attack_Chop'],duration:2.1,kind:'work'},
 });
 const isMove=p=>p.state==='move';
 function otherInput(input,ignored){
@@ -285,7 +285,7 @@ function startAction(p,name){
  }else if(PROFESSION_RULES[name]){
    p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
  }
- p._hfAction={name,time:0,done:false,target,job};
+ p._hfAction={name,time:0,done:false,target,job};if(job){const node=p.world.highflyInteractables?.find(n=>n.id===job.id);if(node&&Math.hypot(node.x-p.pos.x,node.z-p.pos.z)>.2)p.yaw=Math.atan2(node.x-p.pos.x,node.z-p.pos.z);}
  p.setState('hf_action');p.vel.x=p.vel.z=0;p.speed=0;
  p.emit('highflyActionStart',{name,target:target?.kind??'none',simulated:!job});
 }
@@ -510,7 +510,7 @@ export function installHighflyUniversalMotion(p){
     // Pass the canceling input back to original Unsung.
    }else{
     this.stateTime+=step;action.time+=step;this.speed=0;
-    if(action.time>=ACTIONS[action.name].duration&&!ACTIONS[action.name].idle){
+    if(action.time>=(action.job?.seconds??ACTIONS[action.name].duration)&&!ACTIONS[action.name].idle){
      if(action.job){
        const finished=commitProfession(this._hfProfession,this.world,action.job);
        this.emit(finished.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{name:action.name,...finished});

@@ -1,0 +1,200 @@
+name: HIGHFLY P568.3 — SMART TOOLS QA
+on:
+  push:
+    branches: [p5683-smart-tools-20261126]
+    paths: ['.github/workflows/highfly-p5683-smart-tools-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: highfly-p5683-qa
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: previous-build
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-geography-atlas
+          run-id: 45872926641
+          github-token: ${{ github.token }}
+          path: map-atlas
+      - name: Prepare image dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Rebuild game with native beacon arrivals and retain original region assets
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p555-region-runtime.mjs
+          node --check src/highfly/p492-kaykit-people.mjs
+          node --check src/highfly/p565-region-cover.mjs
+          node --check src/highfly/mobile-touch.mjs
+          node --check src/highfly/p538-arvelia-quests.mjs
+          node scripts/p566-interaction-policy.test.mjs
+          node scripts/p568-flight-policy.test.mjs
+          node scripts/p568-resource-policy.test.mjs
+          node scripts/p568-naval-policy.test.mjs
+          node scripts/p5682-polish-policy.test.mjs
+          node --check src/highfly/kaykit-free-hero.mjs
+          node --check src/highfly/p5683-work-tools.mjs
+          node --check src/highfly/p553-continuous-region.mjs
+          node --check src/highfly/premium-rpg.mjs
+          node --check src/highfly/p568-naval-policy.mjs
+          node --check src/highfly/p568-resource-policy.mjs
+          node --check src/highfly/p565-native-materials.mjs
+          node --check src/highfly/p565-region-cover.mjs
+          node --check scripts/p565-integrity-smoke.mjs
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          mkdir -p dist/highfly/regions
+          cp -a previous-build/highfly/regions/. dist/highfly/regions/
+          mkdir -p dist/highfly/p564
+          cp -a map-atlas/. dist/highfly/p564/
+          test -s dist/highfly/p564/atlas.json
+          node --check src/highfly/p564-city-identities.mjs
+          node --check src/highfly/p492-radar.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node --check scripts/p560-android-lab.js
+          node --check scripts/p564-exploration-smoke.mjs
+          node --check scripts/p564-mobility-smoke.mjs
+          node --check src/highfly/universal-motion.mjs
+          node --check src/highfly/p564-phoenix-motion.mjs
+          node --check src/highfly/p564-phoenix-wings.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s and 'p560-android-lab.js' not in s
+          p.write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p5683-build
+          path: dist
+          retention-days: 14
+  smoke:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5683-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify eight native beacon arrivals and early exterior streaming
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf560-server.log 2>&1 &
+          node scripts/p564-exploration-smoke.mjs
+          node scripts/p564-mobility-smoke.mjs
+          node scripts/p5683-user-flow.mjs
+          node scripts/p5683-tool-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p5683-smoke
+          path: |
+            p564-smoke.json
+            p564-mobility.json
+            p5683-user-flow.json
+            p5683-tool-smoke.json
+            p5683-*.png
+          if-no-files-found: warn
+
+  archive-p566:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p566-build
+          run-id: 45893596092
+          github-token: ${{ github.token }}
+          path: game
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p566-smoke
+          run-id: 45893596092
+          github-token: ${{ github.token }}
+          path: audit
+      - name: Verify snapshot
+        run: |
+          test -s game/index.html
+          test -s game/highfly/regions/island-8.json
+          test -s audit/p564-mobility.json
+          printf '%s\n' 'Source commit: 603e2a0f2f75542653e479409a4243367b50e834' 'Original run: 45893596092' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P566-PLAYABLE-BACKUP-P5683
+          path: |
+            game/
+            audit/
+            BACKUP.txt
+          retention-days: 90
+  integrity:
+    needs: package
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: west
+            seeds: '1,2,3,4'
+          - shard: east
+            seeds: '5,6,7,8'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5683-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify actual region rendering and water/furniture state
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf565-server.log 2>&1 &
+          node scripts/p565-integrity-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p5683-integrity-${{ matrix.shard }}
+          path: |
+            p565-integrity-*.json
+            p565-region-*.png
+          if-no-files-found: warn
