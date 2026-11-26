@@ -1,4 +1,4 @@
-name: HIGHFLY P557 — native forest LOD and outer arrivals
+name: HIGHFLY P557b — sixteen exterior and centre performance tests
 on:
   push:
     branches: [experiment/guildhall-full-regions-p55]
@@ -29,6 +29,7 @@ jobs:
       - name: Build real game and all region assets
         run: |
           set -euo pipefail
+          node --check scripts/p556-browser-qa.mjs
           for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy p557-native-forest; do node --check "src/highfly/$f.mjs"; done
           HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
           node scripts/p555-pages-regions.mjs
@@ -36,13 +37,13 @@ jobs:
           test -s dist/highfly/regions/island-8.json
       - uses: actions/upload-artifact@v4
         with:
-          name: highfly-p557-build
+          name: highfly-p557b-build
           path: dist/
           retention-days: 14
   walk-test:
     needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -50,13 +51,13 @@ jobs:
           node-version: '22'
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557-build
+          name: highfly-p557b-build
           path: dist
       - name: Install browser
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Walk all eight regions in actual browser
+      - name: Walk exterior and centre of all eight regions
         run: |
           set -euo pipefail
           mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
@@ -66,7 +67,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: highfly-p557-walk-audit
+          name: highfly-p557b-walk-audit
           path: |
             p556-browser-audit.json
             qa-region-*.png
@@ -87,11 +88,11 @@ jobs:
           path: previous
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557-build
+          name: highfly-p557b-build
           path: new
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557-walk-audit
+          name: highfly-p557b-walk-audit
           path: qa
       - name: Replace only experimental preview after browser checks
         run: |
@@ -110,14 +111,14 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          name: highfly-p557-pages
+          name: highfly-p557b-pages
           path: site
       - name: Wait for artifact index
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           for attempt in $(seq 1 30); do
-            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p557-pages")] | length' 2>/dev/null || echo 0)"
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p557b-pages")] | length' 2>/dev/null || echo 0)"
             if [ "$N" = 1 ]; then sleep 20; exit 0; fi
             sleep 6
           done
@@ -125,4 +126,4 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: highfly-p557-pages
+          artifact_name: highfly-p557b-pages
