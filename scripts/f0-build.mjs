@@ -671,7 +671,7 @@ patch('src/game/camera.js',
  // P496: cap vertical camera jumps only on solid stone staircase.
 patch('src/game/camera.js',
  "this.camera.position.copy(_want);",
- "_want.y=stabilizedStairCameraY(this._hfStairCamY,_want.y,dt,cameraNearRealStairs(this.world,player.pos)); this._hfStairCamY=_want.y; this.camera.position.copy(_want);");
+ "_want.y=stabilizedStairCameraY(this._hfStairCamY,_want.y,dt,cameraNearRealStairs(this.world,player.pos)); const hfFloor=this.world.groundHeight(_want.x,_want.z); if(Number.isFinite(hfFloor)&&_want.y<hfFloor+.55&&!cameraNearRealStairs(this.world,player.pos)){_want.y=hfFloor+.55; this.current=Math.min(this.current,1.2);} this._hfStairCamY=_want.y; this.camera.position.copy(_want);");
 // Some NPC platforms sit higher than the terrain/underlying ground: always
  // resolve to the exposed surface, never put their body BELOW the terrain.
 patch('src/game/people.js',
