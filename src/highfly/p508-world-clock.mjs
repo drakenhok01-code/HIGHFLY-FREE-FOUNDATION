@@ -90,21 +90,6 @@ export function installP508WorldClock(pipe,options={}){
      const desc=name+' · Luna y estrellas habitualmente; eventos raros.';
      if(eventLabel.textContent!==desc)eventLabel.textContent=desc;
    }
-   // P556: actual frame intervals, independent of optional startup profiler flags.
-   if(diagLast&&now>diagLast){diagTimes.push(now-diagLast);if(diagTimes.length>120)diagTimes.shift()}diagLast=now;
-   if(diagMini&&diagMode!=='hidden'&&now-lastDiagPaint>=500){
-     lastDiagPaint=now;const samples=diagTimes.slice().sort((a,b)=>a-b),n=samples.length,mean=samples.reduce((a,b)=>a+b,0)/Math.max(1,n),fps=mean>0?1000/mean:0,p95=samples[Math.max(0,Math.ceil(n*.95)-1)]??0,max=samples.at(-1)??0;
-     const info=pipe.renderer?.info,region=win?.__hfP555Regions?.metrics?.(),g=win?.__game,p=g?.player?.pos;
-     diagMini.textContent=diagMode==='mini'?'FPS '+(fps?fps.toFixed(0):'—'):[
-       'FPS '+(fps?fps.toFixed(1):'—')+' · '+mean.toFixed(1)+' ms/frame',
-       'P95 '+p95.toFixed(1)+' ms · peor '+max.toFixed(1)+' ms',
-       'Draw calls '+(info?.render?.calls??'—')+' · tris '+(info?.render?.triangles??'—'),
-       'GPU geometrías '+(info?.memory?.geometries??'—')+' · texturas '+(info?.memory?.textures??'—'),
-       'Región '+(region?.seed??'inicio')+' · sectores '+(region?.visible??0)+'/'+(region?.total??0)+' · BVH '+(region?.solids??0),
-       'Jugador '+(g?.player?.state??'—')+' · '+(p?[p.x,p.y,p.z].map(v=>v.toFixed(1)).join(' / '):'—'),
-       'Entrada '+(g?.input?.enabled?'activa':'pausada')+' · carga '+(region?.busy?'sí':'no')
-     ].join('\n');
-   }
    draws++;
  };
  const select=(next)=>{
@@ -141,7 +126,24 @@ export function installP508WorldClock(pipe,options={}){
   get grade(){return [grade.x,grade.y,grade.z,grade.w]},
   get updates(){return draws}
  };
- pipe.onBeforeScene.push(update);
+ const measureFrame=()=>{const now=rt();
+   // P556: actual frame intervals, independent of optional startup profiler flags.
+   if(diagLast&&now>diagLast){diagTimes.push(now-diagLast);if(diagTimes.length>120)diagTimes.shift()}diagLast=now;
+   if(diagMini&&diagMode!=='hidden'&&now-lastDiagPaint>=500){
+     lastDiagPaint=now;const samples=diagTimes.slice().sort((a,b)=>a-b),n=samples.length,mean=samples.reduce((a,b)=>a+b,0)/Math.max(1,n),fps=mean>0?1000/mean:0,p95=samples[Math.max(0,Math.ceil(n*.95)-1)]??0,max=samples.at(-1)??0;
+     const info=pipe.renderer?.info,region=win?.__hfP555Regions?.metrics?.(),g=win?.__game,p=g?.player?.pos;
+     diagMini.textContent=diagMode==='mini'?'FPS '+(fps?fps.toFixed(0):'—'):[
+       'FPS '+(fps?fps.toFixed(1):'—')+' · '+mean.toFixed(1)+' ms/frame',
+       'P95 '+p95.toFixed(1)+' ms · peor '+max.toFixed(1)+' ms',
+       'Draw calls '+(info?.render?.calls??'—')+' · tris '+(info?.render?.triangles??'—'),
+       'GPU geometrías '+(info?.memory?.geometries??'—')+' · texturas '+(info?.memory?.textures??'—'),
+       'Región '+(region?.seed??'inicio')+' · sectores '+(region?.visible??0)+'/'+(region?.total??0)+' · BVH '+(region?.solids??0),
+       'Jugador '+(g?.player?.state??'—')+' · '+(p?[p.x,p.y,p.z].map(v=>v.toFixed(1)).join(' / '):'—'),
+       'Entrada '+(g?.input?.enabled?'activa':'pausada')+' · carga '+(region?.busy?'sí':'no')
+     ].join('\n');
+   }
+
+ };pipe.onBeforeScene.push(update,measureFrame);
  let panel=null,root=null,buttons=[],toggle=null,fastButton=null,lunarButton=null,eventLabel=null;
  // P515: mount the existing live climate controls only inside HIGHFLY Options.
  // Moving one DOM panel preserves listeners, sky state, and GPU performance.
@@ -230,7 +232,7 @@ export function installP508WorldClock(pipe,options={}){
  }
  update();
  function dispose(){
-  playing=false;const i=pipe.onBeforeScene.indexOf(update);if(i>=0)pipe.onBeforeScene.splice(i,1);
+  playing=false;const i=pipe.onBeforeScene.indexOf(update);if(i>=0)pipe.onBeforeScene.splice(i,1);const j=pipe.onBeforeScene.indexOf(measureFrame);if(j>=0)pipe.onBeforeScene.splice(j,1);
   pipe.sky.sunColor.copy(baseSun);
   grade.set(0,0,1,0);tonemapGrade.copy(grade);
   panel?.remove();root?.remove();diagMini?.remove();diagCss?.remove();
