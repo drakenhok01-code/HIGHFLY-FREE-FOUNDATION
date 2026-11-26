@@ -1,0 +1,2 @@
+// One movable boat, native terrain/water and obstacle constraints.
+export function steerBoat(state,move,dt,canMove){const turn=Math.max(-1,Math.min(1,move?.x??0)),throttle=Math.max(-1,Math.min(1,move?.y??0));const yaw=state.yaw+turn*1.6*dt;const goal=throttle>=0?throttle*8:throttle*3;const speed=state.speed+(goal-state.speed)*(1-Math.exp(-2.8*dt));const x=state.x+Math.sin(yaw)*speed*dt,z=state.z+Math.cos(yaw)*speed*dt;return canMove(x,z,yaw)?{x,z,yaw,speed}:{...state,speed:0};}

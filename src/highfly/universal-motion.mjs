@@ -461,6 +461,7 @@ export function installHighflyUniversalMotion(p){
   const active=input&&input.pressed&&input.held;
   if(!active)return nativeUpdate(dt,input,camYaw);
   this._hfFlowClock+=step;
+   if(globalThis.__hfP555Regions?.boatStep?.(this,step,input,camYaw))return;
   advanceCrops(this.world,step);
   this._hfCameraPitch=Number.isFinite(this._hfCameraPitch)?this._hfCameraPitch:0;
   if(input.highflyAbilityAim&&Object.prototype.hasOwnProperty.call(input.highflyAbilityAim,'attack')){

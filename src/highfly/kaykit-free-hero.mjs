@@ -254,7 +254,8 @@ export class KayKitFreeHero {
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
    else if(p.state==='hf_wallrun'){key='run';} 
-   else if(p.state==='hf_glide'){key='jump';}
+   else if(p.state==='hf_boat'){key='idle';}
+    else if(p.state==='hf_glide'){key='jump';}
    else if(p.state==='hf_seated'){key=this.clips.has('Sit_Chair_Idle')?'raw:Sit_Chair_Idle':'raw:Sit_Floor_Idle';}
    else if(p.state==='hf_climb'){key='idle';} // anchored hands procedurally, not an endless Interact flap
    else if(p.state==='hf_action'&&p._hfAction){
