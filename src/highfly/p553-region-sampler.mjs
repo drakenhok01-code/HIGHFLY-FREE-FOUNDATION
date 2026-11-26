@@ -39,10 +39,11 @@ export function makeRegionSampler(d,p,native){
    for(let i=-n;i<=n;i++)for(let j=-n;j<=n;j++){const t=table.get(axkey(a.q+i,a.r+j));if(t)dist=Math.min(dist,Math.hypot(t.x-lx,t.z-lz)*S)}
    k=Math.max(k,.95*(1-smooth((dist-R*S*.8)/p.transition)));
   }
-  k*=smooth(edge/9);
+  // Feather the outer apron rather than creating a sharp rectangular terrain wall.
+  k*=smooth(edge/Math.min(24,p.transition??24));
   let height=q.height,water=q.water*q.coverage,level=q.waterLevel;const rv=riverAt(lx,lz);if(rv&&rv.dist<R*.66){const w=1-smooth((rv.dist/R-.40)/.26);if(w>0){height=Math.min(height,height+(rv.level-.48-height)*w);water=Math.max(water,w);if(w>.3)level=rv.level;}}const walkway=walkwayAt(lx,lz);if(walkway?.w.kind==='stairs'&&walkway.t>.05&&walkway.t<.95&&water<.5){const w=1-smooth((walkway.dist-walkway.w.half*.7)/Math.max(.05,walkway.w.half*.3+.12));height=Math.min(height,height+(walkway.y-.17-height)*w);}
   const target=p.base+height*S,original=k>=.999999?target:native(x,z),y=original+(target-original)*k;
-  return {y,soil:q.soil*q.coverage,water,level:p.base+level*S,inside:q.coverage>.5,transition:k};
+  return {y,soil:q.soil*q.coverage*k,water:water*smooth((k-.70)/.25),level:p.base+level*S,inside:q.coverage>.5,transition:k};
  }
  return {sample,source,nearest,riverAt,walkwayAt};
 }
