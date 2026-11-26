@@ -35,9 +35,25 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
   for(let j=0;j<=nz;j++){if(j%3===0)yield 'terrain';for(let i=0;i<=nx;i++){const x=lerp(b.minX,b.maxX,i/nx),z=lerp(b.minZ,b.maxZ,j/nz),q=sampler.sample(x,z);pos.push(x,q.y,z);soil.push(q.soil);const level=Math.max(-.07,q.level);wet.push({x,z,y:level,bed:q.y,f:Math.min((q.water-.30)*3,level-q.y-.025,level+.07-.012)});seaWet.push({x,z,y:-.07,bed:q.y,f:-.07-q.y-.025});}}
   function clipWater(points,a,b,c){const input=[points[a],points[b],points[c]],out=[];for(let i=0;i<3;i++){const a=input[i],b=input[(i+1)%3];if(a.f>0)out.push(a);if((a.f>0)!==(b.f>0)){const t=a.f/(a.f-b.f);out.push({x:lerp(a.x,b.x,t),z:lerp(a.z,b.z,t),y:lerp(a.y,b.y,t),bed:lerp(a.bed,b.bed,t)})}}for(let i=1;i<out.length-1;i++)for(const v of [out[0],out[i],out[i+1]]){water.push(v.x,v.y+.012,v.z);depth.push(Math.max(0,v.y-v.bed));}}
   for(let j=0;j<nz;j++){if(j%12===0)yield 'water';for(let i=0;i<nx;i++){const a=j*(nx+1)+i,b=a+1,c=a+nx+1,d=c+1;idx.push(a,c,b,b,c,d);clipWater(seaWet,a,c,b);clipWater(seaWet,b,c,d);clipWater(wet,a,c,b);clipWater(wet,b,c,d);}}
-  group.add(mesh(pos,idx,terrain,soil));if(water.length)group.add(mesh(water,null,waterMat,null,depth));
+  // Keep identical vertices and normals, but cull world-space surface tiles separately.
+  // The editor still uses the complete mesh for overhead inspection.
+  if(options.runtime){
+   const full=mesh(pos,idx,terrain,soil),norm=full.geometry.getAttribute('normal').array,C=32;
+   for(let j=0;j<nz;j+=C){yield 'terrain chunks';for(let i=0;i<nx;i+=C){
+    const w=Math.min(C,nx-i),h=Math.min(C,nz-j),v=[],n=[],a=[],ix=[];
+    for(let z=0;z<=h;z++)for(let x=0;x<=w;x++){const k=(j+z)*(nx+1)+i+x;v.push(pos[k*3],pos[k*3+1],pos[k*3+2]);n.push(norm[k*3],norm[k*3+1],norm[k*3+2]);a.push(soil[k]);}
+    for(let z=0;z<h;z++)for(let x=0;x<w;x++){const k=z*(w+1)+x;ix.push(k,k+w+1,k+1,k+1,k+w+1,k+w+2)}
+    const o=mesh(v,ix,terrain,a);o.geometry.setAttribute('normal',new THREE.Float32BufferAttribute(n,3));group.add(o);
+   }}full.geometry.dispose();
+  }else group.add(mesh(pos,idx,terrain,soil));
+  function addSurfaceTriangles(vertices,material,depths){
+   if(!vertices.length)return;if(!options.runtime){group.add(mesh(vertices,null,material,null,depths));return}
+   const chunks=new Map();for(let k=0;k<vertices.length;k+=9){const x=(vertices[k]+vertices[k+3]+vertices[k+6])/3,z=(vertices[k+2]+vertices[k+5]+vertices[k+8])/3,key=Math.floor(x/64)+','+Math.floor(z/64);let c=chunks.get(key);if(!c){c={v:[],d:[]};chunks.set(key,c)}for(let j=0;j<9;j++)c.v.push(vertices[k+j]);if(depths)for(let j=0;j<3;j++)c.d.push(depths[k/3+j])}
+   for(const c of chunks.values())group.add(mesh(c.v,null,material,null,depths?c.d:null));
+  }
+  addSurfaceTriangles(water,waterMat,depth);
   const path=[];for(let i=0;i<d.paths.length;i+=3){const x=p.x+d.paths[i]*S,z=p.z+d.paths[i+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[i+1]*S;const w=sampler.walkwayAt(d.paths[i],d.paths[i+2]);path.push(x,w||q.water>.30?y:q.y+.055,z)}
-  if(path.length)group.add(mesh(path,null,road));
+  addSurfaceTriangles(path,road,null);
   // Local species mix based on actual Unsung trees around this site.
   const nearby=(overview?.trees??[]).filter(t=>t[0]>b.minX-150&&t[0]<b.maxX+150&&t[1]>b.minZ-150&&t[1]<b.maxZ+150);
   const counts=species.map((_,i)=>nearby.filter(t=>(kinds[t[3]]??4)===i).length),total=counts.reduce((a,b)=>a+b,0)||1;
