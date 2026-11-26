@@ -1,0 +1,28 @@
+// P556 browser smoke & walk test. Desktop SwiftShader is a functional test,
+// never a benchmark for Samsung Adreno. Reports failures instead of inventing FPS.
+import {chromium} from 'playwright';
+import fs from 'node:fs';
+const base=process.env.HF_QA_URL??'http://127.0.0.1:4173/HIGHFLY-FREE-FOUNDATION/preview-p55/';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+const page=await browser.newPage({viewport:{width:800,height:375},deviceScaleFactor:1,hasTouch:true,isMobile:true});
+const errors=[],rows=[];page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+try{
+ await page.goto(base+'?hfdiag=full',{waitUntil:'domcontentloaded',timeout:120000});
+ await page.waitForFunction(()=>window.__game&&window.__hfP555Regions&&window.__hfP508Clock,{},{timeout:240000});
+ await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'});window.__hfP508Clock.setDiagnostics('full')});
+ for(let seed=1;seed<=8;seed++){
+  const result=await page.evaluate(async seed=>{
+   const api=window.__hfP555Regions,g=window.__game,pipe=window.__pipe,from=performance.now();
+   await api.open(seed,true);if(api.active!==seed)return {seed,ok:false,reason:'Teleport failed',metrics:api.metrics()};
+   const before=g.player.pos.clone(),inp=g.input,old=inp.update,frames=[],start=performance.now();let last=start;
+   // Follow a free direction chosen at the safe arrival point.
+   inp.update=()=>{inp.pressed=new Set();inp.held=new Set();inp.move.x=0;inp.move.y=1;inp.look.x=0;inp.look.y=0;inp.zoom=0;};
+   try{await new Promise(resolve=>{function frame(t){frames.push(t-last);last=t;if(t-start<3500&&frames.length<240)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)})}finally{inp.update=old;inp.move.set?.(0,0);}
+   const after=g.player.pos,elapsed=performance.now()-start,sorted=frames.slice(1).sort((a,b)=>a-b),mean=sorted.reduce((a,b)=>a+b,0)/Math.max(1,sorted.length);
+   const distance=Math.hypot(after.x-before.x,after.z-before.z),diag=document.getElementById('hf-p514-fps-mini');
+   return {seed,ok:Number.isFinite(distance)&&distance>.6,walkedMetres:distance,elapsed,frames:sorted.length,frameMean:mean,p95:sorted[Math.max(0,Math.ceil(sorted.length*.95)-1)]??null,loadMs:api.metrics().loadMs,renderCalls:pipe.renderer.info.render.calls,triangles:pipe.renderer.info.render.triangles,metrics:api.metrics(),state:g.player.state,diagnostic:diag?.textContent,diagVisible:!!diag&&getComputedStyle(diag).display!=='none',wallElapsed:performance.now()-from};
+  },seed);
+  rows.push(result);console.log('HF556_WALK '+JSON.stringify(result));await page.screenshot({path:'qa-region-'+seed+'.png'}).catch(()=>{});
+ }
+}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p556-browser-audit.json',JSON.stringify({device:'CI Chromium SwiftShader, NOT Galaxy S23',rows,errors,allWalked:rows.length===8&&rows.every(r=>r.ok&&r.diagVisible)},null,2))}
+if(rows.length!==8||rows.some(r=>!r.ok||!r.diagVisible)||errors.some(e=>/TypeError|ReferenceError|shader error|WebGLProgram: Shader Error/i.test(e)))process.exitCode=1;
