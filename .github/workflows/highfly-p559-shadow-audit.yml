@@ -1,0 +1,48 @@
+name: HIGHFLY P559 — controlled shadow A-B-C-D audit
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p559-shadow-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shadows:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [1, 6, 8]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Prepare browser
+        run: |
+          node --check scripts/p559-shadow-abcd-qa.mjs
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Compare four shadow profiles in the same location
+        env:
+          HF_SHADOW_SEED: ${{ matrix.seed }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf-shadow-server.log 2>&1 &
+          node scripts/p559-shadow-abcd-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shadow-audit-island-${{ matrix.seed }}
+          path: p559-shadow-audit-*.json
+          if-no-files-found: warn
