@@ -369,7 +369,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-stat-panel"><b>Estado</b><strong>'+(selected.ready?'DISPONIBLE':'PRÓXIMAMENTE')+'</strong></div>'+
     '<div class="hf-rpg-stat-panel"><b>Materiales asociados</b><strong>'+numeric(owned)+'</strong></div>'+
     '<div class="hf-rpg-stat-panel"><b>Acciones completadas</b><strong>'+numeric(profession.completed??0)+'</strong></div>'+
-    '<div class="hf-rpg-stat-panel"><b>Herramientas</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+
+    '<div class="hf-rpg-stat-panel"><b>Herramientas</b><strong>'+numeric(profession.tools?.size??0)+'</strong></div>'+ '<p class="hf-p47-prof-note">'+[['axe','Hacha'],['pickaxe','Pico'],['rod','Caña'],['hoe','Azada'],['watering_can','Regadera'],['sickle','Hoz']].map(([k,n])=>(profession.tools?.has(k)?'✓ ':'✗ ')+n).join(' · ')+'</p>'+button('RECLAMAR KIT BÁSICO','data-hf-tools="starter"','is-primary')+
     '<p class="hf-p47-prof-note">'+(selected.ready?
       'Profesión habilitada. Consultá sus recetas y recursos en Fabricación.':
       'Oficio en preparación: aún no dispone de recetas ni acciones propias. Su icono ya está integrado.')+'</p>'+
@@ -627,6 +627,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    // Ignore EVERY click on underlying menus while the System message is visible.
    return;
   }
+  if(b.dataset.hfTools==='starter'){const player=p(),state=prof();for(const k of ['axe','pickaxe','rod','hoe','watering_can','sickle'])state.tools.add(k);player?._hfProfessionSave?.();message('Kit básico de herramientas recibido.');return;}
   const tab=b.dataset.hfTab;
   if(tab){if(tab.startsWith('bag:')){local.tab='bolsa';local.category=tab.slice(4);}
    else{local.tab=tab;local.category='Todo';}local.toast='';render();return;}

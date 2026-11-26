@@ -2,7 +2,7 @@
 export const PHOENIX=Object.freeze({speed:9.0,sink:3.4,brake:18,energyPerSecond:1.25,minEnergy:3,safeImpact:5.2});
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const AIR_MODES=Object.freeze({glide:{speed:9,vertical:-3.4,cost:1.25},boost:{speed:16,vertical:-2.1,cost:3.2},dive:{speed:24,vertical:-12,cost:.7},ascend:{speed:10,vertical:6.2,cost:5.2},recover:{speed:17,vertical:2.8,cost:2.1}});
-export function airMode(input,state,dt){if(input.pressed.has('air_dive')){if(state.diving){state.diving=false;state.recovery=.9}else{state.diving=true;state.recovery=0}}if(input.held.has('jump')){state.diving=false;state.recovery=0;return 'ascend'}if(state.diving)return 'dive';if((state.recovery??0)>0){state.recovery=Math.max(0,state.recovery-dt);return 'recover'}return input.held.has('dash')?'boost':'glide'}
+export function airMode(input,state,dt){if((state.launch??0)>0){state.launch=Math.max(0,state.launch-dt);return 'ascend'}if(input.pressed.has('air_dive')){if(state.diving){state.diving=false;state.recovery=.9}else{state.diving=true;state.recovery=0}}if(input.held.has('jump')||input.pressed.has('jump')){state.diving=false;state.recovery=0;return 'ascend'}if(state.diving)return 'dive';if((state.recovery??0)>0){state.recovery=Math.max(0,state.recovery-dt);return 'recover'}return input.held.has('dash')?'boost':'glide'}
 export function phoenixVelocity(v,move,yaw,dt,mode='glide'){
  const x=clamp(move?.x??0,-1,1),y=clamp(move?.y??0,-1,1),mag=Math.max(1,Math.hypot(x,y)),k=1-Math.exp(-5*dt);
  const cfg=AIR_MODES[mode]??AIR_MODES.glide,forward=mode==='dive'&&Math.hypot(x,y)<.1?1:y;

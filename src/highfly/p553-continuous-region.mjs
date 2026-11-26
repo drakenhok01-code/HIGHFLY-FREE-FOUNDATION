@@ -54,7 +54,7 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
    for(const c of chunks.values()){const m=mesh(c.v,null,material,null,depths?c.d:null);if(material===waterMat&&options.nativeMaterials)m.userData.regionWater=true;group.add(m)}
   }
   addSurfaceTriangles(water,waterMat,depth);
-  const path=[];for(let i=0;i<d.paths.length;i+=3){const x=p.x+d.paths[i]*S,z=p.z+d.paths[i+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[i+1]*S;const w=sampler.walkwayAt(d.paths[i],d.paths[i+2]);path.push(x,w||q.water>.30?y:q.y+.055,z)}
+  const path=[];for(let i=0;i<d.paths.length;i+=9){const tri=[];let raised=false;for(let j=0;j<9;j+=3){const k=i+j,x=p.x+d.paths[k]*S,z=p.z+d.paths[k+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[k+1]*S,w=sampler.walkwayAt(d.paths[k],d.paths[k+2]);raised ||= !!w||q.water>.30;tri.push(x,w||q.water>.30?y:q.y+.055,z)}if(!options.nativeMaterials||raised)path.push(...tri)}
   addSurfaceTriangles(path,road,null);
   // Local species mix based on actual Unsung trees around this site.
   const nearby=(overview?.trees??[]).filter(t=>t[0]>b.minX-150&&t[0]<b.maxX+150&&t[1]>b.minZ-150&&t[1]<b.maxZ+150);

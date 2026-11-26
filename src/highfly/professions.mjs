@@ -3,14 +3,14 @@
  * All transactions commit exactly ONCE when the animation completes.
  */
 export const PROFESSION_RULES=Object.freeze({
- collectWood:{kind:'woodPile',tool:null,seconds:.85,product:'wood',amount:2},
+ collectWood:{kind:'woodPile',tool:'axe',seconds:.85,product:'wood',amount:2},
  collectStone:{kind:'stonePile',tool:'pickaxe',seconds:.9,product:'stone',amount:2},
  chop:  {kind:'tree',tool:'axe',seconds:.8,product:'wood',amount:2},
  mine:  {kind:'ore',tool:'pickaxe',seconds:.9,product:'ore',amount:2},
  fishing:{kind:'fishSpot',tool:'rod',seconds:1.6,product:'fish',amount:1},
  plant: {kind:'soil',tool:'hoe',seconds:.85,requires:{seed:1}},
  water: {kind:'soil',tool:'watering_can',seconds:.8},
- harvest:{kind:'soil',tool:null,seconds:.9,product:'herb',amount:2},
+ harvest:{kind:'soil',tool:'sickle',seconds:.9,product:'herb',amount:2},
  smelt:{kind:'furnace',tool:null,seconds:1.5,requires:{ore:2},product:'ingot',amount:1},
  forge:{kind:'forge',tool:'hammer',seconds:1.7,requires:{ingot:2},product:'blade_blank',amount:1}
 });
@@ -41,7 +41,7 @@ export function findProfessionTarget(world,pos,yaw,action=null,reach=2.65){
   if(action&&professionActionFor(node)!==action)continue;
   if(!professionActionFor(node))continue;
   const dx=node.x-pos.x,dz=node.z-pos.z,ds=dx*dx+dz*dz;
-  if(ds<dist&&Math.abs((node.y??pos.y)-pos.y)<2.2&&(ds<.2||dx*fx+dz*fz>.1)){best=node;dist=ds;}
+  if(ds<dist&&Math.abs((node.y??pos.y)-pos.y)<(node.kind==='fishSpot'?3.5:2.2)&&(node.kind==='fishSpot'||ds<.2||dx*fx+dz*fz>.1)){best=node;dist=ds;}
  }
  return best;
 }

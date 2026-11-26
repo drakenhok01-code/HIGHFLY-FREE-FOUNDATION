@@ -191,7 +191,7 @@ function beginCliffDescent(p){
 }
 function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
 function stepPhoenix(p,dt,input,yaw){
- if(p.stamina<=0||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
+ if(p.stamina<=0||input.pressed.has('air_close')||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
  const mode=airMode(input,p._hfGlide??={},dt),cfg=AIR_MODES[mode],v=phoenixVelocity(p.vel,input.move,yaw,dt,mode),before=p.pos.clone();p._hfGlide.mode=mode;
  p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
  // Do not allow the native capsule to snap up a cliff face while gliding.
@@ -276,14 +276,15 @@ export function workTarget(p,kind){
 }
 function startAction(p,name){
  const cfg=ACTIONS[name];if(!cfg)return;
+ if(name==='fishing')globalThis.__hfP555Regions?.ensureFishing?.(p);
  const target=cfg.kind==='work'?workTarget(p,name):null;
  let job=null;
  if(PROFESSION_RULES[name]&&target?.id){
    const prep=prepareProfession(p._hfProfession,p.world,name,p.pos,p.yaw);
-   if(!prep.ok){p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
+   if(!prep.ok){p._hfFeedback?.(prep.reason==='missing-tool'?'Necesitás '+({rod:'una caña',pickaxe:'un pico',axe:'un hacha',hoe:'una azada',watering_can:'una regadera',sickle:'una hoz'}[prep.tool]??prep.tool):'Recurso no disponible');p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
    job=prep.job;
  }else if(PROFESSION_RULES[name]){
-   p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
+   p._hfFeedback?.('No hay un recurso disponible cerca');p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
  }
  p._hfAction={name,time:0,done:false,target,job};
  p.setState('hf_action');p.vel.x=p.vel.z=0;p.speed=0;
@@ -387,6 +388,7 @@ export function installHighflyUniversalMotion(p){
     JSON.stringify({inventory:this._hfProfession.inventory,tools:[...this._hfProfession.tools]}));}catch{}
  };
  p._hfProfessionLoad();
+ p._hfFeedback=(message)=>{p._hfNotice={message,until:performance.now()+3200}};
  p.setHighflyProgression=function(level=1,verifiedPoints=0){
   this._hfLevel=clamp(Math.trunc(Number(level)||1),1,99);
   this._hfTrainingScore=Math.max(0,Math.trunc(verifiedPoints));
@@ -495,6 +497,7 @@ export function installHighflyUniversalMotion(p){
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
   if(this.state==='hf_glide'){stepPhoenix(this,step,input,camYaw);return;}
+  if(isMove(this)&&input.pressed.has('air_launch')&&this.stamina>=8){this.spend(4);this.grounded=false;this.coyote=0;this.vel.y=Math.max(5.8,this.vel.y);beginPhoenix(this);this._hfGlide.launch=.45;stepPhoenix(this,step,input,camYaw);return;}
   if(this.state==='hf_wallrun'){stepWallRun(this,step,input);return;}
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
   if(this.state==='hf_climb'){stepClimb(this,step,input,camYaw,nativeUpdate);return;}
@@ -512,7 +515,7 @@ export function installHighflyUniversalMotion(p){
      if(action.job){
        const finished=commitProfession(this._hfProfession,this.world,action.job);
        this.emit(finished.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{name:action.name,...finished});
-       if(finished.ok)this._hfProfessionSave();
+       if(finished.ok){this._hfProfessionSave();if(finished.product)this._hfFeedback?.('+'+finished.amount+' '+({fish:'Pescado',wood:'Madera',stone:'Piedra'}[finished.product]??finished.product)+' · Inventario')}else this._hfFeedback?.('No se pudo recoger el recurso');
      }
      this._hfAction=null;this.setState('move');
      this.emit('highflyActionEnd',{name:action.name,completed:!!action.job});

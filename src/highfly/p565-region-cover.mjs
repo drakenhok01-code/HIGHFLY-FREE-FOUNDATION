@@ -22,5 +22,5 @@ vec4 hfRegionSample(vec2 xz){vec2 uv=(xz-uHFRegionCoverBounds.xy)/uHFRegionCover
   for(let j=0;j<h;j++)for(let i=0;i<w;i++){const k=j*w+i,y=pos[k*3+1],x=pos[k*3],z=pos[k*3+2],slope=Math.hypot((pos[(j*w+Math.min(nx,i+1))*3+1]-pos[(j*w+Math.max(0,i-1))*3+1])/(2*dx),(pos[(Math.min(nz,j+1)*w+i)*3+1]-pos[(Math.max(0,j-1)*w+i)*3+1])/(2*dz));buf.set([y,blocked?.(x,z,y,.15)?1:soil[k],slope,y<0||wet[k].f>0?1:0],k*4)}
   const t=new THREE.DataTexture(buf,w,h,THREE.RGBAFormat,THREE.FloatType);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;tex.value=t;bounds.value.set(b.minX,b.minZ,b.maxX-b.minX,b.maxZ-b.minZ);if(placement&&paths.length){const m=roadMask(paths,placement,b);const rt=new THREE.DataTexture(m.buf,m.w,m.h,THREE.RedFormat);rt.minFilter=rt.magFilter=THREE.NearestFilter;rt.needsUpdate=true;road.value=rt;}enabled.value=1;invalidate();
  }
- return {mount,clear};
+ return {mount,clear,get roadTexture(){return road.value===emptyRoad?null:road.value},get roadBounds(){return bounds.value}};
 }

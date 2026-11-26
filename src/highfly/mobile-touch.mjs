@@ -34,7 +34,8 @@ export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
- if(p.state==='hf_boat')return {action:'boat_exit',label:'BAJAR'};
+ if(p.state==='hf_boat')return {action:'boat_exit',label:'SOLTAR'};
+ if(['move','swim'].includes(p.state)&&globalThis.__hfP555Regions?.nearBoat?.(p.pos))return {action:'boat_board',label:'NAVEGAR'};
  if(p.state==='hf_glide')return {action:'air_dive',label:p._hfGlide?.diving?'PLANEAR':'PICADA'};
  if(p.state==='hf_climb')return {action:'climb',label:'SOLTAR'};
  if(p.state==='hf_seated')return {action:'seat',label:'LEVANTAR'};
@@ -48,7 +49,7 @@ export function resolveHighflyContext(p){
   if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
      Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};
  }
- if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearBoat?.(p.pos))return {action:'boat_board',label:'TIMÓN'};
+ 
  if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearSeat(p.pos,p.yaw))return {action:'seat',label:'SENTAR'};
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
@@ -74,6 +75,7 @@ export function resolveHighflyContext(p){
    if(d<dist&&dx*fx+dz*fz>.1){dist=d;best={action:actions[n.kind][0],label:actions[n.kind][1]};}
  }
  if(best)return best;
+ if(p.grounded&&globalThis.__hfP555Regions?.fishingWater?.(p))return {action:'fishing',label:'PESCAR'};
  if(p.grounded&&p.stamina>3&&descentCandidate(w,p.pos,p.yaw))return {action:'climb',label:'DESCENDER'};
  const wall=typeof w.raycast==='function'?w.raycast(
    {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
@@ -156,6 +158,10 @@ export function attachHighflyTouch(input){
  '#hf-touch .atk{right:12px;bottom:12px;width:76px;height:76px;font-size:15px}',
  '#hf-touch .jump{right:96px;bottom:13px}',
  '#hf-touch .roll{right:98px;bottom:80px}',
+ '#hf-touch .flight{left:152px;bottom:5px;width:58px;height:53px;border:2px solid #d9a7ff;background:linear-gradient(135deg,#6b378e,#25143c);z-index:7}',
+ '#hf-touch .hf-release{position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;color:#e2d6ff;background:#130d24aa;border-radius:5px;padding:3px 7px;pointer-events:none}',
+ '#hf-touch .hf-work-notice{position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);max-width:55vw;padding:8px 14px;border-radius:9px;background:#18142beb;border:1px solid #c9b1f1;color:#fff;pointer-events:none;font:700 12px system-ui;z-index:19;text-align:center}',
+ '#hf-touch .hf-work-notice[hidden]{display:none!important}',
  '#hf-touch .use{right:21px;bottom:108px}',
  '#hf-touch .sprint{left:152px;bottom:64px;width:62px;height:62px;z-index:3}',
  '#hf-touch .sprint[data-active="1"]{border:2px solid #ffdc87;background:linear-gradient(135deg,#755221,#25112f);box-shadow:0 0 16px #e4b85b88}',
@@ -247,9 +253,9 @@ export function attachHighflyTouch(input){
 #hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
 `;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML=hfHud()+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<span class="hf-release" data-hf-no-translate>P5.6.8.1</span><div class="hf-work-notice" hidden></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
- '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
+ '<button class="flight" data-a="air_launch">VOLAR</button><button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
  '<button class="context" data-a="context" aria-label="Acción contextual">TREPAR</button><button class="rpg-menu" data-a="rpg-menu" aria-label="Abrir menú RPG HIGHFLY">✧ MENÚ</button><button class="full" data-a="fullscreen" aria-label="Pantalla completa">⛶</button><button class="actions" data-a="actions" aria-label="Gestos" aria-expanded="false">☺</button><button class="hud-edit" data-a="hud-edit" data-active="0">HUD</button><button class="settings" data-a="settings" aria-label="Opciones gráficas">⚙</button>'+
  '<button class="lock" data-a="lock" aria-label="Fijar enemigo">⊕<small>FIJAR</small></button>'+
@@ -383,6 +389,7 @@ export function attachHighflyTouch(input){
       e.preventDefault();e.stopPropagation();
     };
     b.addEventListener('pointerdown',e=>{
+      if(globalThis.__game?.player?.state==='hf_glide'){t.airPointer={id:e.pointerId,kind:a};if(a==='dash')t.held.add('dash');else t.pressed.add('air_close');try{b.setPointerCapture(e.pointerId)}catch{}e.preventDefault();e.stopPropagation();return;}
       if(t.abilityPointer)return;
       const r=b.getBoundingClientRect();
       // Fingertip movement defines the aim. A tap anywhere in the button
@@ -396,6 +403,7 @@ export function attachHighflyTouch(input){
     });
     b.addEventListener('pointermove',move);
     const end=e=>{
+      if(t.airPointer?.id===e.pointerId){t.held.delete('dash');t.airPointer=null;e.preventDefault();e.stopPropagation();return;}
       if(t.abilityPointer?.id!==e.pointerId||t.abilityPointer?.kind!==a)return;
       move(e);
       t.abilityAim[a]=t.abilityPointer.vector; // null means tap/fallback joystick
@@ -404,6 +412,7 @@ export function attachHighflyTouch(input){
       e.preventDefault();e.stopPropagation();
     };
     const cancel=e=>{
+      if(t.airPointer?.id===e.pointerId){t.held.delete('dash');t.airPointer=null;return;}
       if(t.abilityPointer?.id!==e.pointerId)return;
       t.abilityPointer=null;if(t.aimOverlay)t.aimOverlay.dataset.active='0';
     };
@@ -437,7 +446,7 @@ export function attachHighflyTouch(input){
      if(action&&skillReady(p,action))t.pressed.add(action);
      return;
    }
-   const chosen=a==='context'?t.contextAction:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
+   const current=globalThis.__game?.player;const chosen=a==='air_launch'&&current?.state==='hf_glide'?'air_close':a==='context'?resolveHighflyContext(current).action:a==='interact'?resolveHighflyUse(current).action:a;
    if(a==='sprint'){
     t.sprintOn=!t.sprintOn;
     b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
@@ -554,8 +563,9 @@ export function applyHighflyTouch(input){
    t.contextButton.textContent=context.label;
    t.contextButton.setAttribute('aria-label',context.label);
  }
+ const flight=t.root.querySelector('.flight');if(flight){flight.textContent=p?.state==='hf_glide'?'CERRAR':'VOLAR';flight.hidden=p?.state==='hf_boat'||p?.state==='swim';}const notice=t.root.querySelector('.hf-work-notice');if(notice){notice.hidden=!(p?._hfNotice?.until>performance.now());if(!notice.hidden)notice.textContent=p._hfNotice.message;}
  const cd=globalThis.__game?.player?._hfDashCd??0;
- if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=t.dashButton.dataset.hfOpacity??'.70';t.dashButton.style.filter=cd>.05?'grayscale(.3) brightness(.82)':'';}
+ if(t.dashButton){t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=t.dashButton.dataset.hfOpacity??'.70';t.dashButton.style.filter=cd>.05?'grayscale(.3) brightness(.82)':'';}
  for(const bar of vitalSnapshot(globalThis.__game?.player)){
   const el=t.resources?.[bar.id];if(!el)continue;
   const fill=el.querySelector('.hf-fill'),num=el.querySelector('.hf-number');
