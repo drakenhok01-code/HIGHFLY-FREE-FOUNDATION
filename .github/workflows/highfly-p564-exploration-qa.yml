@@ -1,0 +1,100 @@
+name: HIGHFLY P564 — exploration integration alpha QA
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p564-exploration-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: previous-build
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-geography-atlas
+          run-id: 45872926641
+          github-token: ${{ github.token }}
+          path: map-atlas
+      - name: Prepare image dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Rebuild game with native beacon arrivals and retain original region assets
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p555-region-runtime.mjs
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          mkdir -p dist/highfly/regions
+          cp -a previous-build/highfly/regions/. dist/highfly/regions/
+          mkdir -p dist/highfly/p564
+          cp -a map-atlas/. dist/highfly/p564/
+          test -s dist/highfly/p564/atlas.json
+          node --check src/highfly/p564-city-identities.mjs
+          node --check src/highfly/p492-radar.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node --check scripts/p560-android-lab.js
+          node --check scripts/p564-exploration-smoke.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s and 'p560-android-lab.js' not in s
+          p.write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p564-alpha-build
+          path: dist
+          retention-days: 14
+  smoke:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-alpha-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify eight native beacon arrivals and early exterior streaming
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf560-server.log 2>&1 &
+          node scripts/p564-exploration-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p564-alpha-smoke
+          path: |
+            p564-smoke.json
+          if-no-files-found: warn
