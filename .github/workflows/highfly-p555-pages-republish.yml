@@ -1,0 +1,82 @@
+name: HIGHFLY P555 — publish already compiled RPG
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths:
+      - '.github/workflows/highfly-p555-pages-republish.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Restore stable site snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p543-natural-unique
+          run-id: 45709414313
+          github-token: ${{ github.token }}
+          path: previous
+      - name: Retrieve successful P555 build without recompiling
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p555-playable-experimental
+          run-id: 45729022271
+          github-token: ${{ github.token }}
+          path: new
+      - name: Assemble site within Pages size budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/index.html
+          test -s site/preview-p543/index.html
+          test -s site/preview-p542/index.html
+          test -s site/preview-p541/index.html
+          test ! -e site/preview-p55
+          cp -a new site/preview-p55
+          touch site/.nojekyll
+          for OLD in 537 539; do
+            SIZE="$(du -sb site | cut -f1)"
+            if [ "$SIZE" -lt 950000000 ]; then break; fi
+            rm -rf "site/preview-p${OLD}"
+            echo "Removed old live preview P${OLD}; backup retained in previous immutable artifact."
+          done
+          SIZE="$(du -sb site | cut -f1)"
+          echo "P555 Pages size: $SIZE bytes"
+          test "$SIZE" -lt 950000000
+          test -s site/preview-p55/highfly/regions/island-8.json
+          test -s site/preview-p55/highfly/world-forge-3d.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p555-pages-republish
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p555-pages-republish")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p555-pages-republish
