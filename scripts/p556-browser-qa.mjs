@@ -7,22 +7,22 @@ const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-g
 const page=await browser.newPage({viewport:{width:800,height:375},deviceScaleFactor:1,hasTouch:true,isMobile:true});
 const errors=[],rows=[];page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 try{
- await page.goto(base+'?hfdiag=full',{waitUntil:'domcontentloaded',timeout:120000});
+ await page.goto(base+'?hfdiag=full&hfqa=1',{waitUntil:'domcontentloaded',timeout:120000});
  await page.waitForFunction(()=>window.__game&&window.__hfP555Regions&&window.__hfP508Clock,{},{timeout:240000});
  await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'});window.__hfP508Clock.setDiagnostics('full')});
- for(let seed=1;seed<=8;seed++){
-  const result=await page.evaluate(async seed=>{
+ for(let seed=1;seed<=8;seed++){for(const zone of ['exterior','centro']){
+  const result=await page.evaluate(async ({seed,zone})=>{
    const api=window.__hfP555Regions,g=window.__game,pipe=window.__pipe,from=performance.now();
-   await api.open(seed,true);if(api.active!==seed)return {seed,ok:false,reason:'Teleport failed',metrics:api.metrics()};
+   await api.open(seed,true);if(api.active!==seed)return {seed,zone,ok:false,reason:'Teleport failed',metrics:api.metrics()};if(zone==='centro'&&!api.qaJumpCenter())return {seed,zone,ok:false,reason:'No safe centre',metrics:api.metrics()};
    const before=g.player.pos.clone(),inp=g.input,old=inp.update,frames=[],start=performance.now();let last=start;
    // Follow a free direction chosen at the safe arrival point.
    inp.update=()=>{inp.pressed=new Set();inp.held=new Set();inp.move.x=0;inp.move.y=1;inp.look.x=0;inp.look.y=0;inp.zoom=0;};
    try{await new Promise(resolve=>{function frame(t){frames.push(t-last);last=t;if(frames.length<32&&t-start<90000)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)})}finally{inp.update=old;inp.move.set?.(0,0);}
    const after=g.player.pos,elapsed=performance.now()-start,sorted=frames.slice(1).sort((a,b)=>a-b),mean=sorted.reduce((a,b)=>a+b,0)/Math.max(1,sorted.length);
    const distance=Math.hypot(after.x-before.x,after.z-before.z),regionMetrics=api.metrics(),diag=document.getElementById('hf-p514-fps-mini');
-   return {seed,ok:Number.isFinite(distance)&&distance>.6&&sorted.length>=12,walkedMetres:distance,elapsed,frames:sorted.length,frameMean:mean,p95:sorted[Math.max(0,Math.ceil(sorted.length*.95)-1)]??null,loadMs:api.metrics().loadMs,renderCalls:regionMetrics.opaque?.calls??null,triangles:regionMetrics.opaque?.triangles??null,metrics:regionMetrics,state:g.player.state,diagnostic:diag?.textContent,diagVisible:!!diag&&getComputedStyle(diag).display!=='none',wallElapsed:performance.now()-from};
-  },seed);
-  rows.push(result);console.log('HF557_WALK '+JSON.stringify(result));await page.screenshot({path:'qa-region-'+seed+'.png',timeout:30000}).catch(()=>{});
- }
-}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p556-browser-audit.json',JSON.stringify({device:'CI Chromium SwiftShader, NOT Galaxy S23',rows,errors,allWalked:rows.length===8&&rows.every(r=>r.ok&&r.diagVisible),note:'32-frame target, capped at 90s per region; opaque scene counts exclude other passes; no mobile FPS claim'},null,2))}
-if(rows.length!==8||rows.some(r=>!r.ok||!r.diagVisible)||errors.some(e=>/TypeError|ReferenceError|shader error|WebGLProgram: Shader Error/i.test(e)))process.exitCode=1;
+   return {seed,zone,ok:Number.isFinite(distance)&&distance>.6&&sorted.length>=12,walkedMetres:distance,elapsed,frames:sorted.length,frameMean:mean,p95:sorted[Math.max(0,Math.ceil(sorted.length*.95)-1)]??null,loadMs:api.metrics().loadMs,renderCalls:regionMetrics.opaque?.calls??null,triangles:regionMetrics.opaque?.triangles??null,metrics:regionMetrics,state:g.player.state,diagnostic:diag?.textContent,diagVisible:!!diag&&getComputedStyle(diag).display!=='none',wallElapsed:performance.now()-from};
+  },{seed,zone});
+  rows.push(result);console.log('HF557_WALK '+JSON.stringify(result));await page.screenshot({path:'qa-region-'+seed+'-'+zone+'.png',timeout:30000}).catch(()=>{});
+ }}
+}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p556-browser-audit.json',JSON.stringify({device:'CI Chromium SwiftShader, NOT Galaxy S23',rows,errors,allWalked:rows.length===16&&rows.every(r=>r.ok&&r.diagVisible),note:'32-frame target, capped at 90s per region; opaque scene counts exclude other passes; no mobile FPS claim'},null,2))}
+if(rows.length!==16||rows.some(r=>!r.ok||!r.diagVisible)||errors.some(e=>/TypeError|ReferenceError|shader error|WebGLProgram: Shader Error/i.test(e)))process.exitCode=1;
