@@ -6,6 +6,7 @@ import {installHighflyRadar} from '../highfly/p492-radar.mjs';
 import {translateHighfly} from '../highfly/es-localization.mjs';
 import {findProfessionTarget,professionActionFor} from '../highfly/professions.mjs';
 import {terrainWallContact} from '../highfly/wall-physics.mjs';
+import {descentCandidate} from '../highfly/p564-phoenix-motion.mjs';
 import {loadRpgState,skillReady,DEFAULT_SKILL_SLOTS} from '../highfly/rpg-core.mjs';
 import {skillIcon} from '../highfly/premium-skill-art.mjs';
 /** Pure vector calculation; 8-way + continuous 360° testable without a browser. */
@@ -33,6 +34,7 @@ export function resolveHighflyContext(p){
  const fallback={action:'interact',label:'USAR'};
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
+ if(p.state==='hf_climb')return {action:'climb',label:'SOLTAR'};
  // NPC conversations outrank nearby rocks, walls or collision capsules.
  const g=globalThis.__game;
  // Physical fallen animal outranks proximity climb and tree collisions.
@@ -73,6 +75,7 @@ export function resolveHighflyContext(p){
    if(Number.isFinite(level)&&Number.isFinite(floor)&&level-floor>1.15&&
      level-p.pos.y<2.2&&level-p.pos.y>-.6)return {action:'fishing',label:'PESCAR'};
  }
+ if(p.grounded&&p.stamina>3&&descentCandidate(w,p.pos,p.yaw))return {action:'climb',label:'DESCENDER'};
  const wall=typeof w.raycast==='function'?w.raycast(
    {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
  if((wall>.04&&wall<.91)||terrainWallContact(w,p.pos,{x:fx,z:fz},1.08,.7))
@@ -545,6 +548,7 @@ export function applyHighflyTouch(input){
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
  t.radar?.update();
  const context=resolveHighflyContext(globalThis.__game?.player);
+ const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'CERRAR':deploy?'PLANEAR':'SALTO';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
  t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;
