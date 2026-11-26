@@ -11,6 +11,7 @@ import {runtimeRegionVisuals} from './p536-native-editor-visuals.mjs';
 import {REGION_THEMES,treeId,shrubId,guildLocation} from './p553-region-sampler.mjs';
 import {sectorKey,sectorBounds,distanceToBounds,chooseArrival} from './p556-sector-policy.mjs';
 import {mountRegionForest} from './p557-native-forest.mjs';
+import {createLODCache,lodLevel,triangleCount} from './p558-model-lod.mjs';
 const DIR=import.meta.env.BASE_URL+'highfly/regions/';
 const get=async path=>{const r=await fetch(DIR+path);if(!r.ok)throw Error(path+' HTTP '+r.status);return r.json()};
 const inBounds=(p,x,z,pad=0)=>x>p.bounds.minX-pad&&x<p.bounds.maxX+pad&&z>p.bounds.minZ-pad&&z<p.bounds.maxZ+pad;
@@ -28,10 +29,13 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  const clipTerrain=clipMaterial(terrain.material),clipWater=clipMaterial(water.material);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),ktx=new KTX2Loader().setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/').detectSupport(pipe.renderer);loader.setKTX2Loader(ktx);
  const assets=new Map(audit.assets.map(a=>[a.id,a])),models=new Map(),placements=new Map(placement.placements.map(p=>[p.seed,p]));
+ const lodCache=await createLODCache();
  const load=id=>{if(!models.has(id)){const a=assets.get(id);if(!a)throw Error('Missing '+id);models.set(id,loader.loadAsync(DIR+a.path).then(x=>x.scene).catch(e=>{models.delete(id);throw e}))}return models.get(id)};
- let active=null,busy=false,lastCheck=0,solids=[],lastSector=0;let loadMs=0;
+ let active=null,busy=false,lastCheck=0,solids=[],lastSector=0;let loadMs=0,opaqueParts=null,collect=false;const drawStats=()=>({calls:0,triangles:0});
  const root=new THREE.Group();root.name='P555 streamed Guildhall region';pipe.scene.add(root);
- const renderer=pipe.renderer,originalRender=renderer.render;renderer.render=function(scene,camera){const result=originalRender.call(this,scene,camera);if(scene===pipe.scene)globalThis.__hfP557Opaque={calls:this.info.render.calls,triangles:this.info.render.triangles};return result};
+ const renderer=pipe.renderer,originalRender=renderer.render;renderer.render=function(scene,camera){const opaque=scene===pipe.scene;if(opaque){opaqueParts={buildings:drawStats(),terrain:drawStats(),forest:drawStats()};collect=true}try{return originalRender.call(this,scene,camera)}finally{if(opaque){collect=false;globalThis.__hfP557Opaque={calls:this.info.render.calls,triangles:this.info.render.triangles,parts:opaqueParts}}}};
+ function instrument(m,category){const old=m.onAfterRender;m.onAfterRender=function(r,sc,cam,geo,mat,group){old?.call(this,r,sc,cam,geo,mat,group);if(!collect)return;const stats=opaqueParts[category],count=group?.count??geo.index?.count??geo.attributes.position.count,n=this.isInstancedMesh?this.count:geo.isInstancedBufferGeometry?geo.instanceCount:1;stats.calls++;stats.triangles+=count/3*n}}
+ forest?.group?.traverse(m=>{if(m.isMesh)instrument(m,'forest')});
  // Native Unsung uses custom lighting shaders; imported standard GLB materials need scene lights.
  const ambient=new THREE.AmbientLight(0xffffff,1.4),sun=new THREE.DirectionalLight(0xfff4d7,2);sun.position.set(30,70,40);pipe.scene.add(ambient,sun);ambient.updateMatrixWorld(true);sun.updateMatrixWorld(true);
  terrain.heightAt=(x,z)=>active&&inBounds(active.p,x,z)?active.integrated.gridHeight(x,z):nativeHeight(x,z);
@@ -50,8 +54,9 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  function syncSectors(x,z,force=false){
   if(!active)return;const n=performance.now();if(!force&&n-lastSector<180)return;lastSector=n;
   const lx=(x-active.p.x)/active.p.scale,lz=(z-active.p.z)/active.p.scale;
-  let visible=0;
-  for(const [key,g] of active.sectors){const b=sectorBounds(key),dist=distanceToBounds(lx,lz,b)*active.p.scale,want=dist<=b.radius+(g.parent?18:0);if(want&&!g.parent)active.tmp.add(g);else if(!want&&g.parent)g.removeFromParent();if(want)visible++}
+  let visible=0,levels=[0,0,0],materialized=0;
+  for(const [key,g] of active.sectors){const b=sectorBounds(key),dist=distanceToBounds(lx,lz,b)*active.p.scale,want=dist<=b.radius+(g.parent?12:0);if(want){const level=lodLevel(dist,b.kind,g.userData.level??0);if(!g.children.length){for(const row of g.userData.batches){const m=new THREE.InstancedMesh(row.geometries[level],row.material,row.matrices.length);row.matrices.forEach((mx,i)=>m.setMatrixAt(i,mx));m.instanceMatrix.needsUpdate=true;m.computeBoundingSphere();m.matrixAutoUpdate=false;m.userData.geometries=row.geometries;instrument(m,'buildings');g.add(m)}}else if(g.userData.level!==level){for(const m of g.children){m.geometry=m.userData.geometries[level]}}g.userData.level=level;if(!g.parent){active.tmp.add(g);g.updateMatrixWorld(true)}g.userData.lastUsed=n;visible++;levels[level]++}else{if(g.parent)g.removeFromParent();if(g.children.length&&n-(g.userData.lastUsed??0)>5000){for(const m of g.children)m.dispose();g.clear()}}if(g.children.length)materialized++}
+  active.levels=levels;active.materialized=materialized;
   for(const m of active.integrated.group.children){if(!m.userData.regionVegetation)continue;const b=m.boundingSphere;const dist=Math.hypot(b.center.x-x,b.center.z-z)-b.radius;m.visible=dist<=m.userData.regionRadius;}
   // Only collision BVHs near the avatar. Register at most two new chunks per tick.
   const pending=[];for(const [key,v] of active.collisionChunks){const [i,j]=key.split(',').map(Number),cx=active.p.x+(i+.5)*60*active.p.scale,cz=active.p.z+(j+.5)*60*active.p.scale,d=Math.hypot(cx-x,cz-z);if(v.solid&&d>180){dropSolid(v.solid);v.solid=null}if(!v.solid&&d<135)pending.push({v,d})}
@@ -63,9 +68,9 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
   if(busy||game.state!=='playing')return;if(active?.p.seed===seed){if(warp)travel(active.spawn.x,active.spawn.z,active.spawn.y,active.spawn.yaw);return}
   setBusy(true);const started=performance.now();say('Cargando región '+seed+'…');try{
    const p=placements.get(seed),d=await get('island-'+seed+'.json');if(!p)throw Error('No placement');
-   const integrated=await fusion.buildAsync(d,p,assets,stage=>say('Región '+seed+' · '+stage)),tmp=new THREE.Group();tmp.position.set(p.x,p.base,p.z);tmp.scale.setScalar(p.scale);
+   const integrated=await fusion.buildAsync(d,p,assets,stage=>say('Región '+seed+' · '+stage)),tmp=new THREE.Group();integrated.group.traverse(m=>{if(m.isMesh)instrument(m,'terrain')});tmp.position.set(p.x,p.base,p.z);tmp.scale.setScalar(p.scale);
    const by=new Map();for(const q of d.pieces){if(treeId(q.piece)||shrubId(q.piece)||q.piece==='kenney-nature/ground-river-straight')continue;if(!by.has(q.piece))by.set(q.piece,[]);by.get(q.piece).push(q)}
-   const ids=[...by.keys()];for(let i=0;i<ids.length;i+=8){await Promise.all(ids.slice(i,i+8).map(load));await new Promise(requestAnimationFrame)}
+   const ids=[...by.keys()];for(let i=0;i<ids.length;i+=8){await Promise.all(ids.slice(i,i+8).map(load));await new Promise(resolve=>setTimeout(resolve,0))}
    const dummy=new THREE.Object3D(),mat=new THREE.Matrix4(),boxes=[],chunk=new Map(),local=new THREE.Matrix4(),worldMatrix=new THREE.Matrix4().compose(tmp.position,tmp.quaternion,tmp.scale);
    const geom=(pos,col)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));if(col)g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.computeVertexNormals();return g};
    let structure=null;if(d.structures.position.length){const g=geom(d.structures.position,d.structures.color),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide}));m.userData.owned=true;m.userData.ownMaterial=true;tmp.add(m);structure=g.clone().applyMatrix4(worldMatrix)}
@@ -73,12 +78,12 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
    for(const [id,items] of by){if(performance.now()-batchClock>12){await new Promise(resolve=>setTimeout(resolve,0));batchClock=performance.now()}const model=await load(id);model.updateMatrixWorld(true);const arr=[];for(const q of items){const t=integrated.sampler.nearest(q.x,q.z).t,x=p.x+q.x*p.scale,z=p.z+q.z*p.scale,atY=integrated.gridHeight(x,z),shift=t&&t.ground!=='water'&&Math.abs(q.y-t.top)<1.8?Math.max(-1.2,Math.min(1.2,(atY-p.base)/p.scale-t.top)):0;dummy.position.set(q.x,q.y+shift,q.z);dummy.rotation.set(q.tilt?.[0]??0,q.rot??0,q.tilt?.[1]??0,'YXZ');const s=q.scale??1;dummy.scale.set(s*(q.stretch??1),s,s);dummy.updateMatrix();arr.push({q,m:dummy.matrix.clone()});}
     // Geographic instance batches: never one huge non-culled region batch.
     const batches=new Map();for(const o of arr){const key=sectorKey(id,o.q.x,o.q.z);if(!batches.has(key))batches.set(key,[]);batches.get(key).push(o)}
-    for(const [key,list] of batches){let group=sectors.get(key);if(!group){group=new THREE.Group();group.name=key;sectors.set(key,group)}model.traverse(m=>{if(!m.isMesh||m.isSkinnedMesh)return;const inst=new THREE.InstancedMesh(m.geometry,m.material,list.length);list.forEach((o,i)=>{mat.multiplyMatrices(o.m,m.matrixWorld);inst.setMatrixAt(i,mat)});inst.instanceMatrix.needsUpdate=true;inst.computeBoundingSphere();inst.matrixAutoUpdate=false;group.add(inst)})}
+    for(const [key,list] of batches){let group=sectors.get(key);if(!group){group=new THREE.Group();group.name=key;group.userData.batches=[];sectors.set(key,group)}model.traverse(m=>{if(!m.isMesh||m.isSkinnedMesh)return;const geometries=lodCache.levels(m.geometry),matrices=list.map(o=>new THREE.Matrix4().multiplyMatrices(o.m,m.matrixWorld));group.userData.batches.push({geometries,material:m.material,matrices})})}
     const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());
     if(size.x>.1&&size.y>.25&&size.z>.1){for(const o of arr){
      const wb=box.clone().applyMatrix4(o.m).applyMatrix4(worldMatrix);if(wb.max.y-wb.min.y>.45){const kx=Math.floor((wb.min.x+wb.max.x)/2/8),kz=Math.floor((wb.min.z+wb.max.z)/2/8);for(let ix=Math.floor(wb.min.x/8);ix<=Math.floor(wb.max.x/8);ix++)for(let iz=Math.floor(wb.min.z/8);iz<=Math.floor(wb.max.z/8);iz++){const key=ix+','+iz;if(!boxBuckets.has(key))boxBuckets.set(key,[]);boxBuckets.get(key).push(wb)}}
      if(!/building-|castle|wall-|fence-|rock-|tower|barracks|lumbermill|windmill|watermill/.test(id))continue;
-     const g=new THREE.BoxGeometry(size.x*.90,size.y*.94,size.z*.90).translate(ctr.x,ctr.y,ctr.z).applyMatrix4(o.m).applyMatrix4(worldMatrix).toNonIndexed();const pos=g.getAttribute('position').array,key=Math.floor(o.q.x/60)+','+Math.floor(o.q.z/60);if(!chunk.has(key))chunk.set(key,[]);chunk.get(key).push(...pos);g.dispose();
+     const key=Math.floor(o.q.x/60)+','+Math.floor(o.q.z/60);if(!chunk.has(key))chunk.set(key,[]);const dest=chunk.get(key),transform=new THREE.Matrix4().multiplyMatrices(worldMatrix,o.m),corners=[];for(let v=0;v<8;v++)corners.push(new THREE.Vector3(ctr.x+(v&1?1:-1)*size.x*.45,ctr.y+(v&2?1:-1)*size.y*.47,ctr.z+(v&4?1:-1)*size.z*.45).applyMatrix4(transform));for(const v of [0,2,1,1,2,3,4,5,6,5,7,6,0,1,4,1,5,4,2,6,3,3,6,7,0,4,2,2,4,6,1,3,5,3,7,5]){const q=corners[v];dest.push(q.x,q.y,q.z)}
     }}
    }
 
@@ -93,7 +98,7 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
    if(!spawn)throw Error('No se encontró llegada segura cerca del gremio');
    clear();root.add(integrated.group,tmp);if(guild){const c=document.createElement('canvas');c.width=768;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#221b35';ctx.fillRect(0,0,768,160);ctx.fillStyle='#ffe4a1';ctx.font='bold 50px sans-serif';ctx.textAlign='center';ctx.fillText('GREMIO DE AVENTUREROS',384,100);const tex=new THREE.CanvasTexture(c),label=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthWrite:false}));const x=p.x+(board?.[0]??guild.x)*p.scale,z=p.z+(board?.[2]??guild.z)*p.scale;label.position.set(x,integrated.gridHeight(x,z)+3.2,z);label.scale.set(7,1.46,1);label.userData.ownMaterial=true;root.add(label)}active={p,d,integrated,spawn,qaCenter,tmp,sectors,nativeForest:forest?.impMaterial?mountRegionForest(forest,integrated.plants):null,collisionChunks:new Map([...chunk].map(([key,pos])=>[key,{pos,solid:null}])),geom,visible:0};fusion.activate(p);clipTerrain(p);clipWater(p);
    if(structure)register(structure);syncSectors(warp?spawn.x:game.player.pos.x,warp?spawn.z:game.player.pos.z,true);
-   root.updateMatrixWorld(true);if(warp)travel(spawn.x,spawn.z,spawn.y,spawn.yaw);loadMs=performance.now()-started;
+   if(active.nativeForest)forest.group.traverse(m=>{if(m.isMesh&&!m.userData.hfInstrumented){m.userData.hfInstrumented=true;if(m.geometry?.isInstancedBufferGeometry&&m.geometry.getAttribute('iTree')&&m.material===forest.impMaterial&&m.geometry.instanceCount>0)instrument(m,'forest')}});root.updateMatrixWorld(true);if(warp)travel(spawn.x,spawn.z,spawn.y,spawn.yaw);loadMs=performance.now()-started;
    say('Región '+seed+' · llegada exterior · '+d.pieces.length+' piezas fuente · colisión experimental');panel.style.display='none';
   }catch(e){say('Error: '+e.message);console.error(e)}finally{setBusy(false)}
  }
@@ -101,5 +106,5 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  button('Inicio original',()=>{if(busy||game.state!=='playing')return;clear();const h=game.sites?.spawn??{x:-519,z:-70,y:game.world.floorBelow(-519,nativeHeight(-519,-70)+25,-70,35)};travel(h.x,h.z,h.y);panel.style.display='none'});
  button('FPS completo',()=>{globalThis.__hfP508Clock?.setDiagnostics('full');panel.style.display='none'});button('FPS mini',()=>{globalThis.__hfP508Clock?.setDiagnostics('mini');panel.style.display='none'});button('Ocultar FPS',()=>{globalThis.__hfP508Clock?.setDiagnostics('hidden');panel.style.display='none'});
  pipe.onBeforeScene.push(()=>{if(active&&!busy)syncSectors(game.player.pos.x,game.player.pos.z);const now=performance.now();if(now-lastCheck<900||busy||game.state!=='playing')return;lastCheck=now;const {x,z}=game.player.pos;const p=placement.placements.find(q=>inBounds(q,x,z,80));if(p&&active?.p.seed!==p.seed)open(p.seed,false);else if(active&&!inBounds(active.p,x,z,180))clear()});
- return {open,clear,qaJumpCenter:()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1'||!active?.qaCenter||busy)return false;const t=active.qaCenter;travel(t.x,t.z,t.y,t.yaw);return true},metrics:()=>({seed:active?.p.seed??null,visible:active?.visible??0,total:active?.sectors.size??0,solids:solids.length,busy,loadMs,forest:active?.nativeForest?{trees:active.nativeForest.trees,shrubs:active.nativeForest.shrubs,impostorBlocks:active.nativeForest.impostorBlocks}:null,spawn:active?.spawn??null,opaque:globalThis.__hfP557Opaque??null}),get active(){return active?.p.seed??null},get busy(){return busy},regions:placement.placements};
+ return {open,clear,qaJumpCenter:()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1'||!active?.qaCenter||busy)return false;const t=active.qaCenter;travel(t.x,t.z,t.y,t.yaw);return true},metrics:()=>({seed:active?.p.seed??null,visible:active?.visible??0,total:active?.sectors.size??0,solids:solids.length,busy,loadMs,lod:lodCache.metrics(),levels:active?.levels??[],materialized:active?.materialized??0,forest:active?.nativeForest?{trees:active.nativeForest.trees,shrubs:active.nativeForest.shrubs,impostorBlocks:active.nativeForest.impostorBlocks}:null,spawn:active?.spawn??null,opaque:globalThis.__hfP557Opaque??null}),get active(){return active?.p.seed??null},get busy(){return busy},regions:placement.placements};
 }
