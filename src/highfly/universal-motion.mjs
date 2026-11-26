@@ -11,7 +11,7 @@ import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
 import {allowTerrainTraverse,wallRunEligible,WALL_RUN,terrainWallContact,allowCliffCapsule,walkableBuiltFloor} from './wall-physics.mjs';
-import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES} from './professions.mjs';
+import {professionState,findProfessionTarget,prepareProfession,commitProfession,advanceCrops,PROFESSION_RULES,STARTER_TOOLS} from './professions.mjs';
 export const MOTION={
   secondJumpSpeed:7.58,secondJumpCost:9,secondJumpBuffer:.17,
   minAirBeforeSecond:.095,mantleTime:.42,
@@ -192,7 +192,7 @@ function beginCliffDescent(p){
 function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
 function stepPhoenix(p,dt,input,yaw){
  if(p.stamina<=0||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
- const mode=airMode(input,p._hfGlide??={},dt),cfg=AIR_MODES[mode],v=phoenixVelocity(p.vel,input.move,yaw,dt,mode),before=p.pos.clone();p._hfGlide.mode=mode;
+ const mode=airMode(input,p._hfGlide??={},dt),cfg=AIR_MODES[mode],v=phoenixVelocity(p.vel,input.move,yaw,dt,mode,p._hfCameraPitch??0),before=p.pos.clone();p._hfGlide.mode=mode;p._hfGlide.pitch=Math.atan2(-v.y,Math.max(.1,Math.hypot(v.x,v.z)));
  p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
  // Do not allow the native capsule to snap up a cliff face while gliding.
  const ahead={x:p.pos.x+v.x*dt,z:p.pos.z+v.z*dt};
@@ -200,7 +200,7 @@ function stepPhoenix(p,dt,input,yaw){
  if(Number.isFinite(h)&&h>p.pos.y+.18){p.vel.x=0;p.vel.z=0;}
  if(v.y>=-PHOENIX.safeImpact)p.fallStart=p.pos.y;
  p._integrate(dt);
- p.stamina=Math.max(0,p.stamina-cfg.cost*dt);p.staminaWait=.65;
+ const actualDescent=Math.max(0,before.y-p.pos.y);p.stamina=clamp(p.stamina-(cfg.cost<0?(actualDescent>.05?cfg.cost:0):cfg.cost)*dt,0,p.staminaMax);p.staminaWait=.65;
  p.invulnerable=Math.max(0,(p.invulnerable??0)-dt);p.stateTime+=dt;
  if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z);p.yaw+=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw))*Math.min(1,dt*7);}
  const water=p.world.waterLevel(p.pos.x,p.pos.z);
@@ -276,11 +276,11 @@ export function workTarget(p,kind){
 }
 function startAction(p,name){
  const cfg=ACTIONS[name];if(!cfg)return;
- const target=cfg.kind==='work'?workTarget(p,name):null;
+ if(name==='fishing')globalThis.__hfP555Regions?.ensureFishing?.(p);const target=cfg.kind==='work'?workTarget(p,name):null;
  let job=null;
  if(PROFESSION_RULES[name]&&target?.id){
    const prep=prepareProfession(p._hfProfession,p.world,name,p.pos,p.yaw);
-   if(!prep.ok){p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
+   if(!prep.ok){p._hfFeedback?.(prep.reason==='missing-tool'?'Falta la herramienta necesaria':'Recurso no disponible');p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
    job=prep.job;
  }else if(PROFESSION_RULES[name]){
    p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
@@ -387,6 +387,8 @@ export function installHighflyUniversalMotion(p){
     JSON.stringify({inventory:this._hfProfession.inventory,tools:[...this._hfProfession.tools]}));}catch{}
  };
  p._hfProfessionLoad();
+ try{if(localStorage.getItem('highfly-starter-tools-v1')!=='1'){for(const k of STARTER_TOOLS)p._hfProfession.tools.add(k);p._hfProfessionSave();localStorage.setItem('highfly-starter-tools-v1','1')}}catch{for(const k of STARTER_TOOLS)p._hfProfession.tools.add(k)}
+ p._hfFeedback=(message)=>{p._hfNotice={message,until:performance.now()+3200}};
  p.setHighflyProgression=function(level=1,verifiedPoints=0){
   this._hfLevel=clamp(Math.trunc(Number(level)||1),1,99);
   this._hfTrainingScore=Math.max(0,Math.trunc(verifiedPoints));
@@ -512,7 +514,7 @@ export function installHighflyUniversalMotion(p){
      if(action.job){
        const finished=commitProfession(this._hfProfession,this.world,action.job);
        this.emit(finished.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{name:action.name,...finished});
-       if(finished.ok)this._hfProfessionSave();
+       if(finished.ok){this._hfProfessionSave();if(finished.product)this._hfFeedback?.('+'+finished.amount+' '+({fish:'Pescado',wood:'Madera',stone:'Piedra'}[finished.product]??finished.product)+' · Inventario')}else this._hfFeedback?.('Recurso no disponible');
      }
      this._hfAction=null;this.setState('move');
      this.emit('highflyActionEnd',{name:action.name,completed:!!action.job});

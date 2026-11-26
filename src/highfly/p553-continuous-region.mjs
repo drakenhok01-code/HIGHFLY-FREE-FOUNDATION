@@ -54,7 +54,7 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
    for(const c of chunks.values()){const m=mesh(c.v,null,material,null,depths?c.d:null);if(material===waterMat&&options.nativeMaterials)m.userData.regionWater=true;group.add(m)}
   }
   addSurfaceTriangles(water,waterMat,depth);
-  const path=[];for(let i=0;i<d.paths.length;i+=3){const x=p.x+d.paths[i]*S,z=p.z+d.paths[i+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[i+1]*S;const w=sampler.walkwayAt(d.paths[i],d.paths[i+2]);path.push(x,w||q.water>.30?y:q.y+.055,z)}
+  const path=[];const roadHeight=(x,z)=>{const u=Math.max(0,Math.min(nx-.00001,(x-b.minX)/(b.maxX-b.minX)*nx)),v=Math.max(0,Math.min(nz-.00001,(z-b.minZ)/(b.maxZ-b.minZ)*nz)),i=Math.floor(u),j=Math.floor(v),a=u-i,c=v-j,k=j*(nx+1)+i,h=n=>pos[n*3+1];return a+c<=1?h(k)+(h(k+1)-h(k))*a+(h(k+nx+1)-h(k))*c:h(k+nx+2)+(h(k+nx+1)-h(k+nx+2))*(1-a)+(h(k+1)-h(k+nx+2))*(1-c)};for(let i=0;i<d.paths.length;i+=3){const x=p.x+d.paths[i]*S,z=p.z+d.paths[i+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[i+1]*S;const w=sampler.walkwayAt(d.paths[i],d.paths[i+2]);path.push(x,w||q.water>.30?y:roadHeight(x,z)+.022,z)}
   addSurfaceTriangles(path,road,null);
   // Local species mix based on actual Unsung trees around this site.
   const nearby=(overview?.trees??[]).filter(t=>t[0]>b.minX-150&&t[0]<b.maxX+150&&t[1]>b.minZ-150&&t[1]<b.maxZ+150);

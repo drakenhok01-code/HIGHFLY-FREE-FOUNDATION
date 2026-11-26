@@ -43,7 +43,7 @@ export function installHighflyKayKitPeople(game){
      // skinned child needs an initial world-matrix pass to be visible at once.
      holder.position.set(n.x,n.y,n.z);holder.rotation.y=n.yaw;holder.updateMatrixWorld(true);
      const body=[];model.traverse(m=>{if(m.isSkinnedMesh&&m.visible)body.push(m)});if(body.length<5){holder.removeFromParent();throw Error('Missing styled body meshes '+n.def.id)}
-     const visibility={lastDraw:-Infinity};for(const m of body){const old=m.onAfterRender;m.onAfterRender=function(...args){old?.apply(this,args);visibility.lastDraw=performance.now()}};
+     const visibility={lastDraw:-Infinity};for(const m of body){const old=m.onAfterRender;m.onAfterRender=function(...args){old?.apply(this,args);if(args[1]===pipe.scene)visibility.lastDraw=performance.now()}};
      const mixer=new THREE.AnimationMixer(model);
      const idle=gltf.animations.find(c=>c.name==='Idle');
      const walk=gltf.animations.find(c=>c.name==='Walking_A');
@@ -64,9 +64,9 @@ export function installHighflyKayKitPeople(game){
    // Native visibility is reasserted during people's update, so suppress it
    // AFTER that update; never mutate the original render geometry or its IDs.
    const talking=game.people.talk?.n===a.n;
-   const near=!!p&&(talking||(!game.cine&&distance(a.n,p)<190&&a.n.shown!==false));
+   const near=!!p&&(talking||(!game.cine&&distance(a.n,p)<190&&a.n.shown!==false)||distance(a.n,p)<12);
    a.holder.visible=near;
-   const drawn=performance.now()-a.visibility.lastDraw<1200;
+   const drawn=performance.now()-a.visibility.lastDraw<350&&a.holder.parent===pipe.scene;
    for(const mesh of a.n.meshes)mesh.visible=near&&!drawn;
    if(!near)continue;
    const stance=a.n.moving&&a.n.k>=.9?'walk':'idle';
@@ -82,7 +82,7 @@ export function installHighflyKayKitPeople(game){
   }
   return out;
  };
- const before=()=>{for(const a of actors)if(a.holder.visible)a.holder.updateMatrixWorld(true)};pipe.onBeforeScene.push(before);
+ const before=()=>{for(const a of actors){if(!a.holder.visible)continue;if(a.holder.parent!==pipe.scene)pipe.scene.add(a.holder);a.holder.updateMatrixWorld(true);const missed=performance.now()-a.visibility.lastDraw>=350;for(const m of a.n.meshes)m.visible=missed;if(missed){a.n.root.visible=true;a.n.root.updateMatrixWorld(true)}}};pipe.onBeforeScene.push(before);
  const api={readyPromise,get count(){return actors.length;},get nativeCount(){return native.length;},
   get error(){return issue;},dispose(){
    disposed=true;game.update=prior;const i=pipe.onBeforeScene.indexOf(before);if(i>=0)pipe.onBeforeScene.splice(i,1);

@@ -48,7 +48,7 @@ export function resolveHighflyContext(p){
   if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
      Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};
  }
- if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearBoat?.(p.pos))return {action:'boat_board',label:'TIMÓN'};
+ if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearBoat?.(p.pos))return {action:'boat_board',label:'NAVEGAR'};
  if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearSeat(p.pos,p.yaw))return {action:'seat',label:'SENTAR'};
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
@@ -74,6 +74,7 @@ export function resolveHighflyContext(p){
    if(d<dist&&dx*fx+dz*fz>.1){dist=d;best={action:actions[n.kind][0],label:actions[n.kind][1]};}
  }
  if(best)return best;
+ if(p.grounded&&globalThis.__hfP555Regions?.fishingWater?.(p))return {action:'fishing',label:'PESCAR'};
  if(p.grounded&&p.stamina>3&&descentCandidate(w,p.pos,p.yaw))return {action:'climb',label:'DESCENDER'};
  const wall=typeof w.raycast==='function'?w.raycast(
    {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
@@ -247,7 +248,7 @@ export function attachHighflyTouch(input){
 #hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
 `;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML=hfHud()+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.6.8.2</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
@@ -383,6 +384,7 @@ export function attachHighflyTouch(input){
       e.preventDefault();e.stopPropagation();
     };
     b.addEventListener('pointerdown',e=>{
+      if(globalThis.__game?.player?.state==='hf_glide'){t.airPointer={id:e.pointerId,kind:a};if(a==='dash')t.held.add('dash');else t.pressed.add('dodge');try{b.setPointerCapture(e.pointerId)}catch{}e.preventDefault();e.stopPropagation();return;}
       if(t.abilityPointer)return;
       const r=b.getBoundingClientRect();
       // Fingertip movement defines the aim. A tap anywhere in the button
@@ -396,6 +398,7 @@ export function attachHighflyTouch(input){
     });
     b.addEventListener('pointermove',move);
     const end=e=>{
+      if(t.airPointer?.id===e.pointerId){t.held.delete('dash');t.airPointer=null;e.preventDefault();e.stopPropagation();return;}
       if(t.abilityPointer?.id!==e.pointerId||t.abilityPointer?.kind!==a)return;
       move(e);
       t.abilityAim[a]=t.abilityPointer.vector; // null means tap/fallback joystick
@@ -404,6 +407,7 @@ export function attachHighflyTouch(input){
       e.preventDefault();e.stopPropagation();
     };
     const cancel=e=>{
+      if(t.airPointer?.id===e.pointerId){t.held.delete('dash');t.airPointer=null;return;}
       if(t.abilityPointer?.id!==e.pointerId)return;
       t.abilityPointer=null;if(t.aimOverlay)t.aimOverlay.dataset.active='0';
     };
@@ -437,7 +441,7 @@ export function attachHighflyTouch(input){
      if(action&&skillReady(p,action))t.pressed.add(action);
      return;
    }
-   const chosen=a==='context'?t.contextAction:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
+   const chosen=a==='context'?resolveHighflyContext(globalThis.__game?.player).action:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
    if(a==='sprint'){
     t.sprintOn=!t.sprintOn;
     b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
@@ -554,8 +558,9 @@ export function applyHighflyTouch(input){
    t.contextButton.textContent=context.label;
    t.contextButton.setAttribute('aria-label',context.label);
  }
+ const notice=t.root.querySelector('.hf-work-notice');if(notice){notice.hidden=!(p?._hfNotice?.until>performance.now());if(!notice.hidden)notice.textContent=p._hfNotice.message;}
  const cd=globalThis.__game?.player?._hfDashCd??0;
- if(t.dashButton){t.dashButton.textContent=cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=t.dashButton.dataset.hfOpacity??'.70';t.dashButton.style.filter=cd>.05?'grayscale(.3) brightness(.82)':'';}
+ if(t.dashButton){t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':cd>.05?'DASH '+cd.toFixed(1):'DASH';t.dashButton.style.opacity=t.dashButton.dataset.hfOpacity??'.70';t.dashButton.style.filter=cd>.05?'grayscale(.3) brightness(.82)':'';}
  for(const bar of vitalSnapshot(globalThis.__game?.player)){
   const el=t.resources?.[bar.id];if(!el)continue;
   const fill=el.querySelector('.hf-fill'),num=el.querySelector('.hf-number');

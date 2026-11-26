@@ -308,7 +308,7 @@ export class KayKitFreeHero {
      applyUALPose(this,'ClimbUp_1m',Math.min(.66,p.stateTime*.95),.88);
    }
    // One actor transform driven exclusively by Unsung Player; no root-motion.
-   this.actor.position.set(p.pos.x,(p.viewY??p.pos.y)-(p.state==='hf_seated'?(this.clips.has('Sit_Chair_Idle')?.46:.13):0),p.pos.z);
+   this.actor.position.set(p.pos.x,(p.viewY??p.pos.y)-(p.state==='hf_seated'?(p._hfSeat?.model==='kaykit-dungeon/stool'?.48:.50):0),p.pos.z);
    this.actor.rotation.y=p.yaw;this.phoenixWings.update(dt,p.state==='hf_glide',p.stateTime??0);
    const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
    const eased=k*k*(3-2*k);
@@ -324,6 +324,7 @@ export class KayKitFreeHero {
      // Shoulder and head no longer inherit the 66-degree unstable body flip.
      this._swimBlend*THREE.MathUtils.clamp(
        p._hfDive?1.04-(p._hfCameraPitch??0)*.35:1.07,.55,1.40);
+   const airborne=p.state==='hf_glide';const aim=airborne?THREE.MathUtils.clamp(Math.PI/2+(p._hfGlide?.pitch??0),.35,2.5):0;this._flightBlend=(this._flightBlend??0)+(aim-(this._flightBlend??0))*(1-Math.exp(-8*dt));if(airborne||Math.abs(this._flightBlend)>.02){this.rollPivot.rotation.x+=this._flightBlend;this.phoenixWings.root.rotation.x=.15+this._flightBlend*.78;}
    this.rollPivot.rotation.z=p.state==='roll'?
      (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
    this.offset.scale.y=1-.43*tuck;
@@ -331,6 +332,7 @@ export class KayKitFreeHero {
    // No head correction quaternion: KayKit's stylized mirrored rig turned
    // previous compensators into 180-degree flips. UAL1 controls the strokes.
    this.actor.updateMatrixWorld(true);
+   if(p.state==='hf_seated'&&p._hfSeat){const hip=this._bone('hips')??this._bone('pelvis');if(hip){const hp=hip.getWorldPosition(new THREE.Vector3());const dy=THREE.MathUtils.clamp(p._hfSeat.y+.09-hp.y,-.24,.24);this.actor.position.y+=dy;this.actor.updateMatrixWorld(true)}}
    this._applyDirectedAttack(p);
    // Skinning uses the original GPU bone shader; no CPU geometry copies.
    const rightBlade=this.sword??this.extraWeapons?.get(this.weaponMode?.external);
