@@ -1,4 +1,4 @@
-import {paintCartographicBackdrop} from './p494-cartographic-map.mjs';
+import {paintCartographicBackdrop,paintP564Atlas} from './p494-cartographic-map.mjs';
 /** HIGHFLY P4.9.2: small live HUD radar.
  * Uses real-world X/Z, live Unsung enemies/NPCs and P4.9 hunt state.
  * No fictitious pins, no teleport and no substitute for native world map.
@@ -27,6 +27,8 @@ export function collectHighflyRadarTargets(game){
   if(n?.awake)targets.push({id:'unsung:'+q.id,x:n.x,z:n.z,
    label:'NPC '+n.def.name,detail:'Entregar · '+q.title,kind:'quest'});
  }
+ for(const n of Object.values(game?.strings?.nodes??{}))if(finite(n.x)&&finite(n.z))targets.push({id:'pylon:'+n.id,x:n.x,z:n.z,label:'Faro '+n.id,detail:'Estación de Cuerdas de Luz',kind:'pylon'});
+ const regions=globalThis.__hfP555Regions;for(const q of regions?.regions??[])targets.push({id:'region:'+q.seed,x:q.x,z:q.z,label:'Región '+q.seed,detail:'Exploración libre',kind:'region'});
  const spires=game?.spires??[];
  const next=spires.find(s=>!s.tuned);
  if(next&&finite(next.x)&&finite(next.z))
@@ -61,17 +63,17 @@ export function installHighflyRadar(input,t){
   draw();
  };
  // Tap opens the real-world map instead of silently switching quest.
- let modal=null,largeCanvas=null,mapCaption=null;
+ let modal=null,largeCanvas=null,mapCaption=null,mapScale=.28;
  const openMap=()=>{
   if(modal)return;
   modal=document.createElement('div');modal.id='hf-p493-radar-modal';
   modal.innerHTML='<section class="hf-map-sheet" role="dialog" aria-modal="true" aria-label="Mapa de Aetheria">'+
-   '<header><b>✦ AETHERIA · MAPA DE EXPLORACIÓN</b><button data-close>✕ CERRAR</button></header>'+
+   '<header><b>✦ AETHERIA · MAPA DE EXPLORACIÓN</b><button data-in>+</button><button data-out>−</button><button data-close>✕ CERRAR</button></header>'+
    '<canvas width="672" height="286" aria-label="Mapa local de terreno con posición, NPC y misiones"></canvas>'+
    '<div class="hf-map-caption">El triángulo cian indica tu posición; tocá un marcador para fijar el objetivo.</div></section>';
   document.body.appendChild(modal);largeCanvas=modal.querySelector('canvas');
   mapCaption=modal.querySelector('.hf-map-caption');
-  modal.querySelector('[data-close]').addEventListener('click',closeMap);
+  modal.querySelector('[data-close]').addEventListener('click',closeMap);modal.querySelector('[data-in]').onclick=()=>{mapScale=Math.min(.95,mapScale*1.5);renderMap()};modal.querySelector('[data-out]').onclick=()=>{mapScale=Math.max(.035,mapScale/1.5);renderMap()};
   modal.addEventListener('click',e=>{if(e.target===modal)closeMap();});
   largeCanvas.addEventListener('click',e=>{
    const rect=largeCanvas.getBoundingClientRect(),g=globalThis.__game,p=g?.player?.pos;
@@ -79,7 +81,7 @@ export function installHighflyRadar(input,t){
    const x=(e.clientX-rect.left)*672/rect.width,y=(e.clientY-rect.top)*286/rect.height;
    let best=null,dd=22*22;
    for(const q of collectHighflyRadarTargets(g)){
-    const px=336+(q.x-p.x)*.28,py=143+(q.z-p.z)*.28,d=(px-x)**2+(py-y)**2;
+    const px=336+(q.x-p.x)*mapScale,py=143+(q.z-p.z)*mapScale,d=(px-x)**2+(py-y)**2;
     if(d<dd){best=q;dd=d;}
    }
    if(best){targetId=best.id;try{localStorage.setItem('hf-p492-radar-target',targetId);}catch{}}
@@ -92,14 +94,14 @@ export function installHighflyRadar(input,t){
  function renderMap(){
   const g=globalThis.__game,p=g?.player?.pos,c=largeCanvas,ctx=c?.getContext('2d');
   if(!ctx||!p)return;
-  const W=c.width,H=c.height,scale=.28,terrain=g.world;
-  paintCartographicBackdrop(ctx,g,W,H,scale);
+  const W=c.width,H=c.height,scale=mapScale,terrain=g.world;
+  paintP564Atlas(ctx,g,W,H,scale);
   const points=[...collectHighflyRadarTargets(g)];
   for(const n of g.people?.list??[])if(n.awake)points.push({x:n.x,z:n.z,label:n.def.name,kind:'npc',id:'npc:'+n.def.id});
   for(const q of points){
    const x=W/2+(q.x-p.x)*scale,y=H/2+(q.z-p.z)*scale;
    if(x<6||y<6||x>W-6||y>H-6)continue;
-   dot(ctx,x,y,q.id===targetId?7:4,q.kind==='quest'?'#d9a4ff':q.kind==='npc'?'#a3cdf8':'#eacd82');
+   dot(ctx,x,y,q.id===targetId?7:4,q.kind==='quest'?'#d9a4ff':q.kind==='npc'?'#a3cdf8':q.kind==='region'?'#9ce0b2':'#eacd82');
    if(q.id===targetId){ctx.fillStyle='#ffffff';ctx.font='bold 13px system-ui';ctx.fillText(q.label,x+9,y-7);}
   }
   ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI-(g.rig?.yaw??0));
@@ -117,7 +119,7 @@ export function installHighflyRadar(input,t){
   ctx.clearRect(0,0,w,h);
   ctx.save();ctx.translate(cx,cy);
   ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.clip();
-  ctx.fillStyle='#101729';ctx.fillRect(-r,-r,r*2,r*2);
+  ctx.fillStyle='#101729';ctx.fillRect(-r,-r,r*2,r*2);ctx.save();ctx.translate(-r,-r);paintP564Atlas(ctx,g,r*2,r*2,r/RANGE);ctx.restore();
   ctx.strokeStyle='#43536b';ctx.lineWidth=1;
   for(const circle of [r/3,r*2/3]){ctx.beginPath();ctx.arc(0,0,circle,0,TAU);ctx.stroke();}
   ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();
@@ -137,9 +139,10 @@ export function installHighflyRadar(input,t){
    const q=radarProject(p,spot.npc);dot(ctx,q.x,q.y,4,'#b78bff');
   }
   const targets=collectHighflyRadarTargets(g);
+  for(const t of targets)if((t.kind==='pylon'||t.kind==='region')&&dist(t,p)<=RANGE){const q=radarProject(p,t);dot(ctx,q.x,q.y,4,t.kind==='pylon'?'#f3d479':'#9ce0b2')}
   let chosen=targets.find(o=>o.id===targetId);
   if(!chosen){
-   chosen=targets.reduce((best,item)=>!best||dist(item,p)<dist(best,p)?item:best,null);
+   chosen=targets.filter(q=>q.kind==='quest'||q.kind==='story').reduce((best,item)=>!best||dist(item,p)<dist(best,p)?item:best,null);
    targetId=chosen?.id??null;
   }
   if(chosen){
