@@ -24,7 +24,7 @@ export async function createLODCache(){
      if(simplified.length>=12&&simplified.length<count*.92&&err<=error*1.01){
       const geo=new THREE.BufferGeometry(),map=new Map(),used=[];for(let i=0;i<simplified.length;i++){const old=simplified[i];if(!map.has(old)){map.set(old,used.length);used.push(old)}simplified[i]=map.get(old)}
       for(const [name,attr] of Object.entries(g.attributes)){const size=attr.itemSize,values=new Float32Array(used.length*size);for(let i=0;i<used.length;i++)for(let k=0;k<size;k++)values[i*size+k]=attr.getComponent?attr.getComponent(used[i],k):attr[['getX','getY','getZ','getW'][k]](used[i]);geo.setAttribute(name,new THREE.BufferAttribute(values,size))}
-      geo.setIndex(new THREE.BufferAttribute(used.length<=65535?new Uint16Array(simplified):simplified,1));geo.boundingBox=g.boundingBox?.clone()??null;geo.boundingSphere=g.boundingSphere?.clone()??null;
+      geo.setIndex(new THREE.BufferAttribute(used.length<=65535?new Uint16Array(simplified):simplified,1));if(g.groups.length===1)geo.addGroup(0,simplified.length,g.groups[0].materialIndex);geo.boundingBox=g.boundingBox?.clone()??null;geo.boundingSphere=g.boundingSphere?.clone()??null;
       if(!geo.boundingSphere)geo.computeBoundingSphere();owned.add(geo);out[level]=geo;generated++;
      }else out[level]=out[level-1];
     }catch(e){out[level]=out[level-1];console.warn('P558 simplifier fallback',e.message)}
