@@ -10,6 +10,7 @@ export const P495_STAIR=Object.freeze({id:'petal-cantor',x:-118,z:-459,
 const finite=Number.isFinite;
 export function p495StairTread(world,x,z,yFrom=Infinity){
  if(!world||!finite(x)||!finite(z))return null;
+ const regional=finite(yFrom)?world.hfRegionWalkway?.({x,y:yFrom,z}):null;if(regional?.kind==='stairs')return {id:'regional-stairs',x,z,y:regional.y};
  const s=P495_STAIR;
  // The flight points toward world -X; centreline fixed in the native site.
  const along=s.x-x,cross=z-s.z;
@@ -33,5 +34,5 @@ export function p495StairTraverse(world,a,b){
  if(!a||!b)return false;
  const p=p495StairTread(world,a.x,a.z,a.y),
        q=p495StairTread(world,b.x,b.z,b.y);
- return !!p&&!!q&&Math.abs(a.y-p.y)<.95&&Math.abs(b.y-q.y)<1.15;
+ return !!p&&!!q&&p.id===q.id&&Math.abs(a.y-p.y)<.95&&Math.abs(b.y-q.y)<1.15;
 }
