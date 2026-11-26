@@ -29,6 +29,13 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  const clipTerrain=clipMaterial(terrain.material),clipWater=clipMaterial(water.material);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),ktx=new KTX2Loader().setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/').detectSupport(pipe.renderer);loader.setKTX2Loader(ktx);
  const assets=new Map(audit.assets.map(a=>[a.id,a])),models=new Map(),placements=new Map(placement.placements.map(p=>[p.seed,p]));
+ // P561: reuse the original Strings of Light pylons, not urban teleport targets.
+ const edgeDistance=(p,x,z)=>Math.hypot(Math.max(p.bounds.minX-x,0,x-p.bounds.maxX),Math.max(p.bounds.minZ-z,0,z-p.bounds.maxZ));
+ const beacons=Object.values(game.strings?.nodes??{}).filter(n=>n.id!=='dawn');
+ if(beacons.length!==8)throw Error('P561 expected eight native destination pylons');
+ const beaconMap=new Map(placement.placements.map(p=>{const n=[...beacons].sort((a,b)=>edgeDistance(p,a.x,a.z)-edgeDistance(p,b.x,b.z)||Math.hypot(p.x-a.x,p.z-a.z)-Math.hypot(p.x-b.x,p.z-b.z))[0];return [p.seed,{id:n.id,x:n.x,z:n.z,edgeMetres:Math.round(edgeDistance(p,n.x,n.z)),centerMetres:Math.round(Math.hypot(p.x-n.x,p.z-n.z))}]}));
+ const regionData=new Map();const fetchRegion=seed=>{if(!regionData.has(seed))regionData.set(seed,get('island-'+seed+'.json').catch(e=>{regionData.delete(seed);throw e}));return regionData.get(seed)};
+ let destination=null,beaconArrival=null;
  const lodCache=await createLODCache();
  const load=id=>{if(!models.has(id)){const a=assets.get(id);if(!a)throw Error('Missing '+id);models.set(id,loader.loadAsync(DIR+a.path).then(x=>x.scene).catch(e=>{models.delete(id);throw e}))}return models.get(id)};
  let active=null,busy=false,lastCheck=0,solids=[],lastSector=0;let loadMs=0,opaqueParts=null,collect=false;const drawStats=()=>({calls:0,triangles:0});
@@ -68,7 +75,7 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  async function open(seed,warp=false){
   if(busy||game.state!=='playing')return;if(active?.p.seed===seed){if(warp)travel(active.spawn.x,active.spawn.z,active.spawn.y,active.spawn.yaw);return}
   setBusy(true);const started=performance.now();say('Cargando región '+seed+'…');try{
-   const p=placements.get(seed),d=await get('island-'+seed+'.json');if(!p)throw Error('No placement');
+   const p=placements.get(seed),d=await fetchRegion(seed);if(!p)throw Error('No placement');
    const integrated=await fusion.buildAsync(d,p,assets,stage=>say('Región '+seed+' · '+stage)),tmp=new THREE.Group();integrated.group.traverse(m=>{if(m.isMesh)instrument(m,'terrain')});tmp.position.set(p.x,p.base,p.z);tmp.scale.setScalar(p.scale);
    const by=new Map();for(const q of d.pieces){if(treeId(q.piece)||shrubId(q.piece)||q.piece==='kenney-nature/ground-river-straight')continue;if(!by.has(q.piece))by.set(q.piece,[]);by.get(q.piece).push(q)}
    const ids=[...by.keys()];for(let i=0;i<ids.length;i+=8){await Promise.all(ids.slice(i,i+8).map(load));await new Promise(resolve=>setTimeout(resolve,0))}
@@ -103,9 +110,41 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
    say('Región '+seed+' · llegada exterior · '+d.pieces.length+' piezas fuente · colisión experimental');panel.style.display='none';
   }catch(e){say('Error: '+e.message);console.error(e)}finally{setBusy(false)}
  }
- for(const p of placement.placements.sort((a,b)=>a.seed-b.seed))button('Isla '+p.seed+' · '+REGION_THEMES[p.seed],()=>open(p.seed,true));
- button('Inicio original',()=>{if(busy||game.state!=='playing')return;clear();const h=game.sites?.spawn??{x:-519,z:-70,y:game.world.floorBelow(-519,nativeHeight(-519,-70)+25,-70,35)};travel(h.x,h.z,h.y);panel.style.display='none'});
+ // Diagnostic shortcut: land on the existing pylon, no city geometry mounted by the warp.
+ function travelToBeacon(seed){
+  if(busy||game.state!=='playing'||game.strings?.ride)return false;
+  const b=beaconMap.get(seed),p=placements.get(seed),node=b&&game.strings.nodes[b.id];if(!node||!p)return false;
+  const yaw=Math.atan2(p.x-node.x,p.z-node.z);
+  // Native Strings landing method: stream nearby collision, sample floor and reject large height differences.
+  const tries=[[node.x+Math.sin(yaw)*2.6,node.z+Math.cos(yaw)*2.6],[node.x-Math.sin(yaw)*2.6,node.z-Math.cos(yaw)*2.6],[node.x,node.z]];
+  let land=null;
+  for(const [x,z] of tries){game.world.stream(x,z,6);const y=game.world.floorBelow(x,node.y+2.5,z,8);if(Number.isFinite(y)&&Math.abs(y-node.y)<=3){land={x,z,y};break}}
+  if(!land){say('No se encontró suelo seguro en '+node.id);return false}
+  clear();destination=seed;beaconArrival={seed,id:node.id,...land,edgeMetres:b.edgeMetres,centerMetres:b.centerMetres};
+  travel(land.x,land.z,land.y,yaw);
+  game.checkpoint={x:land.x,y:land.y+.12,z:land.z,yaw};
+  // Prefetch only destination JSON here; full region preparation is triggered by proximity.
+  fetchRegion(seed).catch(e=>console.warn('P561 prefetch',e.message));
+  say('Faro '+node.id+' · destino isla '+seed+' · '+b.edgeMetres+' m al límite');panel.style.display='none';
+  return true;
+ }
+ const nav=document.createElement('div');nav.id='hf-p561-destination';nav.style.cssText='display:none;position:fixed;top:25px;left:44%;max-width:30vw;z-index:99970;pointer-events:none;color:#eee3ff;background:#161327b8;border-radius:5px;padding:3px 5px;font:10px system-ui';document.body.append(nav);
+ for(const p of placement.placements.sort((a,b)=>a.seed-b.seed)){const b=beaconMap.get(p.seed);button('Isla '+p.seed+' · Faro '+b.id+' ('+b.edgeMetres+' m)',()=>travelToBeacon(p.seed))}
+
+ button('Inicio original',()=>{if(busy||game.state!=='playing')return;clear();destination=null;beaconArrival=null;nav.style.display='none';const h=game.sites?.spawn??{x:-519,z:-70,y:game.world.floorBelow(-519,nativeHeight(-519,-70)+25,-70,35)};travel(h.x,h.z,h.y);panel.style.display='none'});
  button('FPS completo',()=>{globalThis.__hfP508Clock?.setDiagnostics('full');panel.style.display='none'});button('FPS mini',()=>{globalThis.__hfP508Clock?.setDiagnostics('mini');panel.style.display='none'});button('Ocultar FPS',()=>{globalThis.__hfP508Clock?.setDiagnostics('hidden');panel.style.display='none'});
- pipe.onBeforeScene.push(()=>{if(active&&!busy)syncSectors(game.player.pos.x,game.player.pos.z);const now=performance.now();if(now-lastCheck<900||busy||game.state!=='playing')return;lastCheck=now;const {x,z}=game.player.pos;const p=placement.placements.find(q=>inBounds(q,x,z,80));if(p&&active?.p.seed!==p.seed)open(p.seed,false);else if(active&&!inBounds(active.p,x,z,180))clear()});
- return {open,clear,qaJumpCenter:()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1'||!active?.qaCenter||busy)return false;const t=active.qaCenter;travel(t.x,t.z,t.y,t.yaw);return true},metrics:()=>({seed:active?.p.seed??null,visible:active?.visible??0,total:active?.sectors.size??0,solids:solids.length,busy,loadMs,lod:lodCache.metrics(),levels:active?.levels??[],materialized:active?.materialized??0,queued:active?.queued??0,vegetationDensity:active?.integrated.stats.density??null,nativeTreesInsideBeforeMount:active?.nativePreexisting??null,forest:active?.nativeForest?{trees:active.nativeForest.trees,shrubs:active.nativeForest.shrubs,impostorBlocks:active.nativeForest.impostorBlocks}:null,spawn:active?.spawn??null,opaque:globalThis.__hfP557Opaque??null}),get active(){return active?.p.seed??null},get busy(){return busy},regions:placement.placements};
+ pipe.onBeforeScene.push(()=>{
+  if(active&&!busy)syncSectors(game.player.pos.x,game.player.pos.z);
+  const now=performance.now();if(now-lastCheck<900||game.state!=='playing')return;lastCheck=now;
+  const {x,z}=game.player.pos;
+  if(destination){const p=placements.get(destination),d=edgeDistance(p,x,z),angle=Math.atan2(p.x-x,p.z-z),relative=(angle-game.rig.yaw+Math.PI*3)%(Math.PI*2)-Math.PI;const arrow=Math.abs(relative)<Math.PI/4?'↑':Math.abs(relative)>Math.PI*.75?'↓':relative>0?'→':'←';nav.style.display=d>0?'block':'none';nav.textContent=arrow+' Isla '+destination+' · '+Math.round(d)+' m'+(busy?' · preparando':'');}
+  if(busy)return;
+  // Begin ahead of the region, retain the current region while crossing it.
+  if(active&&edgeDistance(active.p,x,z)<100)return;
+  const nearby=[...placements.values()].map(p=>({p,d:edgeDistance(p,x,z)})).filter(o=>o.d<=600).sort((a,b)=>a.d-b.d);
+  const best=nearby[0]?.p;
+  if(best&&active?.p.seed!==best.seed){open(best.seed,false);return}
+  if(active&&edgeDistance(active.p,x,z)>850)clear();
+ });
+ return {open,clear,travelToBeacon,beacons:Object.fromEntries(beaconMap),get beaconArrival(){return beaconArrival},qaJumpCenter:()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1'||!active?.qaCenter||busy)return false;const t=active.qaCenter;travel(t.x,t.z,t.y,t.yaw);return true},metrics:()=>({destination,beaconArrival,seed:active?.p.seed??null,visible:active?.visible??0,total:active?.sectors.size??0,solids:solids.length,busy,loadMs,lod:lodCache.metrics(),levels:active?.levels??[],materialized:active?.materialized??0,queued:active?.queued??0,vegetationDensity:active?.integrated.stats.density??null,nativeTreesInsideBeforeMount:active?.nativePreexisting??null,forest:active?.nativeForest?{trees:active.nativeForest.trees,shrubs:active.nativeForest.shrubs,impostorBlocks:active.nativeForest.impostorBlocks}:null,spawn:active?.spawn??null,opaque:globalThis.__hfP557Opaque??null}),get active(){return active?.p.seed??null},get busy(){return busy},regions:placement.placements};
 }
