@@ -1,0 +1,31 @@
+import {chromium} from 'playwright';
+import fs from 'node:fs';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+const page=await browser.newPage({viewport:{width:800,height:375},deviceScaleFactor:1,hasTouch:true,isMobile:true,acceptDownloads:true});
+const errors=[],result={};page.on('pageerror',e=>{errors.push(String(e));console.error('PAGEERROR',String(e))});
+try{
+ await page.goto('http://127.0.0.1:4173/HIGHFLY-FREE-FOUNDATION/preview-p55/?hfqa=1',{waitUntil:'domcontentloaded',timeout:120000});
+ await page.waitForFunction(()=>window.__hfP560Lab,{},{timeout:600000});
+ await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'})});
+ await page.waitForFunction(()=>window.__hfP560Lab.count>=2,{},{timeout:180000});
+ result.initial=await page.evaluate(()=>window.__hfP560Lab.latest);
+ await page.evaluate(async()=>{const api=window.__hfP555Regions;await api.open(6,true);if(api.active!==6)throw Error('Region VI unavailable');if(!api.qaJumpCenter())throw Error('Centre unavailable')});
+ await page.waitForFunction(()=>window.__hfP560Lab.latest?.region===6,{},{timeout:180000});
+ await page.evaluate(()=>window.__hfP560Lab.setProfile('light'));
+ await page.waitForFunction(()=>window.__hfP560Lab.latest?.profile==='light',{},{timeout:180000});
+ result.light=await page.evaluate(()=>({sample:window.__hfP560Lab.latest,soft:window.__pipe.shadows.soft,splits:window.__pipe.shadows.splits}));
+ if(result.light.soft!==false||result.light.splits[1]!==64)throw Error('Shadow switch not applied');
+ await page.evaluate(()=>{const l=window.__hfP560Lab;l.setProfile('normal');l.setMode('hidden')});
+ await page.waitForFunction(()=>window.__hfP560Lab.latest?.profile==='normal',{},{timeout:180000});
+ result.hidden=await page.evaluate(()=>({hidden:getComputedStyle(document.querySelector('#hf-p560-lab')).display==='none',count:window.__hfP560Lab.count,soft:window.__pipe.shadows.soft}));
+ if(!result.hidden.hidden)throw Error('Hidden mode failed');
+ await page.evaluate(()=>window.__hfP560Lab.setMode('mini'));
+ const download=page.waitForEvent('download',{timeout:60000});
+ await page.evaluate(()=>{window.__hfP560Lab.exportData();return true});
+ const file=await download;await file.saveAs('p560-export-smoke.json');
+ const exported=JSON.parse(fs.readFileSync('p560-export-smoke.json','utf8'));result.export={rows:exported.records.length,events:exported.events.length,version:exported.version};
+ if(!exported.records.length||!exported.events.length)throw Error('Export empty');
+ await page.screenshot({path:'p560-mini-smoke.png',timeout:30000});
+ result.ok=true;
+}catch(e){result.ok=false;errors.push(String(e));console.error(e)}finally{await browser.close();result.errors=errors;fs.writeFileSync('p560-smoke.json',JSON.stringify(result,null,2));console.log('HF560_SMOKE '+JSON.stringify(result))}
+if(!result.ok||errors.some(e=>/TypeError|ReferenceError/.test(e)))process.exitCode=1;
