@@ -4,17 +4,9 @@
  */
 import * as THREE from 'three';
 import {makeContinuousRegion} from './p553-continuous-region.mjs';
-import {REGION_THEMES,treeId,shrubId} from './p553-region-sampler.mjs';
+import {REGION_THEMES,treeId,shrubId,guildLocation} from './p553-region-sampler.mjs';
 const DIR='regions/';
-export function guildLocation(d){
- const zone=(d.zones??[]).find(z=>z.kind==='castle')??(d.zones??[]).find(z=>z.kind==='town');
- const own=new Set(zone?.tiles??[]);const candidates=d.tiles.filter(t=>own.has(t.i)&&/great-hall|castle-keep|castle|town-hall/.test(t.prefab??''));
- const board=d.board?.at;
- const priority=t=>/great-hall/.test(t.prefab)?0:/castle-keep|^castle$/.test(t.prefab)?1:2;
- candidates.sort((a,b)=>priority(a)-priority(b)||(board?Math.hypot(a.x-board[0],a.z-board[2])-Math.hypot(b.x-board[0],b.z-board[2]):0));
- const t=candidates[0]??d.tiles.find(t=>t.i===zone?.tile);if(!t)return null;
- return {tile:t.i,prefab:t.prefab,x:t.x,y:t.top,z:t.z,board:board??null};
-}
+
 function guildLabel(d,p,sampler){const g=guildLocation(d);if(!g)return null;const c=document.createElement('canvas');c.width=768;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#221b35';ctx.fillRect(0,0,768,160);ctx.strokeStyle='#dbb45c';ctx.lineWidth=8;ctx.strokeRect(8,8,752,144);ctx.fillStyle='#ffe4a1';ctx.font='bold 50px sans-serif';ctx.textAlign='center';ctx.fillText('GREMIO DE AVENTUREROS',384,100);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const mat=new THREE.SpriteMaterial({map:tex,depthTest:true,depthWrite:false});const sprite=new THREE.Sprite(mat);const x=p.x+(g.board?.[0]??g.x)*p.scale,z=p.z+(g.board?.[2]??g.z)*p.scale;sprite.position.set(x,sampler.sample(x,z).y+3.1,z);sprite.scale.set(7,1.46,1);sprite.userData.guildLabel=true;return sprite;}
 
 const fetchJson=async path=>{const r=await fetch(new URL(DIR+path,location.href));if(!r.ok)throw Error(path+' HTTP '+r.status);return r.json()};
