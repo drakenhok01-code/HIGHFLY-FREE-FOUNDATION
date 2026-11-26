@@ -255,6 +255,7 @@ export class KayKitFreeHero {
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
    else if(p.state==='hf_wallrun'){key='run';} 
    else if(p.state==='hf_glide'){key='jump';}
+   else if(p.state==='hf_seated'){key=this.clips.has('Sit_Chair_Idle')?'raw:Sit_Chair_Idle':'raw:Sit_Floor_Idle';}
    else if(p.state==='hf_climb'){key='idle';} // anchored hands procedurally, not an endless Interact flap
    else if(p.state==='hf_action'&&p._hfAction){
       const cfg=ACTIONS[p._hfAction.name];
@@ -306,7 +307,7 @@ export class KayKitFreeHero {
      applyUALPose(this,'ClimbUp_1m',Math.min(.66,p.stateTime*.95),.88);
    }
    // One actor transform driven exclusively by Unsung Player; no root-motion.
-   this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
+   this.actor.position.set(p.pos.x,(p.viewY??p.pos.y)-(p.state==='hf_seated'?(this.clips.has('Sit_Chair_Idle')?.46:.13):0),p.pos.z);
    this.actor.rotation.y=p.yaw;this.phoenixWings.update(dt,p.state==='hf_glide',p.stateTime??0);
    const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
    const eased=k*k*(3-2*k);
