@@ -1,4 +1,4 @@
-name: HIGHFLY P557b — sixteen exterior and centre performance tests
+name: HIGHFLY P558 — progressive model LOD and component budgets
 on:
   push:
     branches: [experiment/guildhall-full-regions-p55]
@@ -30,20 +30,28 @@ jobs:
         run: |
           set -euo pipefail
           node --check scripts/p556-browser-qa.mjs
-          for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy p557-native-forest; do node --check "src/highfly/$f.mjs"; done
+          for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy p557-native-forest p558-model-lod; do node --check "src/highfly/$f.mjs"; done
           HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
           node scripts/p555-pages-regions.mjs
           grep -q 'P556:' src/highfly/p508-world-clock.mjs
           test -s dist/highfly/regions/island-8.json
       - uses: actions/upload-artifact@v4
         with:
-          name: highfly-p557b-build
+          name: highfly-p558-build
           path: dist/
           retention-days: 14
   walk-test:
     needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 80
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: west
+            seeds: '1,2,3,4'
+          - shard: east
+            seeds: '5,6,7,8'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,13 +59,15 @@ jobs:
           node-version: '22'
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557b-build
+          name: highfly-p558-build
           path: dist
       - name: Install browser
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Walk exterior and centre of all eight regions
+      - name: Walk exterior and centre of assigned regions
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
         run: |
           set -euo pipefail
           mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
@@ -67,7 +77,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: highfly-p557b-walk-audit
+          name: highfly-p558-walk-audit-${{ matrix.shard }}
           path: |
             p556-browser-audit.json
             qa-region-*.png
@@ -88,11 +98,11 @@ jobs:
           path: previous
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557b-build
+          name: highfly-p558-build
           path: new
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p557b-walk-audit
+          pattern: highfly-p558-walk-audit-*
           path: qa
       - name: Replace only experimental preview after browser checks
         run: |
@@ -105,20 +115,23 @@ jobs:
           test -s site/preview-p55/index.html
           rm -rf site/preview-p55
           cp -a new site/preview-p55
-          cp qa/p556-browser-audit.json site/preview-p55/highfly/regions/p556-browser-audit.json
+          node --input-type=module -e 'import fs from "node:fs"; const shards=fs.readdirSync("qa").map(d=>JSON.parse(fs.readFileSync("qa/"+d+"/p556-browser-audit.json"))); const rows=shards.flatMap(s=>s.rows); if(rows.length!==16||new Set(rows.map(r=>r.seed+":"+r.zone)).size!==16||rows.some(r=>!r.ok||!r.geometryOk||!r.nativeForestOk||!r.diagVisible))process.exit(1); fs.writeFileSync("site/preview-p55/highfly/regions/p558-browser-audit.json",JSON.stringify({rows,shards},null,2));'
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
           test "$(du -sb site | cut -f1)" -lt 950000000
           touch site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          name: highfly-p557b-pages
+          name: highfly-p558-pages
           path: site
       - name: Wait for artifact index
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           for attempt in $(seq 1 30); do
-            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p557b-pages")] | length' 2>/dev/null || echo 0)"
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p558-pages")] | length' 2>/dev/null || echo 0)"
             if [ "$N" = 1 ]; then sleep 20; exit 0; fi
             sleep 6
           done
@@ -126,4 +139,4 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: highfly-p557b-pages
+          artifact_name: highfly-p558-pages
