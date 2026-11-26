@@ -1,0 +1,241 @@
+name: HIGHFLY P565 — World Integrity playable Pages
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p565-world-integrity-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: previous-build
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-geography-atlas
+          run-id: 45872926641
+          github-token: ${{ github.token }}
+          path: map-atlas
+      - name: Prepare image dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Rebuild game with native beacon arrivals and retain original region assets
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p555-region-runtime.mjs
+          node --check src/highfly/p565-native-materials.mjs
+          node --check src/highfly/p565-region-cover.mjs
+          node --check scripts/p565-integrity-smoke.mjs
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          mkdir -p dist/highfly/regions
+          cp -a previous-build/highfly/regions/. dist/highfly/regions/
+          mkdir -p dist/highfly/p564
+          cp -a map-atlas/. dist/highfly/p564/
+          test -s dist/highfly/p564/atlas.json
+          node --check src/highfly/p564-city-identities.mjs
+          node --check src/highfly/p492-radar.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node --check scripts/p560-android-lab.js
+          node --check scripts/p564-exploration-smoke.mjs
+          node --check scripts/p564-mobility-smoke.mjs
+          node --check src/highfly/universal-motion.mjs
+          node --check src/highfly/p564-phoenix-motion.mjs
+          node --check src/highfly/p564-phoenix-wings.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s and 'p560-android-lab.js' not in s
+          p.write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p565-build
+          path: dist
+          retention-days: 14
+  smoke:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p565-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify eight native beacon arrivals and early exterior streaming
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf560-server.log 2>&1 &
+          node scripts/p564-exploration-smoke.mjs
+          node scripts/p564-mobility-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p565-smoke
+          path: |
+            p564-smoke.json
+            p564-mobility.json
+          if-no-files-found: warn
+
+  archive-p564:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-phoenix-build
+          run-id: 45876880335
+          github-token: ${{ github.token }}
+          path: game
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-phoenix-smoke
+          run-id: 45876880335
+          github-token: ${{ github.token }}
+          path: audit
+      - name: Verify snapshot
+        run: |
+          test -s game/index.html
+          test -s game/highfly/regions/island-8.json
+          test -s audit/p564-mobility.json
+          printf '%s\n' 'Source commit: eea56398eee1048d838d4c1eabacccc7ce402848' 'Original run: 45876880335' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P564-PLAYABLE-BACKUP
+          path: |
+            game/
+            audit/
+            BACKUP.txt
+          retention-days: 90
+  integrity:
+    needs: package
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: west
+            seeds: '1,2,3,4'
+          - shard: east
+            seeds: '5,6,7,8'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p565-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify actual region rendering and water/furniture state
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf565-server.log 2>&1 &
+          node scripts/p565-integrity-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p565-integrity-${{ matrix.shard }}
+          path: |
+            p565-integrity-*.json
+            p565-region-*.png
+          if-no-files-found: warn
+  publish:
+    needs: [package, smoke, integrity, archive-p564]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p555-pages-republish
+          run-id: 45733138757
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p565-build
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p565-smoke
+          path: smoke
+      - name: Replace only experimental preview after functional checks
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/index.html
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp smoke/p564-smoke.json smoke/p564-mobility.json site/preview-p55/highfly/
+          test -s site/preview-p55/highfly/p564/atlas.json
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p565-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p565-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p565-pages
