@@ -8,6 +8,14 @@ export const treeId=id=>/^(?:kaykit-forest\/tree-|kaykit-halloween\/tree-dead)/i
 export const shrubId=id=>/^kaykit-forest\/bush-/i.test(id);
 export function makeRegionSampler(d,p,native){
  const R=d.tileRadius,S=p.scale,table=new Map(d.tiles.map(t=>[t.q+','+t.r,t]));
+ const byIndex=new Map(d.tiles.map(t=>[t.i,t])),riverGrid=new Map(),walkGrid=new Map();
+ const bucket=R*2,key=(x,z)=>Math.floor(x/bucket)+','+Math.floor(z/bucket);
+ function register(grid,a,b,pad,value){for(let x=Math.floor((Math.min(a.x,b.x)-pad)/bucket);x<=Math.floor((Math.max(a.x,b.x)+pad)/bucket);x++)for(let z=Math.floor((Math.min(a.z,b.z)-pad)/bucket);z<=Math.floor((Math.max(a.z,b.z)+pad)/bucket);z++){const k=x+','+z;if(!grid.has(k))grid.set(k,[]);grid.get(k).push(value)}}
+ for(const river of d.rivers??[])for(let i=1;i<(river.tiles??[]).length;i++){const a=byIndex.get(river.tiles[i-1]),b=byIndex.get(river.tiles[i]);if(a?.ground==='water'&&b?.ground==='water')register(riverGrid,a,b,R,{a,b});}
+ for(const w of [...(d.stairs??[]),...(d.bridges??[]).flatMap(b=>b.legs??[])]){if(![w.ax,w.az,w.ay,w.bx,w.bz,w.by,w.half].every(Number.isFinite))continue;register(walkGrid,{x:w.ax,z:w.az},{x:w.bx,z:w.bz},w.half+R*.2,w)}
+ function segment(x,z,ax,az,bx,bz){const dx=bx-ax,dz=bz-az,n=dx*dx+dz*dz,t=n?clamp(((x-ax)*dx+(z-az)*dz)/n,0,1):0;return {t,dist:Math.hypot(x-ax-dx*t,z-az-dz*t)}}
+ function riverAt(x,z){let best=null;for(const {a,b} of riverGrid.get(key(x,z))??[]){const v=segment(x,z,a.x,a.z,b.x,b.z);if(!best||v.dist<best.dist){const level=t=>Math.max(-.05,t.top-.14);best={dist:v.dist,level:level(a)+(level(b)-level(a))*v.t}}}return best}
+ function walkwayAt(x,z){let best=null;for(const w of walkGrid.get(key(x,z))??[]){const v=segment(x,z,w.ax,w.az,w.bx,w.bz);if(v.dist<=w.half+.12&&(!best||v.dist<best.dist))best={...v,w,y:w.ay+(w.by-w.ay)*v.t};}return best}
  const centre=(q,r)=>[Math.sqrt(3)*R*(q+r/2),1.5*R*r];
  function nearest(x,z){const q=Math.round((Math.sqrt(3)*x/3-z/3)/R),r=Math.round(2*z/(3*R));let best=null,dist=Infinity;for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const t=table.get((q+i)+','+(r+j));if(!t)continue;const dd=Math.hypot(t.x-x,t.z-z);if(dd<dist){best=t;dist=dd}}return {t:best,dist,q,r}}
  function source(x,z){
@@ -32,10 +40,11 @@ export function makeRegionSampler(d,p,native){
    k=Math.max(k,.95*(1-smooth((dist-R*S*.8)/p.transition)));
   }
   k*=smooth(edge/9);
-  const target=p.base+q.height*S,original=native(x,z),y=original+(target-original)*k;
-  return {y,soil:q.soil*q.coverage,water:q.water*q.coverage,level:p.base+q.waterLevel*S,inside:q.coverage>.5,transition:k};
+  let height=q.height,water=q.water*q.coverage,level=q.waterLevel;const rv=riverAt(lx,lz);if(rv&&rv.dist<R*.66){const w=1-smooth((rv.dist/R-.40)/.26);if(w>0){height=Math.min(height,height+(rv.level-.48-height)*w);water=Math.max(water,w);if(w>.3)level=rv.level;}}const walkway=walkwayAt(lx,lz);if(walkway?.w.kind==='stairs'&&walkway.t>.05&&walkway.t<.95&&water<.5){const w=1-smooth((walkway.dist-walkway.w.half*.7)/Math.max(.05,walkway.w.half*.3+.12));height=Math.min(height,height+(walkway.y-.17-height)*w);}
+  const target=p.base+height*S,original=native(x,z),y=original+(target-original)*k;
+  return {y,soil:q.soil*q.coverage,water,level:p.base+level*S,inside:q.coverage>.5,transition:k};
  }
- return {sample,source,nearest};
+ return {sample,source,nearest,riverAt,walkwayAt};
 }
 export function sourceScaleAudit(d,assets){
  const doors=(d.doorways??[]).map(x=>x.h??x.height).filter(x=>Number.isFinite(x)&&x>0).map(x=>x*d.scale).sort((a,b)=>a-b);
