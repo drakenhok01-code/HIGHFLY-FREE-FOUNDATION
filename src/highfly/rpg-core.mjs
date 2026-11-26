@@ -25,6 +25,7 @@ export const ITEM_DEFS=Object.freeze({
  wolf_pelt:{id:'wolf_pelt',name:'Piel de lobo',kind:'Materiales',icon:'wolf_pelt',rarity:'Común',description:'Piel curtible obtenida de los lobos del bosque.',max:999},
  boar_tusk:{id:'boar_tusk',name:'Colmillo de jabalí',kind:'Materiales',icon:'boar_tusk',rarity:'Común',description:'Colmillo resistente para artesanía y encargos del gremio.',max:999},
  crab_shell:{id:'crab_shell',name:'Caparazón de cangrejo',kind:'Materiales',icon:'crab_shell',rarity:'Común',description:'Material duro recogido en la orilla; útil para artesanía futura.',max:999},
+ stone:{id:'stone',name:'Piedra común',kind:'Materiales',icon:'ore',rarity:'Común',description:'Piedra recogida de afloramientos y pilas de roca.',max:999},
  wood:{id:'wood',name:'Madera',kind:'Materiales',icon:'wood',rarity:'Común',description:'Madera talada en el mundo.',max:999},
  fish:{id:'fish',name:'Pescado',kind:'Materiales',icon:'fish',rarity:'Común',description:'Captura obtenida con caña.',max:999},
  ingot:{id:'ingot',name:'Lingote de hierro',kind:'Materiales',icon:'ingot',rarity:'Común',description:'Lingote básico compatible con recetas iniciales. Los metales especiales tienen sus lingotes propios.',max:999},

@@ -30,6 +30,8 @@ export const ACTIONS=Object.freeze({
  cheer:{clip:'Cheer',duration:1.9,kind:'gesture'},
  pickup:{clip:'PickUp',duration:.85,kind:'interaction'},
  use:{clip:'Use_Item',duration:.8,kind:'interaction'},
+ collectWood:{clip:'PickUp',duration:.85,kind:'work'},
+ collectStone:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
  chop:{clip:'1H_Melee_Attack_Chop',duration:.8,kind:'work'},
  mine:{clip:'1H_Melee_Attack_Chop',duration:.9,kind:'work'},
  fishing:{clip:'Use_Item',duration:1.6,kind:'work'},
@@ -280,7 +282,7 @@ function startAction(p,name){
    const prep=prepareProfession(p._hfProfession,p.world,name,p.pos,p.yaw);
    if(!prep.ok){p.emit('highflyProfessionBlocked',{name,reason:prep.reason,tool:prep.tool,item:prep.item});return;}
    job=prep.job;
- }else if(PROFESSION_RULES[name]&&!['chop','mine','fishing'].includes(name)){
+ }else if(PROFESSION_RULES[name]){
    p.emit('highflyProfessionBlocked',{name,reason:'no-real-target'});return;
  }
  p._hfAction={name,time:0,done:false,target,job};

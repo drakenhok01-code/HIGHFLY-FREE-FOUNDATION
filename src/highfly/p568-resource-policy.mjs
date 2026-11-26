@@ -1,0 +1,4 @@
+const wood=new Set(['kaykit-resources/wood-log-stack','kaykit-resources/wood-log-a','kenney-nature/log-stack','kenney-nature/log']);
+const stone=new Set(['kaykit-resources/stone-chunks-large','kenney-nature/rock-large-b','kaykit-forest/rock-3-e-color1','kaykit-forest/rock-3-f-color1','kaykit-forest/rock-3-g-color1','kaykit-forest/rock-3-h-color1','kaykit-forest/rock-3-m-color1']);
+export const resourceKind=id=>wood.has(id)?'woodPile':stone.has(id)?'stonePile':null;
+export function makeResource(seed,kind,id,x,y,z){const key='p568:'+seed+':'+kind+':'+id;let until=0;try{until=Number(localStorage.getItem('hf-resource:'+key))||0}catch{};const available=until<=Date.now();return {id:key,regionResource:true,kind,x,y,z,available,charges:available?1:0,maxCharges:1,respawnSeconds:kind==='fishSpot'?35:90,respawnAt:available?0:until}}

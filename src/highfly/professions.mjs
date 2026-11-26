@@ -3,6 +3,8 @@
  * All transactions commit exactly ONCE when the animation completes.
  */
 export const PROFESSION_RULES=Object.freeze({
+ collectWood:{kind:'woodPile',tool:null,seconds:.85,product:'wood',amount:2},
+ collectStone:{kind:'stonePile',tool:'pickaxe',seconds:.9,product:'stone',amount:2},
  chop:  {kind:'tree',tool:'axe',seconds:.8,product:'wood',amount:2},
  mine:  {kind:'ore',tool:'pickaxe',seconds:.9,product:'ore',amount:2},
  fishing:{kind:'fishSpot',tool:'rod',seconds:1.6,product:'fish',amount:1},
@@ -13,7 +15,7 @@ export const PROFESSION_RULES=Object.freeze({
  forge:{kind:'forge',tool:'hammer',seconds:1.7,requires:{ingot:2},product:'blade_blank',amount:1}
 });
 export const WORK_TARGET_ACTION=Object.freeze({
- tree:'chop',ore:'mine',fishSpot:'fishing',furnace:'smelt',forge:'forge'
+ woodPile:'collectWood',stonePile:'collectStone',tree:'chop',ore:'mine',fishSpot:'fishing',furnace:'smelt',forge:'forge'
 });
 export function professionState(inventory={},tools=[]){
  const clean={};for(const [id,n] of Object.entries(inventory))
@@ -39,7 +41,7 @@ export function findProfessionTarget(world,pos,yaw,action=null,reach=2.65){
   if(action&&professionActionFor(node)!==action)continue;
   if(!professionActionFor(node))continue;
   const dx=node.x-pos.x,dz=node.z-pos.z,ds=dx*dx+dz*dz;
-  if(ds<dist&&dx*fx+dz*fz>.1){best=node;dist=ds;}
+  if(ds<dist&&Math.abs((node.y??pos.y)-pos.y)<2.2&&(ds<.2||dx*fx+dz*fz>.1)){best=node;dist=ds;}
  }
  return best;
 }
@@ -67,9 +69,9 @@ export function commitProfession(state,world,job){
  for(const [item,n] of Object.entries(rule.requires??{}))state.inventory[item]-=n;
  if(rule.product)state.inventory[rule.product]=(state.inventory[rule.product]??0)+(rule.amount??1);
  switch(job.action){
-  case 'chop':case 'mine':case 'fishing':
+  case 'collectWood':case 'collectStone':case 'chop':case 'mine':case 'fishing':
    node.charges=(node.charges??1)-1;
-   if(node.charges<=0){node.charges=0;node.available=false;}
+   if(node.charges<=0){node.charges=0;node.available=false;if(node.respawnSeconds){node.respawnAt=Date.now()+node.respawnSeconds*1000;try{localStorage.setItem('hf-resource:'+node.id,String(node.respawnAt))}catch{}}}
    break;
   case 'plant':node.phase='seeded';node.growth=0;break;
   case 'water':node.phase='growing';node.growth=0;break;
@@ -83,6 +85,7 @@ export function advanceCrops(world,seconds){
  if(!Number.isFinite(seconds)||seconds<=0)return 0;
  let ripe=0;
  for(const node of world?.highflyInteractables??[]){
+  if(node.respawnAt&&Date.now()>=node.respawnAt){node.respawnAt=0;node.charges=node.maxCharges??1;node.available=true;}
   if(node.kind!=='soil'||node.phase!=='growing')continue;
   node.growth=(node.growth??0)+seconds;
   if(node.growth>=(node.growSeconds??12)){node.phase='ripe';ripe++;}

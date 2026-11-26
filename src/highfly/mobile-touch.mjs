@@ -59,7 +59,7 @@ export function resolveHighflyContext(p){
  const tagged=findProfessionTarget(w,p.pos,p.yaw);
  if(tagged){
   const type=professionActionFor(tagged);
-  const label={chop:'TALAR',mine:'MINAR',fishing:'PESCAR',
+  const label={chop:'TALAR',mine:'MINAR',fishing:'PESCAR',collectWood:'RECOGER',collectStone:'PICAR',
     plant:'SEMBRAR',water:'REGAR',harvest:'COSECHAR',smelt:'FUNDIR',forge:'FORJAR'}[type];
   if(label)return {action:type,label};
  }
@@ -72,12 +72,6 @@ export function resolveHighflyContext(p){
    if(d<dist&&dx*fx+dz*fz>.1){dist=d;best={action:actions[n.kind][0],label:actions[n.kind][1]};}
  }
  if(best)return best;
- if(p.grounded&&typeof w.waterLevel==='function'&&typeof w.groundHeight==='function'){
-   const x=p.pos.x+fx*1.4,z=p.pos.z+fz*1.4;
-   const level=w.waterLevel(x,z),floor=w.groundHeight(x,z);
-   if(Number.isFinite(level)&&Number.isFinite(floor)&&level-floor>1.15&&
-     level-p.pos.y<2.2&&level-p.pos.y>-.6)return {action:'fishing',label:'PESCAR'};
- }
  if(p.grounded&&p.stamina>3&&descentCandidate(w,p.pos,p.yaw))return {action:'climb',label:'DESCENDER'};
  const wall=typeof w.raycast==='function'?w.raycast(
    {x:p.pos.x,y:p.pos.y+.85,z:p.pos.z},{x:fx,y:0,z:fz},1.03):Infinity;
