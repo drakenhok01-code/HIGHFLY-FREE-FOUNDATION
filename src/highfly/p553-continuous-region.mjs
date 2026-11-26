@@ -10,7 +10,7 @@ const hash=(x,z)=>{const n=Math.sin(x*12.9898+z*78.233)*43758.5453;return n-Math
 const lerp=(a,b,t)=>a+(b-a)*t;
 function mesh(pos,idx,mat,soil,depth){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));if(soil)g.setAttribute('aRegionSoil',new THREE.Float32BufferAttribute(soil,1));if(depth)g.setAttribute('aDepth',new THREE.Float32BufferAttribute(depth,1));if(idx)g.setIndex(idx);g.computeVertexNormals();g.computeBoundingSphere();const o=new THREE.Mesh(g,mat);o.userData.owned=true;return o}
 function farHeight(e,x,z){const s=64,a=Math.floor(x/s)*s,b=Math.floor(z/s)*s,u=(x-a)/s,v=(z-b)/s;const h=e(a,b),i=e(a+s,b),j=e(a,b+s),k=e(a+s,b+s);return (u+v<=1?h+(i-h)*u+(j-h)*v:k+(j-k)*(1-u)+(i-k)*(1-v))-.7}
-export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWater,nativeLeaves){
+export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWater,nativeLeaves,options={}){
  const native=nativeVisuals.material,pristine=native.fragmentShader;
  const terrain=native.clone(),road=native.clone();
  for(const m of [terrain,road])for(const k of ['uUnsungAlbedo','uUnsungDetail','uNativePath'])m.uniforms[k]={value:native.uniforms[k].value};
@@ -29,7 +29,7 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
  function activate(p){active=p.bounds;native.uniforms.uP55Bounds.value.set(active.minX,active.maxX,active.minZ,active.maxZ);native.uniforms.uP55Clip.value=1;if(sea){sea.uniforms.uRegionBounds.value.copy(native.uniforms.uP55Bounds.value);sea.uniforms.uRegionClip.value=1;}globalThis.__hfP546Cleared=(x,z)=>!!active&&x>active.minX&&x<active.maxX&&z>active.minZ&&z<active.maxZ;}
  const waterMat=new THREE.ShaderMaterial({glslVersion:THREE.GLSL3,side:THREE.DoubleSide,transparent:false,depthWrite:true,depthTest:true,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1,vertexShader:'in float aDepth; out float vDepth; void main(){vDepth=aDepth;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',fragmentShader:'precision highp float; in float vDepth; out vec4 outColor; void main(){float d=max(0.0,vDepth);float k=smoothstep(1.2,30.0,d);vec3 c=mix(vec3(0.13,0.53,0.56),vec3(0.018,0.17,0.28),k);c=mix(c,vec3(0.50,0.77,0.69),(1.0-smoothstep(0.05,1.9,d))*0.5);outColor=vec4(c,1.0);}'});
  function build(d,p,assets){
-  const sampler=makeRegionSampler(d,p,(x,z)=>farHeight(elevation,x,z)),group=new THREE.Group(),b=p.bounds,S=p.scale;
+  const sampler=makeRegionSampler(d,p,options.nativeHeight??((x,z)=>farHeight(elevation,x,z))),group=new THREE.Group(),b=p.bounds,S=p.scale;
   const nx=Math.ceil((b.maxX-b.minX)/1.8),nz=Math.ceil((b.maxZ-b.minZ)/1.8),pos=[],soil=[],idx=[],wet=[],seaWet=[],water=[],depth=[];
   // One shared regular grid, continuous normals and native grass/soil texture.
   for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const x=lerp(b.minX,b.maxX,i/nx),z=lerp(b.minZ,b.maxZ,j/nz),q=sampler.sample(x,z);pos.push(x,q.y,z);soil.push(q.soil);const level=Math.max(-.07,q.level);wet.push({x,z,y:level,bed:q.y,f:Math.min((q.water-.30)*3,level-q.y-.025,level+.07-.012)});seaWet.push({x,z,y:-.07,bed:q.y,f:-.07-q.y-.025});}
@@ -65,7 +65,8 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
   for(const list of batches.values()){const model=nativeUnsungFlora('unsung-tree-'+list[0].name),box=new THREE.Box3().setFromObject(model);box.getSize(size);
    for(const child of model.children){const kind=species.indexOf(list[0].name),mat=child.name==='unsung_original_leaf_cards'&&kind>=0?nativeLeaves?.mats?.[kind]??child.material:child.material;const m=new THREE.InstancedMesh(child.geometry,mat,list.length);for(let i=0;i<list.length;i++){const t=list[i],s=t.h/Math.max(.1,size.y);dummy.position.set(t.x,t.y-box.min.y*s,t.z);dummy.rotation.set(0,t.rot,0);dummy.scale.setScalar(s);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)}m.instanceMatrix.needsUpdate=true;m.computeBoundingSphere();group.add(m)}
   }
-  return {group,sampler,stats:{...sourceScaleAudit(d,assets),replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
+  const gridHeight=(x,z)=>{const u=(x-b.minX)/(b.maxX-b.minX)*nx,v=(z-b.minZ)/(b.maxZ-b.minZ)*nz;if(u<0||u>nx||v<0||v>nz)return elevation(x,z);const i=Math.min(nx-1,Math.floor(u)),j=Math.min(nz-1,Math.floor(v)),a=u-i,c=v-j,k=j*(nx+1)+i;const h=n=>pos[n*3+1];return a+c<=1?h(k)+(h(k+1)-h(k))*a+(h(k+nx+1)-h(k))*c:h(k+nx+2)+(h(k+nx+1)-h(k+nx+2))*(1-a)+(h(k+1)-h(k+nx+2))*(1-c)};
+  return {group,sampler,gridHeight,stats:{...sourceScaleAudit(d,assets),replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
  }
  return {activate,clear,build};
 }
