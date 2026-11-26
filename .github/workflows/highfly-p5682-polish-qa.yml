@@ -1,4 +1,4 @@
-name: HIGHFLY P568.2 — POLISH FROM P568 QA
+name: HIGHFLY P568.2 — POLISH FROM P568 QA (air, tools, island retention)
 on:
   push:
     branches: [p5682-phoenix-polish-20261126]
