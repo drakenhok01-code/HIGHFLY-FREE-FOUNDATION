@@ -11,3 +11,8 @@ export const CITY_IDENTITIES=Object.freeze([
  {id:'valtheria',name:'Valtheria',theme:'Ciudad fortificada',recommended:[80,99],activities:['guardia','élites','defensa','jefes']}
 ]);
 // Design metadata only: level recommendations never gate travel. Actual progression implementation is separate.
+
+// Proposed assignment from real geography and existing structures; preserve numeric seeds.
+export const CITY_BY_SEED=Object.freeze(Object.fromEntries(
+ [[1,'sylvaris'],[2,'arvelia'],[3,'puertaria'],[4,'valdoria'],[5,'auralis'],[6,'lumeria'],[7,'ferrondral'],[8,'valtheria']].map(([seed,id])=>[seed,CITY_IDENTITIES.find(c=>c.id===id)])
+));
