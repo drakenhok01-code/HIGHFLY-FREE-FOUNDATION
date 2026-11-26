@@ -7,6 +7,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
 import {createUniversalMaterial} from './kaykit-material.mjs';
 import {ACTIONS} from './universal-motion.mjs';
+import {createPhoenixWings} from './p564-phoenix-wings.mjs';
 import {applyUALPose} from './ual-retarget.mjs';
 import {WEAPON_MODES,EQUIPMENT_NODES,WEAPON_ANIMATIONS,attackAnimation,applyEquipment} from './universal-gear.mjs';
 import {planDirectionalStroke,driveHandCCD} from './directional-rig.mjs';
@@ -54,6 +55,7 @@ export class KayKitFreeHero {
    this.actor=new THREE.Group();this.actor.name='HIGHFLY_ONE_KAYKIT_ACTOR';
    this.rollPivot=new THREE.Group();this.rollPivot.name='UNSUNG_FULL_BODY_ROLL';
    this.offset=new THREE.Group();this.offset.position.y=-.91;this.rollPivot.position.y=.91;
+   this.phoenixWings=createPhoenixWings();this.actor.add(this.phoenixWings.root);
    this.actor.add(this.rollPivot);this.rollPivot.add(this.offset);this.offset.add(this.root);
    const armored=styleParams.get('hflook')==='armored'||this.originalLook;
    const hidden=new Set(HIDE);
@@ -252,6 +254,7 @@ export class KayKitFreeHero {
    else if(p.state==='hf_dash'){key='dash';duration=.24;}
    else if(p.state==='hf_mantle'){key='raw:Jump_Full_Short';duration=.42;}
    else if(p.state==='hf_wallrun'){key='run';} 
+   else if(p.state==='hf_glide'){key='jump';}
    else if(p.state==='hf_climb'){key='idle';} // anchored hands procedurally, not an endless Interact flap
    else if(p.state==='hf_action'&&p._hfAction){
       const cfg=ACTIONS[p._hfAction.name];
@@ -304,7 +307,7 @@ export class KayKitFreeHero {
    }
    // One actor transform driven exclusively by Unsung Player; no root-motion.
    this.actor.position.set(p.pos.x,p.viewY??p.pos.y,p.pos.z);
-   this.actor.rotation.y=p.yaw;
+   this.actor.rotation.y=p.yaw;this.phoenixWings.update(dt,p.state==='hf_glide',p.stateTime??0);
    const k=p.state==='roll'?Math.min(1,Math.max(0,(p.stateTime??0)/.62)):0;
    const eased=k*k*(3-2*k);
    // Unsung's 360-degree full-body ROLL, around the torso rather than the feet.
