@@ -106,7 +106,7 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
     const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());
     if(size.x>.1&&size.y>.25&&size.z>.1){for(const o of arr){
      const wb=box.clone().applyMatrix4(o.m).applyMatrix4(worldMatrix);if(wb.max.y-wb.min.y>.45){const kx=Math.floor((wb.min.x+wb.max.x)/2/8),kz=Math.floor((wb.min.z+wb.max.z)/2/8);for(let ix=Math.floor(wb.min.x/8);ix<=Math.floor(wb.max.x/8);ix++)for(let iz=Math.floor(wb.min.z/8);iz<=Math.floor(wb.max.z/8);iz++){const key=ix+','+iz;if(!boxBuckets.has(key))boxBuckets.set(key,[]);boxBuckets.get(key).push(wb)}}
-     if(!/building-|castle|wall-|fence-|rock-|tower|barracks|lumbermill|windmill|watermill|bench|seat|barrel|crate|table|boulder|well/.test(id)||/fence-gate|doorway|open-gate/.test(id))continue;
+     if(!/building-|castle|wall-|fence-|rock-|tower|barracks|lumbermill|windmill|watermill|bench|chair|stool|seat|barrel|crate|table|boulder|well/.test(id)||/fence-gate|doorway|open-gate/.test(id))continue;
      const key=Math.floor(o.q.x/60)+','+Math.floor(o.q.z/60);if(!chunk.has(key))chunk.set(key,[]);const dest=chunk.get(key),transform=new THREE.Matrix4().multiplyMatrices(worldMatrix,o.m),corners=[];for(let v=0;v<8;v++)corners.push(new THREE.Vector3(ctr.x+(v&1?1:-1)*size.x*.45,ctr.y+(v&2?1:-1)*size.y*.47,ctr.z+(v&4?1:-1)*size.z*.45).applyMatrix4(transform));for(const v of [0,2,1,1,2,3,4,5,6,5,7,6,0,1,4,1,5,4,2,6,3,3,6,7,0,4,2,2,4,6,1,3,5,3,7,5]){const q=corners[v];dest.push(q.x,q.y,q.z)}
     }}
    }
