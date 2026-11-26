@@ -1,0 +1,34 @@
+name: HIGHFLY P564 — geography and real cartography audit
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p564-geography.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  geography:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p561-build
+          run-id: 45862356845
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Analyze source terrain and generate actual map overlays
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/p564"
+          "$RUNNER_TEMP/p564/bin/pip" install --quiet pillow==12.0.0 numpy==2.3.4
+          "$RUNNER_TEMP/p564/bin/python" scripts/p564-geography-atlas.py dist/highfly
+          test -s dist/highfly/p564/geography-audit.json
+          test -s dist/highfly/p564/region-8.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p564-geography-atlas
+          path: dist/highfly/p564/
+          retention-days: 90
