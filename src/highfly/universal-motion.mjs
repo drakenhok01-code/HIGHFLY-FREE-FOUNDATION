@@ -450,7 +450,7 @@ export function installHighflyUniversalMotion(p){
  p._hfDoubleUsed=false;p._hfJumpPrimed=false;p._hfJumpQueued=0;p._hfJumpFx=0;p._hfGearCycle=0;
  p.spawn=function(...args){
   nativeSpawn(...args);this._hfDoubleUsed=false;this._hfJumpPrimed=false;this._hfJumpQueued=0;
-  this._hfGlide=null;this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
+  this._hfSeat=null;this._hfGlide=null;this._hfJumpFx=0;this._hfAction=null;this._hfMantle=null;this._hfClimb=null;this._hfWallRun=null;this._hfGearCycle=0;this._hfRollVisual='forward';this._hfDive=false;this._hfDiveEntering=false;this._hfOxygen=this._hfOxygenMax;this._hfFlowClock=0;this._hfFlowHistory=[];this._hfFlowVelocity=null;
  };
  p.update=function(dt,input,camYaw=0){
   const step=clamp(dt,0,.05);
@@ -474,6 +474,20 @@ export function installHighflyUniversalMotion(p){
   if(input.held.has('attack')&&!input.pressed.has('attack')){
    input={...input,pressed:new Set(input.pressed)};
    input.pressed.add('attack');
+  }
+  // P565: a real seat anchor belongs to the active streamed region.
+  if(this._hfSeat&&this.state!=='hf_seated')this._hfSeat=null;
+  if(this.state==='hf_seated'){
+   const seat=this._hfSeat,move=Math.hypot(input.move?.x??0,input.move?.y??0);
+   if(!seat||seat.region!==globalThis.__hfP555Regions?.active||move>.18||['seat','jump','dash','attack','interact'].some(k=>input.pressed.has(k))){
+    if(seat){this.pos.copy(seat.exit);this.viewY=this._viewY1=this.pos.y;this.yaw=seat.yaw;this.fallStart=this.pos.y}
+    this._hfSeat=null;this.setState('move');this.vel.set(0,0,0);this.grounded=false;this.emit('highflySeatEnd');return;
+   }
+   this.vel.set(0,0,0);this.speed=0;this.stateTime+=step;this.invulnerable=Math.max(0,this.invulnerable-step);return;
+  }
+  if(isMove(this)&&this.grounded&&input.pressed.has('seat')){
+   const regions=globalThis.__hfP555Regions,seat=regions?.nearSeat(this.pos);
+   if(seat){this._hfSeat={...seat,exit:this.pos.clone(),region:regions.active};this.pos.set(seat.x,seat.y,seat.z);this.viewY=this._viewY1=this.pos.y;this.yaw=seat.yaw;this.vel.set(0,0,0);this.speed=0;this.setState('hf_seated');this.emit('highflySeatStart',{id:seat.id});return;}
   }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
