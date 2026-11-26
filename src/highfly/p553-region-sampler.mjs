@@ -54,3 +54,13 @@ export function sourceScaleAudit(d,assets){
  const sizes=trees.map(q=>(assets.get(q.piece)?.size?.[1]??0)*(q.scale??1)*d.scale).filter(n=>n>0).sort((a,b)=>a-b);
  return {seed:d.seed,scale:d.scale,hero:1.82,doors:doors.length,doorHeights:range(doors),doorWidths:range(widths),doorsBelowHero:doors.filter(h=>h<1.82).length,trees:trees.length,shrubs:shrubs.length,treeHeights:range(sizes),originalPieces:d.pieces.length,retainedNonTrees:d.pieces.length-trees.length-shrubs.length};
 }
+
+export function guildLocation(d){
+ const zone=(d.zones??[]).find(z=>z.kind==='castle')??(d.zones??[]).find(z=>z.kind==='town');
+ const own=new Set(zone?.tiles??[]);const candidates=d.tiles.filter(t=>own.has(t.i)&&/great-hall|castle-keep|castle|town-hall/.test(t.prefab??''));
+ const board=d.board?.at;
+ const priority=t=>/great-hall/.test(t.prefab)?0:/castle-keep|^castle$/.test(t.prefab)?1:2;
+ candidates.sort((a,b)=>priority(a)-priority(b)||(board?Math.hypot(a.x-board[0],a.z-board[2])-Math.hypot(b.x-board[0],b.z-board[2]):0));
+ const t=candidates[0]??d.tiles.find(t=>t.i===zone?.tile);if(!t)return null;
+ return {tile:t.i,prefab:t.prefab,x:t.x,y:t.top,z:t.z,board:board??null};
+}
