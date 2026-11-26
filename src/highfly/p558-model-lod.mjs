@@ -9,7 +9,7 @@ export async function createLODCache(){
   if(cache.has(g))return cache.get(g);
   const pos=g.getAttribute('position'),idx=g.getIndex(),count=idx?.count??pos?.count??0;
   let out=[g,g,g];originals++;sourceTriangles+=count/3;
-  if(MeshoptSimplifier.supported&&pos&&count>=96&&!g.groups.length&&count%3===0){
+  if(MeshoptSimplifier.supported&&pos&&count>=96&&(g.groups.length===0||(g.groups.length===1&&g.groups[0].start===0&&g.groups[0].count===count))&&count%3===0){
    const positions=new Float32Array(pos.count*3),indices=new Uint32Array(count);
    for(let i=0;i<pos.count;i++){positions[i*3]=pos.getX(i);positions[i*3+1]=pos.getY(i);positions[i*3+2]=pos.getZ(i)}
    for(let i=0;i<count;i++)indices[i]=idx?idx.getX(i):i;
@@ -22,8 +22,9 @@ export async function createLODCache(){
      const target=Math.max(12,Math.floor(count*ratio/3)*3);
      const [simplified,err]=stride?MeshoptSimplifier.simplifyWithAttributes(indices,positions,3,attrs,stride,weights,null,target,error,['Permissive']):MeshoptSimplifier.simplify(indices,positions,3,target,error);
      if(simplified.length>=12&&simplified.length<count*.92&&err<=error*1.01){
-      const geo=new THREE.BufferGeometry();for(const [name,attr] of Object.entries(g.attributes))geo.setAttribute(name,attr.clone());
-      geo.setIndex(new THREE.BufferAttribute(simplified,1));geo.boundingBox=g.boundingBox?.clone()??null;geo.boundingSphere=g.boundingSphere?.clone()??null;
+      const geo=new THREE.BufferGeometry(),map=new Map(),used=[];for(let i=0;i<simplified.length;i++){const old=simplified[i];if(!map.has(old)){map.set(old,used.length);used.push(old)}simplified[i]=map.get(old)}
+      for(const [name,attr] of Object.entries(g.attributes)){const size=attr.itemSize,values=new Float32Array(used.length*size);for(let i=0;i<used.length;i++)for(let k=0;k<size;k++)values[i*size+k]=attr.getComponent?attr.getComponent(used[i],k):attr[['getX','getY','getZ','getW'][k]](used[i]);geo.setAttribute(name,new THREE.BufferAttribute(values,size))}
+      geo.setIndex(new THREE.BufferAttribute(used.length<=65535?new Uint16Array(simplified):simplified,1));geo.boundingBox=g.boundingBox?.clone()??null;geo.boundingSphere=g.boundingSphere?.clone()??null;
       if(!geo.boundingSphere)geo.computeBoundingSphere();owned.add(geo);out[level]=geo;generated++;
      }else out[level]=out[level-1];
     }catch(e){out[level]=out[level-1];console.warn('P558 simplifier fallback',e.message)}
