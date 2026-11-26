@@ -1,0 +1,56 @@
+name: HIGHFLY P568.1 — Android user flow Puertaria
+on:
+  push:
+    branches: [p568-phoenix-air-sea-20261126]
+    paths: ['.github/workflows/highfly-p5681-user-flow.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  user-flow:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait for exact repair artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 100); do
+            SHA="$(gh api repos/$GITHUB_REPOSITORY/actions/runs/45902130784 --jq .head_sha)"
+            test "$SHA" = efb9c721ea01507290e63d5d18fccdbe79a2f39e
+            N="$(gh api repos/$GITHUB_REPOSITORY/actions/runs/45902130784/artifacts --jq '[.artifacts[]|select(.name=="highfly-p5681-build" and .expired==false)]|length')"
+            if [ "$N" = 1 ]; then exit 0; fi
+            STATUS="$(gh api repos/$GITHUB_REPOSITORY/actions/runs/45902130784 --jq .status)"
+            if [ "$STATUS" = completed ]; then exit 1; fi
+            sleep 10
+          done
+          exit 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5681-build
+          run-id: 45902130784
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Browser and real Android UI flows
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf5681-user.log 2>&1 &
+          node scripts/p5681-user-flow.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p5681-user-flow
+          path: |
+            p5681-user-flow.json
+            p5681-puertaria.png
+          if-no-files-found: warn
