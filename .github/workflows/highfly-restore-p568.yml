@@ -1,0 +1,65 @@
+name: HIGHFLY Restore P568 exact playable snapshot
+on:
+  push:
+    branches: [backup-p568-air-sea-playable-20261126]
+    paths: ['.github/workflows/highfly-restore-p568.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p568-pages
+          run-id: 45901283917
+          github-token: ${{ github.token }}
+          path: previous
+      - name: Restore exact previous Pages archive
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/index.html
+          test -s site/preview-p55/highfly/release-p568.json
+          test ! -e site/preview-p55/highfly/release-p5681.json
+          grep -q '3e5427e305f12f560d8394c884c0e71fe527a521' site/preview-p55/highfly/release-p568.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P568-EXACT-PAGES-BACKUP
+          path: previous
+          compression-level: 0
+          retention-days: 90
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p568-restored-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p568-restored-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p568-restored-pages
