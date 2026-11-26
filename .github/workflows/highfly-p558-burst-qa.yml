@@ -1,0 +1,54 @@
+name: HIGHFLY P558 — burst streaming stress QA (no deployment)
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p558-burst-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  burst:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: west
+            seeds: '1,2,3,4'
+          - shard: east
+            seeds: '5,6,7,8'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p558-build
+          run-id: 45815892982
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Prepare browser
+        run: |
+          node --check scripts/p558-stream-burst-qa.mjs
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Force six rapid road-position changes per region
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf-burst-server.log 2>&1 &
+          node scripts/p558-stream-burst-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p558-burst-${{ matrix.shard }}
+          path: |
+            p558-burst-audit.json
+            burst-region-*.png
+          if-no-files-found: warn
