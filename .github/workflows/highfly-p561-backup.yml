@@ -1,0 +1,41 @@
+name: HIGHFLY P561 — preserve playable build backup
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p561-backup.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p561-build
+          run-id: 45862356845
+          github-token: ${{ github.token }}
+          path: game
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p561-smoke
+          run-id: 45862356845
+          github-token: ${{ github.token }}
+          path: audit
+      - name: Verify snapshot and record exact source
+        run: |
+          test -s game/index.html
+          test -s game/highfly/regions/island-8.json
+          test -s game/highfly/p560-android-lab.js
+          test -s audit/p561-smoke.json
+          printf '%s\n' 'Source commit: f8ecdb4ea95185d689a26d55a65002682ea05b3e' 'Original run: 45862356845' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P561-PLAYABLE-BACKUP
+          path: |
+            game/
+            audit/
+            BACKUP.txt
+          retention-days: 90
