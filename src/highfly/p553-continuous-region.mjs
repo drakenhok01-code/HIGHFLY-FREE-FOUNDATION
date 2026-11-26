@@ -1,3 +1,4 @@
+import {thinRegionPlants} from './p559-vegetation-policy.mjs';
 /* P553 editor-only replacement of hex surfaces by a single continuous native mesh.
  * Source buildings, roads and bridges retain X/Z. Replant exact source tree positions
  * with local Unsung species; recycle native trees in the apron.
@@ -75,6 +76,7 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
    const slope=Math.hypot(sampler.sample(xx+2,zz).y-q.y,sampler.sample(xx,zz+2).y-q.y)/2;if(slope>.5)continue;
    const name=mix[Math.floor(hash(zz,xx)*mix.length)];add(xx,zz,q.y,7+hash(xx+1,zz)*6,name,hash(xx,zz)*6.283,'native-added');occupied.add(Math.floor(xx/9)+','+Math.floor(zz/9));
   }
+  const density=thinRegionPlants(plant,d,p);plant.splice(0,plant.length,...density.plants);
   // Chunked shared instance batches. Frustum culling works per 100m sector.
   if(!options.runtimeNativeForest){
   const batches=new Map();for(const t of plant){const key=t.name+'/'+Math.floor(t.x/100)+'/'+Math.floor(t.z/100);if(!batches.has(key))batches.set(key,[]);batches.get(key).push(t)}
