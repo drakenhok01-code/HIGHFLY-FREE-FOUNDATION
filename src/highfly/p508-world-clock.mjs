@@ -33,8 +33,8 @@ export function installP508WorldClock(pipe,options={}){
    return {enabled:false,reason:'Native shader uniforms are absent'};
  }
  const search=new URLSearchParams(options.search??win?.location?.search??'');
- let mode=search.get('hftime')||'atardecer';
- if(mode!=='auto'&&mode!=='eclipse'&&!PHASES.includes(mode))mode='atardecer';
+ let mode=search.get('hftime')||'auto';
+ if(mode!=='auto'&&mode!=='eclipse'&&!PHASES.includes(mode))mode='auto';
  // Aurora defaults to scheduled rare events; force/off are QA overrides.
  let auroraOverride=search.get('hfaurora')==='1'?true:search.get('hfaurora')==='0'?false:'auto',playing=true;
  let activeAurora=0,activeEclipse=0,lastEvent=null;
