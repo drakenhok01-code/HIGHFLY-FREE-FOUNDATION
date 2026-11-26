@@ -36,7 +36,7 @@ export function installArveliaQuests({people=[],storage,doc=globalThis.document}
  let state=readArveliaQuests(storage),near=null,lastNear='',disposed=false;
  const wrap=doc.createElement('div');
  wrap.id='hf-p538-dialogues';
- wrap.style.cssText='position:fixed;right:9px;bottom:17%;z-index:125;max-width:min(345px,72vw);font:13px system-ui,sans-serif;color:#fff;pointer-events:none';
+ wrap.style.cssText='position:fixed;left:50%;bottom:20%;transform:translateX(-50%);z-index:9900;width:min(620px,72vw);max-height:62vh;overflow:auto;font:13px system-ui,sans-serif;color:#fff;pointer-events:none';
  const talk=doc.createElement('button');
  talk.type='button';talk.textContent='💬 Hablar';
  talk.style.cssText='display:none;pointer-events:auto;background:#312044ec;color:#fff3cd;border:1px solid #c7a4ec;border-radius:20px;padding:10px 16px;font:700 13px system-ui,sans-serif;box-shadow:0 2px 13px #0009';

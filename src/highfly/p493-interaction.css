@@ -50,3 +50,8 @@
 #hf-rpg [data-hf-rarity="Épico"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #c479ff}
 #hf-rpg [data-hf-rarity="Legendario"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #fbc26c}
 #hf-rpg [data-hf-rarity="Mítico"]:has(img[data-hf-frame-art="p494"]){box-shadow:inset 0 0 0 2px #fe5b6f}
+
+/* P566 central Android conversation */
+#ui #talk.on{top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;max-width:72vw!important;width:min(680px,72vw)!important;max-height:60dvh!important;transform:translate(-50%,-50%)!important;z-index:9900!important;opacity:1!important;visibility:visible!important}
+#hf-p493-dialog-tap{bottom:12%!important;z-index:9940!important}
+#hf-p49-prompt{left:50%!important;right:auto!important;transform:translateX(-50%)!important}

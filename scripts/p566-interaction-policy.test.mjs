@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict';import {isSeat,isMaritime,roadMask} from '../src/highfly/p566-interaction-policy.mjs';
+assert(isSeat('kenney-graveyard/bench'));assert(isSeat('kaykit-dungeon/stool'));assert(!isSeat('kenney-survival/workbench-anvil'));assert(!isSeat('kenney-town/stall-bench'));for(const id of ['structure-platform','ship-small','boat-row-small','boat-row-large'])assert(isMaritime('kenney-pirate/'+id));assert(!isMaritime('kenney-pirate/crate'));
+const mask=roadMask([2,0,2,8,0,2,2,0,8],{x:0,z:0,scale:1},{minX:0,maxX:10,minZ:0,maxZ:10},{step:.25,pad:.25});const sample=(x,z)=>mask.buf[Math.floor(z/10*mask.h)*mask.w+Math.floor(x/10*mask.w)];assert.equal(sample(3,3),255);assert.equal(sample(9,9),0);console.log('P566 policy PASS');
