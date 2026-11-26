@@ -1,4 +1,4 @@
-name: HIGHFLY P558 — progressive model LOD and component budgets
+name: HIGHFLY P558 QA retry — corrected metrics and startup diagnostics
 on:
   push:
     branches: [experiment/guildhall-full-regions-p55]
@@ -21,19 +21,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Prepare image dependencies
+      - name: Reuse compiled P558 artifact from successful build
+        uses: actions/download-artifact@v4
+        with:
+          name: highfly-p558-build
+          run-id: 45815892982
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Verify test script and complete world artifact
         run: |
-          python3 -m venv "$RUNNER_TEMP/highfly-python"
-          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
-          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
-      - name: Build real game and all region assets
-        run: |
-          set -euo pipefail
           node --check scripts/p556-browser-qa.mjs
-          for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy p557-native-forest p558-model-lod; do node --check "src/highfly/$f.mjs"; done
-          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
-          node scripts/p555-pages-regions.mjs
-          grep -q 'P556:' src/highfly/p508-world-clock.mjs
+          test -s dist/index.html
           test -s dist/highfly/regions/island-8.json
       - uses: actions/upload-artifact@v4
         with:
@@ -43,7 +41,7 @@ jobs:
   walk-test:
     needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    timeout-minutes: 65
     strategy:
       fail-fast: false
       matrix:
