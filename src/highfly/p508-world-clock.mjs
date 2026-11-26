@@ -135,7 +135,7 @@ export function installP508WorldClock(pipe,options={}){
      diagMini.textContent=diagMode==='mini'?'FPS '+(fps?fps.toFixed(0):'—'):[
        'FPS '+(fps?fps.toFixed(1):'—')+' · '+mean.toFixed(1)+' ms/frame',
        'P95 '+p95.toFixed(1)+' ms · peor '+max.toFixed(1)+' ms',
-       'Draw calls '+(info?.render?.calls??'—')+' · tris '+(info?.render?.triangles??'—'),
+       'Escena opaca: draw '+(globalThis.__hfP557Opaque?.calls??info?.render?.calls??'—')+' · tris '+(globalThis.__hfP557Opaque?.triangles??info?.render?.triangles??'—'),
        'GPU geometrías '+(info?.memory?.geometries??'—')+' · texturas '+(info?.memory?.textures??'—'),
        'Región '+(region?.seed??'inicio')+' · sectores '+(region?.visible??0)+'/'+(region?.total??0)+' · BVH '+(region?.solids??0),
        'Jugador '+(g?.player?.state??'—')+' · '+(p?[p.x,p.y,p.z].map(v=>v.toFixed(1)).join(' / '):'—'),
