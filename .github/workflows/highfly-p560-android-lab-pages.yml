@@ -1,0 +1,139 @@
+name: HIGHFLY P560 — Android Lab playable Pages preview
+on:
+  push:
+    branches: [experiment/guildhall-full-regions-p55]
+    paths: ['.github/workflows/highfly-p560-android-lab-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Package existing P559 game with Android Lab
+        run: |
+          set -euo pipefail
+          node --check scripts/p560-android-lab.js
+          node --check scripts/p560-android-lab-smoke.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s and 'p560-android-lab.js' not in s
+          p.write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p560-build
+          path: dist
+          retention-days: 14
+  smoke:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p560-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify playable diagnostics and export
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf560-server.log 2>&1 &
+          node scripts/p560-android-lab-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p560-smoke
+          path: |
+            p560-smoke.json
+            p560-export-smoke.json
+            p560-mini-smoke.png
+          if-no-files-found: warn
+  publish:
+    needs: [package, smoke]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p555-pages-republish
+          run-id: 45733138757
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p560-build
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p560-smoke
+          path: smoke
+      - name: Replace only experimental preview after functional checks
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/index.html
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp smoke/p560-smoke.json site/preview-p55/highfly/
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p560-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p560-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p560-pages
