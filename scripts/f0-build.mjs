@@ -348,6 +348,8 @@ copy(path.join(ROOT,'src/highfly/p525-world-forge-3d.mjs'),loc('src/highfly/p525
 for(const name of ['p528-village-layout','p528-village-decor-3d','p529-private-source-import','p530-unsung-original','p530-unsung-loader','p530-city-ground-mask','p531-kaykit-free-catalog','p531-unsung-flora','p532-spanish-labels','p532-quaternius-cc0-catalog','p532-public-urban-assets','p532-public-urban-prefabs','p533-curved-road-path','p533-curved-road-3d','p536-modular-cobble-kit','p536-native-editor-visuals','p537-grade-parcels','p538-eastbrook-land','p538-arvelia-quests','p542-guildhall-prefabs'])
  copy(path.join(ROOT,'src/highfly/'+name+'.mjs'),loc('src/highfly/'+name+'.mjs'));
 
+// P555 branch: full region modules including original Guildhall catalogs, no private assets.
+fs.cpSync(path.join(ROOT,'src/highfly'),loc('src/highfly'),{recursive:true});
 copy(path.join(ROOT,'src/highfly/p510-staged-shadows.mjs'),loc('src/highfly/p510-staged-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p510-shadows.mjs'),loc('src/highfly/qa-p510-shadows.mjs'));
 copy(path.join(ROOT,'src/highfly/qa-p495-stairs.mjs'),loc('src/highfly/qa-p495-stairs.mjs'));
@@ -599,6 +601,15 @@ patch('src/main.js',"window.__ui = ui;","window.__ui = ui;\nwindow.__highflyES=i
 patch('src/main.js',"window.__highflyIntro=installHighflyIntro();",
  "window.__highflyIntro=installHighflyIntro();\nwindow.__hfP521WorldForge=installHighflyWorldForge(game,{search:location.search});\nwindow.__hfP521Resume=installHighflyResume(game);");
 
+// P555 experimental region runtime, separate from the production app.
+patch('src/main.js',"import { installHighflyWorldForge, worldForgeTreeClearings } from './highfly/p521-world-forge-runtime.mjs';",
+ "import { installHighflyWorldForge, worldForgeTreeClearings } from './highfly/p521-world-forge-runtime.mjs';\nimport { installP555Regions } from './highfly/p555-region-runtime.mjs';");
+patch('src/main.js',"window.__hfP521Resume=installHighflyResume(game);",
+ "window.__hfP555Pending=installP555Regions(game,{pipe,terrain,water}).then(api=>window.__hfP555Regions=api).catch(e=>console.error('P555 regions',e));");
+patch('src/main.js',"const hfWFClearTree=worldForgeTreeClearings({search:location.search});",
+ "const hfRegionPlacements=await fetch(import.meta.env.BASE_URL+'highfly/regions/placements.json').then(r=>{if(!r.ok)throw Error('P555 placements missing');return r.json()});\nconst hfWFPrevious=worldForgeTreeClearings({search:location.search});\nconst hfWFClearTree=(x,z)=>hfWFPrevious(x,z)||hfRegionPlacements.placements.some(p=>x>p.bounds.minX&&x<p.bounds.maxX&&z>p.bounds.minZ&&z<p.bounds.maxZ);");
+patch('src/main.js',"const offLimits = (x, z) => onRoute(x, z) || clear.some(",
+ "const offLimits = (x, z) => hfWFClearTree(x,z) || onRoute(x, z) || clear.some(");
 // Reset TAA history whenever the dynamic-resolution governor changes pixel count.
 patch('src/engine/pipeline.js',"this.renderScale = s; this.setSize(this.displayW, this.displayH, true);",
  "this.renderScale = s; this.setSize(this.displayW, this.displayH, true); this.taa.reset = true;");
