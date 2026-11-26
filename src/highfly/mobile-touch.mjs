@@ -35,6 +35,7 @@ export function resolveHighflyContext(p){
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  if(p.state==='hf_climb')return {action:'climb',label:'SOLTAR'};
+ if(p.state==='hf_seated')return {action:'seat',label:'LEVANTARSE'};
  // NPC conversations outrank nearby rocks, walls or collision capsules.
  const g=globalThis.__game;
  // Physical fallen animal outranks proximity climb and tree collisions.
@@ -45,6 +46,7 @@ export function resolveHighflyContext(p){
   if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
      Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};
  }
+ if(p.grounded&&p.state==='move'&&globalThis.__hfP555Regions?.nearSeat(p.pos))return {action:'seat',label:'SENTARSE'};
  // In water, wall contact takes priority over diving.
  if(p.state==='swim'){
   const d=typeof w.raycast==='function'?w.raycast(
