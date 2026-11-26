@@ -46,7 +46,7 @@ export function installP508WorldClock(pipe,options={}){
  let moonIndex=0;
  // P514: hidden/mini/full diagnostics without changing the sampling engine.
  let diagMode=['hidden','mini','full'].includes(search.get('hfdiag'))?search.get('hfdiag'):'hidden';
- let diagMini=null,diagBtn=null,diagCss=null,lastDiagPaint=0;
+ let diagMini=null,diagBtn=null,diagCss=null,lastDiagPaint=0,diagLast=0,diagTimes=[];
  let lastSync=-Infinity,draws=0;
  const baseSun=pipe.sky.sunColor.clone();
  const grade=pipe.skyPass.uniforms.uHFGrade.value;
@@ -90,10 +90,20 @@ export function installP508WorldClock(pipe,options={}){
      const desc=name+' · Luna y estrellas habitualmente; eventos raros.';
      if(eventLabel.textContent!==desc)eventLabel.textContent=desc;
    }
-   if(diagMini&&diagMode==='mini'&&now-lastDiagPaint>=750){
-     lastDiagPaint=now;
-     const fps=win?.__hfP505Pacing?.fps??win?.__hfGpuStats?.fps??win?.__gov?.fps??0;
-     diagMini.textContent='FPS '+(Number.isFinite(fps)&&fps>0?Math.round(fps):'—');
+   // P556: actual frame intervals, independent of optional startup profiler flags.
+   if(diagLast&&now>diagLast){diagTimes.push(now-diagLast);if(diagTimes.length>120)diagTimes.shift()}diagLast=now;
+   if(diagMini&&diagMode!=='hidden'&&now-lastDiagPaint>=500){
+     lastDiagPaint=now;const samples=diagTimes.slice().sort((a,b)=>a-b),n=samples.length,mean=samples.reduce((a,b)=>a+b,0)/Math.max(1,n),fps=mean>0?1000/mean:0,p95=samples[Math.max(0,Math.ceil(n*.95)-1)]??0,max=samples.at(-1)??0;
+     const info=pipe.renderer?.info,region=win?.__hfP555Regions?.metrics?.(),g=win?.__game,p=g?.player?.pos;
+     diagMini.textContent=diagMode==='mini'?'FPS '+(fps?fps.toFixed(0):'—'):[
+       'FPS '+(fps?fps.toFixed(1):'—')+' · '+mean.toFixed(1)+' ms/frame',
+       'P95 '+p95.toFixed(1)+' ms · peor '+max.toFixed(1)+' ms',
+       'Draw calls '+(info?.render?.calls??'—')+' · tris '+(info?.render?.triangles??'—'),
+       'GPU geometrías '+(info?.memory?.geometries??'—')+' · texturas '+(info?.memory?.textures??'—'),
+       'Región '+(region?.seed??'inicio')+' · sectores '+(region?.visible??0)+'/'+(region?.total??0)+' · BVH '+(region?.solids??0),
+       'Jugador '+(g?.player?.state??'—')+' · '+(p?[p.x,p.y,p.z].map(v=>v.toFixed(1)).join(' / '):'—'),
+       'Entrada '+(g?.input?.enabled?'activa':'pausada')+' · carga '+(region?.busy?'sí':'no')
+     ].join('\n');
    }
    draws++;
  };
@@ -115,7 +125,7 @@ export function installP508WorldClock(pipe,options={}){
  };
  const setDiagnostics=(value)=>{
    if(!['hidden','mini','full'].includes(value))return false;
-   diagMode=value;
+   diagMode=value;lastDiagPaint=0;
    if(doc?.body)doc.body.setAttribute('data-hf-diag',diagMode);
    syncButtons();return true;
  };
@@ -167,7 +177,8 @@ export function installP508WorldClock(pipe,options={}){
     body:not([data-hf-diag="full"]) #hf-p499-perf,
     body:not([data-hf-diag="full"]) #hf-p501-stage-profiler,
     body:not([data-hf-diag="full"]) #hf-p502-fpsaudit { display:none !important; }
-    body:not([data-hf-diag="mini"]) #hf-p514-fps-mini { display:none !important; }
+    body[data-hf-diag="hidden"] #hf-p514-fps-mini { display:none !important; }
+    body[data-hf-diag="full"] #hf-p514-fps-mini { top:42px; bottom:auto!important; left:50%; right:auto!important; transform:translateX(-50%); white-space:pre; font:10px/1.35 monospace; border-radius:6px; }
   `;
   doc.body.appendChild(diagCss);
   diagMini=doc.createElement('div');
