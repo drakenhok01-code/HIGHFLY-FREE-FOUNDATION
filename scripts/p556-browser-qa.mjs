@@ -5,11 +5,12 @@ import fs from 'node:fs';
 const base=process.env.HF_QA_URL??'http://127.0.0.1:4173/HIGHFLY-FREE-FOUNDATION/preview-p55/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
 const page=await browser.newPage({viewport:{width:800,height:375},deviceScaleFactor:1,hasTouch:true,isMobile:true});
-const errors=[],rows=[];page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+const errors=[],rows=[];let baseline=null;page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 try{
  await page.goto(base+'?hfdiag=full&hfqa=1',{waitUntil:'domcontentloaded',timeout:120000});
  await page.waitForFunction(()=>window.__game&&window.__hfP555Regions&&window.__hfP508Clock,{},{timeout:240000});
  await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'});window.__hfP508Clock.setDiagnostics('full')});
+ baseline=await page.evaluate(async()=>{await new Promise(resolve=>{let n=0;function frame(){if(++n>=4)resolve();else requestAnimationFrame(frame)}requestAnimationFrame(frame)});return window.__hfP555Regions.metrics().opaque});console.log('HF557_BASELINE '+JSON.stringify(baseline));
  for(let seed=1;seed<=8;seed++){for(const zone of ['exterior','centro']){
   const result=await page.evaluate(async ({seed,zone})=>{
    const api=window.__hfP555Regions,g=window.__game,pipe=window.__pipe,from=performance.now();
@@ -22,7 +23,7 @@ try{
    const distance=Math.hypot(after.x-before.x,after.z-before.z),regionMetrics=api.metrics(),diag=document.getElementById('hf-p514-fps-mini');
    return {seed,zone,ok:Number.isFinite(distance)&&distance>.6&&sorted.length>=12,walkedMetres:distance,elapsed,frames:sorted.length,frameMean:mean,p95:sorted[Math.max(0,Math.ceil(sorted.length*.95)-1)]??null,loadMs:api.metrics().loadMs,renderCalls:regionMetrics.opaque?.calls??null,triangles:regionMetrics.opaque?.triangles??null,metrics:regionMetrics,state:g.player.state,diagnostic:diag?.textContent,diagVisible:!!diag&&getComputedStyle(diag).display!=='none',wallElapsed:performance.now()-from};
   },{seed,zone});
-  rows.push(result);console.log('HF557_WALK '+JSON.stringify(result));await page.screenshot({path:'qa-region-'+seed+'-'+zone+'.png',timeout:30000}).catch(()=>{});
+  result.geometryBudget=Math.max(2500000,(baseline?.triangles??0)+1000000);result.geometryOk=Number.isFinite(result.triangles)&&result.triangles<=result.geometryBudget;result.nativeForestOk=!!result.metrics?.forest?.trees;rows.push(result);console.log('HF557_WALK '+JSON.stringify(result));await page.screenshot({path:'qa-region-'+seed+'-'+zone+'.png',timeout:30000}).catch(()=>{});
  }}
-}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p556-browser-audit.json',JSON.stringify({device:'CI Chromium SwiftShader, NOT Galaxy S23',rows,errors,allWalked:rows.length===16&&rows.every(r=>r.ok&&r.diagVisible),note:'32-frame target, capped at 90s per region; opaque scene counts exclude other passes; no mobile FPS claim'},null,2))}
-if(rows.length!==16||rows.some(r=>!r.ok||!r.diagVisible)||errors.some(e=>/TypeError|ReferenceError|shader error|WebGLProgram: Shader Error/i.test(e)))process.exitCode=1;
+}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p556-browser-audit.json',JSON.stringify({device:'CI Chromium SwiftShader, NOT Galaxy S23',baseline,rows,errors,allWalked:rows.length===16&&rows.every(r=>r.ok&&r.diagVisible),note:'32-frame target, capped at 90s per region; opaque scene counts exclude other passes; no mobile FPS claim'},null,2))}
+if(rows.length!==16||rows.some(r=>!r.ok||!r.diagVisible||!r.geometryOk||!r.nativeForestOk)||errors.some(e=>/TypeError|ReferenceError|shader error|WebGLProgram: Shader Error/i.test(e)))process.exitCode=1;
