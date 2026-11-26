@@ -741,7 +741,7 @@ const delta=terrainDiff.split('\n').filter(x=>/^[+-](?![+-])/.test(x));
 if(delta.length!==6||!delta.every(x=>/fetch\(|loadHeights\(/.test(x)))throw Error('World generation diff not limited to 3 Pages URLs');
 run('npm',['ci','--no-audit','--no-fund'],origin);
 // Vite 8 no longer ships esbuild; pin only this standalone editor bundler in the disposable checkout.
-run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2'],origin);
+run('npm',['install','--no-save','--no-audit','--no-fund','esbuild@0.28.2','meshoptimizer@0.25.0'],origin);
  // P532: Quaternius CC0 GLBs contain genuine KTX2/BasisU texture payloads.
  // Copy the MIT-licensed Three.js BasisU transcoder with the exact installed
  // Three.js runtime: no CDN calls, no loss of material color or image quality.
