@@ -29,6 +29,8 @@ export async function installP555Regions(game,{pipe,terrain,water}){
  const load=id=>{if(!models.has(id)){const a=assets.get(id);if(!a)throw Error('Missing '+id);models.set(id,loader.loadAsync(DIR+a.path).then(x=>x.scene).catch(e=>{models.delete(id);throw e}))}return models.get(id)};
  let active=null,busy=false,auto=true,lastCheck=0,solids=[];
  const root=new THREE.Group();root.name='P555 streamed Guildhall region';pipe.scene.add(root);
+ // Native Unsung uses custom lighting shaders; imported standard GLB materials need scene lights.
+ const ambient=new THREE.AmbientLight(0xffffff,1.4),sun=new THREE.DirectionalLight(0xfff4d7,2);sun.position.set(30,70,40);pipe.scene.add(ambient,sun);ambient.updateMatrixWorld(true);sun.updateMatrixWorld(true);
  terrain.heightAt=(x,z)=>active&&inBounds(active.p,x,z)?active.integrated.gridHeight(x,z):nativeHeight(x,z);
  game.world.waterLevel=(x,z)=>{if(!active||!inBounds(active.p,x,z))return nativeWaterLevel(x,z);const t=active.integrated.sampler.sample(x,z),h=active.integrated.gridHeight(x,z),level=t.water>.30?Math.max(-.07,t.level):-.07;return h<level-.025?level:-Infinity};
  function clear(){clipTerrain(null);clipWater(null);fusion.clear();for(const s of solids){const i=game.world.solids.indexOf(s);if(i>=0)game.world.solids.splice(i,1);s.bvh?.geometry?.dispose()}solids=[];root.traverse(o=>{if(o.userData.owned)o.geometry?.dispose();if(o.isInstancedMesh)o.dispose();if(o.userData.ownMaterial){o.material.map?.dispose();o.material.dispose()}});root.clear();active=null}
@@ -61,19 +63,17 @@ export async function installP555Regions(game,{pipe,terrain,water}){
     if(/building-|castle|wall-|fence-|rock-|tower|barracks|lumbermill|windmill|watermill/.test(id)){const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());if(size.x>.1&&size.y>.25&&size.z>.1){for(const o of arr){const g=new THREE.BoxGeometry(size.x*.90,size.y*.94,size.z*.90).translate(ctr.x,ctr.y,ctr.z).applyMatrix4(o.m).applyMatrix4(worldMatrix).toNonIndexed();const pos=g.getAttribute('position').array,key=Math.floor(o.q.x/60)+','+Math.floor(o.q.z/60);if(!chunk.has(key))chunk.set(key,[]);chunk.get(key).push(...pos);g.dispose()}}}
    }
    const guild=guildLocation(d),board=guild?.board;let spawn=null;
-   if(board){const x=p.x+board[0]*p.scale,z=p.z+board[2]*p.scale,y=integrated.gridHeight(x,z);spawn={x,z,y}}
+   if(board){const facing=d.board?.facing??0,x=p.x+(board[0]+Math.sin(facing)*2)*p.scale,z=p.z+(board[2]+Math.cos(facing)*2)*p.scale,y=integrated.gridHeight(x,z);spawn={x,z,y}}
    if(!spawn){const t=d.tiles.find(t=>t.ground!=='water'&&t.paths?.length&&!t.prefab);if(t){const x=p.x+t.x*p.scale,z=p.z+t.z*p.scale;spawn={x,z,y:integrated.gridHeight(x,z)}}}
    if(!spawn)throw Error('No safe arrival candidate');
-   clear();root.add(integrated.group,tmp);active={p,d,integrated,spawn};fusion.activate(p);clipTerrain(p);clipWater(p);
+   clear();root.add(integrated.group,tmp);if(guild){const c=document.createElement('canvas');c.width=768;c.height=160;const ctx=c.getContext('2d');ctx.fillStyle='#221b35';ctx.fillRect(0,0,768,160);ctx.fillStyle='#ffe4a1';ctx.font='bold 50px sans-serif';ctx.textAlign='center';ctx.fillText('GREMIO DE AVENTUREROS',384,100);const tex=new THREE.CanvasTexture(c),label=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthWrite:false}));const x=p.x+(board?.[0]??guild.x)*p.scale,z=p.z+(board?.[2]??guild.z)*p.scale;label.position.set(x,integrated.gridHeight(x,z)+3.2,z);label.scale.set(7,1.46,1);label.userData.ownMaterial=true;root.add(label)}active={p,d,integrated,spawn};fusion.activate(p);clipTerrain(p);clipWater(p);
    if(structure)register(structure);for(const arr of chunk.values())register(geom(arr));
    root.updateMatrixWorld(true);if(warp)travel(spawn.x,spawn.z,spawn.y);
    say('Región '+seed+' · '+d.pieces.length+' piezas fuente · colisión exterior experimental');panel.style.display='none';
   }catch(e){say('Error: '+e.message);console.error(e)}finally{setBusy(false)}
  }
  for(const p of placement.placements.sort((a,b)=>a.seed-b.seed))button('Isla '+p.seed+' · '+REGION_THEMES[p.seed],()=>open(p.seed,true));
- button('Inicio original',()=>{if(busy||game.state!=='playing')return;clear();travel(-519,-70,nativeHeight(-519,-70));panel.style.display='none'});
- // Correct coordinate order for the original spawn, with native altitude.
- const home=buttons.at(-1);home.onclick=()=>{if(busy||game.state!=='playing')return;clear();travel(-519,-70,nativeHeight(-519,-70));panel.style.display='none'};
+ button('Inicio original',()=>{if(busy||game.state!=='playing')return;clear();const h=game.sites?.spawn??{x:-519,z:-70,y:game.world.floorBelow(-519,nativeHeight(-519,-70)+25,-70,35)};travel(h.x,h.z,h.y);panel.style.display='none'});
  button('FPS: mostrar/ocultar',()=>globalThis.__hfP508Clock?.cycleDiagnostics());
  pipe.onBeforeScene.push(()=>{const now=performance.now();if(now-lastCheck<900||busy||game.state!=='playing')return;lastCheck=now;const {x,z}=game.player.pos;const p=placement.placements.find(q=>inBounds(q,x,z,80));if(p&&active?.p.seed!==p.seed)open(p.seed,false);else if(active&&!inBounds(active.p,x,z,180))clear()});
  return {open,clear,get active(){return active?.p.seed??null},get busy(){return busy},regions:placement.placements};
