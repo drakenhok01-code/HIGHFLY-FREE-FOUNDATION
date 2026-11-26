@@ -28,7 +28,7 @@ export function collectHighflyRadarTargets(game){
    label:'NPC '+n.def.name,detail:'Entregar · '+q.title,kind:'quest'});
  }
  for(const n of Object.values(game?.strings?.nodes??{}))if(finite(n.x)&&finite(n.z))targets.push({id:'pylon:'+n.id,x:n.x,z:n.z,label:'Faro '+n.id,detail:'Estación de Cuerdas de Luz',kind:'pylon'});
- const regions=globalThis.__hfP555Regions;for(const q of regions?.regions??[])targets.push({id:'region:'+q.seed,x:q.x,z:q.z,label:'Región '+q.seed,detail:'Exploración libre',kind:'region'});
+ const regions=globalThis.__hfP555Regions;for(const q of regions?.regions??[])targets.push({id:'region:'+q.seed,x:q.x,z:q.z,label:q.city?.name??'Región '+q.seed,detail:q.city?.theme??'Exploración libre',kind:'region'});
  const spires=game?.spires??[];
  const next=spires.find(s=>!s.tuned);
  if(next&&finite(next.x)&&finite(next.z))
