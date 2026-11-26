@@ -132,6 +132,10 @@ function stepClimb(p,dt,input,camYaw,nativeUpdate){
  // When the wall flares outward at a lower elevation, step out along its normal
  // only if the next contact is real; do not pass through heightfield.
  if(!probe&&Math.abs(y)>.1){for(const shift of [.10,-.10,.20,-.20]){const trial=candidate.clone();trial.x+=f.x*shift;trial.z+=f.z*shift;const floor=p.world.groundHeight(trial.x,trial.z);if(Number.isFinite(floor)&&floor>trial.y+.03)continue;const hit=gripContact({...p,pos:trial},grip.yaw);if(hit){candidate.copy(trial);probe=hit;break}}}
+ const floorAtCandidate=p.world.groundHeight?.(candidate.x,candidate.z);
+ if(y<-.1&&Number.isFinite(floorAtCandidate)&&candidate.y<=floorAtCandidate+.045&&before.y-floorAtCandidate<.32){
+  dropClimb(p);p.pos.set(candidate.x,floorAtCandidate,candidate.z);p.grounded=true;p.viewY=p._viewY1=p.pos.y;p.fallStart=p.pos.y;return;
+ }
  const top=y>.16?gripLedge({...p,pos:candidate},grip):null;
  if(top&&(!probe||probe.distance>.72)){
    startMantle(p,top);p._hfClimb=null;p._hfClimbInput={x:0,y:0};return;
@@ -195,7 +199,7 @@ function stepPhoenix(p,dt,input,yaw){
  if(v.y>=-PHOENIX.safeImpact)p.fallStart=p.pos.y;
  p._integrate(dt);
  p.stamina=Math.max(0,p.stamina-PHOENIX.energyPerSecond*dt);p.staminaWait=.65;
- p.invulnerable=Math.max(0,p.invulnerable-dt);p.stateTime+=dt;
+ p.invulnerable=Math.max(0,(p.invulnerable??0)-dt);p.stateTime+=dt;
  if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z);p.yaw+=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw))*Math.min(1,dt*7);}
  const water=p.world.waterLevel(p.pos.x,p.pos.z);
  if(p.state!=='hf_glide'||p.grounded||p.pos.y<water+.1){endPhoenix(p,p.grounded?'land':'water-or-interrupted');}
