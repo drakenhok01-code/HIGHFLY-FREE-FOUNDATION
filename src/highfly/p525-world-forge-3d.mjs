@@ -123,7 +123,7 @@ renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.18;
 holder.insertBefore(renderer.domElement,holder.firstChild);
-const cam=new THREE.PerspectiveCamera(54,1,.1,35000);
+const cam=new THREE.PerspectiveCamera(54,1,P55_PREVIEW?1.5:.1,35000);
 const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=false;orbit.minDistance=8;orbit.maxDistance=4500;
 orbit.maxPolarAngle=Math.PI/2-.02;orbit.screenSpacePanning=true;
 orbit.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.PAN,RIGHT:P539_PREVIEW?null:THREE.MOUSE.PAN};
@@ -1551,7 +1551,7 @@ async function boot(){
     $('play').hidden=true;
     $('map2d').hidden=true;
     try{
-      if(P55_PREVIEW){await installFullRegionLab({scene,loader:gltfLoader,focus,status,render,nativeVisuals,elevation,overview,refreshVegetation:()=>{updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true)}});}else await installSettlementLab({scene,loader:gltfLoader,overview,elevation,occupied:(x,z)=>archNear(x,z,1.8)||safety.some(([a,b,r])=>Math.hypot(x-a,z-b)<r)||records.some(o=>{const a=BY_ID.get(o.type);return a&&Math.hypot(x-o.x,z-o.z)<Math.hypot(a.w,a.d)*o.scale*.5}),nativeVisuals,render,focus,target:orbit.target,status,refreshGrass:()=>{updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true)}});
+      if(P55_PREVIEW){await installFullRegionLab({scene,loader:gltfLoader,focus,status,render,nativeVisuals,elevation,overview,nativeWater,nativeLeaves,refreshVegetation:()=>{updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true)}});}else await installSettlementLab({scene,loader:gltfLoader,overview,elevation,occupied:(x,z)=>archNear(x,z,1.8)||safety.some(([a,b,r])=>Math.hypot(x-a,z-b)<r)||records.some(o=>{const a=BY_ID.get(o.type);return a&&Math.hypot(x-o.x,z-o.z)<Math.hypot(a.w,a.d)*o.scale*.5}),nativeVisuals,render,focus,target:orbit.target,status,refreshGrass:()=>{updateTrees(true);nativeGrass?.update(orbit.target.x,orbit.target.z,true)}});
     }catch(e){log('P544 Guildhall',e.message,false);status('P544: '+e.message);}
   }
 
