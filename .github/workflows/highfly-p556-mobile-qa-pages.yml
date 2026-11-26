@@ -1,4 +1,4 @@
-name: HIGHFLY P558 QA retry — corrected metrics and startup diagnostics
+name: HIGHFLY P559 — vegetation density and native overlap audit
 on:
   push:
     branches: [experiment/guildhall-full-regions-p55]
@@ -21,21 +21,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reuse compiled P558 artifact from successful build
-        uses: actions/download-artifact@v4
-        with:
-          name: highfly-p558-build
-          run-id: 45815892982
-          github-token: ${{ github.token }}
-          path: dist
-      - name: Verify test script and complete world artifact
+      - name: Prepare image dependencies
         run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Build real game and all region assets
+        run: |
+          set -euo pipefail
           node --check scripts/p556-browser-qa.mjs
-          test -s dist/index.html
+          for f in p508-world-clock p553-continuous-region p555-region-runtime p556-sector-policy p557-native-forest p558-model-lod p559-vegetation-policy; do node --check "src/highfly/$f.mjs"; done
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          node scripts/p555-pages-regions.mjs
+          grep -q 'P556:' src/highfly/p508-world-clock.mjs
           test -s dist/highfly/regions/island-8.json
       - uses: actions/upload-artifact@v4
         with:
-          name: highfly-p558-build
+          name: highfly-p559-build
           path: dist/
           retention-days: 14
   walk-test:
@@ -57,7 +59,7 @@ jobs:
           node-version: '22'
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p558-build
+          name: highfly-p559-build
           path: dist
       - name: Install browser
         run: |
@@ -75,7 +77,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: highfly-p558-walk-audit-${{ matrix.shard }}
+          name: highfly-p559-walk-audit-${{ matrix.shard }}
           path: |
             p556-browser-audit.json
             qa-region-*.png
@@ -96,11 +98,11 @@ jobs:
           path: previous
       - uses: actions/download-artifact@v4
         with:
-          name: highfly-p558-build
+          name: highfly-p559-build
           path: new
       - uses: actions/download-artifact@v4
         with:
-          pattern: highfly-p558-walk-audit-*
+          pattern: highfly-p559-walk-audit-*
           path: qa
       - name: Replace only experimental preview after browser checks
         run: |
@@ -113,7 +115,7 @@ jobs:
           test -s site/preview-p55/index.html
           rm -rf site/preview-p55
           cp -a new site/preview-p55
-          node --input-type=module -e 'import fs from "node:fs"; const shards=fs.readdirSync("qa").map(d=>JSON.parse(fs.readFileSync("qa/"+d+"/p556-browser-audit.json"))); const rows=shards.flatMap(s=>s.rows); if(rows.length!==16||new Set(rows.map(r=>r.seed+":"+r.zone)).size!==16||rows.some(r=>!r.ok||!r.geometryOk||!r.nativeForestOk||!r.diagVisible))process.exit(1); fs.writeFileSync("site/preview-p55/highfly/regions/p558-browser-audit.json",JSON.stringify({rows,shards},null,2));'
+          node --input-type=module -e 'import fs from "node:fs"; const shards=fs.readdirSync("qa").map(d=>JSON.parse(fs.readFileSync("qa/"+d+"/p556-browser-audit.json"))); const rows=shards.flatMap(s=>s.rows); if(rows.length!==16||new Set(rows.map(r=>r.seed+":"+r.zone)).size!==16||rows.some(r=>!r.ok||!r.geometryOk||!r.nativeForestOk||!r.diagVisible))process.exit(1); fs.writeFileSync("site/preview-p55/highfly/regions/p559-browser-audit.json",JSON.stringify({rows,shards},null,2));'
           for OLD in 541 542; do
             if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
           done
@@ -122,14 +124,14 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          name: highfly-p558-pages
+          name: highfly-p559-pages
           path: site
       - name: Wait for artifact index
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           for attempt in $(seq 1 30); do
-            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p558-pages")] | length' 2>/dev/null || echo 0)"
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p559-pages")] | length' 2>/dev/null || echo 0)"
             if [ "$N" = 1 ]; then sleep 20; exit 0; fi
             sleep 6
           done
@@ -137,4 +139,4 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: highfly-p558-pages
+          artifact_name: highfly-p559-pages
