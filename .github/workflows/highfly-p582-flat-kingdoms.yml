@@ -1,0 +1,69 @@
+name: HIGHFLY Flat Kingdoms — original-size thematic islands
+on:
+  push:
+    branches: ['experiment/flat-kingdoms-20261127']
+    paths: ['.github/workflows/highfly-p582-flat-kingdoms.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  islands:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        city: [sylvaris, arvelia, puertaria, valdoria, auralis, lumeria, ferrondral, valtheria]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Compare original with flat original-size themed candidates
+        env:
+          CITY: ${{ matrix.city }}
+        run: bun scripts/p582-flat-kingdoms.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flat-${{ matrix.city }}
+          path: flat/*.json
+          if-no-files-found: error
+          retention-days: 90
+  report:
+    needs: islands
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: flat-*
+          path: flat
+          merge-multiple: true
+      - name: Compile 8 original-size flat kingdom reports and preview links
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const reports=fs.readdirSync('flat').filter(f=>f.endsWith('.json')).map(f=>JSON.parse(fs.readFileSync('flat/'+f,'utf8')));
+          const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+          const summary=reports.map(({rows,...r})=>r);
+          fs.writeFileSync('flat/results.json',JSON.stringify(summary,null,2));
+          const entry=(label,w)=>w?'<p>'+esc(label)+': seed '+w.config.seed+' | files '+w.config.files+' | land '+w.land+' | buildings '+w.buildings+' | span '+w.span.toFixed(2)+' | stairs '+w.stairs+' | bridges '+w.bridges+' | coverage '+w.coverage+'/'+w.required+' | NPC '+(w.population??'not checked')+' | missing '+esc(w.missing.join(', ')||'none')+' | thematic missing '+esc(w.focusMissing.join(', ')||'none')+' <a href="'+esc(w.url)+'">Open 3D</a></p>':'<p>'+esc(label)+': unavailable</p>';
+          fs.writeFileSync('flat/index.html','<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HIGHFLY Flat Kingdoms</title><style>body{font:16px system-ui;background:#151120;color:#efe4cb;max-width:1000px;margin:24px auto;padding:12px}article{border:1px solid #66517f;padding:16px;margin:16px 0;border-radius:12px}a{color:#d2b9ff}</style><h1>HIGHFLY Flat Kingdoms</h1><p>Original island size, hills=0. Generator checks only; not Android or Unsung collision validation.</p>'+summary.map(r=>'<article><h2>'+esc(r.city)+'</h2>'+entry('Original',r.baseline)+entry('Original seed flat',r.sameSeedFlat)+entry('Winner',r.winner)+r.alternatives.map((w,i)=>entry('Alternative '+(i+1),w)).join('')+'</article>').join(''));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'# Flat Kingdoms\n\n| City | Seed | Files | Buildings | NPC | Height span | Missing thematic | 3D |\n|---|---:|---:|---:|---:|---:|---|---|\n'+summary.map(r=>{const w=r.winner;return w?'| '+r.city+' | '+w.config.seed+' | '+w.config.files+' | '+w.buildings+' | '+w.population+' | '+w.span.toFixed(2)+' | '+(w.focusMissing.join(', ')||'none')+' | [preview]('+w.url+') |':'| '+r.city+' | no verified winner | | | | | | |';}).join('\n')+'\n');
+          console.log('HF582_FLAT_SUMMARY '+JSON.stringify(summary.map(r=>({city:r.city,attempts:r.attempts,valid:r.valid,winner:r.winner,sameSeedFlat:r.sameSeedFlat,baseline:r.baseline}))));
+          if(summary.length!==8||summary.some(r=>!r.winner))process.exitCode=1;
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: HIGHFLY-FLAT-KINGDOMS-8
+          path: flat/
+          if-no-files-found: error
+          retention-days: 90
