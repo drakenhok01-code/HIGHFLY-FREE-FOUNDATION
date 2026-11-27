@@ -32,6 +32,9 @@ const safe=s=>typeof s==='string'&&s.split('/').every(v=>/^[a-zA-Z0-9_.-]+$/.tes
 async function get(rel){if(!safe(rel))throw Error('Invalid asset path '+rel);let err;for(let i=0;i<4;i++){try{const r=await fetch(new URL(rel,origin),{signal:AbortSignal.timeout(45000)});if(!r.ok)throw Error('HTTP '+r.status+' '+rel);let b=Buffer.from(await r.arrayBuffer());if(b[0]===31&&b[1]===139)b=gunzipSync(b);return b}catch(e){err=e}}throw err}
 const oldMap=new Map(priorAudit.assets.map(a=>[a.id,a])),assets=[],missing=[],catalog=new Map(),license=await read('src/highfly/guildhall-p544/pack-licenses.json');
 const allowed=new Map(license.packs.filter(p=>p.verified&&p.license==='CC0').map(p=>[p.id,p]));
+const unknown=[...required].filter(id=>!safe(id)||!allowed.has(id.split('/')[0]));
+console.log('HF575_ASSET_PREFLIGHT '+JSON.stringify({required:required.size,packCounts:Object.fromEntries([...new Set([...required].map(id=>id.split('/')[0]))].sort().map(pack=>[pack,[...required].filter(id=>id.startsWith(pack+'/')).length])),newIds:[...required].filter(id=>!oldMap.has(id)).sort(),unapproved:unknown}));
+if(unknown.length)throw Error('Unapproved assets (all): '+JSON.stringify(unknown));
 let catalogIndex;
 for(const id of [...required].sort()){
  if(!safe(id)||!allowed.has(id.split('/')[0]))throw Error('Unapproved pack '+id);
