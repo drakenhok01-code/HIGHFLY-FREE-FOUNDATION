@@ -29,6 +29,7 @@ export function collectHighflyRadarTargets(game){
  }
  for(const n of Object.values(game?.strings?.nodes??{}))if(finite(n.x)&&finite(n.z))targets.push({id:'pylon:'+n.id,x:n.x,z:n.z,label:'Faro '+n.id,detail:'Estación de Cuerdas de Luz',kind:'pylon'});
  const regions=globalThis.__hfP555Regions;for(const q of regions?.regions??[])targets.push({id:'region:'+q.seed,x:q.x,z:q.z,label:q.city?.name??'Región '+q.seed,detail:q.city?.theme??'Exploración libre',kind:'region'});
+ for(const n of globalThis.__hfNativePopulation?.residents??[])if(n.stylist&&!n.indoors&&finite(n.x)&&finite(n.z))targets.push({id:'stylist:'+n.id,x:n.x,z:n.z,label:'Estilista',detail:'Forja de personaje',kind:'npc'});
  const spires=game?.spires??[];
  const next=spires.find(s=>!s.tuned);
  if(next&&finite(next.x)&&finite(next.z))
