@@ -73,6 +73,15 @@ function adjustedAnimation(clip,src,dst,counts){
  }
  return new THREE.AnimationClip(clip.name,clip.duration,tracks);
 }
+// Retarget optional CC0 shared Guildhall clips from their own rest skeleton onto a FREE body.
+export function appendSharedRigAnimations(gltf,rig){
+ const dst=rest(gltf.scene),src=new Map();
+ rig.scene.traverse(n=>{const k=key(n.name);if(dst.has(k)&&!src.has(k))src.set(k,{name:n.name,p:n.position.clone(),q:n.quaternion.clone(),s:n.scale.clone()})});
+ if(src.size<30)return {added:0,matchedBones:src.size};
+ const clips=new Map(gltf.animations.map(c=>[c.name,c]));let added=0;
+ for(const clip of rig.animations){const count={bound:0,skipped:0},out=adjustedAnimation(clip,src,dst,count);if(count.bound<Math.max(10,clip.tracks.length*.8))continue;clips.set(out.name,out);added++}
+ gltf.animations=[...clips.values()];return {added,matchedBones:src.size};
+}
 export function stylizeUniversalKayKit(gltf,{npc=false}={}){
  const root=gltf.scene;
  root.updateMatrixWorld(true);
