@@ -1,0 +1,292 @@
+name: HIGHFLY P5.7.3 — PREMIUM FRAME PERFECTION
+on:
+  push:
+    branches: [p573-premium-frame-20261127]
+    paths: ['.github/workflows/highfly-p573-frame-perfection.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p573-qa
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p559-build
+          run-id: 45828309587
+          github-token: ${{ github.token }}
+          path: previous-build
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p564-geography-atlas
+          run-id: 45872926641
+          github-token: ${{ github.token }}
+          path: map-atlas
+      - name: Prepare image dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4 cairosvg==2.8.2
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Assert flight, water and gameplay source unchanged
+        run: |
+          git fetch --depth=1 origin 65ba77f9cdfc5bae5ca82c2ef108c9a5dfa5b9d9
+          git diff --exit-code 65ba77f9cdfc5bae5ca82c2ef108c9a5dfa5b9d9 HEAD -- src/highfly/universal-motion.mjs src/highfly/p564-phoenix-motion.mjs src/highfly/p565-native-materials.mjs src/highfly/p553-continuous-region.mjs src/highfly/p570-living-world.mjs src/highfly/professions.mjs src/highfly/rpg-core.mjs src/highfly/kaykit-free-hero.mjs
+          git show 65ba77f9cdfc5bae5ca82c2ef108c9a5dfa5b9d9:src/highfly/mobile-touch.mjs | sed 's/P5.7.2<\/div>/P5.7.3<\/div>/' > /tmp/hf-mobile
+          cmp /tmp/hf-mobile src/highfly/mobile-touch.mjs
+          git show 65ba77f9cdfc5bae5ca82c2ef108c9a5dfa5b9d9:src/highfly/p555-region-runtime.mjs | sed 's/Viaje · 5.7.2/Viaje · 5.7.3/' > /tmp/hf-regions
+          cmp /tmp/hf-regions src/highfly/p555-region-runtime.mjs
+      - name: Rebuild game with native beacon arrivals and retain original region assets
+        run: |
+          set -euo pipefail
+          node --check src/highfly/p555-region-runtime.mjs
+          node --check src/highfly/p492-kaykit-people.mjs
+          node --check src/highfly/p565-region-cover.mjs
+          node --check src/highfly/mobile-touch.mjs
+          node --check src/highfly/p538-arvelia-quests.mjs
+          node scripts/p566-interaction-policy.test.mjs
+          node scripts/p568-flight-policy.test.mjs
+          node scripts/p568-resource-policy.test.mjs
+          node scripts/p568-naval-policy.test.mjs
+          node scripts/p5682-polish-policy.test.mjs
+          node scripts/p570-living-policy.test.mjs
+          node --check src/highfly/p570-living-world.mjs
+          node --check src/highfly/p570-living-data.mjs
+          node --check src/highfly/kaykit-free-hero.mjs
+          node --check src/highfly/p5683-work-tools.mjs
+          node --check src/highfly/p553-continuous-region.mjs
+          node --check src/highfly/premium-rpg.mjs
+          ! grep -q 'p41:loot:' src/highfly/premium-rpg.mjs
+          node --check src/highfly/p568-naval-policy.mjs
+          node --check src/highfly/p568-resource-policy.mjs
+          node --check src/highfly/p565-native-materials.mjs
+          node --check src/highfly/p565-region-cover.mjs
+          node --check scripts/p565-integrity-smoke.mjs
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          jq -e '.ok == true and (.rarities|length)==6 and .count>200 and .protectedPixels>10000 and (.repainted|index("wolf_pelt") != null)' dist/highfly/p573/frame-audit.json
+          test -s dist/highfly/p573/frame-contact.jpg
+          mkdir -p dist/highfly/regions
+          cp -a previous-build/highfly/regions/. dist/highfly/regions/
+          mkdir -p dist/highfly/p564
+          cp -a map-atlas/. dist/highfly/p564/
+          test -s dist/highfly/p564/atlas.json
+          node --check src/highfly/p564-city-identities.mjs
+          node --check src/highfly/p492-radar.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node --check scripts/p560-android-lab.js
+          node --check scripts/p564-exploration-smoke.mjs
+          node --check scripts/p564-mobility-smoke.mjs
+          node --check src/highfly/universal-motion.mjs
+          node --check src/highfly/p564-phoenix-motion.mjs
+          node --check src/highfly/p564-phoenix-wings.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s and 'p560-android-lab.js' not in s
+          p.write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/highfly/regions/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p573-build
+          path: dist
+          retention-days: 14
+  smoke:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p573-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validate original rarity art in Bag, Character, Professions and Forge
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf560-server.log 2>&1 &
+          node scripts/p573-premium-browser.mjs
+          node scripts/p5683-tool-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p573-smoke
+          path: |
+            p573-premium-browser.json
+            p573-*.png
+            p5683-tool-smoke.json
+            p5683-*.png
+            p570-living-browser.json
+            p570-*.png
+            p571-*.png
+          if-no-files-found: warn
+
+  archive-p566:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p572-build
+          run-id: 45997236328
+          github-token: ${{ github.token }}
+          path: game
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p572-smoke
+          run-id: 45997236328
+          github-token: ${{ github.token }}
+          path: audit
+      - name: Verify snapshot
+        run: |
+          test -s game/index.html
+          test -s game/highfly/regions/island-8.json
+          test -s audit/p572-premium-browser.json
+          printf '%s\n' 'Source commit: 65ba77f9cdfc5bae5ca82c2ef108c9a5dfa5b9d9' 'Original run: 45997236328' 'Pages base: /HIGHFLY-FREE-FOUNDATION/preview-p55/' > BACKUP.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P572-PLAYABLE-BACKUP-P573
+          path: |
+            game/
+            audit/
+            BACKUP.txt
+          retention-days: 90
+  integrity:
+    needs: package
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: west
+            seeds: '1,2,3,4'
+          - shard: east
+            seeds: '5,6,7,8'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p573-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify actual region rendering and water/furniture state
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf565-server.log 2>&1 &
+          node scripts/p565-integrity-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p573-integrity-${{ matrix.shard }}
+          path: |
+            p565-integrity-*.json
+            p565-region-*.png
+          if-no-files-found: warn
+
+  publish:
+    needs: [package, smoke, archive-p566, integrity]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p572-pages
+          run-id: 45997236328
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p573-build
+          path: new
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p573-smoke
+          path: smoke
+      - name: Publish exact validated build; retain stable preview
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/highfly/release-p572.json
+          jq -e '.ok == true and (.rows|length)==10 and .bag.debugShortcuts==false' smoke/p5683-tool-smoke.json
+          jq -e '.ok == true and (.screens|length)==8 and (.rarities|length)==6' smoke/p573-premium-browser.json
+          rm -rf site/preview-p55
+          cp -a new site/preview-p55
+          cp smoke/p5683-tool-smoke.json smoke/p573-premium-browser.json site/preview-p55/highfly/
+          test -s site/preview-p55/highfly/p564/atlas.json
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ]; then rm -rf "site/preview-p$OLD"; fi
+          done
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          printf '{"version":"5.7.3","testedCommit":"%s","validationRun":%s}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > site/preview-p55/highfly/release-p573.json
+          cp site/preview-p55/index.html site/preview-p55/play-p573.html
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p573-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p573-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p573-pages
+      - name: Verify public release
+        run: |
+          set -euo pipefail
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 30); do
+            if curl -fsSL "$BASE/highfly/release-p573.json?v=$GITHUB_RUN_ID" | jq -e --arg sha "$GITHUB_SHA" '.version=="5.7.3" and .testedCommit==$sha' >/dev/null && curl -fsSL "$BASE/play-p573.html?v=$GITHUB_RUN_ID" -o /tmp/p570.html; then exit 0; fi
+            sleep 10
+          done
+          exit 1
