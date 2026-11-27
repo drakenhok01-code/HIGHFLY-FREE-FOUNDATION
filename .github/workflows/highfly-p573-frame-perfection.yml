@@ -1,4 +1,4 @@
-name: HIGHFLY P5.7.3 — PREMIUM FRAME PERFECTION
+name: HIGHFLY P5.7.3 — PREMIUM FRAME PERFECTION (R2)
 on:
   push:
     branches: [p573-premium-frame-20261127]

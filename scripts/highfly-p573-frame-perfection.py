@@ -112,12 +112,12 @@ for g in grades:
             assert np.array_equal(np.asarray(out)[solid],np.asarray(frame)[solid]),(g,id,'foreground overwritten')
             # Lossless WebP: all six colored frame masters survive byte-exact
             # decoded pixels, including bottom gem (no compression drift).
-            out.save(path,'WEBP',lossless=True,method=5)
+            out.save(path,'WEBP',lossless=True,method=5,exact=True)
             check=Image.open(path).convert('RGBA')
             assert check.size==(256,256)
             assert np.array_equal(np.asarray(check)[solid],np.asarray(frame)[solid]),(g,id,'lossless verification')
             rows.append({'grade':g,'id':typ+'/'+id,'framePixels':int(solid.sum()),'master':g,'recomposed':typ=='items' and id in paintings})
-    frame.save(preview/('frame-master-'+g+'.webp'),'WEBP',lossless=True)
+    frame.save(preview/('frame-master-'+g+'.webp'),'WEBP',lossless=True,exact=True)
 report={'ok':True,'version':'5.7.3','rarities':grades,'count':len(rows),'protectedPixels':int(solid.sum()),'repainted':sorted(paintings),'wolfSource':'original procedural multilayer fur painting','rows':rows}
 (preview/'frame-audit.json').write_text(json.dumps(report,indent=2))
 # Visual contact sheet for inspection, not in-game UI.
