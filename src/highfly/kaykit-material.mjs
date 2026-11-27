@@ -9,6 +9,7 @@ const vertex=HERO_VERT
   .replace('void main() {','void main() { vHFUV = uv;');
 const fragment=[
 'uniform sampler2D uDiffuse;',
+'uniform vec3 uHFAppearanceTint;',
 'uniform float uFlash;',
 'uniform float uRim;',
 'in vec2 vHFUV;',
@@ -22,7 +23,7 @@ const fragment=[
 'vec3 key=normalize(vec3(0.48,0.92,0.34));vec3 fill=normalize(vec3(-0.62,0.42,-0.45));',
 'float ndl=max(dot(n,key),0.0),bounce=max(dot(n,fill),0.0);',
 'float light=0.52+0.38*ndl+0.10*bounce;',
-'vec3 color=texel.rgb*light+vec3(1.0,0.82,0.54)*uFlash;',
+'vec3 color=texel.rgb*uHFAppearanceTint*light+vec3(1.0,0.82,0.54)*uFlash;',
 'vec3 view=normalize(cameraPosition-vWorld);',
 'float spec=pow(max(dot(reflect(-key,n),view),0.0),28.0)*.11;',
 'color+=vec3(.87,.93,1.0)*spec;',
@@ -35,7 +36,7 @@ export function createUniversalMaterial(material,flash,rim){
  if(!material?.map)throw Error('KayKit CC0 atlas texture missing');
  return new THREE.ShaderMaterial({
   vertexShader:vertex,fragmentShader:fragment,
-  uniforms:{uDiffuse:{value:material.map},uFlash:flash,uRim:rim},
+  uniforms:{uDiffuse:{value:material.map},uHFAppearanceTint:{value:new THREE.Color(0xffffff)},uFlash:flash,uRim:rim},
   side:THREE.DoubleSide,transparent:false,depthTest:true,depthWrite:true,
   toneMapped:false
  });
