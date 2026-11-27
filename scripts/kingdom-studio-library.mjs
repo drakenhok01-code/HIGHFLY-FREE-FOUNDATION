@@ -22,7 +22,7 @@ async function get(rel,glb=false){
 async function put(rel,b){const dest=path.join(root,rel);await fs.mkdir(path.dirname(dest),{recursive:true});await fs.writeFile(dest,b)}
 const raw=await get('catalog/index.json'),idx=JSON.parse(raw);
 if(idx.version!==1||!Array.isArray(idx.packs)||!Array.isArray(idx.rigs)||idx.packs.length<18)throw Error('Catálogo público incompleto');
-const allowed=new Set(['kaykit-hexagon','kaykit-forest','kaykit-builder','kaykit-resources','kaykit-tools','kaykit-furniture','kaykit-adventurers','kaykit-weapons','kaykit-skeletons','kaykit-dungeon','kaykit-halloween','kaykit-animations','kenney-nature','kenney-castle','kenney-town','kenney-graveyard','kenney-survival','kenney-pirate']);
+const allowed=new Set(['kaykit-hexagon','kaykit-forest','kaykit-builder','kaykit-resources','kaykit-tools','kaykit-furniture','kaykit-adventurers','kaykit-weapons','kaykit-skeletons','kaykit-dungeon','kaykit-halloween','kaykit-holiday','kaykit-animations','kenney-nature','kenney-castle','kenney-town','kenney-graveyard','kenney-survival','kenney-pirate']);
 const files=new Map(),entries=[];
 for(const p of idx.packs){
  if(!allowed.has(p.id))throw Error('Pack no incluido en lista de licencias FREE: '+p.id);
