@@ -248,7 +248,7 @@ export function attachHighflyTouch(input){
 #hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
 `;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.8.0</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.8.1</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
