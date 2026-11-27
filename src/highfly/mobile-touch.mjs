@@ -35,7 +35,7 @@ export function resolveHighflyContext(p){
  if(!p?.world||!p?.pos)return fallback;
  const w=p.world,fx=Math.sin(p.yaw),fz=Math.cos(p.yaw);
  if(p.state==='hf_boat')return {action:'boat_exit',label:'BAJAR'};
- if(p.state==='hf_glide')return {action:'air_dive',label:p._hfGlide?.diving?'PLANEAR':'PICADA'};
+ if(p.state==='hf_glide')return {action:'air_free',label:p._hfGlide?.free?'PLANEAR':'VOLAR'};
  if(p.state==='hf_climb')return {action:'climb',label:'SOLTAR'};
  if(p.state==='hf_seated')return {action:'seat',label:'LEVANTAR'};
  // NPC conversations outrank nearby rocks, walls or collision capsules.
@@ -248,7 +248,7 @@ export function attachHighflyTouch(input){
 #hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
 `;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.6.8.3</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.7</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
@@ -551,8 +551,8 @@ export function applyHighflyTouch(input){
  if(t.frames%12===0||t.frames===1)refreshHighflyQuests(t,globalThis.__game);
  t.radar?.update();
  const context=resolveHighflyContext(globalThis.__game?.player);
- const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'SUBIR':deploy?'PLANEAR':'SALTO';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
- if(t.dashButton)t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':'DASH';const roll=t.root.querySelector('.roll');if(roll)roll.textContent=p?.state==='hf_glide'?'CERRAR':'ROLL';
+ const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'PLANEO':deploy?'PLANEAR':'SALTO';jumpButton.style.visibility=glide?'hidden':'';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
+ if(t.dashButton){t.dashButton.style.visibility=p?.state==='hf_glide'&&!p._hfGlide?.free?'hidden':'';t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':'DASH';}const roll=t.root.querySelector('.roll');if(roll)roll.textContent=p?.state==='hf_glide'?'CERRAR':'ROLL';
   t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;

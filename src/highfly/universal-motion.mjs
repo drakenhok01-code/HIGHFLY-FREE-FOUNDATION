@@ -6,7 +6,7 @@
  */
 import * as THREE from 'three';
 import {TUNE} from '../game/player.js';
-import {PHOENIX,phoenixVelocity,descentCandidate,AIR_MODES,airMode} from './p564-phoenix-motion.mjs';
+import {PHOENIX,phoenixVelocity,descentCandidate,AIR_MODES,airMode,freeFlightVelocity} from './p564-phoenix-motion.mjs';
 import {WEAPON_MODES} from './universal-gear.mjs';
 import {recordFlowStrike, directionFromAim} from './flow-combat.mjs';
 import {oxygenMax,oxygenRate} from './oxygen-progression.mjs';
@@ -192,7 +192,7 @@ function beginCliffDescent(p){
 function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
 function stepPhoenix(p,dt,input,yaw){
  if(p.stamina<=0||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
- const mode=airMode(input,p._hfGlide??={},dt),cfg=AIR_MODES[mode],v=phoenixVelocity(p.vel,input.move,yaw,dt,mode,p._hfCameraPitch??0),before=p.pos.clone();p._hfGlide.mode=mode;p._hfGlide.pitch=Math.atan2(-v.y,Math.max(.1,Math.hypot(v.x,v.z)));
+ const state=p._hfGlide??={};if(input.pressed.has('air_free')){state.free=!state.free;state.diving=false;state.recovery=0;state.modern=true}const mode=state.free?'free':state.modern?'glide':airMode(input,state,dt);const free=state.free?freeFlightVelocity(p.vel,input.move,yaw,p._hfCameraPitch??0,dt,input.held.has('dash')):null;const cfg=free?{cost:free.cost}:AIR_MODES[mode],v=free?free.v:phoenixVelocity(p.vel,input.move,yaw,dt,mode,p._hfCameraPitch??0),before=p.pos.clone();state.mode=mode;p._hfGlide.pitch=Math.atan2(-v.y,Math.max(.1,Math.hypot(v.x,v.z)));
  p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
  // Do not allow the native capsule to snap up a cliff face while gliding.
  const ahead={x:p.pos.x+v.x*dt,z:p.pos.z+v.z*dt};
@@ -207,7 +207,7 @@ function stepPhoenix(p,dt,input,yaw){
  if(p.state!=='hf_glide'||p.grounded||p.pos.y<water+.1){endPhoenix(p,p.grounded?'land':'water-or-interrupted');}
  else if(p.pos.y>before.y+Math.max(.2,Math.max(0,v.y)*dt+.15)){p.pos.copy(before);p.viewY=p._viewY1=p.pos.y;p.vel.x=p.vel.z=0;}
 }
-function beginPhoenix(p){p._hfGlide={};p._hfJumpQueued=0;p._hfJumpPrimed=false;p._hfDoubleUsed=true;p.setState('hf_glide');p.emit('highflyGlideStart');}
+function beginPhoenix(p){p._hfGlide={modern:!!globalThis.__game?.input?.highflyTouch};p._hfJumpQueued=0;p._hfJumpPrimed=false;p._hfDoubleUsed=true;p.setState('hf_glide');p.emit('highflyGlideStart');}
 /** Wall-run is a deliberate sprint+forward air maneuver alongside real raycast
  * collision. It cannot run on terrain lacking near-wall samples.
  */

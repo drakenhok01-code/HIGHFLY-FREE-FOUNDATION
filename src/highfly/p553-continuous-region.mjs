@@ -1,3 +1,4 @@
+import {roadMask} from './p566-interaction-policy.mjs';
 import {thinRegionPlants} from './p559-vegetation-policy.mjs';
 /* P553 editor-only replacement of hex surfaces by a single continuous native mesh.
  * Source buildings, roads and bridges retain X/Z. Replant exact source tree positions
@@ -54,7 +55,8 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
    for(const c of chunks.values()){const m=mesh(c.v,null,material,null,depths?c.d:null);if(material===waterMat&&options.nativeMaterials)m.userData.regionWater=true;group.add(m)}
   }
   addSurfaceTriangles(water,waterMat,depth);
-  const path=[];const roadHeight=(x,z)=>{const u=Math.max(0,Math.min(nx-.00001,(x-b.minX)/(b.maxX-b.minX)*nx)),v=Math.max(0,Math.min(nz-.00001,(z-b.minZ)/(b.maxZ-b.minZ)*nz)),i=Math.floor(u),j=Math.floor(v),a=u-i,c=v-j,k=j*(nx+1)+i,h=n=>pos[n*3+1];return a+c<=1?h(k)+(h(k+1)-h(k))*a+(h(k+nx+1)-h(k))*c:h(k+nx+2)+(h(k+nx+1)-h(k+nx+2))*(1-a)+(h(k+1)-h(k+nx+2))*(1-c)};for(let i=0;i<d.paths.length;i+=3){const x=p.x+d.paths[i]*S,z=p.z+d.paths[i+2]*S,q=sampler.sample(x,z),y=p.base+d.paths[i+1]*S;const w=sampler.walkwayAt(d.paths[i],d.paths[i+2]);path.push(x,w||q.water>.30?y:roadHeight(x,z)+.022,z)}
+  const dryPaths=[],path=[];for(let i=0;i+8<d.paths.length;i+=9){const cx=(d.paths[i]+d.paths[i+3]+d.paths[i+6])/3,cz=(d.paths[i+2]+d.paths[i+5]+d.paths[i+8])/3,q=sampler.sample(p.x+cx*S,p.z+cz*S),w=sampler.walkwayAt(cx,cz);if(options.nativeMaterials&&!w&&q.water<.30){dryPaths.push(...d.paths.slice(i,i+9));continue}for(let j=0;j<9;j+=3)path.push(p.x+d.paths[i+j]*S,p.base+d.paths[i+j+1]*S,p.z+d.paths[i+j+2]*S)}
+  const pathMask=options.nativeMaterials?roadMask(dryPaths,p,b,{step:.65,pad:.12}):null;
   addSurfaceTriangles(path,road,null);
   // Local species mix based on actual Unsung trees around this site.
   const nearby=(overview?.trees??[]).filter(t=>t[0]>b.minX-150&&t[0]<b.maxX+150&&t[1]>b.minZ-150&&t[1]<b.maxZ+150);
@@ -88,7 +90,7 @@ export function makeContinuousRegion(nativeVisuals,elevation,overview,nativeWate
   }
   const gridHeight=(x,z)=>{const u=(x-b.minX)/(b.maxX-b.minX)*nx,v=(z-b.minZ)/(b.maxZ-b.minZ)*nz;if(u<0||u>nx||v<0||v>nz)return elevation(x,z);const i=Math.min(nx-1,Math.floor(u)),j=Math.min(nz-1,Math.floor(v)),a=u-i,c=v-j,k=j*(nx+1)+i;const h=n=>pos[n*3+1];return a+c<=1?h(k)+(h(k+1)-h(k))*a+(h(k+nx+1)-h(k))*c:h(k+nx+2)+(h(k+nx+1)-h(k+nx+2))*(1-a)+(h(k+1)-h(k+nx+2))*(1-c)};
   const gridWater=(x,z)=>{const u=(x-b.minX)/(b.maxX-b.minX)*nx,v=(z-b.minZ)/(b.maxZ-b.minZ)*nz;if(u<0||u>nx||v<0||v>nz)return -Infinity;const i=Math.min(nx-1,Math.floor(u)),j=Math.min(nz-1,Math.floor(v)),a=u-i,c=v-j,k=j*(nx+1)+i;const interp=field=>a+c<=1?wet[k][field]+(wet[k+1][field]-wet[k][field])*a+(wet[k+nx+1][field]-wet[k][field])*c:wet[k+nx+2][field]+(wet[k+nx+1][field]-wet[k+nx+2][field])*(1-a)+(wet[k+1][field]-wet[k+nx+2][field])*(1-c);const h=gridHeight(x,z),level=interp('y');return interp('f')>0&&level>h+.025?level:h<nativeSea-.025?nativeSea:-Infinity};
-  return {group,sampler,gridHeight,gridWater,grid:{nx,nz,pos,soil,wet,b},plants:plant,stats:{...sourceScaleAudit(d,assets),density:density.counts,replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
+  return {group,sampler,gridHeight,gridWater,pathMask,grid:{nx,nz,pos,soil,wet,b},plants:plant,stats:{...sourceScaleAudit(d,assets),density:density.counts,replaced:plant.filter(t=>t.source==='guildhall').length,recycled:plant.filter(t=>t.source==='native-recycled').length,added:plant.filter(t=>t.source==='native-added').length,gridVertices:pos.length/3}};
  }
  function build(d,p,assets){const it=buildSteps(d,p,assets);let r;do{r=it.next()}while(!r.done);return r.value;}
  async function buildAsync(d,p,assets,onProgress=()=>{}){const it=buildSteps(d,p,assets);let r,last=performance.now();do{r=it.next();if(!r.done&&performance.now()-last>10){onProgress(r.value);await new Promise(resolve=>setTimeout(resolve,0));last=performance.now()}}while(!r.done);return r.value;}

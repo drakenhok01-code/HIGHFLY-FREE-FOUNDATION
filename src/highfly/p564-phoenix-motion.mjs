@@ -25,3 +25,9 @@ export function descentCandidate(world,pos,yaw){
  }
  return null;
 }
+
+export function freeFlightVelocity(v,move,yaw,pitch,dt,boost=false){
+ const x=clamp(move?.x??0,-1,1),y=clamp(move?.y??0,-1,1),m=Math.min(1,Math.hypot(x,y)),a=clamp(pitch,-1.05,1.05);
+ const speed=(boost?19:14)+Math.max(0,a*y)*6,forward=y*Math.cos(a),vx=(Math.sin(yaw)*forward-Math.cos(yaw)*x)*speed,vz=(Math.cos(yaw)*forward+Math.sin(yaw)*x)*speed,vy=m>.08?-Math.sin(a)*y*speed:-1.4,k=1-Math.exp(-4.5*dt);
+ return {v:{x:v.x+(vx-v.x)*k,y:v.y+clamp(vy-v.y,-24*dt,18*dt),z:v.z+(vz-v.z)*k},cost:vy<-3?-2:vy>1?5.2:boost?3.2:1.8};
+}
