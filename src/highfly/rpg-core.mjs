@@ -64,7 +64,7 @@ export const RECIPES=Object.freeze({
  ingot_copper:{item:'ingot_copper',name:'Lingote de cobre',ingredients:{ore_copper:2},count:3,profession:'Fundición'},
  ingot_iron:{item:'ingot_iron',name:'Lingote de hierro',ingredients:{ore_iron:3},count:3,profession:'Fundición'},
  ingot_silver:{item:'ingot_silver',name:'Lingote de plata',ingredients:{ore_silver:5},count:3,profession:'Fundición'},
- ingot_gold:{item:'ingot_gold',name:'Lingote de oro',ingredients:{ore:8},count:3,profession:'Fundición'},
+ ingot_gold:{item:'ingot_gold',name:'Lingote de oro',ingredients:{ore_gold:8},count:3,profession:'Fundición'},
  refine_copper:{item:'ingot_copper',name:'Lingote de cobre',ingredients:{ore_copper:2},count:3,profession:'Fundición'},
  refine_iron:{item:'ingot_iron',name:'Lingote de hierro',ingredients:{ore_iron:3},count:3,profession:'Fundición'},
  refine_silver:{item:'ingot_silver',name:'Lingote de plata',ingredients:{ore_silver:3},count:3,profession:'Fundición'},
