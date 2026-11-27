@@ -1,4 +1,4 @@
-name: Kingdom Builder K0.4 — Geografía temática y editor legible
+name: Kingdom Builder K0.6 — Identidad económica visible
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -37,11 +37,13 @@ jobs:
         run: node scripts/kingdom-studio-themes.mjs guildhall-native
       - name: Aplicar geografía temática y editor mejorado
         run: node scripts/kingdom-studio-terrain.mjs guildhall-native
+      - name: Aplicar prioridades de prefabricados y presupuesto de agricultura
+        run: node scripts/kingdom-studio-identity.mjs guildhall-native
       - name: Instalar dependencias y compilar Studio
         working-directory: guildhall-native
         run: |
           bun install --frozen-lockfile
-          bun test packages/world/test/kingdom-themes.test.ts packages/world/test/kingdom-civic.test.ts packages/world/test/kingdom-economy.test.ts packages/world/test/kingdom-terrain.test.ts --timeout=120000
+          bun test packages/world/test/kingdom-themes.test.ts packages/world/test/kingdom-civic.test.ts packages/world/test/kingdom-economy.test.ts packages/world/test/kingdom-terrain.test.ts packages/world/test/kingdom-identity.test.ts --timeout=120000
           cd apps/studio
           STUDIO_LIBRARY=full VITE_STUDIO_SHOWCASE=1 bun run build --base=/HIGHFLY-FREE-FOUNDATION/kingdom-studio/
       - name: Comprobar rutas estáticas, catálogo, licencia y tamaño
@@ -62,7 +64,7 @@ jobs:
           test "$(du -sb . | cut -f1)" -lt 950000000
       - uses: actions/upload-artifact@v4
         with:
-          name: kingdom-studio-k04-terrain
+          name: kingdom-studio-k06-identity
           path: guildhall-native/apps/studio/dist
           if-no-files-found: error
           retention-days: 14
