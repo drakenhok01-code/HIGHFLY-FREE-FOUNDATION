@@ -38,6 +38,32 @@ const score=(c,{h,z,w})=>{
  const base=total*100+(z.tier>=2&&walls>0?140:0)+(w.board?30:0)+(w.graveyard?30:0)+(mouths?65:0)+(boats?25:0)-w.stairs.length*5-Math.max(0,w.bridges.length-3)*4-span*15-land*.045;
  return {config:c,coverage:total,required:required.length,missing,counts:count,walls,tier:z.tier,board:!!w.board,graveyard:!!w.graveyard,land,buildings:z.stats.buildings,pieces:w.pieces.length,stairs:w.stairs.length,bridges:w.bridges.length,rivers:h.rivers.length,mouths,boats,roads,span,base};
 };
+if(process.env.HF582_RANK==='1'){
+ const rows=fs.readdirSync('compact').filter(f=>/^shard-\d+\.json$/.test(f)).flatMap(f=>JSON.parse(fs.readFileSync('compact/'+f,'utf8')).rows);
+ const used=new Set(),winners=[],details=[];
+ const eligible=rows.filter(r=>r.tier>=2&&r.walls>0&&r.board&&r.graveyard&&r.counts.harbour>0&&r.mouths>0);
+ for(const [city,focus] of Object.entries(themes)){
+  const ordered=eligible.filter(r=>!used.has(r.config.seed)).map(r=>({...r,rank:r.base+focus.reduce((n,k)=>n+(r.counts[k]?45+Math.min(6,r.counts[k])*5:0),0)})).sort((a,b)=>b.rank-a.rank||a.config.files-b.config.files||a.config.seed-b.config.seed);
+  let winner=null;
+  for(const row of ordered.slice(0,12))try{
+   const {h,z,w}=make(row.config),graph=hexWalk(h,z,w,{reach:workTiles(h,z)}),places=lifePlaces(h,z,w,graph,{heroSpots:3});
+   const folk=planFolk(h,z,w,graph,{seed:row.config.seed,pace:144,places,secPerHour:180});
+   const hearts=graph.hearts.filter(n=>n>=0),connected=hearts.length>0&&hearts.length===z.zones.length&&hearts.every(n=>graph.route(hearts[0],n)!==null);
+   const poses=folk.length>0&&folk.every(f=>f.day.length>0&&[0,6,9,13,18,22].every(hour=>lifePose(f.day,hour,24).at.every(Number.isFinite)));
+   details.push({city,seed:row.config.seed,files:row.config.files,connected,poses,population:folk.length});
+   if(!connected||!poses)continue;
+   const roles={};for(const f of folk)roles[f.role]=(roles[f.role]??0)+1;
+   winner={city,...row,population:folk.length,roles,connected,poses,url:url(row.config,city)};break;
+  }catch(e){details.push({city,seed:row.config.seed,error:String(e)})}
+  if(winner){used.add(winner.config.seed);winners.push(winner);console.log('HF582_WINNER '+JSON.stringify(winner))}else console.warn('HF582_NO_WINNER '+city);
+ }
+ const result={sourceCommit:'ef56b1cdf247f8839bf7fbb289713b15dbacae8c',attempts:800,valid:rows.length,eligible:eligible.length,required,winners,details};
+ fs.writeFileSync('compact/results.json',JSON.stringify(result,null,2));
+ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+ fs.writeFileSync('compact/index.html','<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HIGHFLY Compact Kingdoms</title><style>body{background:#151120;color:#efe4cb;font:16px system-ui;margin:24px}main{max-width:1000px;margin:auto}article{border:1px solid #66517f;border-radius:12px;padding:18px;margin:12px 0}a{color:#d2b9ff}small{color:#b9aecb}</style><main><h1>HIGHFLY · Compact Kingdoms</h1><p>'+rows.length+' configuraciones válidas de 800 intentos. '+eligible.length+' candidatas con requisitos mínimos. La lista indica servicios faltantes y no sustituye una prueba física en Unsung.</p>'+winners.map(w=>'<article><h2>'+esc(w.city)+'</h2><p>Semilla '+w.config.seed+' · files '+w.config.files+' · '+w.coverage+'/'+w.required+' familias · '+w.land+' casillas · '+w.population+' habitantes · '+w.stairs+' escaleras · '+w.bridges+' puentes</p><p>Faltantes: '+esc(w.missing.join(', ')||'ninguno')+'</p><a href="'+esc(w.url)+'">Abrir isla original 3D en Guildhall</a></article>').join('')+'<p><small>Los mapas son del generador original. La integración plana personalizada, faros de HIGHFLY y validación Android son posteriores.</small></p></main></html>');
+ console.log('HF582_RESULT '+JSON.stringify({valid:rows.length,eligible:eligible.length,winners:winners.length,allComplete:winners.filter(w=>w.missing.length===0).length}));
+ if(winners.length!==8)process.exitCode=1;
+}else{
 const shard=Number(process.env.SHARD??0),start=1+shard*100,end=start+99,rows=[],errors=[];
 for(let seed=start;seed<=end;seed++)for(const files of [1000,1400]){
  const c=config(seed,files);
@@ -47,3 +73,5 @@ for(let seed=start;seed<=end;seed++)for(const files of [1000,1400]){
 fs.mkdirSync('compact',{recursive:true});
 fs.writeFileSync('compact/shard-'+shard+'.json',JSON.stringify({rows,errors}));
 console.log('HF582_SWEEP',JSON.stringify({shard,start,end,attempts:200,valid:rows.length,errors:errors.length,top:[...rows].sort((a,b)=>b.base-a.base).slice(0,3)}));
+
+}
