@@ -1,13 +1,13 @@
 // Pure policies: no renderer or game-side state. All distances in world metres.
 export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export function edgeDistance(p,x,z){const b=p.bounds;return Math.hypot(Math.max(b.minX-x,0,x-b.maxX),Math.max(b.minZ-z,0,z-b.maxZ))}
-export function approach(p,pos,vel,seconds=12){
+export function approach(p,pos,vel,seconds=24){
  const speed=Math.hypot(vel.x,vel.z),now=edgeDistance(p,pos.x,pos.z);
  // Sample the swept route, not merely its endpoint (fast flight can cross an island).
  let closest=now,eta=Infinity;
  for(let t=0;t<=seconds;t+=.5){const d=edgeDistance(p,pos.x+vel.x*t,pos.z+vel.z*t);closest=Math.min(closest,d);if(d<160&&eta===Infinity)eta=t}
  const approaching=closest<now-15;
- return {seed:p.seed,now,closest,eta,approaching,prefetch:now<600||approaching&&closest<350,mount:now<360||approaching&&eta<=7,speed};
+ return {seed:p.seed,now,closest,eta,approaching,prefetch:now<850||approaching&&closest<350,mount:now<550||approaching&&eta<=12,speed};
 }
 export function selectApproach(placements,pos,vel,active){
  const candidates=placements.map(p=>approach(p,pos,vel)).filter(q=>q.seed!==active&&q.prefetch);
