@@ -270,14 +270,16 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const categories=['Todo','Consumibles','Materiales','Equipamiento','Accesorios','Otros'];
   const rows=allItems().filter(o=>local.category==='Todo'||o.kind===local.category||
     local.category==='Otros'&&o.kind==='Especial');
-  const owned=rows.find(x=>x.id===local.selected)||rows[0]||null;
+  const owned=rows.find(x=>x.id===local.selected&&x.variantIndices?.includes(local.selectedGearIndex))||rows.find(x=>x.id===local.selected)||rows[0]||null;
   const chosen=owned?ITEM_DEFS[owned.id]:null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
    const variants=EQUIP_ITEM_DEFS[chosen?.id]?bag.gearTraits?.bag?.[chosen.id]??[]:[];
-   const variantIndex=Math.max(0,Math.min(variants.length-1,local.selectedGearIndex));
+   const groups=chosen&&variants.length?rows.filter(x=>x.id===chosen.id&&x.variantIndices?.length):[];
+   const variantIndex=owned?.variantIndices?.includes(local.selectedGearIndex)?local.selectedGearIndex:owned?.variantIndex??0;
+   if(chosen){local.selected=chosen.id;local.selectedGearIndex=variantIndex;}
    const trait=variants[variantIndex]??null;
    const qualities=trait?'<div class="hf-rpg-quality" data-hf-rarity="'+safe(trait.rarity)+'"><b>'+safe(trait.rarity)+'</b><strong>+'+trait.plus+'</strong></div>'+
-     (variants.length>1?'<div class="hf-rpg-variants">'+variants.map((t,i)=>'<button type="button" class="'+(i===variantIndex?'is-selected':'')+'" data-hf-gear-index="'+i+'">'+safe(t.rarity)+' +'+t.plus+'</button>').join('')+'</div>':'')+
+     (groups.length>1?'<div class="hf-rpg-variants">'+groups.map(row=>{const i=row.variantIndex,t=variants[i];return '<button type="button" class="'+(row.variantIndices.includes(variantIndex)?'is-selected':'')+'" data-hf-gear-index="'+i+'">'+safe(t?.rarity??chosen.rarity)+' +'+(t?.plus??0)+' · x'+row.count+'</button>'}).join('')+'</div>':'')+
      '<div class="hf-rpg-mini-actions">'+button('MEJORAR +1','data-hf-action="gear:upgrade:bag:'+chosen.id+':'+variantIndex+'"')+
      (trait.plus===9?button('ASCENDER','data-hf-action="gear:ascend:bag:'+chosen.id+':'+variantIndex+'"'):'')+'</div>':'';
   const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};

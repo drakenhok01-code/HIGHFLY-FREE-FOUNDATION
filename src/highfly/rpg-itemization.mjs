@@ -1,3 +1,4 @@
+import {MAX_GEAR_COPIES_PER_ID} from './rpg-bag-capacity.mjs';
 /**
  * HIGHFLY itemization v1.
  * One base image per item. Every physical sword/shield copy has its OWN
@@ -22,7 +23,7 @@ export const enhancedStats=(stats={},trait)=>{
 export function normalizeGearTraits(raw,items={},equipped={}){
  const bag={},eq={};
  for(const id of GEAR_IDS){
-  const n=Math.max(0,Math.min(72,Math.floor(Number(items[id])||0)));
+  const n=Math.max(0,Math.min(MAX_GEAR_COPIES_PER_ID,Math.floor(Number(items[id])||0)));
   // Each gear piece has a separate persistent trait; 72 is the maximum
   // bag capacity, not the former ten-unit stack cap.
   const input=Array.isArray(raw?.bag?.[id])?raw.bag[id]:[];
@@ -64,7 +65,9 @@ export function registerCraftedGear(state,itemId,count=1){
  state.gearTraits??=normalizeGearTraits(null,state.items,state.equipped);
  // Caller has already incremented count in state.items.
  const arr=state.gearTraits.bag[itemId]??=[];
- for(let i=0;i<count;i++)arr.push(defaultTrait(itemId));
+ const total=Math.max(0,Math.min(MAX_GEAR_COPIES_PER_ID,Number(state.items[itemId])||0));
+ if(arr.length>total)arr.length=total;
+ while(arr.length<total)arr.push(defaultTrait(itemId));
 }
 export function gearTraitAt(state,target,id,index=0){
  if(target==='equipped')return state?.gearTraits?.equipped?.[id]??null;

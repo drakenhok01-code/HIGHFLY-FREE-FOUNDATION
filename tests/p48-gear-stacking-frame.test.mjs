@@ -37,13 +37,26 @@ test('P4.8: same ID different rarity or + never merge, even after saving',()=>{
  assert.deepEqual(by(inventoryRows(restored),'training_sword').map(x=>x.count),[2,1,1,1]);
  assert.deepEqual(restored.gearTraits.bag.training_sword.map(x=>x.plus),[0,0,0,3,9]);
 });
-test('P4.8: 11 identical copies form two stacks, are not rejected as full',()=>{
+test('P5.7.4: 11 identical copies form ONE stack and retain their traits',()=>{
  const state=normalizeRpgState(null);state.slots=36;
  state.items.training_shield=10;
  state.gearTraits.bag.training_shield=Array.from({length:10},()=>({id:'training_shield',rarity:'Común',plus:0}));
  const prof={};
- assert.equal(unequipToBag({...state,equipped:{...state.equipped,left_hand:'training_shield'},
-  gearTraits:{bag:state.gearTraits.bag,equipped:{...state.gearTraits.equipped,left_hand:{id:'training_shield',rarity:'Común',plus:0}}}},'left_hand',prof,ITEM_DEFS).ok,true);
+ state.equipped.left_hand='training_shield';state.gearTraits.equipped.left_hand={id:'training_shield',rarity:'Común',plus:0};
+ assert.equal(unequipToBag(state,'left_hand',prof,ITEM_DEFS).ok,true);
+ assert.deepEqual(by(inventoryRows(state),'training_shield').map(x=>x.count),[11]);
+ assert.equal(state.gearTraits.bag.training_shield.length,11);
+ const occupied=occupiedInventorySlots(state);
+ state.items.training_shield+=2;
+ state.gearTraits.bag.training_shield.push({id:'training_shield',rarity:'Raro',plus:0},{id:'training_shield',rarity:'Común',plus:1});
+ assert.deepEqual(by(inventoryRows(state),'training_shield').map(x=>x.count),[11,1,1]);
+ assert.equal(occupiedInventorySlots(state),occupied+2);
+ const store={v:null,setItem(k,v){this.v=v},getItem(){return this.v}};
+ saveRpgState(state,store);
+ const restored=loadRpgState(store);
+ assert.deepEqual(by(inventoryRows(restored),'training_shield').map(x=>x.count),[11,1,1]);
+ assert.equal(equipFromBag(restored,'left_hand','training_shield',11,{},ITEM_DEFS).ok,true);
+ assert.equal(restored.gearTraits.equipped.left_hand.rarity,'Raro');
 });
 test('P4.8: bag labels show xN on identical equipment and preserve per-item trait selection',()=>{
  const ui=fs.readFileSync('src/highfly/premium-rpg.mjs','utf8');
@@ -54,3 +67,5 @@ test('P4.8: bag labels show xN on identical equipment and preserve per-item trai
  assert.match(art,/Image\.composite\(interior,approved,mask\)/);
  assert.match(art,/rounded_rectangle\(\(36,36,220,220\)/);
 });
+
+test('P574: saves retain more than 72 copies in a single identical stack',()=>{const state=normalizeRpgState({items:{training_shield:100},slots:36});assert.equal(state.items.training_shield,100);assert.equal(state.gearTraits.bag.training_shield.length,100);assert.equal(by(inventoryRows(state),'training_shield')[0].count,100)});

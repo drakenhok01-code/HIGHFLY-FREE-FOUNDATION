@@ -1,12 +1,13 @@
 /** HIGHFLY P4.8 — one inventory grouping contract for visuals AND capacity.
  * Identical gear (same item ID + rarity + enhancement) stacks as one visible
- * slot up to that gear's max. Distinct traits NEVER merge; underlying
+ * slot without the legacy ten-copy limit. Distinct traits NEVER merge; underlying
  * per-instance gearTraits arrays remain untouched for equip/save/upgrade.
  */
+export const MAX_GEAR_COPIES_PER_ID=9999; // persistence safety ceiling, not a visual stack cap
 export const isPhysicalGear=def=>def?.kind==='Equipamiento'||def?.kind==='Accesorios';
 export function perSlotLimit(def){
  if(!def)return 0;
- return isPhysicalGear(def)?1:Math.max(1,Math.floor(Number(def.max)||1));
+ return isPhysicalGear(def)?MAX_GEAR_COPIES_PER_ID:Math.max(1,Math.floor(Number(def.max)||1));
 }
 export function combinedCounts(items={},professionInventory={}){
  const totals={};
@@ -29,7 +30,6 @@ export function inventoryStackRows(items={},professionInventory={},defs={},gearT
   if(!def)return [];
   if(isPhysicalGear(def)){
    const traits=Array.isArray(gearTraits?.[id])?gearTraits[id]:[];
-   const limit=Math.max(1,Math.floor(Number(def.max)||10));
    const groups=new Map();
    for(let i=0;i<count;i++){
     const key=identity(traits[i],def),group=groups.get(key)??[];
@@ -38,11 +38,8 @@ export function inventoryStackRows(items={},professionInventory={},defs={},gearT
    }
    const rows=[];
    for(const [key,indices] of groups){
-    for(let start=0;start<indices.length;start+=limit){
-     const part=indices.slice(start,start+limit);
-     rows.push({...def,count:part.length,stackIndex:part[0],
-      variantIndex:part[0],variantIndices:part,traitKey:key});
-    }
+    rows.push({...def,count:indices.length,stackIndex:indices[0],
+      variantIndex:indices[0],variantIndices:indices,traitKey:key});
    }
    return rows;
   }

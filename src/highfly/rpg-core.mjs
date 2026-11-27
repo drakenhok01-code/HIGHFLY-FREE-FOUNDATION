@@ -4,7 +4,7 @@
  */
 import {EQUIP_ITEM_DEFS,normalizeEquipped} from './rpg-equipment.mjs';
 import {normalizeGearTraits,registerCraftedGear} from './rpg-itemization.mjs';
-import {inventoryStackRows,occupiedBagSlots,bagCapacityStatus,combinedCounts,perSlotLimit} from './rpg-bag-capacity.mjs';
+import {inventoryStackRows,occupiedBagSlots,bagCapacityStatus,combinedCounts,perSlotLimit,isPhysicalGear,MAX_GEAR_COPIES_PER_ID} from './rpg-bag-capacity.mjs';
 export const SAVE_KEY='highfly-rpg-f014-v1';
 export const SKILL_SLOT_COUNT=6;
 export const DEFAULT_SKILL_SLOTS=Object.freeze(['pulse','heavy','heal',null,null,null]);
@@ -82,7 +82,7 @@ export function normalizeRpgState(raw){
  const counts=raw&&typeof raw==='object'&&raw.items&&typeof raw.items==='object'?raw.items:{};
  const items={hp_potion:bounded(counts.hp_potion??2,72*99),mp_potion:bounded(counts.mp_potion??2,72*99)};
  for(const [id,def] of Object.entries(ITEM_DEFS))if(id!=='hp_potion'&&id!=='mp_potion'&&id in counts)
-  items[id]=bounded(counts[id],MAX_EXPANDED_BAG_SLOTS*perSlotLimit(def));
+  items[id]=bounded(counts[id],isPhysicalGear(def)?MAX_GEAR_COPIES_PER_ID:MAX_EXPANDED_BAG_SLOTS*perSlotLimit(def));
  // Saved generic ingots become a typed material; no legacy item lost.
  if((items.ingot??0)>0){items.ingot_iron=bounded((items.ingot_iron??0)+items.ingot,MAX_EXPANDED_BAG_SLOTS*perSlotLimit(ITEM_DEFS.ingot_iron));delete items.ingot;}
  const slots=Number.isInteger(raw?.slots)?Math.min(MAX_EXPANDED_BAG_SLOTS,Math.max(MAX_BAG_SLOTS,raw.slots)):MAX_BAG_SLOTS;
@@ -158,6 +158,7 @@ export function canCraft(recipeId,professionInventory={},state){
   if(due)throw Error('HIGHFLY craft validation drift on '+id);
  }
  next[recipe.item]=(next[recipe.item]??0)+recipe.count;
+ if(isPhysicalGear(ITEM_DEFS[recipe.item])&&next[recipe.item]>MAX_GEAR_COPIES_PER_ID)return {ok:false,reason:'Límite de almacenamiento de equipo'};
  const capacity=bagCapacityStatus(next,stock,ITEM_DEFS,state.slots,normalizeGearTraits(state.gearTraits,next,state.equipped).bag);
  return capacity.ok?{ok:true,used:capacity.used,free:capacity.free}:{ok:false,reason:'Bolsa llena',used:capacity.used,capacity:capacity.capacity};
 }
