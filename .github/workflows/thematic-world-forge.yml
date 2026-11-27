@@ -1,0 +1,43 @@
+name: Thematic World Forge - native Guildhall QA
+on:
+  push:
+    branches: [experiment/thematic-world-forge-20261127]
+    paths:
+      - 'experiments/thematic-world-forge/**'
+      - '.github/workflows/thematic-world-forge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.5'
+      - name: Checkout pinned MIT Guildhall source
+        run: |
+          git init guildhall-upstream
+          git -C guildhall-upstream remote add origin https://github.com/Codestz/guildhall.git
+          git -C guildhall-upstream fetch --depth 1 origin ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          git -C guildhall-upstream checkout --detach FETCH_HEAD
+      - name: Install upstream dependencies
+        working-directory: guildhall-upstream
+        run: bun install
+      - name: Smoke test one seed per theme
+        run: |
+          HF_SEEDS=1 bun experiments/thematic-world-forge/generate.mjs guildhall-upstream thematic-smoke || test "$?" = "2" && test -s thematic-smoke/report.json
+      - name: Evaluate 800 native layouts
+        run: bun experiments/thematic-world-forge/generate.mjs guildhall-upstream thematic-output
+      - name: Upload audit and selected layouts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: highfly-thematic-world-forge-audit
+          path: |
+            thematic-output/
+            thematic-smoke/
+            guildhall-upstream/LICENSE
+          if-no-files-found: error
