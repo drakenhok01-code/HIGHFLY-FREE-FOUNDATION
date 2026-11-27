@@ -1,4 +1,4 @@
-name: Kingdom Builder K0.5 — Smart Seed Finder (8 regiones × 500 semillas)
+name: Kingdom Builder K0.6 — Ranking económico real (8 regiones × 500 semillas)
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -33,11 +33,12 @@ jobs:
           node scripts/kingdom-studio-library.mjs guildhall-native/library
           node scripts/kingdom-studio-themes.mjs guildhall-native
           node scripts/kingdom-studio-terrain.mjs guildhall-native
+          node scripts/kingdom-studio-identity.mjs guildhall-native
           mkdir -p guildhall-native/scripts
           cp scripts/kingdom-seed-finder.ts guildhall-native/scripts/
           cd guildhall-native
           bun install --frozen-lockfile
-      - name: Examinar 500 semillas y construir las 40 finalistas
+      - name: Examinar 500 semillas y construir las 60 finalistas
         working-directory: guildhall-native
         run: bun scripts/kingdom-seed-finder.ts 1 500 ${{ matrix.theme }}
       - uses: actions/upload-artifact@v4
@@ -70,5 +71,5 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: highfly-top-80-seeds
+          name: highfly-k06-top-80-seeds
           path: ranking-highfly.json
