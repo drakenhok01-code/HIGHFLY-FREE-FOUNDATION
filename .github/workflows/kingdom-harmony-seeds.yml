@@ -28,9 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Aplicar generador HIGHFLY K0.4 y biblioteca CC0
+      - name: Aplicar reglas de generación y prefabs nativos (sin descargar texturas)
         run: |
-          node scripts/kingdom-studio-library.mjs guildhall-native/library
           node scripts/kingdom-studio-themes.mjs guildhall-native
           node scripts/kingdom-studio-terrain.mjs guildhall-native
           node scripts/kingdom-studio-identity.mjs guildhall-native
