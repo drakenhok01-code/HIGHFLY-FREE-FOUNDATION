@@ -1,0 +1,100 @@
+name: Kingdom Builder K1.1.2 — editor and local ZIP smoke
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths: ['.github/workflows/kingdom-editor-browser-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: kingdom-studio-k112-editor
+          run-id: 46010274854
+          github-token: ${{ github.token }}
+          path: site/HIGHFLY-FREE-FOUNDATION/kingdom-studio
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Freeze, edit, export, reopen, import private ZIP fixture
+        run: |
+          mkdir -p evidence
+          ROOT=site/HIGHFLY-FREE-FOUNDATION/kingdom-studio
+          mkdir -p "$ROOT/town/1"
+          cp "$ROOT/index.html" "$ROOT/town/1/index.html"
+          python3 -m http.server 8765 --directory site >/tmp/server.log 2>&1 &
+          python3 - <<'PY'
+          import pathlib,zipfile,gzip,io
+          root=pathlib.Path('site/HIGHFLY-FREE-FOUNDATION/kingdom-studio/library')
+          file=next(root.rglob('*.glb.gz'))
+          raw=gzip.decompress(file.read_bytes())
+          nested=io.BytesIO()
+          with zipfile.ZipFile(nested,'w',zipfile.ZIP_DEFLATED) as z:z.writestr('Models/fixture.glb',raw)
+          with zipfile.ZipFile('fixture.zip','w',zipfile.ZIP_DEFLATED) as z:z.writestr('Nested.zip',nested.getvalue())
+          PY
+          cat > smoke.mjs <<'JS'
+          import {chromium} from 'playwright';
+          import fs from 'node:fs/promises';
+          const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+          const context=await browser.newContext({viewport:{width:960,height:640},acceptDownloads:true});
+          const page=await context.newPage();
+          const errors=[],bad=[],steps=[];
+          page.on('pageerror',e=>errors.push(e.message));
+          page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1')&&r.status()>=400)bad.push(r.status()+' '+r.url())});
+          const base='http://127.0.0.1:8765/HIGHFLY-FREE-FOUNDATION/kingdom-studio/';
+          try{
+            await page.goto(base+'town/1/?files=0&life=0&theme=puertaria',{waitUntil:'domcontentloaded',timeout:60000});
+            const freeze=page.getByText('Editar isla congelada',{exact:true});
+            await freeze.waitFor({timeout:240000});steps.push('native scene ready');
+            await freeze.click();
+            const launch=page.getByText('WORLD FORGE · EDITAR',{exact:true});
+            await launch.waitFor({timeout:240000});steps.push('frozen scene ready');
+            await launch.click();
+            const panel=page.locator('aside').filter({hasText:'Proyecto congelado'}).last();
+            await panel.getByText('Vaciar hexágono',{exact:true}).waitFor();
+            const map=panel.locator('canvas');
+            const box=await map.boundingBox();
+            for(const [x,y] of [[.5,.5],[.55,.5],[.45,.5],[.5,.55],[.5,.45]]){
+              await map.click({position:{x:box.width*x,y:box.height*y}});
+              const t=await panel.innerText();if(/1 hex\. · [1-9][0-9]* objetos/.test(t))break;
+            }
+            const before=await panel.innerText();
+            if(!/1 hex\. · [1-9][0-9]* objetos/.test(before))throw Error('No cell with objects selected');
+            await panel.getByText('Vaciar hexágono',{exact:true}).click();
+            if(!/1 hex\. · 0 objetos/.test(await panel.innerText()))throw Error('Clear failed');
+            await panel.getByText('Deshacer',{exact:true}).click();
+            if(!/1 hex\. · [1-9][0-9]* objetos/.test(await panel.innerText()))throw Error('Undo failed');
+            steps.push('select, clear, undo');
+            await panel.locator('input[type=file][accept*=".zip"]').setInputFiles('fixture.zip');
+            await panel.getByText(/1 GLB importados/).waitFor({timeout:60000});
+            steps.push('nested ZIP local import');
+            const dl=page.waitForEvent('download');
+            await panel.getByText('Guardar JSON',{exact:true}).click();
+            const d=await dl;await d.saveAs('evidence/project.json');
+            const project=JSON.parse(await fs.readFile('evidence/project.json','utf8'));
+            if(project.schema!=='hf-kingdom-project-v2'||!project.pieces.length||!project.ground)throw Error('Bad JSON');
+            steps.push('snapshot export');
+            await panel.locator('input[type=file][accept*="application/json"]').setInputFiles('evidence/project.json');
+            await page.waitForTimeout(1500);
+            await page.getByText('WORLD FORGE · EDITAR',{exact:true}).waitFor({timeout:240000});
+            steps.push('snapshot reopen');
+            await page.screenshot({path:'evidence/editor.png',timeout:120000}).catch(()=>{});
+            if(errors.length||bad.length)throw Error(JSON.stringify({errors,bad}));
+          }catch(e){console.error(e);process.exitCode=1}
+          finally{await fs.writeFile('evidence/results.json',JSON.stringify({steps,errors,bad},null,2));console.log('EDITOR_QA',JSON.stringify({steps,errors,bad}));await browser.close()}
+          JS
+          node smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kingdom-editor-browser-evidence
+          path: evidence
+          if-no-files-found: warn
