@@ -14,12 +14,12 @@ once("      const { loose, clusters } = batchSets(await job.pieces, (p) => catal
             try{
               const shore=await job.shore
               if(disposed)return
-              const pieces=unpack(packed).filter(p=>catalog.get(p.piece)!==undefined)
+              const pieces=unpack(packed).map((p,i)=>({...p,id:"piece-"+i,cluster:packed.cluster[i]})).filter(p=>catalog.get(p.piece)!==undefined)
               const snapshot={
                 schema:"hf-kingdom-snapshot-v1",engine:"Guildhall",upstream:"ef56b1cdf247f8839bf7fbb289713b15dbacae8c",revision:"K0.7",
                 name,seed,files,theme,shape,nature,step,groundMode:groundOf(param(ctx.query,"ground")),sourceUrl:location.href,
                 coordinates:{units:"metres",up:"Y",yaw:"radians"},
-                pieces:pieces.map((p,i)=>({...p,id:"piece-"+i,cluster:packed.cluster[i]})),
+                pieces,
                 map:m,ground:g,shore,
                 prefabs:await loadTiles(),
                 limitations:{staticSnapshot:true,liveNPCState:false,liveWeatherState:false,readyForUnsung:false}
