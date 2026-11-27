@@ -6,6 +6,7 @@ import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
 import {stylizeUniversalKayKit,appendSharedRigAnimations} from './stylize-kaykit-free.mjs';
+import {affinityOnce,relationship,npcBudget} from './p581-reforged-policy.mjs';
 const BASE=import.meta.env.BASE_URL+'highfly/living-p580/',REGION=import.meta.env.BASE_URL+'highfly/regions-p575/';
 const KEY='hf-p580-native-residents-v1',LIMIT=24,NEAR=85,ANIM=45;
 const roleNames={merchant:'Comerciante',smith:'Herrero',farmer:'Agricultor',fisher:'Pescador',miner:'Minero',lumberjack:'Leñador',guard:'Guardia','night-watch':'Vigilante',monk:'Monje',archer:'Arquero',soldier:'Soldado',knight:'Caballero',bard:'Bardo',lamplighter:'Farolero','tavern-keeper':'Tabernero',mage:'Mago'};
@@ -21,36 +22,44 @@ const get=async url=>{const r=await fetch(url);if(!r.ok)throw Error('Living Worl
 export function installNativePopulation(game,pipe,forge){
  const root=new THREE.Group();root.name='HF580_NATIVE_POPULATION';pipe.scene.add(root);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),ktx=new KTX2Loader().setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/').detectSupport(pipe.renderer);loader.setKTX2Loader(ktx);
- const bodies=new Map(),props=new Map(),fallbackClips=new Set(),unmounted=new Set(),bodyErrors=new Set();
- let sharedRig=null,rigReport={},qaHour=null,dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,selected=null,lastAffinity=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
+ const plans=new Map(),materials=new Map(),bodyQueue=[],bodies=new Map(),props=new Map(),fallbackClips=new Set(),unmounted=new Set(),bodyErrors=new Set();
+ let sharedRig=null,rigReport={},qaHour=null,dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,selected=null,lastAffinity=0,drawBudget=16,frameMs=16,lastFrame=0,lastBudget=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
  let state={};try{const value=JSON.parse(localStorage.getItem(KEY)||'{}');if(value&&typeof value==='object')state=value}catch{}
  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
  const panel=document.createElement('section');panel.id='hf-native-dialogue';panel.hidden=true;panel.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(400px,75vw);max-height:72vh;overflow:auto;z-index:100015;background:#1a152af8;color:#f2e5cf;border:1px solid #b58be7;border-radius:12px;padding:15px;font:13px system-ui';document.body.append(panel);
  const dep=()=>dependencies??=Promise.all([get(BASE+'recipes.json'),import(/* @vite-ignore */ BASE+'native-life.mjs'),get(REGION+'asset-audit.json'),get(BASE+'mounts.json').catch(()=>({mounts:{}})),get(BASE+'prop-audit.json').catch(()=>({assets:[],rig:null}))]).then(([recipes,life,audit,mounts,extra])=>({recipes,life,assets:new Map([...audit.assets,...extra.assets].map(a=>[a.id,a])),mounts:mounts.mounts??{},rig:extra.rig}));
  const rig=()=>sharedRig??=dep().then(d=>d.rig?loader.loadAsync(BASE+'rig-medium.glb').catch(()=>null):null);
+ const planFor=seed=>{if(!plans.has(seed))plans.set(seed,get(BASE+'region-'+seed+'.json').catch(e=>{plans.delete(seed);throw e}));return plans.get(seed)};
+ const prefetch=seed=>Promise.all([dep(),planFor(seed)]).then(()=>true);
+ const materialFor=(base,tint)=>{const key=(base?.map?.uuid??'plain')+':'+tint;if(!materials.has(key))materials.set(key,new THREE.MeshBasicMaterial({map:base?.map??null,color:tint,side:THREE.DoubleSide,transparent:!!base?.transparent,alphaTest:base?.alphaTest??0}));return materials.get(key)};
  const model=name=>{if(!bodies.has(name))bodies.set(name,Promise.all([loader.loadAsync(BASE+'models/'+name+'.glb'),rig()]).then(([g,r])=>{if(r)rigReport[name]=appendSharedRigAnimations(g,r);return {g,actual:name,profile:stylizeUniversalKayKit(g,{npc:true})}}).catch(e=>{bodyErrors.add(name+': '+String(e));if(name==='Knight')throw e;return model('Knight')}));return bodies.get(name)};
  const loadProp=(id,asset)=>{if(!props.has(id))props.set(id,loader.loadAsync(REGION+asset.path).then(g=>g.scene).catch(e=>{unmounted.add(id);return null}));return props.get(id)};
- function clearActor(n){if(n.actor){n.mixer?.stopAllAction();n.actor.traverse(o=>{if(o.userData.hfNpcMat)o.material?.dispose();if(o.userData.hfNpcTag){o.material.map?.dispose();o.material.dispose()}});n.actor.removeFromParent()}n.actor=null;n.body=null;n.mixer=null;n.action=null;n.clip=null;n.loading=false;n.attached=new Map();n.serial=(n.serial??0)+1}
- function clear(){generation++;for(const n of records)clearActor(n);root.clear();region=null;records=[];active=[];selected=null;panel.hidden=true;ready=false;lastScan=-Infinity;loadError=null}
+ function clearActor(n){if(n.actor){n.mixer?.stopAllAction();if(n.body)n.mixer?.uncacheRoot(n.body);n.actor.traverse(o=>{if(o.userData.hfNpcTag){o.material.map?.dispose();o.material.dispose()}});n.actor.removeFromParent()}n.actor=null;n.body=null;n.mixer=null;n.action=null;n.clip=null;n.loading=false;n.attached=new Map();n.serial=(n.serial??0)+1;n.lastDraw=-Infinity}
+ function clear(){generation++;bodyQueue.length=0;for(const n of records)clearActor(n);root.clear();region=null;records=[];active=[];selected=null;panel.hidden=true;ready=false;lastScan=-Infinity;loadError=null}
  function tag(n){const c=document.createElement('canvas');c.width=512;c.height=112;const ctx=c.getContext('2d');ctx.fillStyle='#1c152cdd';ctx.fillRect(0,0,512,112);ctx.fillStyle=n.stylist?'#e9c36a':'#eee2cd';ctx.font='bold 34px system-ui';ctx.textAlign='center';ctx.fillText((n.stylist?'✦ ':n.quest?'! ':'')+n.def.name,256,47);ctx.font='26px system-ui';ctx.fillText(n.stylist?'Estilista':n.def.role,256,88);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthWrite:false}));s.scale.set(2.5,.54,1);s.position.y=2.2;s.userData.hfNpcTag=true;s.visible=false;return s}
  function actor(n){
   if(n.actor||n.loading)return;
   n.loading=true;const token=generation,serial=n.serial??0;
   model(n.modelName).then(({g,profile})=>{
    if(token!==generation||serial!==(n.serial??0)||!active.includes(n)){n.loading=false;return}
-   const a=new THREE.Group();a.name='HF580_'+n.id;const b=cloneSkeleton(g.scene);const scale=(1.82/profile.naturalHeight)*n.height;b.scale.setScalar(scale);
+   bodyQueue.push(()=>{
+   if(token!==generation||serial!==(n.serial??0)||!active.includes(n)){n.loading=false;return}
+   const a=new THREE.Group();a.name='HF580_'+n.id;const b=cloneSkeleton(g.scene);const scale=(1.82/profile.naturalHeight)*n.height;const bodyHolder=new THREE.Group();bodyHolder.scale.setScalar(scale);bodyHolder.add(b);
    b.traverse(o=>{if(!o.isMesh)return;const name=o.name??'';
     if(n.recipe.hide?.includes(name)||/sword|shield|dagger|quiver|bow|staff|wand|hammer|axe|book/i.test(name)&&!/_Body$|_Head$|_ArmLeft$|_ArmRight$|_LegLeft$|_LegRight$/i.test(name))o.visible=false;
     const mat=Array.isArray(o.material)?o.material[0]:o.material;
-    o.material=new THREE.MeshBasicMaterial({map:mat?.map??null,color:/_Head$/i.test(name)?0xffffff:n.tint,side:THREE.DoubleSide});o.userData.hfNpcMat=true;o.frustumCulled=false;
+    o.material=materialFor(mat,/_Head$|hood/i.test(name)?0xffffff:n.tint);o.frustumCulled=false;
+    if(o.isSkinnedMesh&&o.visible){o.onAfterRender=(renderer,scene)=>{if(scene===pipe.scene){n.lastDraw=performance.now();n.drawCalls=(n.drawCalls??0)+1}}}
+
    });
-   a.add(b);const t=tag(n);a.add(t);root.add(a);
-   n.actor=a;n.body=b;n.tag=t;n.mixer=new THREE.AnimationMixer(b);n.clips=new Map(g.animations.map(c=>[c.name,c]));n.modelScale=scale;n.loading=false;n.attached=new Map();n.actor.visible=false;
+   a.add(bodyHolder);const t=tag(n);a.add(t);pipe.scene.add(a);a.position.set(n.x??0,n.y??0,n.z??0);a.updateMatrixWorld(true);
+   n.actor=a;n.body=b;n.tag=t;n.mixer=new THREE.AnimationMixer(b);n.clips=new Map(g.animations.map(c=>[c.name,c]));n.modelScale=scale;n.loading=false;n.attached=new Map();n.actor.visible=false;n.lastDraw=-Infinity;n.drawCalls=0;
+   });
   }).catch(e=>{n.loading=false;loadError=String(e)})
  }
  function mount(r){
   clear();region=r;const token=generation;
-  Promise.all([dep(),get(BASE+'region-'+r.p.seed+'.json')]).then(([d,plan])=>{
+  Promise.all([dep(),planFor(r.p.seed)]).then(([d,plan])=>{
    if(token!==generation)return;
    if(plan.seed!==r.p.seed||plan.sourceSeed!==r.d.sourceSeed||plan.folk.length!==plan.summary.population)throw Error('Population seed mismatch');
    const usedRoles=new Set();let stylistAssigned=false;
@@ -93,22 +102,31 @@ export function installNativePopulation(game,pipe,forge){
   if(!n.actor)return;
   const q=pose(n,h);if(!q||q.v.indoors){n.actor.visible=false;return}n.x=q.x;n.y=q.y;n.z=q.z;
   n.actor.position.set(q.x,q.y,q.z);n.actor.rotation.y=selected===n?Math.atan2(p.x-q.x,p.z-q.z):q.facing;n.actor.visible=true;n.tag.visible=Math.hypot(p.x-q.x,p.z-q.z)<13;
-  const d=Math.hypot(p.x-q.x,p.z-q.z);if(d>ANIM)return;
+  const d=Math.hypot(p.x-q.x,p.z-q.z);if(d>ANIM){n.actor.updateMatrixWorld(true);return;} if(d>20&&performance.now()-(n.animAt??0)<83){n.actor.updateMatrixWorld(true);return;}n.animAt=performance.now();
   const v=q.v,r=q.routine,want=selected===n?'Idle_A':r?.clip??v.clip??(v.act==='walk'?n.recipe.activity.walk:v.act==='work'?n.recipe.activity.work:choose(n.recipe.activity.idle,n.id,5));
   const clip=findClip(n,want,v.act);if(clip&&n.clip!==clip){n.action?.stop();n.action=n.mixer.clipAction(n.clips.get(clip));n.action.reset().play();n.clip=clip}
   if(n.action){if(r&&n.clip===r.clip&&selected!==n){n.action.paused=true;n.action.time=r.phase*n.action.getClip().duration;n.mixer.update(0)}else{n.action.paused=false;n.mixer.update(Math.min(.05,dt))}}
   const desired=new Set();if(selected!==n){for(const id of r?.props??(v.prop?[v.prop]:v.act==='work'&&n.f.prop?[n.f.prop]:[]))if(id)desired.add(id);if(v.carry)desired.add(v.carry);if(v.act==='work'&&!desired.size){for(const id of [choose(n.recipe.hands?.r,n.id,6),choose(n.recipe.hands?.l,n.id,7)])if(id)desired.add(id)}}
   for(const a of n.attached.values())if(a)a.pivot.visible=desired.has(a.id)&&!n.d.mounts[a.id]?.clips?.[clip]?.hide;
   for(const id of desired)attach(n,id,clip);
+  n.actor.updateMatrixWorld(true);
  }
  function update(dt){
-  const p=game.player?.pos;if(!ready||!region||!p)return;const h=hour();lastHour=h;const now=performance.now();
-  if(now-lastScan>220){lastScan=now;const candidates=[];wetRejected=0;
+  const p=game.player?.pos;if(!ready||!region||!p)return;const h=hour();lastHour=h;const now=performance.now();if(lastFrame&&now-lastFrame<250)frameMs=frameMs*.92+(now-lastFrame)*.08;lastFrame=now;if(now-lastBudget>1800){drawBudget=npcBudget(frameMs,drawBudget);lastBudget=now}if(bodyQueue.length)bodyQueue.shift()();
+  if(now-lastScan>300){lastScan=now;const candidates=[];wetRejected=0;
    for(const n of records){const q=pose(n,h);if(!q){wetRejected++;continue}n.x=q.x;n.y=q.y;n.z=q.z;n.indoors=q.v.indoors;if(q.v.indoors)continue;const distance=Math.hypot(p.x-q.x,p.z-q.z);if(distance<NEAR)candidates.push({n,distance})}
-   candidates.sort((a,b)=>a.distance-b.distance);const next=candidates.slice(0,LIMIT).map(q=>q.n);if(selected&&!next.includes(selected)){selected=null;panel.hidden=true}
+   candidates.sort((a,b)=>a.distance-b.distance);const next=candidates.slice(0,Math.min(LIMIT,drawBudget)).map(q=>q.n);if(selected&&!next.includes(selected)){selected=null;panel.hidden=true}
    for(const n of active)if(!next.includes(n))clearActor(n);active=next;for(const n of active)actor(n);
   }
-  for(const n of active)render(n,p,h,dt);
+  const camera=game.rig?.camera;
+  const frustum=camera?new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse)):null;
+  const bounds=new THREE.Sphere(new THREE.Vector3(),2.5);
+  for(const n of active){render(n,p,h,dt);if(!n.actor?.visible)continue;
+   const dist=Math.hypot(n.x-p.x,n.z-p.z);bounds.center.set(n.x,n.y+1,n.z);
+   // Keep immediate interaction range available even if the camera looks elsewhere.
+   if(frustum&&dist>6&&!frustum.intersectsSphere(bounds))n.actor.visible=false;
+   if(n.actor.visible){if(n.actor.parent!==pipe.scene)pipe.scene.add(n.actor);n.actor.updateMatrixWorld(true)}
+  }
   if(selected&&Math.hypot(p.x-selected.x,p.z-selected.z)>4.5){selected=null;panel.hidden=true}
  }
  const near=p=>!p?null:active.filter(n=>n.actor?.visible&&Math.abs(n.y-p.y)<2&&Math.hypot(n.x-p.x,n.z-p.z)<3.1).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0]??null;
@@ -129,6 +147,6 @@ export function installNativePopulation(game,pipe,forge){
  }
  function talk(p){const n=near(p);if(!n)return false;draw(n);return true}
  function record(e){if(!region||!e?.ok)return;for(const n of records){const q=state[n.id];if(n.quest?.action===e.action&&q?.status==='active'){q.progress=Math.min(n.quest.count,q.progress+1);if(q.progress>=n.quest.count)q.status='ready'}}save()}
- const api={mount,clear,update,near,talk,record,get ready(){return ready},qaHour:h=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return false;qaHour=Number.isFinite(h)?((h%24+24)%24):null;lastScan=-Infinity;return true},qaModels:async()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return [];return Promise.all(['Knight','Barbarian','Mage','Rogue','Rogue_Hooded'].map(async name=>{const m=await model(name);return {name,actual:m.actual,profile:m.profile}}))},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],rigReport,unmounted:[...unmounted],loadError})};
+ const api={mount,clear,update,near,talk,record,prefetch,get ready(){return ready},qaHour:h=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return false;qaHour=Number.isFinite(h)?((h%24+24)%24):null;lastScan=-Infinity;return true},qaModels:async()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return [];return Promise.all(['Knight','Barbarian','Mage','Rogue','Rogue_Hooded'].map(async name=>{const m=await model(name);return {name,actual:m.actual,profile:m.profile}}))},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,drawn:performance.now()-(n.lastDraw??-Infinity)<750,drawCalls:n.drawCalls??0,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,drawBudget,frameMs,queuedBodies:bodyQueue.length,drawn:active.filter(n=>performance.now()-(n.lastDraw??-Infinity)<750).length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],rigReport,unmounted:[...unmounted],loadError})};
  globalThis.__hfNativePopulation=api;return api;
 }
