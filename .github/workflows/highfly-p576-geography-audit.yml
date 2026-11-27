@@ -31,7 +31,10 @@ jobs:
       - name: Compare actual native placements and audit every source walkway
         run: |
           set -euo pipefail
-          cp -a overlay/. dist/
+          OVERLAY="$(find overlay -type f -name play-p575.html -printf '%h\n' | head -n1)"
+          test -n "$OVERLAY"
+          test -s "$OVERLAY/highfly/regions-p575/placements.json"
+          cp -a "$OVERLAY/." dist/
           python3 -m venv "$RUNNER_TEMP/p576"
           "$RUNNER_TEMP/p576/bin/pip" install --quiet pillow==12.0.0 numpy==2.3.4
           "$RUNNER_TEMP/p576/bin/python" scripts/p576-geography-audit.py
