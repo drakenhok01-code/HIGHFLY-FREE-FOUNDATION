@@ -8,11 +8,11 @@ export const treeId=id=>/^(?:kaykit-forest\/tree-|kaykit-halloween\/tree-dead)/i
 export const shrubId=id=>/^kaykit-forest\/bush-/i.test(id);
 export function makeRegionSampler(d,p,native){
  const R=d.tileRadius,S=p.scale,axkey=(q,r)=>q*65536+r,table=new Map(d.tiles.map(t=>[axkey(t.q,t.r),t]));
- const byIndex=new Map(d.tiles.map(t=>[t.i,t])),riverGrid=new Map(),walkGrid=new Map();
+ const byIndex=new Map(d.tiles.map(t=>[t.i,t])),riverGrid=new Map(),walkGrid=new Map(),approachGrid=new Map();
  const bucket=R*2,key=(x,z)=>Math.floor(x/bucket)+','+Math.floor(z/bucket);
  function register(grid,a,b,pad,value){for(let x=Math.floor((Math.min(a.x,b.x)-pad)/bucket);x<=Math.floor((Math.max(a.x,b.x)+pad)/bucket);x++)for(let z=Math.floor((Math.min(a.z,b.z)-pad)/bucket);z<=Math.floor((Math.max(a.z,b.z)+pad)/bucket);z++){const k=x+','+z;if(!grid.has(k))grid.set(k,[]);grid.get(k).push(value)}}
  for(const river of d.rivers??[])for(let i=1;i<(river.tiles??[]).length;i++){const a=byIndex.get(river.tiles[i-1]),b=byIndex.get(river.tiles[i]);if(a?.ground==='water'&&b?.ground==='water')register(riverGrid,a,b,R,{a,b});}
- for(const w of [...(d.stairs??[]),...(d.bridges??[]).flatMap(b=>b.legs??[])]){if(![w.ax,w.az,w.ay,w.bx,w.bz,w.by,w.half].every(Number.isFinite))continue;register(walkGrid,{x:w.ax,z:w.az},{x:w.bx,z:w.bz},w.half+R*.2,w)}
+ for(const w of [...(d.stairs??[]),...(d.bridges??[]).flatMap(b=>b.legs??[])]){if(![w.ax,w.az,w.ay,w.bx,w.bz,w.by,w.half].every(Number.isFinite))continue;register(walkGrid,{x:w.ax,z:w.az},{x:w.bx,z:w.bz},w.half+R*.2,w);const len=Math.hypot(w.bx-w.ax,w.bz-w.az);if(len<.01)continue;for(const side of [0,1]){const x=side?w.bx:w.ax,z=side?w.bz:w.az,y=side?w.by:w.ay,dx=(side?1:-1)*(w.bx-w.ax)/len,dz=(side?1:-1)*(w.bz-w.az)/len,L=Math.min(R*1.3,Math.max(2.2,w.half*2.5));const a={x,z},b={x:x+dx*L,z:z+dz*L};register(approachGrid,a,b,w.half+.7,{a,b,y,half:w.half,L,kind:w.kind});}}
  function segment(x,z,ax,az,bx,bz){const dx=bx-ax,dz=bz-az,n=dx*dx+dz*dz,t=n?clamp(((x-ax)*dx+(z-az)*dz)/n,0,1):0;return {t,dist:Math.hypot(x-ax-dx*t,z-az-dz*t)}}
  function riverAt(x,z){let best=null;for(const {a,b} of riverGrid.get(key(x,z))??[]){const v=segment(x,z,a.x,a.z,b.x,b.z);if(!best||v.dist<best.dist){const level=t=>Math.max(-.05,t.top-.14);best={dist:v.dist,level:level(a)+(level(b)-level(a))*v.t}}}return best}
  function walkwayAt(x,z){let best=null;for(const w of walkGrid.get(key(x,z))??[]){const v=segment(x,z,w.ax,w.az,w.bx,w.bz);if(v.dist<=w.half+.12&&(!best||v.dist<best.dist))best={...v,w,y:w.ay+(w.by-w.ay)*v.t};}return best}
@@ -42,7 +42,10 @@ export function makeRegionSampler(d,p,native){
   // Feather the outer apron rather than creating a sharp rectangular terrain wall.
   k*=smooth(edge/Math.min(24,p.transition??24));
   let height=q.height,water=q.water*q.coverage,level=q.waterLevel;const rv=riverAt(lx,lz);if(rv&&rv.dist<R*.66){const w=1-smooth((rv.dist/R-.40)/.26);if(w>0){height=Math.min(height,height+(rv.level-.48-height)*w);water=Math.max(water,w);if(w>.3)level=rv.level;}}const walkway=walkwayAt(lx,lz);if(walkway?.w.kind==='stairs'&&water<.5){const w=1-smooth((walkway.dist-walkway.w.half*.7)/Math.max(.05,walkway.w.half*.3+.12));const t=walkway.t,entry=Math.min(1,t*12,(1-t)*12),target=walkway.y-.12*entry;height=height+(target-height)*w;}
-  const target=p.base+height*S,original=k>=.999999?target:native(x,z),y=original+(target-original)*k;
+   // Taper bank approaches into the exact authored bridge/stair ends on dry land only.
+  // Never fill waterbeds under the bridge or alter its elevated deck.
+  if(water<.3&&!walkway){let best=null;for(const a of approachGrid.get(key(lx,lz))??[]){const v=segment(lx,lz,a.a.x,a.a.z,a.b.x,a.b.z);if(v.dist>a.half+.65||v.t>=1)continue;const weight=(1-smooth(v.t))*(1-smooth((v.dist-a.half*.65)/(a.half*.35+.65)));if(!best||weight>best.weight)best={weight,y:a.y};}if(best)height+=(best.y-.035-height)*best.weight;}
+ const target=p.base+height*S,original=k>=.999999?target:native(x,z),y=original+(target-original)*k;
   return {y,soil:q.soil*q.coverage*k,water:water*smooth((k-.70)/.25),level:p.base+level*S,inside:q.coverage>.5,transition:k};
  }
  return {sample,source,nearest,riverAt,walkwayAt};
