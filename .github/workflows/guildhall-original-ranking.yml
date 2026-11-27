@@ -1,0 +1,62 @@
+name: Guildhall ORIGINAL — eight complete islands
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths: ['.github/workflows/guildhall-original-ranking.yml','scripts/guildhall-original-ranking.ts']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [arvelia, puertaria, ferrondral, sylvaris, valdoria, lumeria, auralis, valtheria]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall-native
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Original source integrity and scan
+        run: |
+          mkdir -p guildhall-native/scripts
+          cp scripts/guildhall-original-ranking.ts guildhall-native/scripts/
+          cd guildhall-native
+          git diff --exit-code
+          bun scripts/guildhall-original-ranking.ts 1 120 ${{ matrix.theme }}
+          git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.theme }}
+          path: guildhall-native/seed-results/*.json
+  collect:
+    needs: search
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          path: results
+          merge-multiple: true
+      - run: |
+          python - <<'PY'
+          import json,pathlib
+          p=[json.loads(f.read_text()) for f in pathlib.Path('results').glob('*.json')]
+          assert len(p)==8
+          for x in p:
+              a=x['finalists'][0]
+              print('WINNER',x['theme'],a['seed'],a['files'],a['score'])
+          pathlib.Path('original-ranking.json').write_text(json.dumps(p,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guildhall-original-ranking
+          path: original-ranking.json
