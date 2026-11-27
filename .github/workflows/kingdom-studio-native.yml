@@ -1,4 +1,4 @@
-name: Kingdom Builder K1.1.2 — Editor modular con importación ZIP privada
+name: Kingdom Builder K1.3 — City Harmony
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -40,6 +40,8 @@ jobs:
         run: node scripts/kingdom-studio-terrain.mjs guildhall-native
       - name: Aplicar prioridades de prefabricados y presupuesto de agricultura
         run: node scripts/kingdom-studio-identity.mjs guildhall-native
+      - name: Incorporar reglas City Harmony
+        run: node scripts/kingdom-studio-harmony.mjs guildhall-native
       - name: Incorporar exportación de la isla construida
         run: node scripts/kingdom-snapshot.mjs guildhall-native
       - name: Incorporar editor de hexágonos y objetos
@@ -71,7 +73,7 @@ jobs:
           test "$(du -sb . | cut -f1)" -lt 950000000
       - uses: actions/upload-artifact@v4
         with:
-          name: kingdom-studio-k112-editor
+          name: kingdom-studio-k13-editor
           path: guildhall-native/apps/studio/dist
           if-no-files-found: error
           retention-days: 14
