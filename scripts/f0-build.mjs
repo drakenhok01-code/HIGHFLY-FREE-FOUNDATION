@@ -307,7 +307,7 @@ run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p482-three-in
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p43-premium-art.py',iconDest,loc('public/highfly/rarity')]);
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p44-align-art.py',iconDest,loc('public/highfly/rarity'),loc('public/highfly/brand/highfly-official.avif'),loc('public/highfly/brand/official-rpg-fitness.webp')]);
 run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p572-creature-frames.py',path.join(ROOT,'assets/highfly'),loc('public/highfly/rarity')]);
-run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p573-frame-perfection.py',path.join(ROOT,'assets/highfly'),loc('public/highfly/rarity'),iconDest]);
+run(process.env.HIGHFLY_ICON_PYTHON || 'python3',['scripts/highfly-p574-frame-aura.py',path.join(ROOT,'assets/highfly'),loc('public/highfly/rarity'),iconDest]);
 console.log('[HIGHFLY USER ICON PACK V1] 60 original WebP icons installed; 24 future references kept inactive');
 
 
