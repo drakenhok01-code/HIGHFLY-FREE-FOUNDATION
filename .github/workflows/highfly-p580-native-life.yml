@@ -67,24 +67,36 @@ jobs:
           cp guildhall/LICENSE dist/highfly/living-p580/GUILDHALL-MIT.txt
           git -C guildhall diff --exit-code
           jq -e '(.regions|length)==8 and .population>0 and all(.regions[]; .population>0 and .walks>0 and .work>0)' dist/highfly/living-p580/index.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p580-population-data
+          path: dist/highfly/living-p580/
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/checkout@v4
+        with:
+          repository: KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0
+          ref: 672074b73ba276876a19e8816ecdc5241817ab47
+          path: kaykit-official
+          persist-credentials: false
       - name: Acquire official pinned CC0 character GLBs
         run: |
           set -euo pipefail
+          test "$(git -C kaykit-official rev-parse HEAD)" = 672074b73ba276876a19e8816ecdc5241817ab47
           mkdir -p dist/highfly/living-p580/models
-          BASE=https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/672074b73ba276876a19e8816ecdc5241817ab47
-          while read -r NAME SHA; do
+          for NAME in Barbarian Knight Mage Rogue Rogue_Hooded; do
+            REL="addons/kaykit_character_pack_adventures/Characters/gltf/$NAME.glb"
             FILE="dist/highfly/living-p580/models/$NAME.glb"
-            curl --retry 3 -fsSL "$BASE/addons/kaykit_character_pack_adventures/Characters/gltf/$NAME.glb" -o "$FILE"
-            test "$(git hash-object "$FILE")" = "$SHA"
-          done <<'EOF'
-          Barbarian 66d312ab6dc02b35fb648e7585bfdddb4e02eeef
-          Knight 717b56ca2b5ff5392679774725201ba03a3eefab
-          Mage c89f19f6e707f6e07e4632a08876bd6d0172b082
-          Rogue c8827661105eef7b2fbef3bc676d41a47625733
-          Rogue_Hooded 5d2b1403240d5f9ffff12e02c007572038eca2a8
-          EOF
-          curl -fsSL "$BASE/LICENSE.txt" -o dist/highfly/living-p580/KAYKIT-CC0.txt
+            git -C kaykit-official show "HEAD:$REL" > "$FILE"
+            EXPECTED="$(git -C kaykit-official rev-parse "HEAD:$REL")"
+            ACTUAL="$(git hash-object --no-filters "$FILE")"
+            echo "HF580_MODEL $NAME $EXPECTED $ACTUAL $(wc -c < "$FILE")"
+            test "$EXPECTED" = "$ACTUAL"
+            test "$(head -c 4 "$FILE")" = glTF
+          done
+          git -C kaykit-official show HEAD:LICENSE.txt > dist/highfly/living-p580/KAYKIT-CC0.txt
           echo 'ae322141814056dda0deea7540d74c41d87aee1da319977cd1bd84ee5a923629  dist/highfly/living-p580/KAYKIT-CC0.txt' | sha256sum -c -
+          sha256sum dist/highfly/living-p580/models/*.glb > dist/highfly/living-p580/models-sha256.txt
       - uses: actions/upload-artifact@v4
         with:
           name: highfly-p580-native-life
