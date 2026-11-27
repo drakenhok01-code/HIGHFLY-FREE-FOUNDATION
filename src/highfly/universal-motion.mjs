@@ -496,6 +496,7 @@ export function installHighflyUniversalMotion(p){
   }
   // Explicit full-body states own the player. Combat, ROLL and DASH cannot
   // play at the same time as mantle/climb/sit/work.
+  if(input.pressed.has('living_talk')&&this.state==='move'&&globalThis.__hfLivingWorld?.talk(this.pos))return;
   if(this.state==='hf_glide'){stepPhoenix(this,step,input,camYaw);return;}
   if(this.state==='hf_wallrun'){stepWallRun(this,step,input);return;}
   if(this.state==='hf_mantle'){this.stateTime+=step;stepMantle(this,step);return;}
@@ -514,7 +515,7 @@ export function installHighflyUniversalMotion(p){
      if(action.job){
        const finished=commitProfession(this._hfProfession,this.world,action.job);
        this.emit(finished.ok?'highflyProfessionComplete':'highflyProfessionBlocked',{name:action.name,...finished});
-       if(finished.ok){this._hfProfessionSave();if(finished.product)this._hfFeedback?.('+'+finished.amount+' '+({fish:'Pescado',wood:'Madera',stone:'Piedra'}[finished.product]??finished.product)+' · Inventario')}else this._hfFeedback?.('Recurso no disponible');
+       if(finished.ok){globalThis.__hfLivingWorld?.record(finished);this._hfProfessionSave();if(finished.product)this._hfFeedback?.('+'+finished.amount+' '+({fish:'Pescado',fish_river:'Pez de río',fish_coast:'Pez costero',wood:'Madera',stone:'Piedra',ore_copper:'Mineral de cobre',ore_iron:'Mineral de hierro',ore_silver:'Mineral de plata'}[finished.product]??finished.product)+' · Inventario')}else this._hfFeedback?.('Recurso no disponible');
      }
      this._hfAction=null;this.setState('move');
      this.emit('highflyActionEnd',{name:action.name,completed:!!action.job});

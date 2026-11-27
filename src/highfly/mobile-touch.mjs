@@ -43,7 +43,7 @@ export function resolveHighflyContext(p){
  // Physical fallen animal outranks proximity climb and tree collisions.
  if(g?.__hfP41WorldLoot?.nearCorpse?.(p.pos))return {action:'interact',label:'SAQUEAR'};
  const npc=g?.people?.near?.();
- if(npc)return {action:'interact',label:'HABLAR'};
+ if(npc)return {action:'interact',label:'HABLAR'};if(globalThis.__hfLivingWorld?.near(p.pos))return {action:'living_talk',label:'HABLAR'};
  for(const spot of Object.values(g?.__highflyHunts?.spots??{})){
   if(spot?.npc&&Math.hypot(p.pos.x-spot.npc.x,p.pos.z-spot.npc.z)<3.2&&
      Math.abs(p.pos.y-spot.npc.y)<3)return {action:'interact',label:'HABLAR'};

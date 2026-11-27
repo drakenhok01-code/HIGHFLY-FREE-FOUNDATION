@@ -12,7 +12,7 @@ export const PROFESSION_RULES=Object.freeze({
  plant: {kind:'soil',tool:'hoe',seconds:1.65,requires:{seed:1}},
  water: {kind:'soil',tool:'watering_can',seconds:1.5},
  harvest:{kind:'soil',tool:'sickle',seconds:1.65,product:'herb',amount:2},
- smelt:{kind:'furnace',tool:null,seconds:2.1,requires:{ore:2},product:'ingot',amount:1},
+ smelt:{kind:'furnace',tool:null,seconds:2.1,requires:{ore:2},product:'ingot',amount:3},
  forge:{kind:'forge',tool:'hammer',seconds:2.1,requires:{ingot:2},product:'blade_blank',amount:1}
 });
 export const WORK_TARGET_ACTION=Object.freeze({
@@ -46,25 +46,32 @@ export function findProfessionTarget(world,pos,yaw,action=null,reach=2.65){
  }
  return best;
 }
+export function ruleFor(action,node,state,metal){const base=PROFESSION_RULES[action];if(!base)return null;
+ if(action==='mine'&&['ore_copper','ore_iron','ore_silver'].includes(node?.product))return {...base,product:node.product};
+ if(action==='fishing'&&['fish_river','fish_coast'].includes(node?.product))return {...base,product:node.product};
+ if(action==='smelt'){const chosen=metal??['copper','iron','silver'].find(k=>(state.inventory['ore_'+k]??0)>=2);if(chosen)return {...base,metal:chosen,requires:{['ore_'+chosen]:2},product:'ingot_'+chosen,amount:3}}
+ if(action==='forge'){const chosen=metal??['iron','copper','silver'].find(k=>(state.inventory['ingot_'+k]??0)>=2);if(chosen)return {...base,metal:chosen,requires:{['ingot_'+chosen]:2}}}
+ return base;
+}
 export function prepareProfession(state,world,action,pos,yaw){
- const rule=PROFESSION_RULES[action];
+ let rule=PROFESSION_RULES[action];
  if(!rule)return {ok:false,reason:'unknown-action'};
  const node=findProfessionTarget(world,pos,yaw,action);
  if(!node)return {ok:false,reason:'no-real-target'};
- if(!state)return {ok:false,reason:'no-profession-state'};
+ if(!state)return {ok:false,reason:'no-profession-state'};rule=ruleFor(action,node,state);
  if(rule.tool&&!state.tools?.has(rule.tool))return {ok:false,reason:'missing-tool',tool:rule.tool};
  for(const [item,n] of Object.entries(rule.requires??{}))
   if((state.inventory?.[item]??0)<n)return {ok:false,reason:'missing-item',item};
- return {ok:true,job:{action,id:node.id,seconds:rule.seconds,done:false}};
+ return {ok:true,job:{action,id:node.id,seconds:rule.seconds,metal:rule.metal,done:false}};
 }
 export function commitProfession(state,world,job){
  if(!job||job.done)return {ok:false,reason:'already-committed'};
- const rule=PROFESSION_RULES[job.action];
+ let rule=PROFESSION_RULES[job.action];
  if(!rule)return {ok:false,reason:'unknown-action'};
  const node=world?.highflyInteractables?.find(n=>n.id===job.id);
  if(!node||node.available===false||professionActionFor(node)!==job.action)
   return {ok:false,reason:'invalidated-target'};
- if(rule.tool&&!state.tools?.has(rule.tool))return {ok:false,reason:'missing-tool'};
+ rule=ruleFor(job.action,node,state,job.metal);if(rule.tool&&!state.tools?.has(rule.tool))return {ok:false,reason:'missing-tool'};
  for(const [item,n] of Object.entries(rule.requires??{}))
   if((state.inventory?.[item]??0)<n)return {ok:false,reason:'missing-item'};
  for(const [item,n] of Object.entries(rule.requires??{}))state.inventory[item]-=n;

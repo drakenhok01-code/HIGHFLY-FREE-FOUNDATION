@@ -20,6 +20,7 @@ import './premium-p44.css';
 import './premium-p45.css';
 import './premium-p46.css';
 import './premium-p47.css';
+import './p570-premium.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
@@ -410,6 +411,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '</div>','hf-rpg-forge-main')+'</div>';
  }
  function questDetails(){
+  const l=(globalThis.__hfLivingWorld?.summary()??[]).find(q=>'living:'+q.id===local.selectedQuest);if(l)return '<div class="hf-rpg-quest-detail">'+title(l.title,'ARVELIA · '+safe(l.name))+'<p class="hf-rpg-info">'+safe(l.text)+'</p><div class="hf-rpg-quest-detail-foot"><b>'+l.progress+' / '+l.count+'</b><span>'+l.reward+' monedas · hablá con '+safe(l.name)+' para aceptar o entregar.</span></div></div>';
   // P4.9 standalone hunt missions coexist with Unsung quests. They share
   // the journal, not the original quest engine's internal state machine.
   const huntKey=HUNT_ORDER.find(id=>HUNT_MISSIONS[id].id===local.selectedQuest);
@@ -439,6 +441,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '</div>';
  }
  function quests(){
+  const livingRows=(globalThis.__hfLivingWorld?.summary()??[]).map(q=>'<button type="button" data-hf-quest="living:'+safe(q.id)+'" class="hf-rpg-quest-row"><b>✦ ARVELIA · '+safe(q.title)+'</b><small>'+safe(q.name)+'</small><span>'+safe(q.status==='available'?'DISPONIBLE':q.status==='done'?'COMPLETADA':q.progress+' / '+q.count)+'</span></button>').join('');
   const rows=game.quests?.active??[],objective=translateHighfly(game.objective||'Explorá el mundo');
   const hunt=game.__highflyHunts,hs=hunt?.state;
   const huntRows=hs?HUNT_ORDER.map(id=>{
@@ -454,7 +457,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    '<div class="hf-rpg-subtitle">SEGUIMIENTO · '+rows.length+' ACTIVAS</div>'+
    '<div class="hf-rpg-quest-list">'+
    '<button type="button" data-hf-quest="primary" class="hf-rpg-quest-row '+(local.selectedQuest==='primary'?'is-selected':'')+'"><b>✦ HISTORIA · '+safe(objective)+'</b><small>Objetivo principal del Valle</small></button>'+
-   rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('')+huntLevel+huntRows+
+   rows.map(q=>{const st=game.quests?.state?.[q.id],v=game.quests?.progress?.(q);return '<button type="button" data-hf-quest="'+safe(q.id)+'" class="hf-rpg-quest-row '+(local.selectedQuest===q.id?'is-selected':'')+'"><b>'+safe(translateHighfly(q.title))+'</b><small>'+safe(translateHighfly(q.verb))+'</small><span>'+safe(st?.s==='ready'?'ENTREGAR':v?.length>=2?v[0]+' / '+v[1]:'ACTIVA')+'</span></button>';}).join('') +huntLevel+huntRows+livingRows+
    '</div>','hf-rpg-quest-left')+
    panel(questDetails(),'hf-rpg-quest-right')+'</div>';
  }
@@ -530,7 +533,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    game.openMenu('hero');
    if(game.state!=='menu')return false;
   }
-  local.opened=true;local.tab=tab==='bolsa'?'bolsa':'personaje';root.hidden=false;
+  local.opened=true;local.tab=bodies[tab]?tab:'personaje';root.hidden=false;
   if((fromNative||tab==='misiones'||tab==='mapa')&&bodies[tab])local.tab=tab;
   syncEquipment();syncSkills();
   document.body.classList.add('hf-rpg-is-open');
@@ -543,7 +546,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   local.toast='';
   if(game.state==='menu'&&game.menu==='hero')game.closeMenu();
  }
- const api={open,openFromNative:tab=>open(tab,true),close,toggle:()=>local.opened?close():open(),render,
+ const api={open,openFromNative:tab=>open(tab,true),close,toggle:()=>local.opened?close():open(),render,livingAward(amount){bag.coins=(bag.coins??0)+Math.max(0,Math.floor(amount));save();return true},livingTrade(id,price,buy){const inv=prof().inventory;if(!['seed','wood','ore_copper','ore_iron','ore_silver'].includes(id)||!Number.isFinite(price)||price<1)return false;if(buy){if((bag.coins??0)<price)return false;bag.coins-=price;inv[id]=(inv[id]??0)+1}else{if((inv[id]??0)<1)return false;inv[id]--;bag.coins=(bag.coins??0)+price}save();p()?._hfProfessionSave?.();return true},
   get opened(){return local.opened},get state(){return bag}};
  // Reuse Unsung's native map/journal/bench command, but present the HIGHFLY
  // menu instead of a second, conflicting legacy UI. Quest rules are untouched.
