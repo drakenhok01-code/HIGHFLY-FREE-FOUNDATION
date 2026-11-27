@@ -40,10 +40,11 @@ await edit("packages/world/src/hex/zones.ts",s=>{
  ""
  ].join("\n")+s.slice(b);
  // Explicit wall tier independent of repo size. Castle remains separate from town walls.
- s=once(s,"  const tier = castleTier(h.spec.files, opts.agents)","  const tier = opts.theme && opts.theme!=='equilibrada' ? Math.max(2,castleTier(h.spec.files, opts.agents)) : castleTier(h.spec.files, opts.agents)");
+ s=once(s,"  const tier = castleTier(h.spec.files, opts.agents)","  const tier = profile ? Math.max(2,castleTier(h.spec.files, opts.agents)) : castleTier(h.spec.files, opts.agents)");
  return s;
 });
 await edit("packages/world/src/hex/world.ts",s=>{
+ s=once(s,"  const tier = opts.agents === undefined ? z.tier : castleTier(h.spec.files, opts.agents)","  const tier = z.kingdomTheme ? Math.max(2,z.tier) : opts.agents === undefined ? z.tier : castleTier(h.spec.files, opts.agents)");
  // Reserve civic lots nearest central square before specialty lots in capital.
  const a=s.indexOf("  // Actual primary industry lots"), b=s.indexOf("  // Reserve civic buildings",a), c=s.indexOf("  // each place's own scenes first,",b);
  if(a<0||b<0||c<0)throw Error("civic anchors");
@@ -82,6 +83,7 @@ await edit("packages/world/src/hex/world.ts",s=>{
  "          wallList.push(p);",
  "        }",
  "      }",
+ "      const towerSites=new Set<number>();for(const w of wallList){const i=tileAt(w.x,w.z);if(i>=0&&!towerSites.has(i)&&hash2(seed+1308,i,0)<.16&&wallList.filter(q=>tileAt(q.x,q.z)===i).length>=2){towerSites.add(i);const [x,zz]=at(i);if(!roadLike(i)&&!occupied.near(x,zz,1.3).some(so=>solidDistance(so,x,zz)<.85))pieces.push({piece:`kaykit-hexagon/building-tower-base-${castleColour}`,x,y:top(i),z:zz,rot:w.rot,scale:.21});}}",
  "      pieces.push(...wallList);",
  "    }",
  "  }",
