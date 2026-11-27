@@ -24,8 +24,8 @@ const get=async url=>{const r=await fetch(url);if(!r.ok)throw Error('Living Worl
 export function installNativePopulation(game,pipe,forge){
  const root=new THREE.Group();root.name='HF580_NATIVE_POPULATION';pipe.scene.add(root);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),ktx=new KTX2Loader().setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/').detectSupport(pipe.renderer);loader.setKTX2Loader(ktx);
- const plans=new Map(),materials=new Map(),bodyQueue=[],bodies=new Map(),props=new Map(),fallbackClips=new Set(),unmounted=new Set(),bodyErrors=new Set();
- let sharedRig=null,rigReport={},qaHour=null,dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,selected=null,lastAffinity=0,drawBudget=16,frameMs=16,lastFrame=0,lastBudget=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
+ const plans=new Map(),materials=new Map(),bodyQueue=new Map(),bodies=new Map(),props=new Map(),fallbackClips=new Set(),unmounted=new Set(),bodyErrors=new Set();
+ let sharedRig=null,rigReport={},qaHour=null,dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,scanHour=null,scanRevision=0,selected=null,lastAffinity=0,drawBudget=16,frameMs=16,lastFrame=0,lastBudget=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
  let state={};try{const value=JSON.parse(localStorage.getItem(KEY)||'{}');if(value&&typeof value==='object')state=value}catch{}
  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
  const panel=document.createElement('section');panel.id='hf-native-dialogue';panel.hidden=true;panel.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(400px,75vw);max-height:72vh;overflow:auto;z-index:100015;background:#1a152af8;color:#f2e5cf;border:1px solid #b58be7;border-radius:12px;padding:15px;font:13px system-ui';document.body.append(panel);
@@ -36,15 +36,15 @@ export function installNativePopulation(game,pipe,forge){
  const materialFor=(base,tint)=>{const key=(base?.map?.uuid??'plain')+':'+tint;if(!materials.has(key))materials.set(key,new THREE.MeshBasicMaterial({map:base?.map??null,color:tint,side:THREE.DoubleSide,transparent:!!base?.transparent,alphaTest:base?.alphaTest??0}));return materials.get(key)};
  const model=name=>{if(!bodies.has(name))bodies.set(name,Promise.all([loader.loadAsync(BASE+'models/'+name+'.glb'),rig()]).then(([g,r])=>{if(r)rigReport[name]=appendSharedRigAnimations(g,r);return {g,actual:name,profile:stylizeUniversalKayKit(g,{npc:true})}}).catch(e=>{bodyErrors.add(name+': '+String(e));if(name==='Knight')throw e;return model('Knight')}));return bodies.get(name)};
  const loadProp=(id,asset)=>{if(!props.has(id))props.set(id,loader.loadAsync(REGION+asset.path).then(g=>g.scene).catch(e=>{unmounted.add(id);return null}));return props.get(id)};
- function clearActor(n){if(n.actor){n.mixer?.stopAllAction();if(n.body)n.mixer?.uncacheRoot(n.body);n.actor.traverse(o=>{if(o.userData.hfNpcTag){o.material.map?.dispose();o.material.dispose()}});n.actor.removeFromParent()}n.actor=null;n.body=null;n.mixer=null;n.action=null;n.clip=null;n.loading=false;n.attached=new Map();n.serial=(n.serial??0)+1;n.lastDraw=-Infinity}
- function clear(){generation++;bodyQueue.length=0;for(const n of records)clearActor(n);root.clear();region=null;records=[];active=[];selected=null;panel.hidden=true;ready=false;lastScan=-Infinity;loadError=null}
+ function clearActor(n){bodyQueue.delete(n.id);if(n.actor){n.mixer?.stopAllAction();if(n.body)n.mixer?.uncacheRoot(n.body);n.actor.traverse(o=>{if(o.userData.hfNpcTag){o.material.map?.dispose();o.material.dispose()}});n.actor.removeFromParent()}n.actor=null;n.body=null;n.mixer=null;n.action=null;n.clip=null;n.loading=false;n.attached=new Map();n.serial=(n.serial??0)+1;n.lastDraw=-Infinity}
+ function clear(){generation++;bodyQueue.clear();scanHour=null;for(const n of records)clearActor(n);root.clear();region=null;records=[];active=[];selected=null;panel.hidden=true;ready=false;lastScan=-Infinity;lastFrame=0;loadError=null}
  function tag(n){const c=document.createElement('canvas');c.width=512;c.height=112;const ctx=c.getContext('2d');ctx.fillStyle='#1c152cdd';ctx.fillRect(0,0,512,112);ctx.fillStyle=n.stylist?'#e9c36a':'#eee2cd';ctx.font='bold 34px system-ui';ctx.textAlign='center';ctx.fillText((n.stylist?'✦ ':n.quest?'! ':'')+n.def.name,256,47);ctx.font='26px system-ui';ctx.fillText(n.stylist?'Estilista':n.def.role,256,88);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthWrite:false}));s.scale.set(2.5,.54,1);s.position.y=2.2;s.userData.hfNpcTag=true;s.visible=false;return s}
  function actor(n){
   if(n.actor||n.loading)return;
   n.loading=true;const token=generation,serial=n.serial??0;
   model(n.modelName).then(({g,profile})=>{
-   if(token!==generation||serial!==(n.serial??0)||!active.includes(n)){n.loading=false;return}
-   bodyQueue.push(()=>{
+   if(token!==generation||serial!==(n.serial??0)||!active.includes(n))return;
+   bodyQueue.set(n.id,()=>{
    if(token!==generation||serial!==(n.serial??0)||!active.includes(n)){n.loading=false;return}
    const a=new THREE.Group();a.name='HF580_'+n.id;const b=cloneSkeleton(g.scene);const scale=(1.82/profile.naturalHeight)*n.height;const bodyHolder=new THREE.Group();bodyHolder.scale.setScalar(scale);bodyHolder.add(b);
    b.traverse(o=>{if(!o.isMesh)return;const name=o.name??'';
@@ -57,7 +57,7 @@ export function installNativePopulation(game,pipe,forge){
    a.add(bodyHolder);const t=tag(n);a.add(t);pipe.scene.add(a);a.position.set(n.x??0,n.y??0,n.z??0);a.updateMatrixWorld(true);
    n.actor=a;n.body=b;n.tag=t;n.mixer=new THREE.AnimationMixer(b);n.clips=new Map(g.animations.map(c=>[c.name,c]));n.modelScale=scale;n.loading=false;n.attached=new Map();n.actor.visible=false;n.lastDraw=-Infinity;n.drawCalls=0;
    });
-  }).catch(e=>{n.loading=false;loadError=String(e)})
+  }).catch(e=>{if(token===generation&&serial===(n.serial??0)){n.loading=false;loadError=String(e)}})
  }
  function mount(r){
   clear();region=r;const token=generation;
@@ -114,12 +114,15 @@ export function installNativePopulation(game,pipe,forge){
   n.actor.updateMatrixWorld(true);
  }
  function update(dt){
-  const p=game.player?.pos;if(!ready||!region||!p)return;const h=hour();lastHour=h;const now=performance.now();if(lastFrame&&now-lastFrame<250)frameMs=frameMs*.92+(now-lastFrame)*.08;lastFrame=now;if(now-lastBudget>1800){drawBudget=npcBudget(frameMs,drawBudget);lastBudget=now}if(bodyQueue.length)bodyQueue.shift()();
+  const p=game.player?.pos;if(!ready||!region||!p)return;const h=hour();const now=performance.now();if(lastFrame)frameMs=frameMs*.92+Math.min(250,now-lastFrame)*.08;lastFrame=now;if(now-lastBudget>1800){drawBudget=npcBudget(frameMs,drawBudget);lastBudget=now}
   if(now-lastScan>300){lastScan=now;const candidates=[];wetRejected=0;
-   for(const n of records){const q=pose(n,h);if(!q){wetRejected++;continue}n.x=q.x;n.y=q.y;n.z=q.z;n.indoors=q.v.indoors;if(q.v.indoors)continue;const distance=Math.hypot(p.x-q.x,p.z-q.z);if(distance<NEAR)candidates.push({n,distance})}
+   for(const n of records){const q=pose(n,h);if(!q){wetRejected++;n.x=n.y=n.z=null;n.indoors=true;continue}n.x=q.x;n.y=q.y;n.z=q.z;n.indoors=q.v.indoors;if(q.v.indoors)continue;const distance=Math.hypot(p.x-q.x,p.z-q.z);if(distance<NEAR)candidates.push({n,distance})}
    candidates.sort((a,b)=>a.distance-b.distance);const next=candidates.slice(0,Math.min(LIMIT,drawBudget)).map(q=>q.n);if(selected&&!next.includes(selected)){selected=null;panel.hidden=true}
-   for(const n of active)if(!next.includes(n))clearActor(n);active=next;for(const n of active)actor(n);
+   for(const n of active)if(!next.includes(n))clearActor(n);active=next;for(const n of active)actor(n);scanHour=h;scanRevision++;
   }
+  // Run only the closest valid queued job per frame; discarded actors cannot enqueue stale work.
+  for(const n of active){const job=bodyQueue.get(n.id);if(!job)continue;bodyQueue.delete(n.id);try{job()}catch(e){n.loading=false;loadError=String(e)}break;}
+  lastHour=h;
   const camera=game.rig?.camera;
   const frustum=camera?new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse)):null;
   const bounds=new THREE.Sphere(new THREE.Vector3(),2.5);
@@ -157,6 +160,6 @@ export function installNativePopulation(game,pipe,forge){
  }
  function talk(p){const n=near(p);if(!n)return false;draw(n);return true}
  function record(e){if(!region||!e?.ok)return;for(const n of records){const q=state[n.id];if(n.quest?.action===e.action&&q?.status==='active'){q.progress=Math.min(n.quest.count,q.progress+1);if(q.progress>=n.quest.count)q.status='ready'}}save()}
- const api={mount,clear,update,near,talk,record,prefetch,get ready(){return ready},qaHour:h=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return false;qaHour=Number.isFinite(h)?((h%24+24)%24):null;lastScan=-Infinity;return true},qaModels:async()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return [];return Promise.all(['Knight','Barbarian','Mage','Rogue','Rogue_Hooded'].map(async name=>{const m=await model(name);return {name,actual:m.actual,profile:m.profile}}))},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,drawn:performance.now()-(n.lastDraw??-Infinity)<750,drawCalls:n.drawCalls??0,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,drawBudget,frameMs,queuedBodies:bodyQueue.length,drawn:active.filter(n=>performance.now()-(n.lastDraw??-Infinity)<750).length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],rigReport,unmounted:[...unmounted],loadError})};
+ const api={mount,clear,update,near,talk,record,prefetch,get ready(){return ready},qaHour:h=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return false;qaHour=Number.isFinite(h)?((h%24+24)%24):null;lastScan=-Infinity;return true},qaModels:async()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return [];return Promise.all(['Knight','Barbarian','Mage','Rogue','Rogue_Hooded'].map(async name=>{const m=await model(name);return {name,actual:m.actual,profile:m.profile}}))},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,drawn:performance.now()-(n.lastDraw??-Infinity)<750,drawCalls:n.drawCalls??0,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,drawBudget,frameMs,queuedBodies:bodyQueue.size,scanHour,scanRevision,drawn:active.filter(n=>performance.now()-(n.lastDraw??-Infinity)<750).length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],rigReport,unmounted:[...unmounted],loadError})};
  globalThis.__hfNativePopulation=api;return api;
 }
