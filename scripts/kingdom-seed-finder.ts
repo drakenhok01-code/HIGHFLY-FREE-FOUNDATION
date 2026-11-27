@@ -65,24 +65,33 @@ for(const theme of profiles){
  }
  list.sort((a,b)=>b.geo-a.geo||a.seed-b.seed);
  const finalists=[];
- for(const x of list.slice(0,40)){
+ for(const x of list.slice(0,60)){
   const h=hexIsland({seed:x.seed,...p}),z=hexZones(h,{theme}),w=hexWorld(h,z);
   const tiles=new Map(w.tiles.map(t=>[t.i,t.prefab]));
   const town=z.zones.find(z=>z.kind==="town");
   const civic=mandatory.filter(id=>town?.tiles.some(i=>tiles.get(i)===id)).length;
   const thematic=z.zones.filter(z=>primary[theme]!.includes(z.kind)&&z.tiles.length>0);
   const thematicTiles=thematic.reduce((n,z)=>n+z.tiles.length,0);
-  const maxLots=theme==="arvelia"?80:45;
-  const themeScore=clamp(thematicTiles/maxLots);
-  const roadScore=clamp(z.roads.length/Math.max(1,z.zones.filter(x=>x.tiles.length>0).length-1));
-  // Prefer actual usable towns, not just a beautiful terrain.
-  const finalScore=.65*x.geo+15*themeScore+12*civic/mandatory.length+8*roadScore;
   const counts:Record<string,number>={};for(const tile of w.tiles)if(tile.prefab)counts[tile.prefab]=(counts[tile.prefab]??0)+1;
-  const actual=theme==="puertaria"?(counts.dock??0)+(counts["harbour-quay"]??0):theme==="ferrondral"?(counts.mine??0):theme==="valdoria"?(counts.field??0):theme==="sylvaris"?(counts.lumber??0):thematic.length;
-  const usable= civic===mandatory.length&&thematic.length>0&&actual>0;
-  finalists.push({...x,score:Math.round((finalScore-(usable?0:25))*100)/100,civic,themeZones:thematic.length,themeTiles:thematicTiles,roads:z.roads.length,buildings:z.stats.buildings,pieces:w.pieces.length,actual,usable,counts});
+  const count=(re:RegExp)=>w.pieces.filter(p=>re.test(p.piece)).length;
+  const mines=count(/building-mine-/),rails=count(/kaykit-holiday\//),boats=count(/boat-row|ship-small/),trees=count(/tree-/);
+  const docks=(counts.dock??0)+(counts["harbour-quay"]??0);
+  const fields=z.stats.fields,farms=(counts.farmstead??0)+(counts["farmstead-yard"]??0),bridges=w.bridges.length;
+  const waterfront=town?.tiles.filter(i=>[...h.grid.neighbours(i)].some(j=>j>=0&&["river","lake","shallows"].includes(kindOf(h,j)))).length??0;
+  const workshops=(counts.smithy??0)+(counts["smithy-works"]??0);
+  const actual=theme==="ferrondral"?mines:theme==="puertaria"?boats:theme==="valdoria"?fields:theme==="sylvaris"?(counts.lumber??0)+(counts.hunter??0):theme==="lumeria"?(counts.market??0)+(counts["market-square"]??0):theme==="auralis"?(counts.monastery??0)+(counts["monastery-compound"]??0):theme==="valtheria"?(counts.barracks??0)+(counts.archery??0)+(counts["training-arena"]??0):civic;
+  const economy=theme==="ferrondral"?.55*clamp(mines/5)+.2*clamp(workshops/12)+.15*clamp(rails/Math.max(1,mines*2))+.1*(1-clamp(fields/30)):
+    theme==="puertaria"?.30*clamp(boats/20)+.25*clamp(docks/12)+.25*clamp(waterfront/15)+.20*clamp(bridges/5):
+    theme==="valdoria"?.65*clamp(fields/150)+.35*clamp(farms/8):
+    theme==="sylvaris"?.7*clamp(actual/8)+.3*clamp(x.m.woods/x.m.land/.5):
+    theme==="arvelia"?clamp(thematicTiles/80):clamp(actual/8);
+  const roadScore=clamp(z.roads.length/Math.max(1,z.zones.filter(x=>x.tiles.length>0).length-1));
+  const usable=civic===mandatory.length&&thematic.length>0&&actual>0&&(theme!=="ferrondral"||(mines>=2&&rails>=mines*2&&fields<=6))&&(theme!=="puertaria"||(boats>=10&&docks>=8&&bridges>=2&&fields<=10));
+  const finalScore=.35*x.geo+45*economy+12*civic/mandatory.length+8*roadScore;
+  finalists.push({...x,score:Math.round((finalScore-(usable?0:35))*100)/100,civic,themeZones:thematic.length,themeTiles:thematicTiles,roads:z.roads.length,buildings:z.stats.buildings,pieces:w.pieces.length,actual,usable,counts,metrics:{mines,rails,boats,docks,trees,fields,farms,bridges,waterfront,workshops}});
+
  }
- finalists.sort((a,b)=>b.score-a.score||a.seed-b.seed);
+ finalists.sort((a,b)=>Number(b.usable)-Number(a.usable)||b.score-a.score||a.seed-b.seed);
  output.profiles[theme]={preset:p,scanned:list.length,finalists:finalists.slice(0,10)};
  console.log("BEST",theme,JSON.stringify(finalists.slice(0,3).map(({counts,...v})=>v)));
 }
