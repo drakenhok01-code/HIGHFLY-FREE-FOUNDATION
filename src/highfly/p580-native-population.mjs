@@ -10,6 +10,8 @@ import {affinityOnce,relationship,npcBudget} from './p581-reforged-policy.mjs';
 const BASE=import.meta.env.BASE_URL+'highfly/living-p580/',REGION=import.meta.env.BASE_URL+'highfly/regions-p575/';
 const KEY='hf-p580-native-residents-v1',LIMIT=24,NEAR=85,ANIM=45;
 const roleNames={merchant:'Comerciante',smith:'Herrero',farmer:'Agricultor',fisher:'Pescador',miner:'Minero',lumberjack:'Leñador',guard:'Guardia','night-watch':'Vigilante',monk:'Monje',archer:'Arquero',soldier:'Soldado',knight:'Caballero',bard:'Bardo',lamplighter:'Farolero','tavern-keeper':'Tabernero',mage:'Mago'};
+const lore={arvelia:'El gremio de Arvelia guarda los primeros registros del renacimiento.',puertaria:'Los pescadores oyen ecos extraños en la costa desde la restauración del Valle.',valdoria:'Las cosechas se recuperan, pero algunos campos siguen mostrando señales de la Fractura.',sylvaris:'Los árboles conservan ecos de la antigua magia.',ferrondral:'Las minas revelaron vetas que brillan al caer la noche.',lumeria:'Las caravanas traen noticias de los otros reinos.',auralis:'Los estudiosos investigan la Novena Voz.',valtheria:'Las fortalezas vigilan los cambios en las fronteras.'};
+const replies={farmer:['Si cuidamos la tierra, ella cuidará de nosotros.','La cosecha es el sustento de muchas familias.'],fisher:['El viento nos dice cuándo salir al agua.','Hay días en que el mar devuelve cosas que nadie esperaba.'],smith:['Un buen filo lleva horas de paciencia.','Necesitamos materiales para que el taller siga trabajando.'],miner:['Nunca hay que entrar solo en una galería desconocida.','Las piedras de este valle guardan historias.'],merchant:['Cada viajero trae noticias distintas.','Sin caminos seguros no hay comercio.'],guard:['Las rondas no terminan cuando cae la noche.','No todos los peligros vienen de fuera de las murallas.'],bard:['Las canciones conservan lo que los libros olvidan.','Algún día contaré la historia de los aventureros de este valle.']};
 const roleText={merchant:'Las rutas comerciales mantienen unida Aetheria.',smith:'El metal responde a la paciencia y al fuego.',farmer:'Cada cosecha necesita tiempo y manos cuidadosas.',fisher:'El agua trae sustento y secretos.',miner:'La roca esconde riquezas y peligros.',lumberjack:'El bosque merece respeto.',guard:'Mi deber es mantener el camino seguro.',monk:'La Novena Voz todavía resuena en el Valle.',bard:'Cada pueblo tiene una historia que merece una canción.'};
 const jobs={farmer:{action:'harvest',count:1,title:'Una cosecha para el pueblo'},fisher:{action:'fishing',count:2,title:'Provisiones de la costa'},miner:{action:'mine',count:2,title:'Mineral para el taller'},lumberjack:{action:'chop',count:2,title:'Madera para el pueblo'}};
 const models={knight:'Knight',barbarian:'Barbarian',mage:'Mage',rogue:'Rogue','rogue-hooded':'Rogue_Hooded',ranger:'Rogue'};
@@ -69,7 +71,7 @@ export function installNativePopulation(game,pipe,forge){
     const stylist=!stylistAssigned&&f.role==='merchant';if(stylist)stylistAssigned=true;
     const quest=!stylist&&jobs[f.role]&&!usedRoles.has(f.role)?{...jobs[f.role],reward:25}:null;if(quest)usedRoles.add(f.role);
     const def={id,name:stylist?'Estilista de '+plan.city:choose(names,id,1)+' '+String(f.id+1),role:stylist?'Estilista':role,text:roleText[f.role]??'Que la llama del Fénix te acompañe.'};
-    return {id,f,recipe,def,native:true,stylist,quest,modelName:choose(modelOptions,id,2)??'Knight',height:.96+random(id,3)*.08,tint:choose(colors,id,4),d,actor:null,loading:false,serial:0,attached:new Map()};
+    return {id,f,recipe,def,city:plan.city,native:true,stylist,quest,modelName:choose(modelOptions,id,2)??'Knight',height:.96+random(id,3)*.08,tint:choose(colors,id,4),d,actor:null,loading:false,serial:0,attached:new Map()};
    });ready=true;
   }).catch(e=>{if(token===generation){loadError=String(e);console.error('[HF580 population]',e)}})
  }
@@ -131,18 +133,26 @@ export function installNativePopulation(game,pipe,forge){
  }
  const near=p=>!p?null:active.filter(n=>n.actor?.visible&&Math.abs(n.y-p.y)<2&&Math.hypot(n.x-p.x,n.z-p.z)<3.1).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0]??null;
  function getState(n){return state[n.id]??=( {affinity:0,status:n.quest?'available':'none',progress:0})}
- function draw(n,message=n.def.text){
+ function draw(n,message=null,stage='greeting'){
   selected=n;panel.hidden=false;panel.replaceChildren();const q=getState(n);
   const add=(tag,value)=>{const el=document.createElement(tag);el.textContent=value;panel.append(el);return el};
   const btn=(label,fn)=>{const b=add('button',label);b.style.cssText='margin:4px;padding:8px;background:#39264e;border:1px solid #b58ae4;color:white;border-radius:6px';b.onclick=fn};
-  add('strong',n.def.name+' · '+n.def.role);add('p',message+' · Afinidad '+q.affinity);
+  add('strong',n.def.name+' · '+n.def.role);add('p',relationship(q.affinity)+' · Afinidad '+q.affinity);
+  const greeting=lastHour<6||lastHour>=20?'Buenas noches':lastHour<12?'Buen día':'Buenas tardes';
+  add('p',message??(q.affinity<0?'Preferiría seguir con mi trabajo.':greeting+', aventurero. '+n.def.text));
+  const decide=(id,delta)=>{affinityOnce(q,id,delta);save()};
+  if(stage==='greeting'){
+   btn('¿Cómo va tu trabajo?',()=>{decide('first-respect',2);draw(n,(replies[n.f.role]??[n.def.text])[0],'work')});
+   btn('¿Qué sabés del Valle?',()=>draw(n,lore[n.city]??'La llama del Fénix todavía nos guía.','lore'));
+   if(!q.decisions?.first-disrespect)btn('No tengo tiempo para tus problemas.',()=>{decide('first-disrespect',-3);draw(n,'Entiendo. No te quitaré más tiempo.','end')});
+  }else if(stage==='work'){btn('Contame un poco más',()=>draw(n,(replies[n.f.role]??[n.def.text,n.def.text])[1],'detail'));btn('Volver a conversar',()=>draw(n));}
+  else if(stage!=='end')btn('Volver a conversar',()=>draw(n));
   if(n.stylist)btn('Cambiar mi apariencia',()=>{if(forge.open('stylist')){panel.hidden=true;selected=null}});
   if(n.quest){add('p',n.quest.title+' · '+q.progress+'/'+n.quest.count+' · '+q.status);
    if(q.status==='available')btn('Aceptar misión secundaria',()=>{q.status='active';save();draw(n,'Gracias, aventurero.')});
    if(q.status==='ready')btn('Entregar misión',()=>{if(typeof game.__highflyRpg?.livingAward!=='function')return;q.status='done';q.affinity=Math.min(100,q.affinity+10);game.__highflyRpg.livingAward(n.quest.reward);save();draw(n,'Misión completada.')});
   }
-  btn('Trato amable',()=>{if(Date.now()-lastAffinity>3000){lastAffinity=Date.now();q.affinity=Math.min(100,q.affinity+2);save()}draw(n,'Aprecio tu amabilidad.')});
-  btn('Trato hostil',()=>{if(Date.now()-lastAffinity>3000){lastAffinity=Date.now();q.affinity=Math.max(-100,q.affinity-2);save()}draw(n,'Prefiero mantener distancia.')});
+
   btn('Cerrar',()=>{selected=null;panel.hidden=true});
  }
  function talk(p){const n=near(p);if(!n)return false;draw(n);return true}
