@@ -17,21 +17,21 @@ try{
   await page.evaluate(s=>window.__hfP555Regions.open(s,true),seed);
   await page.waitForFunction(s=>window.__hfP555Regions.active===s&&!window.__hfP555Regions.busy&&window.__hfNativePopulation.ready,seed,{timeout:600000});
   await page.evaluate(()=>{window.__hfNativePopulation.qaHour(9);window.__hfP555Regions.qaJumpCenter()});
-  await page.waitForFunction(n=>window.__hfNativePopulation.metrics().population===n&&window.__hfNativePopulation.residents.some(v=>Number.isFinite(v.x)&&!v.indoors),expected[seed],{timeout:120000});
-  const before=await page.evaluate(()=>window.__hfNativePopulation.residents);
+  await page.waitForFunction(n=>{const a=window.__hfNativePopulation;return a.metrics().population===n&&a.metrics().scanHour===9&&a.residents.some(v=>Number.isFinite(v.x)&&!v.indoors)},expected[seed],{timeout:120000});
+  const before=await page.evaluate(()=>window.__hfNativePopulation.residents.filter(n=>Number.isFinite(n.x)&&Number.isFinite(n.z)));
   await page.evaluate(()=>window.__hfNativePopulation.qaHour(13));
-  await page.waitForFunction(()=>window.__hfNativePopulation.metrics().hour===13,{},{timeout:60000});
-  const moved=await page.evaluate(before=>window.__hfNativePopulation.residents.filter(n=>{const a=before.find(q=>q.id===n.id);return a&&Math.hypot(a.x-n.x,a.z-n.z)>.5}).length,before);
+  await page.waitForFunction(()=>window.__hfNativePopulation.metrics().scanHour===13,{},{timeout:60000});
+  const moved=await page.evaluate(before=>window.__hfNativePopulation.residents.filter(n=>{const a=before.find(q=>q.id===n.id);return a&&Number.isFinite(n.x)&&Number.isFinite(n.z)&&Math.hypot(a.x-n.x,a.z-n.z)>.5}).length,before);
   if(moved<1)throw Error('No scheduled movement '+seed);
   const resident=await page.evaluate(()=>{const a=window.__hfNativePopulation.residents;return a.find(n=>n.stylist&&!n.indoors&&Number.isFinite(n.x))??a.find(n=>!n.indoors&&Number.isFinite(n.x))});
   await page.evaluate(n=>{const g=window.__game;g.player.spawn(n.x,n.y+.12,n.z-2.4,0);g.player.grounded=true;g.rig.yaw=0;g.rig.snap(g.player)},resident);
   await page.waitForFunction(()=>window.__hfNativePopulation.metrics().drawn>0,{},{timeout:120000});
   const row=await page.evaluate(()=>{const a=window.__hfNativePopulation,integrity=window.__hfP555Regions.qaIntegrity();return {...a.metrics(),stylist:a.residents.find(n=>n.stylist),terrainMismatch:integrity.mismatch,waterNative:integrity.waterUsesNative}});
   row.moved=moved;row.surface=await page.evaluate(()=>window.__hfP555Regions.metrics().surface);if(!row.surface?.clippedRoads||row.surface.roadTriangles<1)throw Error('Road conformity data absent');
-  if(row.population!==expected[seed]||row.visible<1||row.drawn<1||row.active>24||row.loadError||row.terrainMismatch!==0||!row.waterNative||!row.stylist)throw Error('Population runtime failure '+JSON.stringify(row));
+  if(row.population!==expected[seed]||row.visible<1||row.drawn<1||row.active>24||row.queuedBodies>row.active||row.loadError||row.terrainMismatch!==0||!row.waterNative||!row.stylist)throw Error('Population runtime failure '+JSON.stringify(row));
   if(seed===3){
    await page.evaluate(()=>window.__hfNativePopulation.qaHour(22));
-   await page.waitForFunction(()=>window.__hfNativePopulation.metrics().hour===22,{},{timeout:60000});
+   await page.waitForFunction(()=>window.__hfNativePopulation.metrics().scanHour===22,{},{timeout:60000});
    row.night=await page.evaluate(()=>{const a=window.__hfNativePopulation;return {population:a.residents.length,indoors:a.residents.filter(n=>n.indoors).length,active:a.metrics().active,drawn:a.metrics().drawn}});
    if(row.night.population!==expected[seed]||row.night.indoors<1)throw Error('Night population missing');
    await page.screenshot({path:'p581-puertaria-night.png',timeout:120000});
@@ -43,7 +43,7 @@ try{
    let found=false;
    for(const hour of [9,10,11,12,13,14,15,16,17,18]){
     await page.evaluate(h=>window.__hfNativePopulation.qaHour(h),hour);
-    await page.waitForFunction(h=>window.__hfNativePopulation.metrics().hour===h,hour,{timeout:60000});
+    await page.waitForFunction(h=>window.__hfNativePopulation.metrics().scanHour===h,hour,{timeout:60000});
     const n=await page.evaluate(()=>window.__hfNativePopulation.residents.find(r=>r.stylist&&!r.indoors&&Number.isFinite(r.x)));
     if(!n)continue;
     await page.evaluate(n=>{const g=window.__game;g.player.spawn(n.x,n.y+.01,n.z,0);g.player.grounded=true},n);
