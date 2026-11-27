@@ -1,4 +1,4 @@
-name: Kingdom Builder K0.2 — Studio original completo
+name: Kingdom Builder K0.3 — Generador temático experimental
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -33,10 +33,13 @@ jobs:
         run: node scripts/kingdom-studio-library.mjs guildhall-native/library
       - name: Habilitar los nueve módulos originales
         run: node scripts/kingdom-studio-patch.mjs guildhall-native
+      - name: Incorporar especializaciones al generador original
+        run: node scripts/kingdom-studio-themes.mjs guildhall-native
       - name: Instalar dependencias y compilar Studio
         working-directory: guildhall-native
         run: |
           bun install --frozen-lockfile
+          bun test packages/world/test/kingdom-themes.test.ts --timeout=120000
           cd apps/studio
           STUDIO_LIBRARY=full VITE_STUDIO_SHOWCASE=1 bun run build --base=/HIGHFLY-FREE-FOUNDATION/kingdom-studio/
       - name: Comprobar rutas estáticas, catálogo, licencia y tamaño
@@ -57,7 +60,7 @@ jobs:
           test "$(du -sb . | cut -f1)" -lt 950000000
       - uses: actions/upload-artifact@v4
         with:
-          name: kingdom-studio-k02-native
+          name: kingdom-studio-k03-themed
           path: guildhall-native/apps/studio/dist
           if-no-files-found: error
           retention-days: 14
