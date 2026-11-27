@@ -1,4 +1,4 @@
-name: HIGHFLY P5.8.0 — LIVING WORLD & CHARACTER FORGE R2
+name: HIGHFLY P5.8.0 — LIVING WORLD & CHARACTER FORGE R3
 on:
   push:
     branches: [p580-living-world-anime-20261127]
