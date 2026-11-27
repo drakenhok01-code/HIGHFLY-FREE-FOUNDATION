@@ -72,3 +72,27 @@
 #hf-rpg .hf-p42-professions .hf-rpg-prof-feature{grid-template-columns:58px minmax(0,1fr)!important;min-width:0!important;max-width:100%!important}
 #hf-rpg .hf-p42-professions .hf-rpg-stat-panel,#hf-rpg .hf-p42-professions .hf-rpg-mini-actions{min-width:0!important;max-width:100%!important}
 @media(max-height:395px){#hf-rpg .hf-rpg-prof-feature-art{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;max-width:52px!important;max-height:52px!important}#hf-rpg .hf-p42-professions .hf-rpg-prof-feature{grid-template-columns:52px minmax(0,1fr)!important}#hf-rpg .hf-rpg-detail-art[data-hf-rarity]{width:min(100px,100%)!important}}
+
+/* P572 R2: the legacy P47 feature rule sets both container and IMG to 62px
+ * with higher specificity. One responsive size for the actual parent and its
+ * image. No other artwork or game mechanics are changed. */
+#hf-rpg .hf-p42-professions{--hf-prof-feature-size:58px}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature{
+ grid-template-columns:var(--hf-prof-feature-size) minmax(0,1fr)!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature>.hf-rpg-prof-feature-art.hf-p42-prof-frame{
+ position:relative!important;display:grid!important;place-items:center!important;
+ width:var(--hf-prof-feature-size)!important;height:var(--hf-prof-feature-size)!important;
+ min-width:var(--hf-prof-feature-size)!important;max-width:var(--hf-prof-feature-size)!important;
+ min-height:var(--hf-prof-feature-size)!important;max-height:var(--hf-prof-feature-size)!important;
+ box-sizing:border-box!important;align-self:center!important;justify-self:center!important;
+ margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
+}
+#hf-rpg .hf-p42-professions .hf-rpg-prof-feature>.hf-rpg-prof-feature-art.hf-p42-prof-frame>.hf-rpg-art{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:100%!important;max-height:100%!important;box-sizing:border-box!important;
+ margin:0!important;padding:0!important;border:0!important;object-fit:contain!important;
+ object-position:center!important;transform:none!important;
+}
+@media(max-height:395px){#hf-rpg .hf-p42-professions{--hf-prof-feature-size:52px}}

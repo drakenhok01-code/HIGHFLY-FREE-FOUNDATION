@@ -26,7 +26,7 @@ const check=async(tab,width,height)=>{
  const b=rect(a),p=rect(e),c=style(a);const img=a.tagName==='IMG';const embedded=img&&a.dataset.hfFrameArt==='p43';
  const exact=tab==='bolsa'||tab==='oficios'||tab==='personaje'||e.classList.contains('hf-rpg-forge-result-art');
  const center=exact?Math.abs((b.left+b.right-p.left-p.right)/2)<2.5&&Math.abs((b.top+b.bottom-p.top-p.bottom)/2)<2.5:true;
- return {id:a.dataset.hfArtId??e.dataset.hfItem??'',src:img?a.getAttribute('src'):null,embedded,rarity:e.dataset.hfRarity??null,loaded:!img||a.naturalWidth>0,square:Math.abs(b.width-b.height)<2.1&&b.width>0,center,fit:b.left>=p.left-2.5&&b.right<=p.right+2.5&&b.top>=p.top-2.5&&b.bottom<=p.bottom+2.5,transform:c.transform,contain:!img||c.objectFit==='contain',one:e.querySelectorAll(':scope > .hf-rpg-art').length===1,original:!embedded||a.naturalWidth===256&&a.naturalHeight===256};
+ return {id:a.dataset.hfArtId??e.dataset.hfItem??'',bounds:{art:[b.x,b.y,b.width,b.height],slot:[p.x,p.y,p.width,p.height]},src:img?a.getAttribute('src'):null,embedded,rarity:e.dataset.hfRarity??null,loaded:!img||a.naturalWidth>0,square:Math.abs(b.width-b.height)<2.1&&b.width>0,center,fit:b.left>=p.left-2.5&&b.right<=p.right+2.5&&b.top>=p.top-2.5&&b.bottom<=p.bottom+2.5,transform:c.transform,contain:!img||c.objectFit==='contain',one:e.querySelectorAll(':scope > .hf-rpg-art').length===1,original:!embedded||a.naturalWidth===256&&a.naturalHeight===256};
  }).filter(Boolean);
  const panel=root.querySelector('.hf-p42-professions'),right=panel?.lastElementChild;
  const panelFit=!panel||!right||rect(right).right<=rect(panel).right+2;
@@ -45,7 +45,7 @@ const check=async(tab,width,height)=>{
   const items=data.rows.filter(x=>x.id.startsWith('item_'));if(items.some(x=>!x.embedded))throw Error('Inventory item missing original framed image '+JSON.stringify(items.filter(x=>!x.embedded)));
  }
 };
-for(const [width,height] of [[915,412],[800,375]])for(const tab of ['bolsa','personaje','oficios','forja'])await check(tab,width,height);
+for(const [width,height] of [[915,412],[800,375]])for(const tab of ['bolsa','personaje','oficios','forja']){try{await check(tab,width,height)}catch(e){result.errors.push(String(e));console.error('HF572_PANEL_ERROR '+String(e))}}
 await page.evaluate(()=>window.__highflyRpg.close());
 result.ok=result.errors.length===0;
 }catch(e){result.errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p572-premium-browser.json',JSON.stringify(result,null,2));console.log('HF572_SUMMARY '+JSON.stringify(result))}

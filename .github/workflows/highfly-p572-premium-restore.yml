@@ -1,4 +1,4 @@
-name: HIGHFLY P5.7.2 — PREMIUM ART RESTORE
+name: HIGHFLY P5.7.2 — PREMIUM ART RESTORE (R2)
 on:
   push:
     branches: [p572-premium-restore-20261127]
