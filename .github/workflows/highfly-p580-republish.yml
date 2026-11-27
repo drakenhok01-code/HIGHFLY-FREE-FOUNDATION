@@ -1,0 +1,128 @@
+name: HIGHFLY P580 R3 — publish validated build
+on:
+  push:
+    branches: [p580-living-world-anime-20261127]
+    paths: ['.github/workflows/highfly-p580-republish.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 15220697608
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p580-overlay
+          run-id: 46060442489
+          github-token: ${{ github.token }}
+          path: overlay
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: highfly-p580-qa-*
+          run-id: 46060442489
+          github-token: ${{ github.token }}
+          path: evidence
+          merge-multiple: true
+      - name: Assemble identical validated R3 and verify preserved previews
+        run: |
+          set -euo pipefail
+          mkdir site retired
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          du -sb site site/* || true
+          python3 - <<'PY'
+          import json,pathlib,shutil,hashlib
+          rows=[];forge=None
+          for p in sorted(pathlib.Path('evidence').glob('p580-qa-*.json')):
+              x=json.loads(p.read_text())
+              assert not x['errors'],p
+              assert len(x['models'])==5 and all(m['actual']==m['name'] for m in x['models']),p
+              rows.extend(x['rows'])
+              if x['forge']:forge=x['forge']
+          assert sorted(r['seed'] for r in rows)==list(range(1,9))
+          assert sum(r['population'] for r in rows)==1457
+          assert all(r['ready'] and r['moved']>0 and r['visible']>0 and not r['bodyErrors'] for r in rows)
+          assert forge and all(forge[k] for k in ['samePlayer','sameInventory','persisted','applied','closed'])
+          root=pathlib.Path('site/preview-p55')
+          protected={p:hashlib.sha256(p.read_bytes()).digest() for p in [root/'play-p574.html',root/'play-p575.html',root/'highfly/release-p575.json']}
+          release=json.loads(pathlib.Path('overlay/highfly/release-p580.json').read_text())
+          assert release['testedCommit']=='959d0b4eb23deee91e0f11e5faf9922b964ef419' and release['validationRun']==46060442489
+          for p in pathlib.Path('overlay').rglob('*'):
+              if not p.is_file():continue
+              dst=root/p.relative_to('overlay')
+              if dst.exists():
+                  assert hashlib.sha256(dst.read_bytes()).digest()==hashlib.sha256(p.read_bytes()).digest(),f'Protected old file conflict: {dst}'
+                  continue
+              dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,dst)
+          assert all(hashlib.sha256(p.read_bytes()).digest()==h for p,h in protected.items())
+          (root/'highfly/p580-qa.json').write_text(json.dumps({'regions':rows,'forge':forge}))
+          print('HF580_VALIDATED',len(rows),sum(r['population'] for r in rows),forge)
+          PY
+          echo "HF580_SITE_BYTES_BEFORE=$(du -sb site | cut -f1)"
+          for OLD in 541 542; do
+            if [ "$(du -sb site | cut -f1)" -ge 950000000 ] && [ -d "site/preview-p$OLD" ]; then
+              mv "site/preview-p$OLD" retired/
+              echo "HF580_RETIRED_PREVIEW=$OLD"
+            fi
+          done
+          echo "HF580_SITE_BYTES_AFTER=$(du -sb site | cut -f1)"
+          du -sb site/* || true
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          test -s site/preview-p55/play-p574.html
+          test -s site/preview-p55/play-p575.html
+          test -s site/preview-p55/play-p580.html
+          test -s site/preview-p543/index.html
+          touch site/.nojekyll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p580-retired-previews-backup
+          path: retired/
+          if-no-files-found: ignore
+          retention-days: 90
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p580-r3-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p580-r3-pages" and .expired==false)] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p580-r3-pages
+      - name: Verify public validated release
+        run: |
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 20); do
+            if curl -fsSL "$BASE/highfly/release-p580.json?v=$GITHUB_RUN_ID" | jq -e '.version=="5.8.0" and .testedCommit=="959d0b4eb23deee91e0f11e5faf9922b964ef419" and .validationRun==46060442489 and .population==1457' >/dev/null && curl -fsSL "$BASE/play-p580.html?v=$GITHUB_RUN_ID" -o /tmp/p580.html && curl -fsSL "$BASE/play-p575.html?v=$GITHUB_RUN_ID" -o /tmp/p575.html && curl -fsSL "$BASE/highfly/p580-qa.json?v=$GITHUB_RUN_ID" | jq -e '(.regions|length)==8 and .forge.persisted' >/dev/null; then
+              echo 'HF580 PUBLIC VERIFIED'
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
