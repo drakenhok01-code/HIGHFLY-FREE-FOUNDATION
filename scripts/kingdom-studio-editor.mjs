@@ -9,10 +9,10 @@ await edit("apps/studio/src/hexworld/job.ts",s=>{
  s=once(s,'      stats: {\n        land: h.stats.land,','      editorTiles: w.tiles,\n      stats: {\n        land: h.stats.land,');
  return once(s,'function pack(pieces: HexWorld["pieces"]','export function pack(pieces: HexWorld["pieces"]');
 });
+await fs.writeFile(root+"/packages/render/src/kingdom-private-loader.ts", `export {Vector2,Raycaster,Group} from "three"\nexport {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js"\n`);
 await fs.writeFile(root+"/apps/studio/src/hexworld/kingdom-editor.ts",[
 'import {hexAt,hexCentre,HEX_TILE_SIZE,placeTile,type TilePrefab,type PlacedPiece} from "@guildhall/world"',
-'import {Vector2,Raycaster,Group} from "three"',
-'import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js"',
+'import {Vector2,Raycaster,Group,GLTFLoader} from "../../../../packages/render/src/kingdom-private-loader.ts"',
 'import {pack,heightsAt,type GroundStage,type MapStage,type ShoreStage} from "./job.ts"',
 'import {libraryUrl} from "../catalog.ts"',
 'import {href} from "../shell/router.ts"',
