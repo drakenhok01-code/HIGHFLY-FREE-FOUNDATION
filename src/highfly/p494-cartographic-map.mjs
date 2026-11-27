@@ -66,7 +66,7 @@ export function paintCartographicBackdrop(ctx,g,W,H,scale=.28){
 let atlas=null,atlasPending=null,overview=null;
 const mapImages=new Map(),base=import.meta.env?.BASE_URL??'./';
 function requestImage(path){if(mapImages.has(path))return mapImages.get(path);const img=new Image();img.src=base+'highfly/'+path;mapImages.set(path,img);return img}
-function requestAtlas(){if(!atlasPending)atlasPending=Promise.all([fetch(base+'highfly/p564/atlas.json').then(r=>{if(!r.ok)throw Error('Atlas unavailable');return r.json()}),fetch(base+'highfly/native-overview.json').then(r=>r.json())]).then(([a,o])=>{atlas=a;overview=o;requestImage('native-relief-region.png');requestImage('native-relief-core.png')}).catch(()=>{});}
+function requestAtlas(){if(!atlasPending)atlasPending=Promise.all([fetch(base+'highfly/p564-p575/atlas.json').then(r=>{if(!r.ok)throw Error('Atlas unavailable');return r.json()}),fetch(base+'highfly/native-overview.json').then(r=>r.json())]).then(([a,o])=>{atlas=a;overview=o;requestImage('native-relief-region.png');requestImage('native-relief-core.png')}).catch(()=>{});}
 function imageWindow(ctx,img,b,view,W,H,scale){
  if(!img.complete||!img.naturalWidth)return;
  const x0=Math.max(b.minX,view.minX),x1=Math.min(b.maxX,view.maxX),z0=Math.max(b.minZ,view.minZ),z1=Math.min(b.maxZ,view.maxZ);
@@ -80,7 +80,7 @@ export function paintP564Atlas(ctx,g,W,H,scale){
  ctx.fillStyle='#1a3038';ctx.fillRect(0,0,W,H);
  if(!atlas)return false;
  for(const k of ['region','core']){const m=atlas.meta[k],h=m.size/2;imageWindow(ctx,requestImage('native-relief-'+k+'.png'),{minX:-h,maxX:h,minZ:-h,maxZ:h},v,W,H,scale)}
- for(const q of atlas.regions){const b=q.bounds;if(b.minX>=v.maxX||b.maxX<=v.minX||b.minZ>=v.maxZ||b.maxZ<=v.minZ)continue;imageWindow(ctx,requestImage('p564/'+q.image),b,v,W,H,scale)}
+ for(const q of atlas.regions){const b=q.bounds;if(b.minX>=v.maxX||b.maxX<=v.minX||b.minZ>=v.maxZ||b.maxZ<=v.minZ)continue;imageWindow(ctx,requestImage('p564-p575/'+q.image),b,v,W,H,scale)}
  ctx.strokeStyle='#dac59a';ctx.lineWidth=1.6;ctx.lineJoin='round';
  for(const line of overview?.routes??[]){if(!line.length)continue;ctx.beginPath();for(let i=0;i<line.length;i++){const [x,z]=line[i],px=(x-v.minX)*scale,pz=(z-v.minZ)*scale;i?ctx.lineTo(px,pz):ctx.moveTo(px,pz)}ctx.stroke()}
  return true;
