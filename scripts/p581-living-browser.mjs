@@ -24,11 +24,19 @@ try{
   const moved=await page.evaluate(before=>window.__hfNativePopulation.residents.filter(n=>{const a=before.find(q=>q.id===n.id);return a&&Math.hypot(a.x-n.x,a.z-n.z)>.5}).length,before);
   if(moved<1)throw Error('No scheduled movement '+seed);
   const resident=await page.evaluate(()=>{const a=window.__hfNativePopulation.residents;return a.find(n=>n.stylist&&!n.indoors&&Number.isFinite(n.x))??a.find(n=>!n.indoors&&Number.isFinite(n.x))});
-  await page.evaluate(n=>{const g=window.__game;g.player.spawn(n.x,n.y+.02,n.z,0);g.player.grounded=true},resident);
+  await page.evaluate(n=>{const g=window.__game;g.player.spawn(n.x,n.y+.12,n.z-2.4,0);g.player.grounded=true;g.rig.yaw=0;g.rig.snap(g.player)},resident);
   await page.waitForFunction(()=>window.__hfNativePopulation.metrics().drawn>0,{},{timeout:120000});
   const row=await page.evaluate(()=>{const a=window.__hfNativePopulation,integrity=window.__hfP555Regions.qaIntegrity();return {...a.metrics(),stylist:a.residents.find(n=>n.stylist),terrainMismatch:integrity.mismatch,waterNative:integrity.waterUsesNative}});
-  row.moved=moved;
+  row.moved=moved;row.surface=await page.evaluate(()=>window.__hfP555Regions.metrics().surface);if(!row.surface?.clippedRoads||row.surface.roadTriangles<1)throw Error('Road conformity data absent');
   if(row.population!==expected[seed]||row.visible<1||row.drawn<1||row.active>24||row.loadError||row.terrainMismatch!==0||!row.waterNative||!row.stylist)throw Error('Population runtime failure '+JSON.stringify(row));
+  if(seed===3){
+   await page.evaluate(()=>window.__hfNativePopulation.qaHour(22));
+   await page.waitForFunction(()=>window.__hfNativePopulation.metrics().hour===22,{},{timeout:60000});
+   row.night=await page.evaluate(()=>{const a=window.__hfNativePopulation;return {population:a.residents.length,indoors:a.residents.filter(n=>n.indoors).length,active:a.metrics().active,drawn:a.metrics().drawn}});
+   if(row.night.population!==expected[seed]||row.night.indoors<1)throw Error('Night population missing');
+   await page.screenshot({path:'p581-puertaria-night.png',timeout:120000});
+   await page.evaluate(()=>window.__hfNativePopulation.qaHour(13));
+  }
   rows.push(row);console.log('HF581_QA_REGION '+JSON.stringify(row));await page.screenshot({path:'p581-region-'+seed+'.png',timeout:120000});
   if(seed===2){
    // Verify that the stylist's actual interaction opens the same creator used on first launch.
