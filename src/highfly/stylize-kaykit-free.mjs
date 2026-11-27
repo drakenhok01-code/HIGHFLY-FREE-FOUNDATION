@@ -77,9 +77,10 @@ function adjustedAnimation(clip,src,dst,counts){
 export function appendSharedRigAnimations(gltf,rig){
  const dst=rest(gltf.scene),src=new Map();
  rig.scene.traverse(n=>{const k=key(n.name);if(dst.has(k)&&!src.has(k))src.set(k,{name:n.name,p:n.position.clone(),q:n.quaternion.clone(),s:n.scale.clone()})});
- if(src.size<30)return {added:0,matchedBones:src.size};
+ // Guildhall's shared animation GLB contains 23 animated bones, not all 41 FREE sockets.
+ if(src.size<18||!['head','spine','upperarml','upperarmr','upperlegl','upperlegr'].every(k=>src.has(k)))return {added:0,matchedBones:src.size};
  const clips=new Map(gltf.animations.map(c=>[c.name,c]));let added=0;
- for(const clip of rig.animations){const count={bound:0,skipped:0},out=adjustedAnimation(clip,src,dst,count);if(count.bound<Math.max(10,clip.tracks.length*.8))continue;clips.set(out.name,out);added++}
+ for(const clip of rig.animations){if(clips.has(clip.name))continue;const count={bound:0,skipped:0},out=adjustedAnimation(clip,src,dst,count);if(count.bound<Math.max(10,clip.tracks.length*.8))continue;clips.set(out.name,out);added++}
  gltf.animations=[...clips.values()];return {added,matchedBones:src.size};
 }
 export function stylizeUniversalKayKit(gltf,{npc=false}={}){
