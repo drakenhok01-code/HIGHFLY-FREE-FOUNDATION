@@ -22,8 +22,8 @@ const U = Object.fromEntries`);
  s=once(s,'opts: { agents?: number; wild?: number; places?: readonly PlaceSpec[] } = {},','opts: { agents?: number; wild?: number; places?: readonly PlaceSpec[]; theme?: string } = {},');
  s=once(s,'const tier = castleTier(h.spec.files, opts.agents)','const theme = opts.theme && Object.hasOwn(ALIASES,opts.theme) ? ALIASES[opts.theme] : opts.theme\n  const profile = !opts.places && theme && Object.hasOwn(THEMES,theme) ? THEMES[theme] : undefined\n  const tier = castleTier(h.spec.files, opts.agents)');
  s=once(s,'const order: ZoneKind[] = [','const order: ZoneKind[] = profile ? [...profile.order] : [');
- s=once(s,'if (land > 1400) order.push("farm", "fishing")','if (land > 1400) order.push(...(profile ? [profile.primary, "hamlet"] as ZoneKind[] : ["farm", "fishing"] as ZoneKind[]))');
- s=once(s,'if (land > 2200) order.push("farm", "lumber")','if (land > 2200) order.push(...(profile ? [profile.primary, "market"] as ZoneKind[] : ["farm", "lumber"] as ZoneKind[]))');
+ s=once(s,'if (land > 1400) order.push("farm", "fishing")','if (land > 1400) order.push(...(profile ? [profile.primary === "town" ? "hamlet" : profile.primary, "hamlet"] as ZoneKind[] : ["farm", "fishing"] as ZoneKind[]))');
+ s=once(s,'if (land > 2200) order.push("farm", "lumber")','if (land > 2200) order.push(...(profile ? [profile.primary === "town" ? "hamlet" : profile.primary, "market"] as ZoneKind[] : ["farm", "lumber"] as ZoneKind[]))');
  s=once(s,'const own = opts.places ? PLAN.hamlet : PLAN[z.kind]','const original = opts.places ? PLAN.hamlet : PLAN[z.kind]\n    const own = profile && (profile.primary === z.kind || profile.secondary === z.kind) ? {...original, per1k: original.per1k * profile.size, min: Math.ceil(original.min * 1.4)} : original');
  return s;
 });
@@ -115,3 +115,40 @@ test("civic core audit for all eight themes on seed 33",()=>{
  }
 });
 `);
+
+// K0.3.3 — constrain secondary economic clusters; retain geography and road rules.
+await edit('packages/world/src/hex/zones.ts',s=>{
+ s=once(s,'    zones.push({ kind: pick, tile: best, tiles: [], buildings: 0 })','    const economic = new Set<ZoneKind>(["farm","fishing","harbour","mine","lumber","camp","monastery","market"]);\n    const preferred = profile && (pick === profile.primary || pick === profile.secondary);\n    const limit = preferred ? Math.max(3,Math.ceil(land/350)) : 1;\n    const balanced = profile && economic.has(pick) && zones.filter(x=>x.kind===pick).length >= limit ? "hamlet" : pick;\n    zones.push({ kind: balanced, tile: best, tiles: [], buildings: 0 })');
+ s=once(s,'const R = z.kind === "farm" ? 5 : 7','const R = profile ? (profile.primary === "farm" ? (z.kind === "farm" ? 7 : 5) : (z.kind === "farm" ? 3 : 3)) : (z.kind === "farm" ? 5 : 7)');
+ s=once(s,'< (z.kind === "farm" ? 0.85 : 0.5)) use[i] = U.field','< (profile && profile.primary !== "farm" ? 0.25 : (z.kind === "farm" ? 0.85 : 0.5))) use[i] = U.field');
+ s=once(s,'else if (near) u = h1(24, i) < 0.4 ? "field" : h1(25, i) < 0.55 ? "pasture" : "orchard"','else if (near) u = profile && profile.primary !== "farm" ? (h1(24,i)<0.08 ? "field" : h1(25,i)<0.25 ? "pasture" : "meadow") : h1(24, i) < 0.4 ? "field" : h1(25, i) < 0.55 ? "pasture" : "orchard"');
+ s=once(s,'    use[i] = U[u]\n  }\n  // the graveyard last','    if(profile && profile.primary !== "farm" && ["field","pasture","orchard"].includes(u) && h1(61,i)<0.7) u="meadow";\n    use[i] = U[u]\n  }\n  // the graveyard last');
+ return s;
+});
+// Railway pieces are taken from the verified public library, never SOURCE.
+const trackCatalog=JSON.parse(await fs.readFile(root+'/library/catalog/kaykit-holiday.json','utf8'));
+const track=trackCatalog.find(x=>/straight/i.test(x.id)&&/track/i.test(x.id));
+if(!track)throw Error("No se encontró riel recto CC0");
+const mine=JSON.parse(await fs.readFile(root+'/data/tiles/mine.json','utf8'));
+const size=track.size;const long=Math.max(size[0],size[2]);const scale=Math.min(1,1.25/long);
+for(let j=0;j<2;j++)mine.pieces.push({piece:track.id,x:0,z:0.45+j*long*scale,y:0.025,rot:size[0]>size[2]?Math.PI/2:0,scale,pin:true});
+await fs.writeFile(root+'/data/tiles/mine.json',JSON.stringify(mine,null,2)+'\n');
+await fs.writeFile(root+'/packages/world/test/kingdom-economy.test.ts',`import {test,expect} from "bun:test";
+import {readFileSync} from "node:fs";
+import {hexIsland,hexZones,validateTilePrefab} from "../src/hex/index.ts";
+test("port and farming use different agricultural allocation",()=>{
+ let port=0, farm=0;
+ for(const seed of [7,33,51]){
+  const h=hexIsland({seed,files:4000});
+  const p=hexZones(h,{theme:"puertaria"}),v=hexZones(h,{theme:"valdoria"});
+  port+=p.stats.fields;farm+=v.stats.fields;
+  expect(p.zones.filter(x=>x.kind==="farm").length).toBeLessThanOrEqual(1);
+  expect(p.zones.filter(x=>x.kind==="town").length).toBe(1);
+ }
+ console.log({port,farm});expect(farm).toBeGreaterThan(port);
+});
+test("mine has two verified rail pieces",()=>{
+ const mine=JSON.parse(readFileSync(new URL("../../../data/tiles/mine.json",import.meta.url),"utf8"));
+ expect(validateTilePrefab(mine)).toEqual([]);
+ expect(mine.pieces.filter((x:any)=>x.piece.startsWith("kaykit-holiday/")).length).toBe(2);
+});\n`);
