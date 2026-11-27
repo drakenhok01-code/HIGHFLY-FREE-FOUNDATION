@@ -1,4 +1,4 @@
-name: HIGHFLY P5.8.1 — LIVING WORLD REFORGED
+name: HIGHFLY P5.8.1 — LIVING WORLD REFORGED R2
 on:
   push:
     branches: [p581-living-world-reforged-20261127]
@@ -178,7 +178,7 @@ jobs:
               if x['forge']:forge=x['forge']
           assert sorted(r['seed'] for r in rows)==list(range(1,9))
           assert sum(r['population'] for r in rows)==1457
-          assert all(r['drawn']>0 and r['surface']['clippedRoads']>0 and not r['bodyErrors'] for r in rows)
+          assert all(r['drawn']>0 and r['moved']>0 and r['scanHour']==13 and r['queuedBodies']<=r['active'] and r['surface']['clippedRoads']>0 and not r['bodyErrors'] for r in rows)
           assert forge and forge['samePlayer'] and forge['sameInventory'] and forge['persisted']
           root=pathlib.Path('site/preview-p55')
           for p in pathlib.Path('overlay').rglob('*'):
