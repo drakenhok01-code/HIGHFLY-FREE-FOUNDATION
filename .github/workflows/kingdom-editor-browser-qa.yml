@@ -1,4 +1,4 @@
-name: Kingdom Builder K1.1.2 — editor and local ZIP smoke
+name: Kingdom Builder K1.1.3 — editor accessible, replace hex and local ZIP
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: kingdom-studio-k112-editor
-          run-id: 46010274854
+          run-id: 46011730187
           github-token: ${{ github.token }}
           path: site/HIGHFLY-FREE-FOUNDATION/kingdom-studio
       - uses: actions/setup-node@v4
@@ -57,7 +57,6 @@ jobs:
             await freeze.click();
             const launch=page.getByText('WORLD FORGE · EDITAR',{exact:true});
             await launch.waitFor({timeout:240000});steps.push('frozen scene ready');
-            await launch.click();
             const panel=page.locator('aside').filter({hasText:'Proyecto congelado'}).last();
             await panel.getByText('Vaciar hexágono',{exact:true}).waitFor();
             const map=panel.locator('canvas');
@@ -73,6 +72,12 @@ jobs:
             await panel.getByText('Deshacer',{exact:true}).click();
             if(!/1 hex\. · [1-9][0-9]* objetos/.test(await panel.innerText()))throw Error('Undo failed');
             steps.push('select, clear, undo');
+            const selector=panel.getByLabel('Catálogo de hexágonos',{exact:true});
+            await selector.selectOption('house');
+            await panel.getByText('Reemplazar seleccionado',{exact:true}).click();
+            await panel.getByText('Edición aplicada',{exact:true}).waitFor({timeout:120000}).catch(()=>{});
+            if(!/1 hex\. · [1-9][0-9]* objetos/.test(await panel.innerText()))throw Error('Replacement did not create pieces');
+            steps.push('replace hex');
             await panel.locator('input[type=file][accept*=".zip"]').setInputFiles('fixture.zip');
             await panel.getByText(/1 GLB importados/).waitFor({timeout:60000});
             steps.push('nested ZIP local import');
