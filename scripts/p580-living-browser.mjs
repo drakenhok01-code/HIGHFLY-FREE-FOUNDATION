@@ -11,10 +11,11 @@ try{
  await page.waitForFunction(()=>window.__hfP555Regions?.qaJumpCenter&&window.__hfNativePopulation?.qaModels&&window.__hero?.diagnostics&&window.__hfCharacterForge,{},{timeout:600000});
  await page.evaluate(()=>{const g=window.__game;g.state='playing';g.input.enabled=true;g.emit('state',{state:'playing'})});
  models=await page.evaluate(()=>window.__hfNativePopulation.qaModels());
+ console.log('HF580_MODEL_DIAGNOSTICS '+JSON.stringify(await page.evaluate(()=>window.__hfNativePopulation.metrics())));
  if(models.length!==5||models.some(m=>m.profile.bones!==41||m.profile.headRatio<.17||m.profile.headRatio>.35))throw Error('Styled models invalid '+JSON.stringify(models));
  for(const seed of seeds){
   await page.evaluate(s=>window.__hfP555Regions.open(s,true),seed);
-  await page.waitForFunction(s=>window.__hfP555Regions.active===s&&!window.__hfP555Regions.busy&&window.__hfNativePopulation.ready,s,{timeout:600000});
+  await page.waitForFunction(s=>window.__hfP555Regions.active===s&&!window.__hfP555Regions.busy&&window.__hfNativePopulation.ready,seed,{timeout:600000});
   await page.evaluate(()=>{window.__hfNativePopulation.qaHour(9);window.__hfP555Regions.qaJumpCenter()});
   await page.waitForFunction(n=>window.__hfNativePopulation.metrics().population===n&&window.__hfNativePopulation.residents.some(v=>Number.isFinite(v.x)&&!v.indoors),expected[seed],{timeout:120000});
   const before=await page.evaluate(()=>window.__hfNativePopulation.residents);
@@ -52,5 +53,5 @@ try{
    console.log('HF580_FORGE '+JSON.stringify(forge));
   }
  }
-}catch(e){errors.push(String(e));console.error(e)}finally{await browser.close();fs.writeFileSync('p580-qa-'+seeds[0]+'.json',JSON.stringify({rows,errors,forge,models},null,2));console.log('HF580_QA_SUMMARY '+JSON.stringify({tested:rows.length,expected:seeds.length,errors,forge,models:models.map(x=>({name:x.name,headRatio:x.profile.headRatio,clips:x.profile.clips}))}))}
+}catch(e){errors.push(String(e));console.error(e);console.log('HF580_FAILURE_CONTEXT '+JSON.stringify(await page.evaluate(()=>({population:window.__hfNativePopulation?.metrics(),regions:window.__hfP555Regions?.metrics()})).catch(()=>null)))}finally{await browser.close();fs.writeFileSync('p580-qa-'+seeds[0]+'.json',JSON.stringify({rows,errors,forge,models},null,2));console.log('HF580_QA_SUMMARY '+JSON.stringify({tested:rows.length,expected:seeds.length,errors,forge,models:models.map(x=>({name:x.name,headRatio:x.profile.headRatio,clips:x.profile.clips}))}))}
 if(rows.length!==seeds.length||errors.length||seeds.includes(2)&&!forge)process.exitCode=1;
