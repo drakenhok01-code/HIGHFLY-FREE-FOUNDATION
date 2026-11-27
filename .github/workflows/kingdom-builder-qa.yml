@@ -1,0 +1,50 @@
+name: World Forge Kingdom Builder K0.1 — QA aislada
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths:
+      - '.github/workflows/kingdom-builder-qa.yml'
+      - 'src/highfly/kingdom-builder-*.mjs'
+      - 'tests/kingdom-builder.test.mjs'
+      - 'src/highfly/p525-world-forge-3d.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: kingdom-builder-qa
+  cancel-in-progress: true
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar lógica aislada
+        run: |
+          node --check src/highfly/kingdom-builder-core.mjs
+          node --check src/highfly/kingdom-builder-ui.mjs
+          node --check src/highfly/p525-world-forge-3d.mjs
+          node --test tests/kingdom-builder.test.mjs
+      - name: Preparar dependencias del editor nativo
+        run: |
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+      - name: Compilar vista previa sin desplegar
+        run: |
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/world-forge-kingdom/ npm run build
+          node scripts/p555-pages-regions.mjs
+          test -s dist/highfly/world-forge-3d.html
+          test -s dist/highfly/world-forge-3d.js
+          test -s dist/highfly/regions/island-8.json
+          grep -q 'KINGDOM BUILDER K0.1' dist/highfly/world-forge-3d.js
+          ! find dist -type f | grep -E '(KIT_COMPLETO|KAYKIT_SOURCE_EDITOR_V1_PRIVATE|fragmento_0[12]\.bin)'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kingdom-builder-k01-qa
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
