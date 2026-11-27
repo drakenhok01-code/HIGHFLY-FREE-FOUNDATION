@@ -1,0 +1,63 @@
+name: Kingdom Builder K0.2 — Studio original completo
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths:
+      - '.github/workflows/kingdom-studio-native.yml'
+      - 'scripts/kingdom-studio-*.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: kingdom-studio-native
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall-native
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recuperar biblioteca CC0 original completa y comprobar hashes
+        run: node scripts/kingdom-studio-library.mjs guildhall-native/library
+      - name: Habilitar los nueve módulos originales
+        run: node scripts/kingdom-studio-patch.mjs guildhall-native
+      - name: Instalar dependencias y compilar Studio
+        working-directory: guildhall-native
+        run: |
+          bun install --frozen-lockfile
+          cd apps/studio
+          STUDIO_LIBRARY=full VITE_STUDIO_SHOWCASE=1 bun run build --base=/HIGHFLY-FREE-FOUNDATION/kingdom-studio/
+      - name: Comprobar rutas estáticas, catálogo, licencia y tamaño
+        run: |
+          cd guildhall-native
+          test -s apps/studio/dist/index.html
+          test -s LICENSE
+          cp LICENSE apps/studio/dist/LICENSE-GUILDHALL.txt
+          cd apps/studio/dist
+          for route in studio pieces palette composer npcs grips grips/editor town lab/hexmap lab/hextiles; do
+            mkdir -p "$route"
+            cp index.html "$route/index.html"
+          done
+          touch .nojekyll
+          test -s data/bundle.json
+          find library -name '*.glb.gz' | wc -l
+          test "$(find library -name '*.glb.gz' | wc -l)" -gt 1000
+          test "$(du -sb . | cut -f1)" -lt 950000000
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kingdom-studio-k02-native
+          path: guildhall-native/apps/studio/dist
+          if-no-files-found: error
+          retention-days: 14
