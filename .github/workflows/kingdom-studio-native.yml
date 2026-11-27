@@ -1,4 +1,4 @@
-name: Kingdom Builder K0.3 — Generador temático experimental
+name: Kingdom Builder K0.3.2 — Núcleo cívico y especialización
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -39,7 +39,7 @@ jobs:
         working-directory: guildhall-native
         run: |
           bun install --frozen-lockfile
-          bun test packages/world/test/kingdom-themes.test.ts --timeout=120000
+          bun test packages/world/test/kingdom-themes.test.ts packages/world/test/kingdom-civic.test.ts --timeout=120000
           cd apps/studio
           STUDIO_LIBRARY=full VITE_STUDIO_SHOWCASE=1 bun run build --base=/HIGHFLY-FREE-FOUNDATION/kingdom-studio/
       - name: Comprobar rutas estáticas, catálogo, licencia y tamaño
@@ -60,7 +60,7 @@ jobs:
           test "$(du -sb . | cut -f1)" -lt 950000000
       - uses: actions/upload-artifact@v4
         with:
-          name: kingdom-studio-k03-themed
+          name: kingdom-studio-k032-civic
           path: guildhall-native/apps/studio/dist
           if-no-files-found: error
           retention-days: 14
