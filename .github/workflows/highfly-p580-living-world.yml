@@ -1,0 +1,230 @@
+name: HIGHFLY P5.8.0 — LIVING WORLD & CHARACTER FORGE
+on:
+  push:
+    branches: [p580-living-world-anime-20261127]
+    paths: ['.github/workflows/highfly-p580-living-world.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p580
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: HIGHFLY-P575-PLAYABLE-BACKUP-P580
+          run-id: 46053754302
+          github-token: ${{ github.token }}
+          path: backup
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p580-native-life
+          run-id: 46053754302
+          github-token: ${{ github.token }}
+          path: native-life
+      - name: Prepare image dependencies and test source
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/highfly-python"
+          "$RUNNER_TEMP/highfly-python/bin/python" -m pip install --quiet pillow==12.0.0 numpy==2.3.4 cairosvg==2.8.2
+          echo "HIGHFLY_ICON_PYTHON=$RUNNER_TEMP/highfly-python/bin/python" >> "$GITHUB_ENV"
+          node --check src/highfly/p580-native-population.mjs
+          node --check src/highfly/p580-character-forge.mjs
+          node --check src/highfly/stylize-kaykit-free.mjs
+          node --check src/highfly/p570-living-world.mjs
+          node --check src/highfly/kaykit-material.mjs
+          node --check scripts/p580-living-browser.mjs
+          node scripts/p570-living-policy.test.mjs
+          node scripts/p568-flight-policy.test.mjs
+          node scripts/p568-resource-policy.test.mjs
+          node scripts/p568-naval-policy.test.mjs
+          node --test tests/p48-gear-stacking-frame.test.mjs tests/rpg-core.test.mjs tests/rpg-equipment.test.mjs
+      - name: Rebuild source with P580 integration and unchanged P575 terrain data
+        run: |
+          set -euo pipefail
+          test -s backup/play-p575.html
+          test -s native-life/index.json
+          jq -e '.population==1457 and (.regions|length)==8' native-life/index.json
+          HIGHFLY_PAGES_BASE=/HIGHFLY-FREE-FOUNDATION/preview-p55/ npm run build
+          mkdir -p dist/highfly/regions dist/highfly/regions-p575 dist/highfly/p564-p575 dist/highfly/living-p580
+          cp -a backup/highfly/regions/. dist/highfly/regions/
+          cp -a backup/highfly/regions-p575/. dist/highfly/regions-p575/
+          cp -a backup/highfly/p564-p575/. dist/highfly/p564-p575/
+          cp -a native-life/. dist/highfly/living-p580/
+          cp guildhall/data/mounts.json dist/highfly/living-p580/mounts.json
+          node scripts/p580-stage-life-props.mjs
+          cp scripts/p560-android-lab.js dist/highfly/p560-android-lab.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('dist/index.html')
+          s=p.read_text()
+          assert '</body>' in s
+          Path('dist/play-p580.html').write_text(s.replace('</body>', '<script type="module" src="./highfly/p560-android-lab.js"></script></body>'))
+          PY
+          test -s dist/play-p580.html
+          grep -q 'HF580_NATIVE_POPULATION' dist/assets/*.js
+          grep -q 'hf-character-forge' dist/assets/*.js
+          jq -e '.population==1457' dist/highfly/living-p580/index.json
+          printf '{"version":"5.8.0","testedCommit":"%s","validationRun":%s,"population":1457,"baseVersion":"5.7.5","stage":"native population and cosmetic forge"}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > dist/highfly/release-p580.json
+          mkdir -p overlay/highfly
+          cp -a dist/assets overlay/
+          cp dist/play-p580.html overlay/
+          cp -a dist/highfly/living-p580 overlay/highfly/
+          cp dist/highfly/release-p580.json overlay/highfly/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p580-build
+          path: dist/
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p580-overlay
+          path: overlay/
+          retention-days: 30
+          if-no-files-found: error
+  integrity:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: northwest
+            seeds: '1,2'
+          - shard: southeast
+            seeds: '3,4'
+          - shard: northeast
+            seeds: '5,6'
+          - shard: southwest
+            seeds: '7,8'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p580-build
+          path: dist
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run native population and character forge in browser
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf580-server.log 2>&1 &
+          node scripts/p580-living-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p580-qa-${{ matrix.shard }}
+          path: |
+            p580-qa-*.json
+            p580-region-*.png
+          if-no-files-found: warn
+  publish:
+    needs: [package, integrity]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 15220697608
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p580-overlay
+          path: overlay
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: highfly-p580-qa-*
+          path: evidence
+          merge-multiple: true
+      - name: Append exact tested P580 without overwriting the previous release
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p55/play-p575.html
+          python3 - <<'PY'
+          import json,pathlib,shutil,hashlib
+          rows=[];forge=None
+          for p in pathlib.Path('evidence').glob('p580-qa-*.json'):
+              x=json.loads(p.read_text());assert not x['errors'];rows.extend(x['rows'])
+              if x['forge']:forge=x['forge']
+          assert sorted(r['seed'] for r in rows)==list(range(1,9))
+          assert sum(r['population'] for r in rows)==1457
+          assert forge and forge['samePlayer'] and forge['sameInventory'] and forge['persisted']
+          root=pathlib.Path('site/preview-p55')
+          for p in pathlib.Path('overlay').rglob('*'):
+              if not p.is_file():continue
+              dst=root/p.relative_to('overlay')
+              if dst.exists():
+                  assert hashlib.sha256(dst.read_bytes()).digest()==hashlib.sha256(p.read_bytes()).digest(),f'Protected old file conflict: {dst}'
+                  continue
+              dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,dst)
+          (root/'highfly/p580-qa.json').write_text(json.dumps({'regions':rows,'forge':forge}))
+          PY
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p580-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p580-pages" and .expired==false)] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p580-pages
+      - name: Verify public release and preserve P575
+        run: |
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 20); do
+            if curl -fsSL "$BASE/highfly/release-p580.json?v=$GITHUB_RUN_ID" | jq -e --arg sha "$GITHUB_SHA" '.version=="5.8.0" and .testedCommit==$sha and .population==1457' >/dev/null && curl -fsSL "$BASE/play-p580.html?v=$GITHUB_RUN_ID" -o /tmp/p580.html && curl -fsSL "$BASE/play-p575.html?v=$GITHUB_RUN_ID" -o /tmp/p575.html; then exit 0; fi
+            sleep 10
+          done
+          exit 1
