@@ -1,0 +1,93 @@
+name: HIGHFLY P580 — backup P575 and export native living world
+on:
+  push:
+    branches: [p580-living-world-anime-20261127]
+    paths: ['.github/workflows/highfly-p580-native-life.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p574-build
+          run-id: 46009002629
+          github-token: ${{ github.token }}
+          path: game
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p575-overlay
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: overlay
+      - name: Archive the complete validated playable P575
+        run: |
+          set -euo pipefail
+          test -s overlay/play-p575.html
+          cp -a overlay/. game/
+          test -s game/play-p575.html
+          test -s game/highfly/regions-p575/island-8.json
+          jq -e '.version=="5.7.5" and .testedCommit=="90d6bfe0b94babeb1d344250c1c0d55188f5f501"' game/highfly/release-p575.json
+          printf '%s\n' 'P575 R3 validated build and overlay. Original run 46042017894. P574 shared assets retained.' > game/BACKUP-P575.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HIGHFLY-P575-PLAYABLE-BACKUP-P580
+          path: game/
+          retention-days: 90
+  population:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p575-overlay
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Generate native 24-hour population plans
+        run: |
+          set -euo pipefail
+          git -C guildhall diff --exit-code
+          bun scripts/p580-export-native-life.ts
+          bun build scripts/p580-native-life-entry.ts --target=browser --format=esm --minify --outfile=dist/highfly/living-p580/native-life.mjs
+          cp guildhall/LICENSE dist/highfly/living-p580/GUILDHALL-MIT.txt
+          git -C guildhall diff --exit-code
+          jq -e '(.regions|length)==8 and .population>0 and all(.regions[]; .population>0 and .walks>0 and .work>0)' dist/highfly/living-p580/index.json
+      - name: Acquire official pinned CC0 character GLBs
+        run: |
+          set -euo pipefail
+          mkdir -p dist/highfly/living-p580/models
+          BASE=https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/672074b73ba276876a19e8816ecdc5241817ab47
+          while read -r NAME SHA; do
+            FILE="dist/highfly/living-p580/models/$NAME.glb"
+            curl --retry 3 -fsSL "$BASE/addons/kaykit_character_pack_adventures/Characters/gltf/$NAME.glb" -o "$FILE"
+            test "$(git hash-object "$FILE")" = "$SHA"
+          done <<'EOF'
+          Barbarian 66d312ab6dc02b35fb648e7585bfdddb4e02eeef
+          Knight 717b56ca2b5ff5392679774725201ba03a3eefab
+          Mage c89f19f6e707f6e07e4632a08876bd6d0172b082
+          Rogue c8827661105eef7b2fbef3bc676d41a47625733
+          Rogue_Hooded 5d2b1403240d5f9ffff12e02c007572038eca2a8
+          EOF
+          curl -fsSL "$BASE/LICENSE.txt" -o dist/highfly/living-p580/KAYKIT-CC0.txt
+          echo 'ae322141814056dda0deea7540d74c41d87aee1da319977cd1bd84ee5a923629  dist/highfly/living-p580/KAYKIT-CC0.txt' | sha256sum -c -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p580-native-life
+          path: dist/highfly/living-p580/
+          retention-days: 90
+          if-no-files-found: error
