@@ -1,0 +1,75 @@
+name: Kingdom Builder K1.2 — Ocho regiones compactas (16.000 combinaciones)
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths: ['.github/workflows/kingdom-compact-seeds.yml','scripts/kingdom-compact-seeds.ts']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [arvelia, puertaria, ferrondral, sylvaris, valdoria, lumeria, auralis, valtheria]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall-native
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Aplicar generador HIGHFLY K0.4 y biblioteca CC0
+        run: |
+          node scripts/kingdom-studio-library.mjs guildhall-native/library
+          node scripts/kingdom-studio-themes.mjs guildhall-native
+          node scripts/kingdom-studio-terrain.mjs guildhall-native
+          node scripts/kingdom-studio-identity.mjs guildhall-native
+          mkdir -p guildhall-native/scripts
+          cp scripts/kingdom-compact-seeds.ts guildhall-native/scripts/
+          cd guildhall-native
+          bun install --frozen-lockfile
+      - name: Examinar 2.000 combinaciones y construir 80 finalistas por región
+        working-directory: guildhall-native
+        run: bun scripts/kingdom-compact-seeds.ts 1 500 ${{ matrix.theme }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seed-ranking-${{ matrix.theme }}
+          path: guildhall-native/seed-results/*.json
+          if-no-files-found: error
+  collect:
+    needs: search
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: seed-ranking-*
+          path: results
+          merge-multiple: true
+      - name: Consolidar ranking
+        run: |
+          python3 - <<'PY'
+          import json,pathlib
+          profiles={}
+          for p in pathlib.Path('results').glob('*.json'):
+              d=json.loads(p.read_text())
+              profiles.update(d['profiles'])
+          assert len(profiles)==8
+          pathlib.Path('ranking-highfly.json').write_text(json.dumps({'range':[1,500],'sizes':[600,800,1000,1300],'profiles':profiles},ensure_ascii=False,indent=2))
+          for theme,p in profiles.items():
+              top=p['finalists'][0]
+              print(theme, 'seed',top['seed'],'files',top['files'],'score',top['score'],'usable',top['usable'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-k12-compact-islands
+          path: ranking-highfly.json
