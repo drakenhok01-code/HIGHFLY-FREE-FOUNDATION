@@ -15,7 +15,7 @@ const ALIAS={health:'item_hp_potion',mana:'item_mp_potion',herb:'item_herb',ore:
 const USER_ICONS=Object.freeze({
  ...Object.fromEntries('hp_potion mp_potion herb ore wood fish ingot blade_blank seed bag_upgrade'.split(' ').map(x=>['item_'+x,'items/'+(x==='ingot'?'ingot_iron':x)])),
  ...Object.fromEntries(Object.entries({hf_iron_helmet:'helmet',hf_iron_chest:'chest',hf_iron_gloves:'gloves',hf_iron_pants:'shoulders',hf_iron_boots:'boots',hf_iron_shoulders:'shoulders',hf_copper_ring:'ring',hf_silver_necklace:'necklace'}).map(([id,asset])=>['item_'+id,'armor/'+asset])),
- item_leather:'items/leather',item_fish_river:'items/fish',item_fish_coast:'items/fish',
+ item_stone:'items/ore',item_leather:'items/leather',item_fish_river:'items/fish',item_fish_coast:'items/fish',
  // P4.9 safe temporary visuals: each new physical loot ID has an existing
  // approved rarity-capable frame until its dedicated painting is approved.
  item_wolf_pelt:'items/wolf_pelt',
@@ -47,13 +47,6 @@ export const userIconUrl=id=>id==='item_wolf_pelt'?import.meta.env.BASE_URL+'hig
  USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
 const valid=id=>id.startsWith('item_')?ITEMS.has(id.slice(5)):id.startsWith('slot_')?SLOTS.has(id.slice(5)):id.startsWith('profession_')?PROFS.has(id.slice(11)):id.startsWith('skill_')?SKILLS.has(id.slice(6)):false;
-const RARITY_COLOR={'Común':'#a8a4b4','Poco común':'#59c38e','Raro':'#62a4f5','Épico':'#ae70ed','Legendario':'#e8b955','Mítico':'#f574ac'};
-function separateArt(id,source,large,rarity,crop=true){const color=RARITY_COLOR[rarity]??RARITY_COLOR['Común'];return '<span class="hf-rpg-art hf-premium-icon hf-separated-art'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" data-hf-frame-art="separated" style="--hf-frame-color:'+color+'"><span class="hf-art-interior'+(crop?' is-cropped':'')+'"><img src="'+source+'" alt="" draggable="false"/></span><svg class="hf-art-frame" viewBox="0 0 100 100" aria-hidden="true"><rect x="3" y="3" width="94" height="94" rx="7" fill="none" stroke="#21182f" stroke-width="6"/><rect x="3.5" y="3.5" width="93" height="93" rx="6" fill="none" stroke="'+color+'" stroke-width="2.4"/><path d="M5 19V5H19 M81 5H95V19 M95 81V95H81 M19 95H5V81" fill="none" stroke="#e6c792" stroke-width="2.5"/><path d="M50 1L56 7L50 13L44 7Z" fill="'+color+'" stroke="#f4d69d" stroke-width="1.3"/><path d="M50 3L53 7L50 10L47 7Z" fill="#fff" opacity=".45"/></svg></span>'}
-export function frameInventoryArt(markup,id,large=false,rarity='Común'){
- if(markup.includes('hf-separated-art'))return markup;
- const template=separateArt(id,'',large,rarity,false);
- return template.replace('<img src="" alt="" draggable="false"/>',markup);
-}
 export function premiumArt(name,large=false,rarity='Común'){
  // P4.3 restores approved 256px, painterly icons WITH their integrated metal
  // frame. Do not add a secondary HTML frame or crop the illustration.
@@ -62,8 +55,8 @@ export function premiumArt(name,large=false,rarity='Común'){
  const source=userIconUrl(id);
  if(source){
   const rel=USER_ICONS[id],custom=P494_CREATURE_ICON_IDS.has(id),hasOrnateRarity=!custom&&id.startsWith('item_')&&/^(items|armor|weapons)\//.test(rel);
-  if(id.startsWith('item_'))return separateArt(id,source,large,rarity,hasOrnateRarity);const framed=source;
-  return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(custom?'p494':hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
+  const framed=custom?assetUrl('rarity/items/'+id.slice(5)+'__'+(grades[rarity]??'comun')):hasOrnateRarity?assetUrl('rarity/'+rel+'__'+(grades[rarity]??'comun')):source;
+  return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(custom||hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
  }
  if(!valid(id))return null;
  return '<img class="hf-rpg-art hf-premium-icon'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" src="'+assetUrl('premium/'+id)+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';

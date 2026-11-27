@@ -24,7 +24,7 @@ import './p570-premium.css';
 import {paintLiveHero} from './hero-portrait.mjs';
 import {skillIcon} from './premium-skill-art.mjs';
 import {EQUIP_SLOTS,EQUIP_ITEM_DEFS,equippedMode,equipmentBonuses,equipFromBag,unequipToBag} from './rpg-equipment.mjs';
-import {premiumArt,frameInventoryArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
+import {premiumArt,assetUrl,questArtUrl,professionIcon,officialLogoUrl} from './premium-assets.mjs';
 import {originalMapSnapshot,currentMapLandmarks} from './premium-map.mjs';
 import {ITEM_DEFS,RECIPES,loadRpgState,saveRpgState,inventoryRows,bagSlots,MAX_BAG_SLOTS,occupiedInventorySlots,distinctInventoryItems,consumeBagUpgrade,spendPotion,canCraft,craftPotion,ownedMaterialCount,attributeBreakdown,liveSkillRows,assignSkillSlot,clearSkillSlot,skillReady} from './rpg-core.mjs';
 
@@ -104,7 +104,7 @@ function tile(id,count,selected,trait=null,stackIndex=0,selectedIndex=0,variantI
  const def=ITEM_DEFS[id],icon='item_'+id;
  const gear=def?.kind==='Equipamiento'||def?.kind==='Accesorios';
  const selectedThis=selected===id&&(variantIndices.length?variantIndices.includes(selectedIndex):stackIndex===selectedIndex);
- return '<button type="button" class="hf-rpg-item '+(selectedThis?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">' +frameInventoryArt(art(icon,false,trait?.rarity??def?.rarity??'Común'),icon,false,trait?.rarity??def?.rarity??'Común')+(!gear||count>1?'<b>x'+numeric(count)+'</b>':'')+'</button>';
+ return '<button type="button" class="hf-rpg-item '+(selectedThis?'is-selected':'')+'" data-hf-stack-index="'+stackIndex+'" data-hf-item="'+safe(id)+'" data-hf-rarity="'+safe(trait?.rarity??def?.rarity??'')+'" aria-label="'+safe(def?.name||id)+'">' +art(icon,false,trait?.rarity??def?.rarity??'Común')+(!gear||count>1?'<b>x'+numeric(count)+'</b>':'')+'</button>';
 }
 function resourceRow(key,label,pCurrent,pMax){
  return '<div class="hf-rpg-meter"><span>'+label+'</span><div class="hf-rpg-track"><i class="'+key+'" style="width:'+pct(pCurrent,pMax).toFixed(1)+'%"></i></div><b>'+numeric(pCurrent)+' / '+numeric(pMax)+'</b></div>';
