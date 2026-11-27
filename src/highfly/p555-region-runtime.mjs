@@ -20,7 +20,7 @@ import {CITY_BY_SEED} from './p564-city-identities.mjs';
 import {mountRegionForest} from './p557-native-forest.mjs';
 import {createLODCache,lodLevel,triangleCount} from './p558-model-lod.mjs';
 import {installLivingWorld} from './p570-living-world.mjs';
-const DIR=import.meta.env.BASE_URL+'highfly/regions/';
+const DIR=import.meta.env.BASE_URL+'highfly/regions-p575/';
 const get=async path=>{const r=await fetch(DIR+path);if(!r.ok)throw Error(path+' HTTP '+r.status);return r.json()};
 const inBounds=(p,x,z,pad=0)=>x>p.bounds.minX-pad&&x<p.bounds.maxX+pad&&z>p.bounds.minZ-pad&&z<p.bounds.maxZ+pad;
 function clipMaterial(m,variable='vWorld'){
@@ -62,7 +62,7 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  game.world.waterLevel=(x,z)=>{if(!active||!inBounds(active.p,x,z))return nativeWaterLevel(x,z);return active.integrated.gridWater(x,z)};
  function clear(){if(vessel?.pilot)return false;living.clear();clipNativeWater(null);if(vessel)removeVessel();game.world.highflyInteractables=(game.world.highflyInteractables??[]).filter(n=>!n.regionResource);active?.nativeForest?.dispose();regionCover?.clear();clipTerrain(null);waterRoot.traverse(o=>{if(o.userData.owned)o.geometry?.dispose()});waterRoot.clear();fusion.clear();for(const s of solids){const i=game.world.solids.indexOf(s);if(i>=0)game.world.solids.splice(i,1);s.bvh?.geometry?.dispose()}solids=[];root.traverse(o=>{if(o.userData.owned)o.geometry?.dispose();if(o.isInstancedMesh)o.dispose();if(o.userData.ownMaterial){o.material.map?.dispose();o.material.dispose()}});if(active)for(const g of active.sectors.values())if(!g.parent)g.traverse(o=>{if(o.isInstancedMesh)o.dispose()});root.clear();active=null}
  const css='background:#17142c;color:#eee3ff;border:1px solid #a48dc7;border-radius:8px;padding:7px;font:600 11px system-ui;';
- const toggle=document.createElement('button');toggle.textContent='🗺 Viaje · 5.7.4';toggle.style.cssText=css+'position:fixed;left:44%;top:5px;z-index:99980;';
+ const toggle=document.createElement('button');toggle.textContent='🗺 Viaje · 5.7.5';toggle.style.cssText=css+'position:fixed;left:44%;top:5px;z-index:99980;';
  const panel=document.createElement('div');panel.style.cssText='display:none;position:fixed;left:50%;top:38px;transform:translateX(-50%);width:min(340px,85vw);z-index:99981;background:#151127ed;border:1px solid #b397dc;border-radius:12px;padding:10px;color:white;font:12px system-ui;max-height:70vh;overflow:auto;';
  const msg=document.createElement('div');msg.textContent='8 regiones asignadas · carga por proximidad';panel.append(msg);
  const buttons=[];function button(label,fn){const b=document.createElement('button');b.textContent=label;b.style.cssText=css+'margin:3px;';b.onclick=fn;panel.append(b);buttons.push(b);return b}
@@ -199,7 +199,7 @@ export async function installP555Regions(game,{pipe,terrain,water,forest=globalT
  button('Inicio original',()=>{if(busy||game.state!=='playing'||vessel?.pilot)return;clear();destination=null;beaconArrival=null;nav.style.display='none';const h=game.sites?.spawn??{x:-519,z:-70,y:game.world.floorBelow(-519,nativeHeight(-519,-70)+25,-70,35)};travel(h.x,h.z,h.y);panel.style.display='none'});
  button('FPS completo',()=>{globalThis.__hfP508Clock?.setDiagnostics('full');panel.style.display='none'});button('FPS mini',()=>{globalThis.__hfP508Clock?.setDiagnostics('mini');panel.style.display='none'});button('Ocultar FPS',()=>{globalThis.__hfP508Clock?.setDiagnostics('hidden');panel.style.display='none'});
  // Save a safe regional position and mount the saved region before restoring.
- const resumeKey='highfly-unsung-regional-resume-v2',qa=new URLSearchParams(location.search).get('hfqa')==='1';
+ const resumeKey='highfly-unsung-regional-resume-p575',qa=new URLSearchParams(location.search).get('hfqa')==='1';
  let resumeT=0,resumeAttempted=false,resuming=false;
  const readResume=()=>{try{const d=JSON.parse(localStorage.getItem(resumeKey)||'null');return d?.v===2&&d.pos&&[d.pos.x,d.pos.y,d.pos.z,d.pos.yaw].every(Number.isFinite)?d:null}catch{return null}};
  function saveResume(){if(qa||!resumeAttempted||resuming||busy||game.cine||!['playing','paused','menu'].includes(game.state))return false;const pl=game.player;if(!pl?.grounded||pl.health<=0||pl.state!=='move')return false;const pos={x:pl.pos.x,y:pl.pos.y,z:pl.pos.z,yaw:pl.yaw};if(!validResumePosition(pos,game.world))return false;const region=active&&inBounds(active.p,pos.x,pos.z)?active.p.seed:null;if(!region&&[...placements.values()].some(p=>inBounds(p,pos.x,pos.z)))return false;try{localStorage.setItem(resumeKey,JSON.stringify({v:2,region,pos,at:Date.now()}));return true}catch{return false}}
