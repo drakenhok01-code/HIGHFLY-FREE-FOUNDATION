@@ -1,0 +1,70 @@
+name: HIGHFLY Compact Kingdoms — 800 candidate simulations
+on:
+  push:
+    branches: ['experiment/compact-kingdoms-20261127']
+    paths: ['.github/workflows/highfly-p582-compact-sweep.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Simulate 200 original island configurations
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          bun scripts/p582-compact-sweep.ts
+          test -s compact/shard-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compact-sweep-${{ matrix.shard }}
+          path: compact/*.json
+          retention-days: 90
+          if-no-files-found: error
+  rank:
+    needs: sweep
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: compact-sweep-*
+          path: compact
+          merge-multiple: true
+      - name: Select distinct themed winners and verify NPC routes
+        env:
+          HF582_RANK: '1'
+        run: bun scripts/p582-compact-sweep.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: HIGHFLY-COMPACT-KINGDOMS-8
+          path: compact/
+          retention-days: 90
+          if-no-files-found: error
