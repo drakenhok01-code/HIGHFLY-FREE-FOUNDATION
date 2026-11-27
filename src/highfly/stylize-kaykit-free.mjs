@@ -37,6 +37,27 @@ function meshWorldBox(mesh){
  mesh.geometry.computeBoundingBox();
  return mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld);
 }
+// Some official FREE variants name their hooded head differently. Resolve it
+// from head skin weights and actual geometry instead of guessing a mesh name.
+function findNpcHead(root,headBone){
+ const candidates=[];
+ root.traverse(o=>{
+  if(!o.isSkinnedMesh)return;
+  const b=meshWorldBox(o),size=b.getSize(WORLD()),center=b.getCenter(WORLD());
+  if(size.y<.5||center.y<headBone.y-.28||Math.abs(center.x-headBone.x)>.42)return;
+  const si=o.geometry.attributes.skinIndex,sw=o.geometry.attributes.skinWeight;
+  if(!si||!sw)return;
+  const indices=new Set(o.skeleton.bones.map((bone,i)=>key(bone.name)==='head'?i:-1).filter(i=>i>=0));
+  if(!indices.size)return;
+  let weight=0;
+  for(let i=0;i<si.count;i++){const j=[si.getX(i),si.getY(i),si.getZ(i),si.getW(i)],w=[sw.getX(i),sw.getY(i),sw.getZ(i),sw.getW(i)];for(let k=0;k<4;k++)if(indices.has(j[k]))weight+=w[k]}
+  const share=weight/si.count;
+  if(share<.45)return;
+  const named=/head|hood|face/i.test(o.name)?1:0;
+  candidates.push({mesh:o,score:share*4+named+Math.min(size.y,1.4)+Math.min(size.x,1.4)*.5});
+ });
+ return candidates.sort((a,b)=>b.score-a.score)[0]?.mesh??null;
+}
 function adjustedAnimation(clip,src,dst,counts){
  const tracks=[];
  for(const tr of clip.tracks){
@@ -90,8 +111,8 @@ export function stylizeUniversalKayKit(gltf,{npc=false}={}){
  if(bones.size!==41||!bones.has('head')||!bones.has('handslotr'))
   throw Error('Expected authentic 41-bone FREE Knight medium rig, got '+bones.size);
  const oldWorld=new Map([...bones].map(([k,b])=>[k,b.getWorldPosition(WORLD())]));
- const headMesh=root.getObjectByName('Knight_Head')??(npc?(()=>{let m=null;root.traverse(o=>{if(o.isSkinnedMesh&&/_Head$/i.test(o.name))m=o});return m})():null);
- if(!headMesh?.isSkinnedMesh)throw Error('Original Knight_Head skinned mesh missing');
+ const headMesh=root.getObjectByName('Knight_Head')??(npc?(()=>{let m=null;root.traverse(o=>{if(o.isSkinnedMesh&&/_Head$/i.test(o.name))m=o});return m??findNpcHead(root,oldWorld.get('head'))})():null);
+ if(!headMesh?.isSkinnedMesh)throw Error('Original head skinned mesh missing: '+[...root.children].map(n=>n.name).join(','));
  const headBox=meshWorldBox(headMesh),headBone=oldWorld.get('head');
  if(!headBone||headBox.max.y-headBox.min.y<.5)throw Error('Invalid KayKit FREE original head geometry');
  const meshes=[];root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
@@ -135,14 +156,14 @@ export function stylizeUniversalKayKit(gltf,{npc=false}={}){
  if((!npc&&(clips.length!==76||counts.bound<6000))||(npc&&(clips.length<20||counts.bound<1000)))
   throw Error('KayKit animation rest retarget incomplete: '+JSON.stringify({clips:clips.length,...counts}));
  const bodyBox=new THREE.Box3(),headWarp=meshRest.find(m=>m.name===headMesh.name)?.box;
- for(const part of meshRest)if(!npc||/_(Head|Body|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(part.name))bodyBox.union(part.box);
+ for(const part of meshRest)if(!npc||part.name===headMesh.name||/_(Head|Body|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(part.name))bodyBox.union(part.box);
  const naturalHeight=bodyBox.getSize(new THREE.Vector3()).y;
  const headRatio=headWarp.getSize(new THREE.Vector3()).y/naturalHeight;
  if(!(naturalHeight>2.7&&naturalHeight<4.2&&headRatio>.17&&headRatio<.35))
   throw Error('Stylized proportions invalid: '+JSON.stringify({naturalHeight,headRatio}));
  gltf.animations=clips;
  const result={rig:'FREE_KNIGHT_MEDIUM_41',bones:bones.size,meshCount:meshes.length,
-  vertices:verts,naturalHeight,headRatio,tracks:counts.bound,skipped:counts.skipped,clips:clips.length};
+  vertices:verts,headMesh:headMesh.name,naturalHeight,headRatio,tracks:counts.bound,skipped:counts.skipped,clips:clips.length};
  root.userData.highflyUniversal=result;
  return result;
 }
