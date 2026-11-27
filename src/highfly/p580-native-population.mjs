@@ -5,7 +5,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
-import {stylizeUniversalKayKit} from './stylize-kaykit-free.mjs';
+import {stylizeUniversalKayKit,appendSharedRigAnimations} from './stylize-kaykit-free.mjs';
 const BASE=import.meta.env.BASE_URL+'highfly/living-p580/',REGION=import.meta.env.BASE_URL+'highfly/regions-p575/';
 const KEY='hf-p580-native-residents-v1',LIMIT=24,NEAR=85,ANIM=45;
 const roleNames={merchant:'Comerciante',smith:'Herrero',farmer:'Agricultor',fisher:'Pescador',miner:'Minero',lumberjack:'Leñador',guard:'Guardia','night-watch':'Vigilante',monk:'Monje',archer:'Arquero',soldier:'Soldado',knight:'Caballero',bard:'Bardo',lamplighter:'Farolero','tavern-keeper':'Tabernero',mage:'Mago'};
@@ -22,12 +22,13 @@ export function installNativePopulation(game,pipe,forge){
  const root=new THREE.Group();root.name='HF580_NATIVE_POPULATION';pipe.scene.add(root);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),ktx=new KTX2Loader().setTranscoderPath(import.meta.env.BASE_URL+'highfly/basis/').detectSupport(pipe.renderer);loader.setKTX2Loader(ktx);
  const bodies=new Map(),props=new Map(),fallbackClips=new Set(),unmounted=new Set(),bodyErrors=new Set();
- let dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,selected=null,lastAffinity=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
+ let sharedRig=null,rigReport={},qaHour=null,dependencies=null,region=null,records=[],active=[],generation=0,lastScan=-Infinity,selected=null,lastAffinity=0,loadError=null,ready=false,lastHour=12,wetRejected=0;
  let state={};try{const value=JSON.parse(localStorage.getItem(KEY)||'{}');if(value&&typeof value==='object')state=value}catch{}
  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
  const panel=document.createElement('section');panel.id='hf-native-dialogue';panel.hidden=true;panel.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(400px,75vw);max-height:72vh;overflow:auto;z-index:100015;background:#1a152af8;color:#f2e5cf;border:1px solid #b58be7;border-radius:12px;padding:15px;font:13px system-ui';document.body.append(panel);
- const dep=()=>dependencies??=Promise.all([get(BASE+'recipes.json'),import(/* @vite-ignore */ BASE+'native-life.mjs'),get(REGION+'asset-audit.json'),get(BASE+'mounts.json').catch(()=>({mounts:{}}))]).then(([recipes,life,audit,mounts])=>({recipes,life,assets:new Map(audit.assets.map(a=>[a.id,a])),mounts:mounts.mounts??{}}));
- const model=name=>{if(!bodies.has(name))bodies.set(name,loader.loadAsync(BASE+'models/'+name+'.glb').then(g=>({g,profile:stylizeUniversalKayKit(g,{npc:true})})).catch(e=>{bodyErrors.add(name+': '+String(e));if(name==='Knight')throw e;return model('Knight')}));return bodies.get(name)};
+ const dep=()=>dependencies??=Promise.all([get(BASE+'recipes.json'),import(/* @vite-ignore */ BASE+'native-life.mjs'),get(REGION+'asset-audit.json'),get(BASE+'mounts.json').catch(()=>({mounts:{}})),get(BASE+'prop-audit.json').catch(()=>({assets:[],rig:null}))]).then(([recipes,life,audit,mounts,extra])=>({recipes,life,assets:new Map([...audit.assets,...extra.assets].map(a=>[a.id,a])),mounts:mounts.mounts??{},rig:extra.rig}));
+ const rig=()=>sharedRig??=dep().then(d=>d.rig?loader.loadAsync(BASE+'rig-medium.glb').catch(()=>null):null);
+ const model=name=>{if(!bodies.has(name))bodies.set(name,Promise.all([loader.loadAsync(BASE+'models/'+name+'.glb'),rig()]).then(([g,r])=>{if(r)rigReport[name]=appendSharedRigAnimations(g,r);return {g,profile:stylizeUniversalKayKit(g,{npc:true})}}).catch(e=>{bodyErrors.add(name+': '+String(e));if(name==='Knight')throw e;return model('Knight')}));return bodies.get(name)};
  const loadProp=(id,asset)=>{if(!props.has(id))props.set(id,loader.loadAsync(REGION+asset.path).then(g=>g.scene).catch(e=>{unmounted.add(id);return null}));return props.get(id)};
  function clearActor(n){if(n.actor){n.mixer?.stopAllAction();n.actor.traverse(o=>{if(o.userData.hfNpcMat)o.material?.dispose();if(o.userData.hfNpcTag){o.material.map?.dispose();o.material.dispose()}});n.actor.removeFromParent()}n.actor=null;n.body=null;n.mixer=null;n.action=null;n.clip=null;n.loading=false;n.attached=new Map();n.serial=(n.serial??0)+1}
  function clear(){generation++;for(const n of records)clearActor(n);root.clear();region=null;records=[];active=[];selected=null;panel.hidden=true;ready=false;lastScan=-Infinity;loadError=null}
@@ -63,7 +64,7 @@ export function installNativePopulation(game,pipe,forge){
    });ready=true;
   }).catch(e=>{if(token===generation){loadError=String(e);console.error('[HF580 population]',e)}})
  }
- function hour(){const h=Number(globalThis.__hfP508Climate?.phase);return Number.isFinite(h)?((h%1+1)%1)*24:12}
+ function hour(){if(qaHour!==null)return qaHour;const h=Number(globalThis.__hfP508Climate?.phase);return Number.isFinite(h)?((h%1+1)%1)*24:12}
  function pose(n,h){
   const p=region.p,i=region.integrated,v=n.d.life.lifePose(n.f.day,h,24),at=v.at;
   let x=p.x+at[0]*p.scale,z=p.z+at[2]*p.scale,y=p.base+at[1]*p.scale;
@@ -128,6 +129,6 @@ export function installNativePopulation(game,pipe,forge){
  }
  function talk(p){const n=near(p);if(!n)return false;draw(n);return true}
  function record(e){if(!region||!e?.ok)return;for(const n of records){const q=state[n.id];if(n.quest?.action===e.action&&q?.status==='active'){q.progress=Math.min(n.quest.count,q.progress+1);if(q.progress>=n.quest.count)q.status='ready'}}save()}
- const api={mount,clear,update,near,talk,record,get ready(){return ready},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],unmounted:[...unmounted],loadError})};
+ const api={mount,clear,update,near,talk,record,get ready(){return ready},qaHour:h=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return false;qaHour=Number.isFinite(h)?((h%24+24)%24):null;lastScan=-Infinity;return true},qaModels:async()=>{if(new URLSearchParams(location.search).get('hfqa')!=='1')return [];return Promise.all(['Knight','Barbarian','Mage','Rogue','Rogue_Hooded'].map(async name=>({name,profile:(await model(name)).profile})))},get residents(){return records.map(n=>({id:n.id,role:n.def.role,stylist:n.stylist,x:n.x,y:n.y,z:n.z,visible:!!n.actor?.visible,indoors:!!n.indoors}))},metrics:()=>({seed:region?.p.seed??null,ready,population:records.length,visible:active.filter(n=>n.actor?.visible).length,active:active.length,hour:lastHour,wetRejected,bodyErrors:[...bodyErrors],fallbackClips:[...fallbackClips],rigReport,unmounted:[...unmounted],loadError})};
  globalThis.__hfNativePopulation=api;return api;
 }
