@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {approach,selectApproach,affinityOnce,npcBudget} from '../src/highfly/p581-reforged-policy.mjs';
 import {conformRoadTriangle} from '../src/highfly/p581-road-conform.mjs';
 const p={seed:3,bounds:{minX:0,maxX:100,minZ:0,maxZ:100}};
@@ -18,3 +19,11 @@ const tri=conformRoadTriangle([[.1,.1],[1.9,.1],[.1,1.9]],grid);
 assert(tri.length>9);
 for(let i=0;i<tri.length;i+=9){for(const w of [[1/3,1/3,1/3],[.6,.2,.2],[.2,.6,.2]]){let x=0,h=0,z=0;for(let j=0;j<3;j++){x+=tri[i+j*3]*w[j];h+=tri[i+j*3+1]*w[j];z+=tri[i+j*3+2]*w[j]}assert(Math.abs(h-y(x,z)-.018)<1e-7)}}
 console.log('HF581_POLICY_OK swept flight, persistent dialogue decisions, adaptive budget, exact dry road conformity');
+
+// Guard against accidental subtraction when reading hyphenated decision IDs.
+for(const file of ['p570-living-world.mjs','p580-native-population.mjs']){
+ const source=readFileSync(new URL('../src/highfly/'+file,import.meta.url),'utf8');
+ assert(!/\.decisions\?\.[\w]+-\w+/.test(source),'Invalid decision property access: '+file);
+ assert(source.includes("q.decisions?.['first-disrespect']"),'Missing safe dialogue decision lookup: '+file);
+}
+console.log('HF581_DIALOGUE_KEYS_OK');
