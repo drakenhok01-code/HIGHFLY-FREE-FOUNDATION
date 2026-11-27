@@ -147,7 +147,7 @@ export function installNativePopulation(game,pipe,forge){
   if(stage==='greeting'){
    btn('¿Cómo va tu trabajo?',()=>{decide('first-respect',2);draw(n,(replies[n.f.role]??[n.def.text])[0],'work')});
    btn('¿Qué sabés del Valle?',()=>draw(n,lore[n.city]??'La llama del Fénix todavía nos guía.','lore'));
-   if(!q.decisions?.first-disrespect)btn('No tengo tiempo para tus problemas.',()=>{decide('first-disrespect',-3);draw(n,'Entiendo. No te quitaré más tiempo.','end')});
+   if(!q.decisions?.['first-disrespect'])btn('No tengo tiempo para tus problemas.',()=>{decide('first-disrespect',-3);draw(n,'Entiendo. No te quitaré más tiempo.','end')});
   }else if(stage==='work'){btn('Contame un poco más',()=>draw(n,(replies[n.f.role]??[n.def.text,n.def.text])[1],'detail'));btn('Volver a conversar',()=>draw(n));}
   else if(stage!=='end')btn('Volver a conversar',()=>draw(n));
   if(n.stylist)btn('Cambiar mi apariencia',()=>{if(forge.open('stylist')){panel.hidden=true;selected=null}});
