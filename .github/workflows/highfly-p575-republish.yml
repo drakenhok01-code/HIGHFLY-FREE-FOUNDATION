@@ -1,0 +1,88 @@
+name: HIGHFLY P575 — publish validated R3 artifact
+on:
+  push:
+    branches: [p575-original-kingdoms-20261127]
+    paths: ['.github/workflows/highfly-p575-republish.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Verify whether the exact R3 is already live
+        id: current
+        run: |
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          if curl -fsSL "$BASE/highfly/release-p575.json?check=$GITHUB_RUN_ID" | jq -e '.version=="5.7.5" and .testedCommit=="90d6bfe0b94babeb1d344250c1c0d55188f5f501" and .validationRun==46042017894' >/dev/null && curl -fsSL "$BASE/play-p575.html?check=$GITHUB_RUN_ID" -o /tmp/p575.html; then
+            echo "live=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "live=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/download-artifact@v4
+        if: steps.current.outputs.live != 'true'
+        with:
+          artifact-ids: 15220697608
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: validated
+      - name: Verify exact preassembled tested site
+        if: steps.current.outputs.live != 'true'
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find validated -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          BASE=site/preview-p55
+          test -s "$BASE/play-p574.html"
+          test -s "$BASE/play-p575.html"
+          jq -e '.testedCommit=="90d6bfe0b94babeb1d344250c1c0d55188f5f501" and .validationRun==46042017894' "$BASE/highfly/release-p575.json"
+          jq -e 'length==8 and ([.[].seed]|sort)==[1,2,3,4,5,6,7,8] and all(.[]; .mismatch==0 and .wetOnDry==0 and .missingTerrain==0 and .waterUsesNative)' "$BASE/highfly/p575-integrity.json"
+          jq -e '(.regions|length)==8' "$BASE/highfly/p564-p575/atlas.json"
+          jq -e '.ok and (.regions|length)==8 and .models==274' "$BASE/highfly/regions-p575/integration-audit.json"
+          test "$(du -sb site | cut -f1)" -lt 950000000
+      - uses: actions/configure-pages@v5
+        if: steps.current.outputs.live != 'true'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.current.outputs.live != 'true'
+        with:
+          name: highfly-p575-r3-republish
+          path: site
+      - name: Wait for Pages artifact indexing
+        if: steps.current.outputs.live != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p575-r3-republish" and .expired==false)] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - uses: actions/deploy-pages@v4
+        if: steps.current.outputs.live != 'true'
+        id: deploy
+        with:
+          artifact_name: highfly-p575-r3-republish
+      - name: Check public preview, atlas and regional data
+        run: |
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 20); do
+            if curl -fsSL "$BASE/highfly/release-p575.json?check=$GITHUB_RUN_ID" | jq -e '.version=="5.7.5" and .testedCommit=="90d6bfe0b94babeb1d344250c1c0d55188f5f501"' >/dev/null && curl -fsSL "$BASE/play-p575.html?check=$GITHUB_RUN_ID" -o /tmp/p575.html && curl -fsSL "$BASE/play-p574.html?check=$GITHUB_RUN_ID" -o /tmp/p574.html && curl -fsSL "$BASE/highfly/p564-p575/atlas.json?check=$GITHUB_RUN_ID" | jq -e '(.regions|length)==8' >/dev/null && curl -fsSL "$BASE/highfly/regions-p575/integration-audit.json?check=$GITHUB_RUN_ID" | jq -e '.ok and (.regions|length)==8' >/dev/null; then
+              echo 'P575 PUBLIC VERIFIED'
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
