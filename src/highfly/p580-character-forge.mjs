@@ -26,7 +26,8 @@ export function applyAppearance(hero,appearance){
 export function installCharacterForge(game){
  let saved=readAppearance(),draft=saved??{...DEFAULT},offered=false,active=false,previousInput=null,lastHero=null,initial=false;
  const panel=document.createElement('section');panel.id='hf-character-forge';panel.hidden=true;
- panel.style.cssText='position:fixed;top:5%;right:3%;width:min(350px,48vw);max-height:90vh;overflow:auto;z-index:100020;padding:16px;background:#171224f5;color:#f4e6ce;border:1px solid #b792d9;border-radius:13px;box-shadow:0 12px 35px #0008;font:13px system-ui;box-sizing:border-box';
+ panel.style.cssText='position:fixed;top:max(6px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));width:clamp(245px,39vw,370px);max-height:none;overflow:hidden;z-index:100020;padding:10px;background:#171224f5;color:#f4e6ce;border:1px solid #b792d9;border-radius:13px;box-shadow:0 12px 35px #0008;font:13px system-ui;box-sizing:border-box';
+ const style=document.createElement('style');style.textContent='#hf-character-forge:not([hidden]){display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:5px}#hf-character-forge .hf-forge-scroll{overflow:auto;min-height:0;overscroll-behavior:contain;padding:2px 4px}#hf-character-forge .hf-forge-actions{display:flex;gap:4px;justify-content:space-between}#hf-character-forge .hf-forge-actions button{flex:1;margin:0!important;min-height:36px}#hf-character-forge input{max-width:60%;min-width:0}#hf-character-forge input[type=color]{height:30px;width:58px}#hf-character-forge label{margin:5px 0!important}#hf-character-forge p{margin:4px 0}body[data-hf-forge-open] #hf-mobile-touch{visibility:hidden} @media(max-aspect-ratio:1/1){#hf-character-forge{left:5%!important;right:5%!important;top:auto!important;bottom:8px!important;width:90%!important;max-height:56dvh!important}}';document.head.append(style);
  panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Forja de personaje');
  const field=(label,el)=>{const row=document.createElement('label');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0';row.append(document.createTextNode(label),el);return row};
  const make=(tag,text)=>{const e=document.createElement(tag);if(text)e.textContent=text;return e};
@@ -47,15 +48,15 @@ export function installCharacterForge(game){
   if(!active)return false;
   if(commit){const next=readFields();if(!applyAppearance(globalThis.__hero,next))return false;try{saved=saveAppearance(next);game.player._hfAppearance=saved}catch{warning.textContent='No se pudo guardar la apariencia.';return false}}
   else applyAppearance(globalThis.__hero,saved??DEFAULT);
-  panel.hidden=true;active=false;if(game.input&&previousInput!==null)game.input.enabled=previousInput;previousInput=null;return true;
+  panel.hidden=true;active=false;document.body.removeAttribute('data-hf-forge-open');if(game.input&&previousInput!==null)game.input.enabled=previousInput;previousInput=null;return true;
  }
- panel.append(title,note,field('Nombre',name),field('Vestimenta',outfit),field('Detalles',accent),field('Casco',helmet),field('Capa',cape),presets,warning,btn('Guardar apariencia',()=>close(true)),btn('Cancelar',()=>close(false)));
+ const scroll=make('div');scroll.className='hf-forge-scroll';scroll.append(note,field('Nombre',name),field('Vestimenta',outfit),field('Detalles',accent),field('Casco',helmet),field('Capa',cape),presets,warning);const actions=make('div');actions.className='hf-forge-actions';actions.append(btn('Guardar apariencia',()=>close(true)),btn('Cancelar',()=>close(false)));panel.append(title,scroll,actions);
  for(const event of ['pointerdown','pointerup','touchstart','touchend','click','keydown'])panel.addEventListener(event,e=>e.stopPropagation());
  document.body.append(panel);
  function open(source='stylist'){
   if(active||!globalThis.__hero?.root||globalThis.__hero.originalLook||game.player?.state==='dead')return false;
   initial=source==='initial';draft=saved??{...DEFAULT};sync(draft);previousInput=game.input?.enabled??null;if(game.input)game.input.enabled=false;
-  active=true;offered=true;panel.hidden=false;preview();return true;
+  active=true;offered=true;document.body.setAttribute('data-hf-forge-open','1');panel.hidden=false;preview();return true;
  }
  function update(){
   const h=globalThis.__hero;if(h&&h!==lastHero){lastHero=h;if(saved){applyAppearance(h,saved);game.player._hfAppearance=saved}}
