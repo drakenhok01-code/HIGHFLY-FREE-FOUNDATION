@@ -126,6 +126,36 @@
       "sourcePath": "tools/import/packs/kaykit-tools.ts",
       "sourceBlob": "c7d1562b079041af0607ae5512ef2639429cecbf",
       "verified": true
+    },
+    {
+      "id": "kaykit-furniture",
+      "source": "KayKit_Furniture_Bits_1.0_FREE",
+      "sourceBlob": "a8f6fbfb7750e16860576121d74f3c898bbee58c",
+      "vendorUrl": "https://kaylousberg.itch.io/furniture-bits",
+      "vendor": "kaykit",
+      "license": "CC0",
+      "sourcePath": "tools/import/packs/kaykit-furniture.ts",
+      "verified": true
+    },
+    {
+      "id": "kaykit-builder",
+      "source": "KayKit_Medieval_Builder_Pack_1.0",
+      "sourceBlob": "a0bcc06af24bafbb775174e23eff803ec8824607",
+      "vendorUrl": "https://kaylousberg.itch.io/kaykit-medieval-builder-pack",
+      "vendor": "kaykit",
+      "license": "CC0",
+      "sourcePath": "tools/import/packs/kaykit-builder.ts",
+      "verified": true
+    },
+    {
+      "id": "kaykit-holiday",
+      "source": "KayKit_Holiday_Bits_1.0_FREE",
+      "sourceBlob": "fe3960b647222d3bd05396cf5f2781474ab50100",
+      "vendorUrl": "https://kaylousberg.itch.io/holiday-bits",
+      "vendor": "kaykit",
+      "license": "CC0",
+      "sourcePath": "tools/import/packs/kaykit-holiday.ts",
+      "verified": true
     }
   ]
 }
