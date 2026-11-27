@@ -1,0 +1,44 @@
+name: HIGHFLY P576 — read-only world geography and surface audit
+on:
+  push:
+    branches: [p576-world-geography-audit-20261127]
+    paths: ['.github/workflows/highfly-p576-geography-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p574-build
+          run-id: 46009002629
+          github-token: ${{ github.token }}
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 15219918189
+          run-id: 46042017894
+          github-token: ${{ github.token }}
+          path: overlay
+      - name: Compare actual native placements and audit every source walkway
+        run: |
+          set -euo pipefail
+          cp -a overlay/. dist/
+          python3 -m venv "$RUNNER_TEMP/p576"
+          "$RUNNER_TEMP/p576/bin/pip" install --quiet pillow==12.0.0 numpy==2.3.4
+          "$RUNNER_TEMP/p576/bin/python" scripts/p576-geography-audit.py
+          node scripts/p576-surface-audit.mjs
+          rm p576-audit/*.bin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p576-geography-and-surface-audit
+          path: p576-audit/*.json
+          retention-days: 90
