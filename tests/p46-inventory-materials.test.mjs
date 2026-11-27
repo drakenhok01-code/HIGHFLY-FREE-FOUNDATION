@@ -3,11 +3,20 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {normalizeRpgState,inventoryRows,occupiedInventorySlots,distinctInventoryItems,inventoryCapacity,
  ITEM_DEFS,RECIPES,canCraft,craftPotion,loadRpgState,saveRpgState} from '../src/highfly/rpg-core.mjs';
-import {unequipToBag,equipFromBag} from '../src/highfly/rpg-equipment.mjs';
-import {enhanceGear,gearTraitAt} from '../src/highfly/rpg-itemization.mjs';
+import {EQUIP_ITEM_DEFS,unequipToBag,equipFromBag} from '../src/highfly/rpg-equipment.mjs';
+import {RARITIES,enhanceGear,gearTraitAt} from '../src/highfly/rpg-itemization.mjs';
 import {grantP41TestLoot} from '../src/highfly/p41-loot.mjs';
 
 const fixture=()=>({bag:normalizeRpgState(null),prof:{inventory:{},tools:new Set(),completed:0}});
+// Distinct cells now mean item ID + rarity, never different enhancement alone.
+function fillDistinct(bag,n){
+ const ids=Object.keys(EQUIP_ITEM_DEFS).filter(id=>!['training_sword','training_shield'].includes(id));
+ let i=0;
+ for(const id of ids)for(const rarity of RARITIES){
+  if(i>=n)return;bag.items[id]=(bag.items[id]??0)+1;(bag.gearTraits.bag[id]??=[]).push({id,rarity,plus:i%10});i++;
+ }
+ if(i!==n)throw Error('fixture insufficient');
+}
 test('P4.6 regression: 14 distinct types with 48 physical slots never falsely indicate full',()=>{
  const {bag,prof}=fixture();bag.slots=48;
  const materials=['ore','ore_copper','ore_iron','ore_silver','ore_gold','raw_diamond',
@@ -21,7 +30,7 @@ test('P4.6 regression: 14 distinct types with 48 physical slots never falsely in
  const result=unequipToBag(bag,'right_hand',prof.inventory,ITEM_DEFS);
  assert.equal(result.ok,true,'Equipped original sword must fit in a new physical cell');
  assert.equal(bag.items.training_sword,11,'Gear must not cap at ten globally');
- assert.equal(occupiedInventorySlots(bag,prof.inventory),before+1);
+ assert.equal(occupiedInventorySlots(bag,prof.inventory),before);
  assert.equal(bag.equipped.right_hand,null);
  assert.equal(bag.gearTraits.bag.training_sword.length,11);
  const store={v:'',getItem(){return this.v},setItem(k,v){this.v=v}};
@@ -29,7 +38,7 @@ test('P4.6 regression: 14 distinct types with 48 physical slots never falsely in
  const restored=loadRpgState(store);
  assert.equal(restored.items.training_sword,11);
  assert.equal(restored.gearTraits.bag.training_sword.length,11);
- assert.equal(inventoryRows(restored,prof.inventory).filter(x=>x.id==='training_sword').length,2);
+ assert.equal(inventoryRows(restored,prof.inventory).filter(x=>x.id==='training_sword').length,1);
 });
 test('P4.6: equipment swaps are atomic and preserve traits when several copies exist',()=>{
  const {bag,prof}=fixture();bag.slots=48;
@@ -48,8 +57,8 @@ test('P4.6: two-handed/companion unequip fails without losing either item if bag
  bag.equipped.right_hand='training_sword';
  bag.equipped.left_hand='training_shield';
  bag.gearTraits.equipped.left_hand={id:'training_shield',rarity:'Raro',plus:3};
- bag.items.hf_iron_chest=34; // 34 gear cells + HP + MP = 36 occupied
- bag.gearTraits.bag.hf_iron_chest=Array.from({length:34},(_,i)=>({id:'hf_iron_chest',rarity:['Común','Poco común','Raro','Épico'][Math.floor(i/10)],plus:i%10}));
+ fillDistinct(bag,34); // 34 distinct ID/rarity groups + 2 potions
+ assert.equal(occupiedInventorySlots(bag,prof.inventory),36);
  const before=JSON.stringify(bag);
  const fail=unequipToBag(bag,'right_hand',prof.inventory,ITEM_DEFS);
  assert.equal(fail.ok,false);
@@ -67,15 +76,15 @@ test('P4.6: physical stacks use real max-per-stack and split quantities',()=>{
 });
 test('P4.6: refining a material in full bag can free a slot before adding result',()=>{
  const {bag,prof}=fixture();
- bag.items.hf_iron_chest=33; // 33 DISTINCT trait groups + 2 starting potions + ore_copper = 36
- bag.gearTraits.bag.hf_iron_chest=Array.from({length:33},(_,i)=>({id:'hf_iron_chest',rarity:['Común','Poco común','Raro','Épico'][Math.floor(i/10)],plus:i%10}));
+ fillDistinct(bag,33); // 33 ID/rarity groups + 2 potions + ore = 36
  prof.inventory.ore_copper=2;
+ assert.equal(occupiedInventorySlots(bag,prof.inventory),36);
  const v=canCraft('refine_copper',prof.inventory,bag);
  assert.equal(v.ok,true,JSON.stringify(v));
  const built=craftPotion('refine_copper',prof,bag);
  assert.equal(built.ok,true);
  assert.equal(prof.inventory.ore_copper,0);
- assert.equal(bag.items.ingot_copper,1);
+ assert.equal(bag.items.ingot_copper,3); // established three-ingot recipe
  assert.equal(occupiedInventorySlots(bag,prof.inventory),36);
 });
 test('P4.6: eight unique mineral IDs and two enhancement tiers are registered',()=>{

@@ -1,6 +1,6 @@
 /** HIGHFLY P4.8 — one inventory grouping contract for visuals AND capacity.
- * Identical gear (same item ID + rarity + enhancement) stacks as one visible
- * slot without the legacy ten-copy limit. Distinct traits NEVER merge; underlying
+ * Gear of the same item ID and rarity stacks as one visible
+ * slot without the legacy ten-copy limit. Enhancements remain distinct individual traits; underlying
  * per-instance gearTraits arrays remain untouched for equip/save/upgrade.
  */
 export const MAX_GEAR_COPIES_PER_ID=9999; // persistence safety ceiling, not a visual stack cap
@@ -20,9 +20,13 @@ export function combinedCounts(items={},professionInventory={}){
  }
  return totals;
 }
-const identity=(trait,def)=>JSON.stringify([
-  trait?.rarity??def?.rarity??'Común',Number.isInteger(trait?.plus)?trait.plus:0
-]);
+const identity=(trait,def)=>JSON.stringify([trait?.rarity??def?.rarity??'Común']);
+// Subgroups are only for the detail selector, never extra bag cells.
+export function enhancementChoices(indices=[],traits=[]){
+ const levels=new Map();
+ for(const index of indices){const plus=Number.isInteger(traits[index]?.plus)?traits[index].plus:0;const row=levels.get(plus)??{plus,count:0,index,indices:[]};row.count++;row.indices.push(index);levels.set(plus,row);}
+ return [...levels.values()].sort((a,b)=>a.plus-b.plus);
+}
 export function inventoryStackRows(items={},professionInventory={},defs={},gearTraits={}){
  const totals=combinedCounts(items,professionInventory);
  return Object.entries(totals).flatMap(([id,count])=>{

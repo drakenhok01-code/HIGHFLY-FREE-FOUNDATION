@@ -26,9 +26,10 @@ test('P4.7: 1000 units of one material use two physical slots, not 1000',()=>{
  const rows=inventoryRows(bag).filter(x=>x.id==='coal');
  assert.deepEqual(rows.map(x=>x.count),[999,1]);
 });
-test('P4.7: menu always starts and reopens on Personaje, not last visited Opciones',()=>{
+test('P4.7: default menu reopens on Personaje; explicit menu requests are honored',()=>{
  const src=file('src/highfly/premium-rpg.mjs');
- assert.match(src,/local\.opened=true;local\.tab=tab==='bolsa'\?'bolsa':'personaje'/);
+ assert.match(src,/function open\(tab='personaje',fromNative=false\)/);
+ assert.match(src,/local\.opened=true;local\.tab=bodies\[tab\]\?tab:'personaje'/);
  assert.match(src,/local\.opened=false;local\.tab='personaje';root\.hidden=true/);
 });
 test('P4.7: quest last card accessible within independently scrolling column',()=>{

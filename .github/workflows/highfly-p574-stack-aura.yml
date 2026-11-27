@@ -1,4 +1,4 @@
-name: HIGHFLY P5.7.4 — STACKS & PREMIUM AURA
+name: HIGHFLY P5.7.4 — STACKS & PREMIUM AURA (R2)
 on:
   push:
     branches: [p574-stack-aura-20261127]
@@ -251,7 +251,7 @@ jobs:
           test -s site/preview-p543/index.html
           test -s site/preview-p55/highfly/release-p573.json
           jq -e '.ok == true and (.rows|length)==10 and .bag.debugShortcuts==false' smoke/p5683-tool-smoke.json
-          jq -e '.ok == true and (.screens|length)==8 and (.rarities|length)==6 and .shields[0].count=="x11"' smoke/p574-premium-browser.json
+          jq -e '.ok == true and (.screens|length)==8 and (.rarities|length)==6 and .shields[0].count=="x12" and (.shields|length)==2 and (.shieldChoices|length)==2' smoke/p574-premium-browser.json
           rm -rf site/preview-p55
           cp -a new site/preview-p55
           cp smoke/p5683-tool-smoke.json smoke/p574-premium-browser.json site/preview-p55/highfly/

@@ -1,5 +1,5 @@
 import {moveTraitsOnEquip,moveTraitsOnUnequip,enhancedStats} from './rpg-itemization.mjs';
-import {bagCapacityStatus} from './rpg-bag-capacity.mjs';
+import {bagCapacityStatus,MAX_GEAR_COPIES_PER_ID} from './rpg-bag-capacity.mjs';
 /** HIGHFLY PHOENIX PREMIUM: real, persistent equip/unequip transactions.
  * No fake armor is equipped. Only supported KayKit Knight FREE weapon meshes
  * are exposed; future rigs/armour must provide verified visible adapters.
@@ -106,10 +106,11 @@ export function equipFromBag(state,slotId,itemId,variantIndex=0,professionInvent
  nextItems[itemId]-=1;
  nextEquipped[slotId]=itemId;
  // Preview gear-trait movement without touching the saved state. The same
- // ID, rarity and + can merge into one stack; different traits remain separate.
+ // ID and rarity share a cell; each enhancement remains on its physical copy.
  const preview={equipped:{...state.equipped},
   gearTraits:JSON.parse(JSON.stringify(state.gearTraits??{bag:{},equipped:{}}))};
  moveTraitsOnEquip(preview,slotId,itemId,affected,variantIndex);
+ if(Object.entries(nextItems).some(([id,n])=>EQUIP_ITEM_DEFS[id]&&n>MAX_GEAR_COPIES_PER_ID))return {ok:false,reason:'Límite de almacenamiento de equipo'};
  const projection=bagCapacityStatus(nextItems,professionInventory,
   equipmentBagDefs(nextItems,professionInventory,itemDefinitions),state.slots,preview.gearTraits.bag);
  if(!projection.ok)
@@ -136,6 +137,7 @@ export function unequipToBag(state,slotId,professionInventory={},itemDefinitions
  const preview={equipped:{...state.equipped},
   gearTraits:JSON.parse(JSON.stringify(state.gearTraits??{bag:{},equipped:{}}))};
  moveTraitsOnUnequip(preview,affected);
+ if(Object.entries(next).some(([id,n])=>EQUIP_ITEM_DEFS[id]&&n>MAX_GEAR_COPIES_PER_ID))return {ok:false,reason:'Límite de almacenamiento de equipo'};
  const projected=bagCapacityStatus(next,professionInventory,
   equipmentBagDefs(next,professionInventory,itemDefinitions),state.slots,preview.gearTraits.bag);
  if(!projected.ok)return {ok:false,reason:'Bolsa llena: '+projected.used+' / '+projected.capacity+' casillas ocupadas'};

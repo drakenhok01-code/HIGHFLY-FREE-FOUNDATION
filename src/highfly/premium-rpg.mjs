@@ -1,3 +1,4 @@
+import {enhancementChoices} from './rpg-bag-capacity.mjs';
 import {highflyRemoveItem,nearHighflyMerchant,itemSalePrice} from './p493-item-transactions.mjs';
 import './p493-interaction.css';
 /** HIGHFLY F0.14 premium RPG windows.
@@ -208,7 +209,7 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
    return;
   }
   if(m.type==='equip'){result=equipFromBag(bag,m.slotId,m.itemId,m.variantIndex??0,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.pickEquipItem=null;}}
-  else if(m.type==='gear-upgrade'){result=enhanceGear(bag,{place:m.place,id:m.id,index:m.index},m.kind);if(result.ok)save();}
+  else if(m.type==='gear-upgrade'){result=enhanceGear(bag,{place:m.place,id:m.id,index:m.index},m.kind,{stock:prof().inventory,defs:ITEM_DEFS});if(result.ok)save();}
    else if(m.type==='unequip'){result=unequipToBag(bag,m.slotId,prof().inventory,ITEM_DEFS);if(result.ok){save();syncEquipment();local.confirmUnequip=null;}}
   else if(m.type==='assign-skill'){result=assignSkillSlot(bag,m.slotIndex,m.skillId,p());if(result.ok){save();syncSkills();local.pickSkill=null;}}
   else if(m.type==='expand'){result=consumeBagUpgrade(bag);if(result.ok)save();}
@@ -274,12 +275,12 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
   const chosen=owned?ITEM_DEFS[owned.id]:null;
   const count=chosen?itemCount(chosen.id,prof(),bag):0;
    const variants=EQUIP_ITEM_DEFS[chosen?.id]?bag.gearTraits?.bag?.[chosen.id]??[]:[];
-   const groups=chosen&&variants.length?rows.filter(x=>x.id===chosen.id&&x.variantIndices?.length):[];
+   const groups=chosen&&variants.length?enhancementChoices(owned?.variantIndices??[],variants):[];
    const variantIndex=owned?.variantIndices?.includes(local.selectedGearIndex)?local.selectedGearIndex:owned?.variantIndex??0;
    if(chosen){local.selected=chosen.id;local.selectedGearIndex=variantIndex;}
    const trait=variants[variantIndex]??null;
    const qualities=trait?'<div class="hf-rpg-quality" data-hf-rarity="'+safe(trait.rarity)+'"><b>'+safe(trait.rarity)+'</b><strong>+'+trait.plus+'</strong></div>'+
-     (groups.length>1?'<div class="hf-rpg-variants">'+groups.map(row=>{const i=row.variantIndex,t=variants[i];return '<button type="button" class="'+(row.variantIndices.includes(variantIndex)?'is-selected':'')+'" data-hf-gear-index="'+i+'">'+safe(t?.rarity??chosen.rarity)+' +'+(t?.plus??0)+' · x'+row.count+'</button>'}).join('')+'</div>':'')+
+     (groups.length>0?'<div class="hf-rpg-variants" aria-label="Elegí el nivel de mejora">'+groups.map(row=>'<button type="button" class="'+(row.indices.includes(variantIndex)?'is-selected':'')+'" data-hf-gear-index="'+row.index+'" data-hf-plus="'+row.plus+'" data-hf-variant-count="'+row.count+'">+'+row.plus+' · x'+row.count+'</button>').join('')+'</div>':'')+
      '<div class="hf-rpg-mini-actions">'+button('MEJORAR +1','data-hf-action="gear:upgrade:bag:'+chosen.id+':'+variantIndex+'"')+
      (trait.plus===9?button('ASCENDER','data-hf-action="gear:ascend:bag:'+chosen.id+':'+variantIndex+'"'):'')+'</div>':'';
   const categoryIcons={Todo:'◈',Consumibles:'⚗',Materiales:'❖',Equipamiento:'⚔',Accesorios:'◇',Otros:'✧'};
@@ -298,9 +299,9 @@ export function installPremiumRpgUI(game,{search=globalThis.location?.search??''
     '<div class="hf-rpg-grid" data-hf-bag-capacity="'+bag.slots+'">'+bagSlots(rows,bag.slots).map((o,i)=>o?tile(o.id,o.count,chosen?.id,gearTraitAt(bag,'bag',o.id,o.variantIndex),o.variantIndex,local.selectedGearIndex,o.variantIndices):
      '<div class="hf-rpg-empty-slot" aria-label="Espacio de bolsa vacío '+(i+1)+'"><span>✧</span></div>').join('')+'</div>'+
     '<div class="hf-rpg-inventory-counter">'+occupiedInventorySlots(bag,prof().inventory)+' / '+bag.slots+' ESPACIOS OCUPADOS</div>')+
-   panel(title('Detalle del objeto',chosen?.rarity??'Sin selección')+
+   panel(title('Detalle del objeto',trait?.rarity??chosen?.rarity??'Sin selección')+
     (chosen?'<div class="hf-rpg-detail-art" data-hf-rarity="'+safe(trait?.rarity??chosen.rarity)+'">'+art('item_'+chosen.id,true,trait?.rarity??chosen.rarity)+'</div><h3>'+safe(chosen.name)+'</h3>'+
-      '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(count)+'</div>'+qualities+
+      '<div class="hf-rpg-tag">'+safe(chosen.kind)+' · Tenés '+numeric(trait?owned.count:count)+(trait&&owned.count!==count?' de esta rareza · '+numeric(count)+' en total':'')+'</div>'+qualities+
       '<p class="hf-rpg-info">'+safe(chosen.description)+'</p>'+
       (chosen.stats?'<p class="hf-rpg-info">Atributos: '+safe(Object.entries(chosen.stats).map(([k,v])=>k+' +'+v).join(' · '))+'</p>':'')+
       choices+'<div class="hf-p493-bag-actions">'+

@@ -1,4 +1,4 @@
-import {MAX_GEAR_COPIES_PER_ID} from './rpg-bag-capacity.mjs';
+import {MAX_GEAR_COPIES_PER_ID,bagCapacityStatus} from './rpg-bag-capacity.mjs';
 /**
  * HIGHFLY itemization v1.
  * One base image per item. Every physical sword/shield copy has its OWN
@@ -24,8 +24,7 @@ export function normalizeGearTraits(raw,items={},equipped={}){
  const bag={},eq={};
  for(const id of GEAR_IDS){
   const n=Math.max(0,Math.min(MAX_GEAR_COPIES_PER_ID,Math.floor(Number(items[id])||0)));
-  // Each gear piece has a separate persistent trait; 72 is the maximum
-  // bag capacity, not the former ten-unit stack cap.
+  // Each physical piece keeps its own rarity and enhancement; capacity counts rarity groups.
   const input=Array.isArray(raw?.bag?.[id])?raw.bag[id]:[];
   bag[id]=Array.from({length:n},(_,i)=>validTrait(input[i],id));
  }
@@ -74,7 +73,7 @@ export function gearTraitAt(state,target,id,index=0){
  const list=state?.gearTraits?.bag?.[id]??[];
  return list[Math.floor(index)]??null;
 }
-export function enhanceGear(state,{place='bag',id,index=0},kind='upgrade'){
+export function enhanceGear(state,{place='bag',id,index=0},kind='upgrade',capacityContext=null){
  const trait=gearTraitAt(state,place,id,index);
  if(!trait)return {ok:false,reason:'No hay un equipo válido seleccionado'};
  if(kind==='upgrade'){
@@ -94,6 +93,12 @@ export function enhanceGear(state,{place='bag',id,index=0},kind='upgrade'){
   const next=rarityIndex(trait.rarity)+1;
   if(next>=RARITIES.length)return {ok:false,reason:'Este equipo ya es Mítico'};
   if((state.items?.ascension_core??0)<1)return {ok:false,reason:'Necesitás un Núcleo de Ascensión'};
+  if(place==='bag'&&capacityContext?.defs){
+   const preview=JSON.parse(JSON.stringify(state.gearTraits.bag));
+   preview[id][index]={...trait,rarity:RARITIES[next],plus:0};
+   const stock={...state.items,ascension_core:state.items.ascension_core-1};
+   if(!bagCapacityStatus(stock,capacityContext.stock,capacityContext.defs,state.slots,preview).ok)return {ok:false,reason:'Bolsa llena: la nueva rareza necesita una casilla'};
+  }
   state.items.ascension_core--;
   trait.rarity=RARITIES[next];trait.plus=0;
   return {ok:true,trait:{...trait},spent:1,material:'Núcleo de Ascensión'};

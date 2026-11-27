@@ -40,7 +40,13 @@ const check=async(tab,width,height)=>{
  if(!data.count||data.double||!data.panelFit||data.bad.length)throw Error('Art layout failed '+tab+' '+JSON.stringify(data.bad));
  if(tab==='bolsa'&&width===915){
   const shields=await page.evaluate(()=>[...document.querySelectorAll('[data-hf-item="training_shield"]')].map(x=>({rarity:x.dataset.hfRarity,count:x.querySelector('b')?.textContent??'x1'})));
-  if(JSON.stringify(shields)!==JSON.stringify([{rarity:'Común',count:'x11'},{rarity:'Raro',count:'x1'},{rarity:'Común',count:'x1'}]))throw Error('Shield stack groups incorrect '+JSON.stringify(shields));result.shields=shields;
+  if(JSON.stringify(shields)!==JSON.stringify([{rarity:'Común',count:'x12'},{rarity:'Raro',count:'x1'}]))throw Error('Shield stack groups incorrect '+JSON.stringify(shields));result.shields=shields;
+  await page.evaluate(()=>document.querySelector('[data-hf-item="training_shield"][data-hf-rarity="Común"]').click());
+  const choices=await page.evaluate(()=>[...document.querySelectorAll('[data-hf-plus]')].map(x=>({plus:+x.dataset.hfPlus,count:+x.dataset.hfVariantCount})));
+  if(JSON.stringify(choices)!==JSON.stringify([{plus:0,count:11},{plus:1,count:1}]))throw Error('Missing enhancement choices '+JSON.stringify(choices));
+  await page.evaluate(()=>document.querySelector('[data-hf-plus="1"]').click());
+  const selected=await page.evaluate(()=>({label:document.querySelector('.hf-rpg-quality strong')?.textContent,selected:document.querySelector('[data-hf-plus="1"]')?.classList.contains('is-selected')}));
+  if(selected.label!=='+1'||!selected.selected)throw Error('Enhancement choice not selected '+JSON.stringify(selected));result.shieldChoices=choices;
   const seen=data.rows.filter(x=>x.id==='item_training_sword'&&x.embedded).map(x=>x.src);
   result.rarities=slugs.filter(s=>seen.some(url=>url?.endsWith('sword__'+s+'.webp')));
   if(result.rarities.length!==6)throw Error('All six original sword rarity images not rendered '+JSON.stringify(seen));
