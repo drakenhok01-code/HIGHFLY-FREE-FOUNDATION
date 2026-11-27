@@ -192,7 +192,7 @@ function beginCliffDescent(p){
 function endPhoenix(p,reason){p._hfGlide=null;if(p.state==='hf_glide')p.setState('move');p.emit('highflyGlideEnd',{reason});}
 function stepPhoenix(p,dt,input,yaw){
  if(p.stamina<=0||input.pressed.has('dodge')||input.pressed.has('attack')){endPhoenix(p,'cancel');return;}
- const state=p._hfGlide??={};if(input.pressed.has('air_free')){state.free=!state.free;state.diving=false;state.recovery=0;state.modern=true}const mode=state.free?'free':state.modern?'glide':airMode(input,state,dt);const free=state.free?freeFlightVelocity(p.vel,input.move,yaw,p._hfCameraPitch??0,dt,input.held.has('dash')):null;const cfg=free?{cost:free.cost}:AIR_MODES[mode],v=free?free.v:phoenixVelocity(p.vel,input.move,yaw,dt,mode,p._hfCameraPitch??0),before=p.pos.clone();state.mode=mode;p._hfGlide.pitch=Math.atan2(-v.y,Math.max(.1,Math.hypot(v.x,v.z)));
+ const state=p._hfGlide??={};if(input.pressed.has('air_free')){state.free=!state.free;state.diving=false;state.recovery=0;state.modern=true}const mode=state.free?'free':state.modern?'glide':airMode(input,state,dt),quiet=state.modern&&!state.free&&Math.hypot(input.move?.x??0,input.move?.y??0)<.09;const free=state.free?freeFlightVelocity(p.vel,input.move,yaw,-(p._hfCameraPitch??0),dt,input.held.has('sprint')):null;const cfg=free?{cost:free.cost}:quiet?{cost:-2.5}:AIR_MODES[mode],v=free?free.v:phoenixVelocity(p.vel,input.move,yaw,dt,mode,p._hfCameraPitch??0),before=p.pos.clone();state.turbo=!!(state.free&&input.held.has('sprint'));if(quiet){v.y=p.vel.y+clamp(-1.25-p.vel.y,-20*dt,20*dt)}state.mode=mode;p._hfGlide.pitch=Math.atan2(-v.y,Math.max(.1,Math.hypot(v.x,v.z)));
  p.vel.set(v.x,v.y+TUNE.gravity*dt,v.z);
  // Do not allow the native capsule to snap up a cliff face while gliding.
  const ahead={x:p.pos.x+v.x*dt,z:p.pos.z+v.z*dt};
@@ -200,9 +200,9 @@ function stepPhoenix(p,dt,input,yaw){
  if(Number.isFinite(h)&&h>p.pos.y+.18){p.vel.x=0;p.vel.z=0;}
  if(v.y>=-PHOENIX.safeImpact)p.fallStart=p.pos.y;
  p._integrate(dt);
- const actualDescent=Math.max(0,before.y-p.pos.y);p.stamina=clamp(p.stamina-(cfg.cost<0?(actualDescent>.05?cfg.cost:0):cfg.cost)*dt,0,p.staminaMax);p.staminaWait=.65;
+ const actualDescent=Math.max(0,before.y-p.pos.y);p.stamina=clamp(p.stamina-(cfg.cost<0?(quiet||actualDescent>.05?cfg.cost:0):cfg.cost)*dt,0,p.staminaMax);p.staminaWait=.65;
  p.invulnerable=Math.max(0,(p.invulnerable??0)-dt);p.stateTime+=dt;
- if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z);p.yaw+=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw))*Math.min(1,dt*7);}
+ let bank=0;if(Math.hypot(v.x,v.z)>.3){const a=Math.atan2(v.x,v.z),turn=Math.atan2(Math.sin(a-p.yaw),Math.cos(a-p.yaw));p.yaw+=turn*Math.min(1,dt*7);if(state.free)bank=clamp(-turn*1.5,-.65,.65);}state.bank=(state.bank??0)+(bank-(state.bank??0))*(1-Math.exp(-8*dt));
  const water=p.world.waterLevel(p.pos.x,p.pos.z);
  if(p.state!=='hf_glide'||p.grounded||p.pos.y<water+.1){endPhoenix(p,p.grounded?'land':'water-or-interrupted');}
  else if(p.pos.y>before.y+Math.max(.2,Math.max(0,v.y)*dt+.15)){p.pos.copy(before);p.viewY=p._viewY1=p.pos.y;p.vel.x=p.vel.z=0;}

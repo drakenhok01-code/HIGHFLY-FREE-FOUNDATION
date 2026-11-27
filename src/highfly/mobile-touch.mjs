@@ -248,7 +248,7 @@ export function attachHighflyTouch(input){
 #hf-touch[data-editing="1"] .hf-fps{outline:2px dashed #80ffec;outline-offset:2px}
 `;
  const root=document.createElement('div');root.id='hf-touch';root.hidden=true;
- root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.7</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
+ root.innerHTML=hfHud()+'<div class="hf-release" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);font:9px system-ui;pointer-events:none">P5.7.1</div><div class="hf-work-notice" hidden style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%);padding:8px;background:#18142beb;border-radius:8px;pointer-events:none;color:white"></div>'+'<div class="cam" aria-label="Cámara libre"></div><div class="stick" aria-label="Joystick 360 grados"><div class="knob"></div></div>'+
  '<button class="atk" data-a="attack">ATK</button><button class="jump" data-a="jump">SALTO</button>'+
  '<button class="roll" data-a="dodge">ROLL</button><button class="use" data-a="interact">USAR</button>'+
  '<button class="sprint" data-a="sprint" aria-pressed="false">CORRER</button><button class="dash" data-a="dash" aria-label="DASH direccional">DASH</button>'+
@@ -284,7 +284,7 @@ export function attachHighflyTouch(input){
  '<button class="hf-talk-next" data-a="dialogue-next" hidden>SEGUIR</button>';
  document.body.append(root);
  const rotate=document.createElement('div');rotate.id='hf-rotate';rotate.textContent='Girás el teléfono a horizontal para jugar HIGHFLY';document.body.append(rotate);
- const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},
+ const t={root,x:0,y:0,held:new Set(),pressed:new Set(),active:false,lastPointer:null,debug:null,gestureCount:0,sprintOn:false,airTurbo:false,dashButton:root.querySelector('.dash'),contextButton:root.querySelector('.context'),contextAction:'climb', contextHeld:null,abilityAim:{},abilityPointer:null,aimOverlay:root.querySelector('.ability-aim'),actionsOpen:false,actionPanel:root.querySelector('.action-panel'),attackPointer:null,resources:{},
  attackCue:root.querySelector('.hf-attack-cue'),lastAttackSwipe:null,
  questPanel:root.querySelector('.hf-quests'),fpsBadge:root.querySelector('.hf-fps'),
  questExpanded:true,frames:0,skillButtons:{},
@@ -443,8 +443,7 @@ export function attachHighflyTouch(input){
    }
    const chosen=a==='context'?resolveHighflyContext(globalThis.__game?.player).action:a==='interact'?resolveHighflyUse(globalThis.__game?.player).action:a;
    if(a==='sprint'){
-    t.sprintOn=!t.sprintOn;
-    b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER';
+    const flying=globalThis.__game?.player?._hfGlide?.free;if(flying){t.airTurbo=!t.airTurbo;b.dataset.active=t.airTurbo?'1':'0';b.textContent='TURBO'}else{t.sprintOn=!t.sprintOn;b.dataset.active=t.sprintOn?'1':'0';b.textContent='CORRER'}
    }else{
     t.pressed.add(chosen);if(chosen==='jump'||chosen==='dash')t.held.add(chosen);
     if(['sit','lie','cheer'].includes(a)){t.actionPanel.hidden=true;t.actionsOpen=false;}
@@ -460,7 +459,7 @@ export function attachHighflyTouch(input){
   b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
  }
  // Browser focus/fullscreen transitions should never leave runaway movement.
- globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.attackPointer=null;if(t.attackCue)t.attackCue.hidden=true;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
+ globalThis.addEventListener('blur',()=>{sid=cid=null;center();t.held.clear();t.sprintOn=false;t.airTurbo=false;t.attackPointer=null;if(t.attackCue)t.attackCue.hidden=true;t.abilityPointer=null;t.abilityAim={};if(t.aimOverlay)t.aimOverlay.dataset.active='0';});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){sid=cid=null;center();t.held.clear();t.attackPointer=null;}});
 }
 function rootLock(t){return t?.root?.querySelector?.('.lock')}
@@ -507,15 +506,14 @@ export function applyHighflyTouch(input){
  if(!t.root.hidden&&t.hudEditor?.restore&&!t.hudEditor.restored)
   t.hudEditor.restored=!!t.hudEditor.restore();
  if(!input.enabled){
-  t.pressed.clear();t.held.clear();t.sprintOn=false;t.x=t.y=0;t.active=false;
+  t.pressed.clear();t.held.clear();t.sprintOn=false;t.airTurbo=false;t.x=t.y=0;t.active=false;
   return;
  }
  input.move.x=t.x;input.move.y=t.y;
  for(const a of t.pressed)input.pressed.add(a);
  input.highflyAbilityAim={...t.abilityAim};t.abilityAim={};
  for(const a of t.held)input.held.add(a);
- if(t.sprintOn)input.held.add('sprint');
- const g=globalThis.__game,p=g?.player;
+ const g=globalThis.__game,p=g?.player;const free=p?.state==='hf_glide'&&p._hfGlide?.free,airborne=p?.state==='hf_glide';if(!free)t.airTurbo=false;if((free&&t.airTurbo)||(!airborne&&t.sprintOn))input.held.add('sprint');const sprint=t.root.querySelector('.sprint');if(sprint){sprint.style.visibility=airborne&&!free?'hidden':'';sprint.textContent=free?'TURBO':'CORRER';sprint.dataset.active=(free?t.airTurbo:t.sprintOn)?'1':'0';sprint.setAttribute('aria-pressed',(free?t.airTurbo:t.sprintOn)?'true':'false')}
  const talking=!!g?.people?.talk;
  if(t.root?.dataset)t.root.dataset.talking=talking?'1':'0';
  if(t.talkNext)t.talkNext.hidden=!talking;
@@ -552,7 +550,7 @@ export function applyHighflyTouch(input){
  t.radar?.update();
  const context=resolveHighflyContext(globalThis.__game?.player);
  const jumpButton=t.root.querySelector('.jump');if(jumpButton){const glide=p?.state==='hf_glide',deploy=p?.state==='move'&&!p.grounded&&p.vel?.y<-.65&&(!p._hfJumpPrimed||p._hfDoubleUsed)&&p.stamina>=3;const text=glide?'PLANEO':deploy?'PLANEAR':'SALTO';jumpButton.style.visibility=glide?'hidden':'';if(jumpButton.textContent!==text)jumpButton.textContent=text;}
- if(t.dashButton){t.dashButton.style.visibility=p?.state==='hf_glide'&&!p._hfGlide?.free?'hidden':'';t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':'DASH';}const roll=t.root.querySelector('.roll');if(roll)roll.textContent=p?.state==='hf_glide'?'CERRAR':'ROLL';
+ if(t.dashButton){t.dashButton.style.visibility=p?.state==='hf_glide'?'hidden':'';t.dashButton.textContent=p?.state==='hf_glide'?'TURBO':'DASH';}const roll=t.root.querySelector('.roll');if(roll)roll.textContent=p?.state==='hf_glide'?'CERRAR':'ROLL';
   t.contextAction=context.action;
  if(t.contextButton){
    t.contextButton.textContent=context.label;

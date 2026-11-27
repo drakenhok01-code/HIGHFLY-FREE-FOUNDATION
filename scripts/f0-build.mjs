@@ -661,6 +661,11 @@ patch('src/game/game.js',"resetProgress() { try { localStorage.removeItem(SAVE_K
 
 patch('src/game/game.js','    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);',
  '    p._hfCameraPitch=this.rig.pitch;\n    p.update(dt, busy ? this._idle : this.input, this.rig.yaw);');
+patch('src/game/camera.js','this.pitch = Math.max(-1.15, Math.min(1.05, this.pitch - input.look.y));',"const hfFlying=player.state==='hf_glide'&&player._hfGlide?.free; this.pitch = Math.max(-1.05, Math.min(1.05, this.pitch + (hfFlying?input.look.y:-input.look.y)));");
+patch('src/game/camera.js','(riding ? 1.3 : 1)','(hfFlying ? 1.22 : riding ? 1.3 : 1)');
+patch('src/game/camera.js','const k = 1 - Math.exp(-14 * dt);','const k = 1 - Math.exp(-(hfFlying?22:14) * dt);');
+patch('src/game/camera.js','if (target) {','if (target && !hfFlying) {');
+patch('src/game/camera.js','const side = Math.min(this.shoulder,','const side = Math.min(hfFlying?0:this.shoulder,');
 // Camera raymarches actual heightfield so a close cliff cannot show its backface.
 patch('src/game/camera.js',
  "const free = this.world.raycast(_pivot, _dir, distance + 0.4) - 0.3;",

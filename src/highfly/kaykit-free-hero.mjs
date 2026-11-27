@@ -327,7 +327,7 @@ export class KayKitFreeHero {
        p._hfDive?1.04-(p._hfCameraPitch??0)*.35:1.07,.55,1.40);
    const airborne=p.state==='hf_glide';const aim=airborne&&(!p._hfGlide?.modern||p._hfGlide?.free)?THREE.MathUtils.clamp(Math.PI/2+(p._hfGlide?.pitch??0),.35,2.5):0;this._flightBlend=(this._flightBlend??0)+(aim-(this._flightBlend??0))*(1-Math.exp(-8*dt));if(airborne||Math.abs(this._flightBlend)>.02){this.rollPivot.rotation.x+=this._flightBlend;this.phoenixWings.root.rotation.x=.15+this._flightBlend*.78;}else this.phoenixWings.root.rotation.x=0;
    this.rollPivot.rotation.z=p.state==='roll'?
-     (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:0;
+     (direction==='left'?1:direction==='right'?-1:0)*Math.PI*2*eased-.08*tuck:airborne&&p._hfGlide?.free?(p._hfGlide.bank??0):0;
    this.offset.scale.y=1-.43*tuck;
    this.rollPivot.position.y=.91-.39*tuck+this._swimBlend*.08;
    // No head correction quaternion: KayKit's stylized mirrored rig turned
