@@ -1,4 +1,4 @@
-name: HIGHFLY P5.7.1 — WATER, CAMERA & RARITY STABILITY
+name: HIGHFLY P5.7.1 — WATER, CAMERA & RARITY STABILITY (R2)
 on:
   push:
     branches: [p571-stability-20261127]

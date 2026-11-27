@@ -23,3 +23,7 @@
 #hf-rpg .hf-rpg-detail-art>.hf-separated-art{width:108px!important;height:108px!important}
 #hf-rpg .hf-rpg-slot-art>.hf-separated-art{width:100%!important;height:100%!important}
 #hf-rpg .hf-rpg-forge-recipe>.hf-separated-art,#hf-rpg .hf-rpg-ingredient>.hf-separated-art{width:44px!important;height:44px!important;flex:none}
+
+#hf-rpg .hf-separated-art .hf-art-interior>.hf-rpg-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;transform:none!important;max-width:none!important;max-height:none!important;border:0!important}
+#hf-rpg .hf-rpg-item>.hf-separated-art>.hf-art-frame{aspect-ratio:1!important}
+#hf-rpg .hf-rpg-item>.hf-separated-art>.hf-art-interior{clip-path:inset(0 round 5%);transform:none!important}
