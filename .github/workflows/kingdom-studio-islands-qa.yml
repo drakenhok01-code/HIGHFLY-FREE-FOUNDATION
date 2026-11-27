@@ -1,0 +1,84 @@
+name: Kingdom Builder K0.2.3 — Validación de islas 3D
+on:
+  push:
+    branches: [world-forge-kingdom-builder]
+    paths:
+      - '.github/workflows/kingdom-studio-islands-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  islands:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: kingdom-studio-k02-native
+          run-id: 45993413135
+          github-token: ${{ github.token }}
+          path: site/HIGHFLY-FREE-FOUNDATION/kingdom-studio
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Probar isla 7 y las dos URLs del usuario
+        run: |
+          mkdir -p evidence
+          ROOT=site/HIGHFLY-FREE-FOUNDATION/kingdom-studio
+          for seed in 1 7 33; do
+            mkdir -p "$ROOT/town/$seed"
+            cp "$ROOT/index.html" "$ROOT/town/$seed/index.html"
+          done
+          python3 -m http.server 8765 --directory site > /tmp/kingdom-server.log 2>&1 &
+          cat > islands.mjs <<'JS'
+          import {chromium} from 'playwright';
+          import fs from 'node:fs/promises';
+          const base='http://127.0.0.1:8765/HIGHFLY-FREE-FOUNDATION/kingdom-studio/';
+          const cases=[
+            ['isla-7','town/7/'],
+            ['isla-33','town/33/?coast=0.45&rain=0.3&files=1500'],
+            ['isla-1','town/1/?files=0&coast=1.05&rain=1.65&forest=0.22']
+          ];
+          const results=[];
+          for(const [id,route] of cases){
+            const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+            const page=await browser.newPage({viewport:{width:800,height:450},deviceScaleFactor:1});
+            const errors=[],bad=[];
+            const result={id,route,errors,bad};
+            page.on('pageerror',e=>errors.push(e.message));
+            page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)bad.push(r.status()+' '+r.url())});
+            page.on('requestfailed',r=>{if(r.url().startsWith(base)&&r.failure()?.errorText!=='net::ERR_ABORTED')bad.push(r.failure()?.errorText+' '+r.url())});
+            try{
+              await page.goto(base+route,{waitUntil:'domcontentloaded',timeout:60000});
+              await page.waitForSelector('[data-screen="town"]',{timeout:60000});
+              await page.waitForFunction(()=>typeof window.guildhall?.ready==='function',{timeout:60000});
+              await page.evaluate(()=>Promise.race([window.guildhall.ready(),new Promise((_,rej)=>setTimeout(()=>rej(Error('ready timeout')),180000))]));
+              await page.waitForFunction(()=>{try{const p=window.guildhall.perf.now();return p.calls>0&&p.tris>0}catch{return false}},{timeout:120000,polling:1000});
+              result.info=await page.evaluate(()=>({url:location.href,stats:window.guildhall.perf.now(),text:document.body.innerText.slice(0,1800),canvases:document.querySelectorAll('canvas').length}));
+              if(!result.info.canvases)throw Error('No canvas');
+              result.renderOK=true;
+              try{
+                await page.screenshot({path:'evidence/'+id+'.png',timeout:120000});
+                result.captureOK=true;
+              }catch(e){result.captureOK=false;result.captureError=String(e)}
+            }catch(e){result.error=String(e);result.renderOK=false}
+            result.ok=result.renderOK===true&&result.captureOK===true&&!errors.length&&!bad.length;
+            results.push(result);
+            console.log(JSON.stringify(result));
+            await fs.writeFile('evidence/results.json',JSON.stringify(results,null,2));
+            await browser.close();
+          }
+          if(results.some(r=>!r.ok))process.exitCode=1;
+          JS
+          node islands.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kingdom-k023-islands-evidence
+          path: evidence
+          if-no-files-found: warn
