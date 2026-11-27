@@ -1,4 +1,4 @@
-name: Kingdom Builder K0.7 — Identidad económica y exportación JSON
+name: Kingdom Builder K1.1 — Editor congelado y biblioteca privada local
 on:
   push:
     branches: [world-forge-kingdom-builder]
@@ -42,6 +42,8 @@ jobs:
         run: node scripts/kingdom-studio-identity.mjs guildhall-native
       - name: Incorporar exportación de la isla construida
         run: node scripts/kingdom-snapshot.mjs guildhall-native
+      - name: Incorporar editor de hexágonos y objetos
+        run: node scripts/kingdom-studio-editor.mjs guildhall-native
       - name: Instalar dependencias y compilar Studio
         working-directory: guildhall-native
         run: |
@@ -67,7 +69,7 @@ jobs:
           test "$(du -sb . | cut -f1)" -lt 950000000
       - uses: actions/upload-artifact@v4
         with:
-          name: kingdom-studio-k07-snapshot
+          name: kingdom-studio-k11-editor
           path: guildhall-native/apps/studio/dist
           if-no-files-found: error
           retention-days: 14
