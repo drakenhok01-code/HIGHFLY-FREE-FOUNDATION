@@ -47,6 +47,8 @@ export const userIconUrl=id=>id==='item_wolf_pelt'?import.meta.env.BASE_URL+'hig
  USER_ICONS[id]?assetUrl('user-icons/'+USER_ICONS[id]):null;
 
 const valid=id=>id.startsWith('item_')?ITEMS.has(id.slice(5)):id.startsWith('slot_')?SLOTS.has(id.slice(5)):id.startsWith('profession_')?PROFS.has(id.slice(11)):id.startsWith('skill_')?SKILLS.has(id.slice(6)):false;
+const RARITY_COLOR={'Común':'#a8a4b4','Poco común':'#59c38e','Raro':'#62a4f5','Épico':'#ae70ed','Legendario':'#e8b955','Mítico':'#f574ac'};
+function separateArt(id,source,large,rarity,crop=true){const color=RARITY_COLOR[rarity]??RARITY_COLOR['Común'];return '<span class="hf-rpg-art hf-premium-icon hf-separated-art'+(large?' is-large':'')+'" data-hf-art-id="'+id+'" data-hf-frame-art="separated" style="--hf-frame-color:'+color+'"><span class="hf-art-interior'+(crop?' is-cropped':'')+'"><img src="'+source+'" alt="" draggable="false"/></span><svg class="hf-art-frame" viewBox="0 0 100 100" aria-hidden="true"><rect x="3" y="3" width="94" height="94" rx="7" fill="none" stroke="#21182f" stroke-width="6"/><rect x="3.5" y="3.5" width="93" height="93" rx="6" fill="none" stroke="'+color+'" stroke-width="2.4"/><path d="M5 19V5H19 M81 5H95V19 M95 81V95H81 M19 95H5V81" fill="none" stroke="#e6c792" stroke-width="2.5"/><path d="M50 1L56 7L50 13L44 7Z" fill="'+color+'" stroke="#f4d69d" stroke-width="1.3"/><path d="M50 3L53 7L50 10L47 7Z" fill="#fff" opacity=".45"/></svg></span>'}
 export function premiumArt(name,large=false,rarity='Común'){
  // P4.3 restores approved 256px, painterly icons WITH their integrated metal
  // frame. Do not add a secondary HTML frame or crop the illustration.
@@ -55,7 +57,7 @@ export function premiumArt(name,large=false,rarity='Común'){
  const source=userIconUrl(id);
  if(source){
   const rel=USER_ICONS[id],custom=P494_CREATURE_ICON_IDS.has(id),hasOrnateRarity=!custom&&id.startsWith('item_')&&/^(items|armor|weapons)\//.test(rel);
-  const framed=hasOrnateRarity?assetUrl('rarity/'+rel+'__'+(grades[rarity]??'comun')):source;
+  if(id.startsWith('item_'))return separateArt(id,source,large,rarity,hasOrnateRarity);const framed=source;
   return '<img class="hf-rpg-art hf-premium-icon hf-user-icon'+(large?' is-large':'')+'" data-hf-icon-pack="user-v1" data-hf-art-id="'+id+'" data-hf-frame-art="'+(custom?'p494':hasOrnateRarity?'p43':'original')+'" src="'+framed+'" draggable="false" loading="eager" alt="" aria-hidden="true"/>';
  }
  if(!valid(id))return null;
