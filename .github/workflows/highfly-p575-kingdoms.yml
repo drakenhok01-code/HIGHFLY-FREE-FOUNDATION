@@ -1,0 +1,183 @@
+name: HIGHFLY P5.7.5 — KINGDOMS REBORN (Unsung 17)
+on:
+  push:
+    branches: [p575-original-kingdoms-20261127]
+    paths: ['.github/workflows/highfly-p575-kingdoms.yml','scripts/p575-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p575
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Codestz/guildhall
+          ref: ef56b1cdf247f8839bf7fbb289713b15dbacae8c
+          path: guildhall
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p574-build
+          run-id: 46009002629
+          github-token: ${{ github.token }}
+          path: dist
+      - name: Export exact approved original Guildhall worlds
+        run: |
+          set -euo pipefail
+          git -C guildhall diff --exit-code
+          bun scripts/p575-export-approved-islands.ts
+          git -C guildhall diff --exit-code
+          node scripts/p575-stage-regions.mjs
+          jq -e '.ok and (.regions|length)==8 and .regionIdsPreserved and .nativeReservationsPreserved and .pieces < .previousPieces' dist/highfly/regions-p575/integration-audit.json
+      - name: Rebuild cartography and isolated entrypoint
+        run: |
+          python3 -m venv "$RUNNER_TEMP/p575"
+          "$RUNNER_TEMP/p575/bin/pip" install --quiet pillow==12.0.0
+          "$RUNNER_TEMP/p575/bin/python" scripts/p575-atlas.py
+          node --check src/highfly/p555-region-runtime.mjs
+          node --check src/highfly/p494-cartographic-map.mjs
+          node scripts/p575-preview-overlay.mjs
+          test -s overlay/play-p575.html
+          test -s overlay/highfly/regions-p575/island-8.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: highfly-p575-overlay
+          path: overlay
+          retention-days: 30
+          if-no-files-found: error
+  integrity:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: northwest
+            seeds: '1,2'
+          - shard: southeast
+            seeds: '3,4'
+          - shard: northeast
+            seeds: '5,6'
+          - shard: southwest
+            seeds: '7,8'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p574-build
+          run-id: 46009002629
+          github-token: ${{ github.token }}
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p575-overlay
+          path: overlay
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validate exact new cities in playable P574 runtime
+        env:
+          HF_QA_SEEDS: ${{ matrix.seeds }}
+        run: |
+          set -euo pipefail
+          cp -a overlay/. dist/
+          mkdir -p test-site/HIGHFLY-FREE-FOUNDATION
+          ln -s "$PWD/dist" test-site/HIGHFLY-FREE-FOUNDATION/preview-p55
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory test-site >/tmp/hf575-server.log 2>&1 &
+          node scripts/p575-integrity-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: highfly-p575-integrity-${{ matrix.shard }}
+          path: |
+            p575-integrity-*.json
+            p575-region-*.png
+          if-no-files-found: warn
+  publish:
+    needs: [package, integrity]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    concurrency:
+      group: highfly-p555-pages
+      cancel-in-progress: false
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p574-pages
+          run-id: 46009002629
+          github-token: ${{ github.token }}
+          path: previous
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p575-overlay
+          path: overlay
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: highfly-p575-integrity-*
+          path: evidence
+          merge-multiple: true
+      - name: Add new preview without overwriting any existing P574 file
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          test -s site/preview-p55/play-p574.html
+          test -s site/preview-p55/highfly/release-p574.json
+          python3 - <<'PY'
+          import json,pathlib,shutil
+          rows=[]
+          for p in pathlib.Path('evidence').glob('p575-integrity-*.json'):
+              x=json.loads(p.read_text());assert not x['errors'];rows.extend(x['rows'])
+          assert sorted(r['seed'] for r in rows)==list(range(1,9))
+          root=pathlib.Path('site/preview-p55')
+          for p in pathlib.Path('overlay').rglob('*'):
+              if not p.is_file():continue
+              dst=root/p.relative_to('overlay')
+              assert not dst.exists(),f'Protected old file: {dst}'
+              dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,dst)
+          (root/'highfly/p575-integrity.json').write_text(json.dumps(rows))
+          PY
+          test "$(du -sb site | cut -f1)" -lt 950000000
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p575-pages
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p575-pages
+      - name: Verify published new and old previews
+        run: |
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 20); do
+            if curl -fsSL "$BASE/highfly/release-p575.json?v=$GITHUB_RUN_ID" | jq -e --arg sha "$GITHUB_SHA" '.version=="5.7.5" and .testedCommit==$sha' >/dev/null && curl -fsSL "$BASE/play-p575.html?v=$GITHUB_RUN_ID" -o /tmp/p575.html && curl -fsSL "$BASE/play-p574.html?v=$GITHUB_RUN_ID" -o /tmp/p574.html; then exit 0; fi
+            sleep 10
+          done
+          exit 1
