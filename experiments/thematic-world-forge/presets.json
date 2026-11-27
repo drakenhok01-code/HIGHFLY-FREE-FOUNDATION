@@ -1,0 +1,221 @@
+{
+  "schema": 1,
+  "upstream": "ef56b1cdf247f8839bf7fbb289713b15dbacae8c",
+  "seeds": 100,
+  "agents": 6,
+  "minimumCastleTier": 2,
+  "hills": 0,
+  "profiles": [
+    {
+      "id": "inicios",
+      "label": "Ciudad de los Inicios",
+      "files": 8000,
+      "forest": 0.16,
+      "districts": [
+        "market",
+        "camp",
+        "farm",
+        "monastery"
+      ],
+      "buildings": [
+        "townhouse",
+        "house",
+        "market",
+        "tavern",
+        "smithy",
+        "chapel",
+        "cottage",
+        "construction",
+        "homestead"
+      ],
+      "requiredScenes": [
+        "market-square",
+        "town-hall-plaza",
+        "tavern-garden",
+        "smithy-works",
+        "training-arena"
+      ],
+      "needsArt": null
+    },
+    {
+      "id": "puertaria",
+      "label": "Puertaria",
+      "files": 3000,
+      "forest": 0.08,
+      "districts": [
+        "harbour",
+        "fishing",
+        "market"
+      ],
+      "buildings": [
+        "storehouse",
+        "warehouse",
+        "boathouse",
+        "house",
+        "tavern",
+        "market",
+        "cottage"
+      ],
+      "requiredScenes": [
+        "harbour-quay",
+        "market-square",
+        "tavern-garden"
+      ],
+      "needsArt": null
+    },
+    {
+      "id": "cascadas",
+      "label": "Bosque de las Cascadas",
+      "files": 3000,
+      "forest": 0.38,
+      "districts": [
+        "lumber",
+        "lumber",
+        "farm",
+        "camp"
+      ],
+      "buildings": [
+        "lumber",
+        "hunter",
+        "homestead",
+        "cottage",
+        "house",
+        "watermill",
+        "tavern"
+      ],
+      "requiredScenes": [
+        "farmstead-yard",
+        "tavern-garden"
+      ],
+      "needsArt": null
+    },
+    {
+      "id": "nieve",
+      "label": "Fortaleza de la Nieve",
+      "files": 3000,
+      "forest": 0.15,
+      "districts": [
+        "camp",
+        "camp",
+        "mine"
+      ],
+      "buildings": [
+        "barracks",
+        "fort-tower",
+        "archery",
+        "cottage",
+        "house",
+        "smithy",
+        "warehouse"
+      ],
+      "requiredScenes": [
+        "training-arena",
+        "archery-range",
+        "smithy-works"
+      ],
+      "needsArt": "Snow-specific art and tint not verified"
+    },
+    {
+      "id": "volcan",
+      "label": "Territorio Volcánico",
+      "files": 4000,
+      "forest": 0.05,
+      "districts": [
+        "mine",
+        "mine",
+        "camp",
+        "market"
+      ],
+      "buildings": [
+        "smithy",
+        "warehouse",
+        "storehouse",
+        "construction",
+        "homestead",
+        "cottage",
+        "house"
+      ],
+      "requiredScenes": [
+        "smithy-works",
+        "market-square"
+      ],
+      "needsArt": "Volcanic art and lava not verified"
+    },
+    {
+      "id": "abismo",
+      "label": "Territorio del Abismo",
+      "files": 3000,
+      "forest": 0.22,
+      "districts": [
+        "monastery",
+        "monastery",
+        "camp"
+      ],
+      "buildings": [
+        "monastery",
+        "chapel",
+        "graveyard",
+        "cottage",
+        "house",
+        "fort-tower",
+        "ruins"
+      ],
+      "requiredScenes": [
+        "monastery-compound"
+      ],
+      "needsArt": null
+    },
+    {
+      "id": "oriental",
+      "label": "Mizuhara",
+      "files": 3000,
+      "forest": 0.25,
+      "districts": [
+        "monastery",
+        "camp",
+        "market"
+      ],
+      "buildings": [
+        "chapel",
+        "monastery",
+        "house",
+        "cottage",
+        "market",
+        "archery",
+        "homestead"
+      ],
+      "requiredScenes": [
+        "monastery-compound",
+        "archery-range",
+        "market-square"
+      ],
+      "needsArt": "No authentic Japanese assets verified"
+    },
+    {
+      "id": "agricola",
+      "label": "Territorio Agrícola",
+      "files": 8000,
+      "forest": 0.09,
+      "districts": [
+        "farm",
+        "farm",
+        "market",
+        "hamlet"
+      ],
+      "buildings": [
+        "farmstead",
+        "homestead",
+        "cottage",
+        "house",
+        "windmill",
+        "market",
+        "warehouse"
+      ],
+      "requiredScenes": [
+        "farmstead-yard",
+        "market-square"
+      ],
+      "needsArt": null
+    }
+  ]
+}
