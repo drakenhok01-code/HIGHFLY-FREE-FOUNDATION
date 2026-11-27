@@ -30,6 +30,8 @@ jobs:
           node-version: '22'
       - name: Aplicar reglas de generación y prefabs nativos (sin descargar texturas)
         run: |
+          mkdir -p guildhall-native/library/catalog
+          curl --fail --retry 5 --retry-all-errors -sS https://guildhall.codestz.dev/library/ea594dd361b4/catalog/kaykit-holiday.json -o guildhall-native/library/catalog/kaykit-holiday.json
           node scripts/kingdom-studio-themes.mjs guildhall-native
           node scripts/kingdom-studio-terrain.mjs guildhall-native
           node scripts/kingdom-studio-identity.mjs guildhall-native
