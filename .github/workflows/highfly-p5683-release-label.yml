@@ -1,0 +1,110 @@
+name: HIGHFLY P568.3 — Release label and fresh entry
+on:
+  push:
+    branches: [p5683-smart-tools-20261126]
+    paths: ['.github/workflows/highfly-p5683-release-label.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: highfly-p555-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: highfly-free-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: highfly-p5683-pages
+          run-id: 45910106930
+          github-token: ${{ github.token }}
+          path: previous
+      - name: Correct only stale label in the validated release
+        run: |
+          set -euo pipefail
+          mkdir site
+          TAR="$(find previous -name artifact.tar -type f -print -quit)"
+          test -n "$TAR"
+          tar -xf "$TAR" -C site
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, hashlib
+          root=Path('site/preview-p55')
+          meta=root/'highfly/release-p5683.json'
+          release=json.loads(meta.read_text())
+          assert release['version']=='5.6.8.3'
+          assert release['testedCommit']=='4f4b00b7335e252b046fd4b40ef61ce627f8cbd0'
+          assert json.loads((root/'highfly/p5683-tool-smoke.json').read_text())['ok']
+          old='Viaje · 5.6.8.2'
+          new='Viaje · 5.6.8.3'
+          hits=[]
+          for p in root.rglob('*.js'):
+              s=p.read_text(encoding='utf-8')
+              if old in s:
+                  assert s.count(old)==1
+                  hits.append((p,s))
+          assert len(hits)==1, [(str(p),len(s)) for p,s in hits]
+          p,s=hits[0]
+          fixed=s.replace(old,new)
+          assert old not in fixed
+          p.write_text(fixed,encoding='utf-8')
+          # Preserve the existing hashed asset paths and use a new query token
+          # on the entry module to avoid an earlier cached copy in mobile Chrome.
+          html=root/'index.html'
+          import re
+          text=html.read_text()
+          # Vite main script / module preload URLs receive the same fresh token.
+          text=re.sub(r'((?:src|href)="[^"]+\.js)(\")', r'\1?v=5683-label2\2',text)
+          html.write_text(text)
+          (root/'play-p5683.html').write_text(text)
+          release['labelCorrectionCommit']='${{ github.sha }}'
+          release['entry']='play-p5683.html'
+          release['labelBundle']=str(p.relative_to(root))
+          release['labelBundleSha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+          meta.write_text(json.dumps(release,indent=2))
+          print('HF5683_LABEL_FIXED',p,release)
+          PY
+          test -s site/preview-p543/index.html
+          test -s site/preview-p55/play-p5683.html
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: highfly-p5683-label-fixed-pages
+          path: site
+      - name: Wait for artifact index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            N="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '[.artifacts[] | select(.name=="highfly-p5683-label-fixed-pages")] | length' 2>/dev/null || echo 0)"
+            if [ "$N" = 1 ]; then sleep 20; exit 0; fi
+            sleep 6
+          done
+          exit 1
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: highfly-p5683-label-fixed-pages
+      - name: Verify public Pages release over HTTP
+        run: |
+          set -euo pipefail
+          BASE=https://drakenhok01-code.github.io/HIGHFLY-FREE-FOUNDATION/preview-p55
+          for attempt in $(seq 1 30); do
+            if curl -fsSL "$BASE/highfly/release-p5683.json?v=$GITHUB_RUN_ID" -o /tmp/release.json && jq -e '.version=="5.6.8.3" and .entry=="play-p5683.html"' /tmp/release.json >/dev/null; then
+              BUNDLE="$(jq -r .labelBundle /tmp/release.json)"
+              EXPECTED="$(jq -r .labelBundleSha256 /tmp/release.json)"
+              curl -fsSL "$BASE/$BUNDLE?v=5683-label2" -o /tmp/bundle.js
+              ACTUAL="$(sha256sum /tmp/bundle.js | cut -d' ' -f1)"
+              if [ "$EXPECTED" = "$ACTUAL" ] && curl -fsSL "$BASE/play-p5683.html?v=$GITHUB_RUN_ID" | grep -q '5683-label2'; then echo "Public Pages verified: 5.6.8.3"; exit 0; fi
+            fi
+            sleep 10
+          done
+          exit 1
