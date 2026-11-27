@@ -73,24 +73,24 @@ function adjustedAnimation(clip,src,dst,counts){
  }
  return new THREE.AnimationClip(clip.name,clip.duration,tracks);
 }
-export function stylizeUniversalKayKit(gltf){
+export function stylizeUniversalKayKit(gltf,{npc=false}={}){
  const root=gltf.scene;
  root.updateMatrixWorld(true);
  const bones=boneMap(root),before=rest(root);
  if(bones.size!==41||!bones.has('head')||!bones.has('handslotr'))
   throw Error('Expected authentic 41-bone FREE Knight medium rig, got '+bones.size);
  const oldWorld=new Map([...bones].map(([k,b])=>[k,b.getWorldPosition(WORLD())]));
- const headMesh=root.getObjectByName('Knight_Head');
+ const headMesh=root.getObjectByName('Knight_Head')??(npc?(()=>{let m=null;root.traverse(o=>{if(o.isSkinnedMesh&&/_Head$/i.test(o.name))m=o});return m})():null);
  if(!headMesh?.isSkinnedMesh)throw Error('Original Knight_Head skinned mesh missing');
  const headBox=meshWorldBox(headMesh),headBone=oldWorld.get('head');
  if(!headBone||headBox.max.y-headBox.min.y<.5)throw Error('Invalid KayKit FREE original head geometry');
  const meshes=[];root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
- if(meshes.length!==6)throw Error('Expected six original skinned parts, found '+meshes.length);
+ if((!npc&&meshes.length!==6)||(npc&&meshes.length<3))throw Error('Expected six original skinned parts, found '+meshes.length);
  const skeletons=new Set(),meshRest=[];
  let verts=0;
  for(const mesh of meshes){
   const old=mesh.matrixWorld.clone(),inverse=old.clone().invert();
-  const face=mesh.name==='Knight_Head',geometry=mesh.geometry.clone(),pos=geometry.attributes.position;
+  const face=mesh===headMesh,geometry=mesh.geometry.clone(),pos=geometry.attributes.position;
   const temp=new THREE.Vector3(),bounds=new THREE.Box3();
   for(let i=0;i<pos.count;i++){
    temp.fromBufferAttribute(pos,i).applyMatrix4(old);
@@ -122,10 +122,10 @@ export function stylizeUniversalKayKit(gltf){
  for(const mesh of meshes){mesh.bind(mesh.skeleton,mesh.matrixWorld);mesh.computeBoundingBox();}
  const after=rest(root),counts={bound:0,skipped:0};
  const clips=gltf.animations.map(c=>adjustedAnimation(c,before,after,counts));
- if(clips.length!==76||counts.bound<6000)
+ if((!npc&&(clips.length!==76||counts.bound<6000))||(npc&&(clips.length<20||counts.bound<1000)))
   throw Error('KayKit animation rest retarget incomplete: '+JSON.stringify({clips:clips.length,...counts}));
- const bodyBox=new THREE.Box3(),headWarp=meshRest.find(m=>m.name==='Knight_Head')?.box;
- for(const part of meshRest)bodyBox.union(part.box);
+ const bodyBox=new THREE.Box3(),headWarp=meshRest.find(m=>m.name===headMesh.name)?.box;
+ for(const part of meshRest)if(!npc||/_(Head|Body|ArmLeft|ArmRight|LegLeft|LegRight)$/i.test(part.name))bodyBox.union(part.box);
  const naturalHeight=bodyBox.getSize(new THREE.Vector3()).y;
  const headRatio=headWarp.getSize(new THREE.Vector3()).y/naturalHeight;
  if(!(naturalHeight>2.7&&naturalHeight<4.2&&headRatio>.17&&headRatio<.35))
